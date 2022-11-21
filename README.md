@@ -1,3 +1,5 @@
+![FlagAI](logo.png)
+
 ### FlagPerf
 
 FlagPerf是一款面向AI异构加速芯片的通用基准性能测试平台。我们希望面向AI异构芯片提供多框架、多场景、开放、公平的标准化测试体系，通过抽象模型训练过程及厂商共建扩展的形式，兼顾AI性能测试的通用性和异构硬件的灵活性。
@@ -125,9 +127,9 @@ CASES = ['BERT_TORCH_DEMO_A100_1X8']
 #     "data_dir_container": "<data direcotory in container>",
 # }
 
-BERT_TORCH_DEMO_A100_1X8 = {
+BERT_PADDLE_DEMO_A100_1X8 = {
     "model": "bert",
-    "framework": "pytorch",
+    "framework": "paddle",
     "config": "config_A100x1x8",
     "repeat": 1,
     "nnodes": 1,
@@ -140,27 +142,22 @@ BERT_TORCH_DEMO_A100_1X8 = {
 修改Vendor的测试Case配置文件
 
 ```
-vim nvidia/bert-pytorch/config/config_A100x2x8.py
-from config_Ampere_common import *
-fp16 = True
-ddp_type = "apex"
-dist_backend = "nccl"
-
+vim nvidia/bert-paddle/config/config_A100x1x8.py
+target_mlm_accuracy = 0.67
 gradient_accumulation_steps = 1
-max_steps = 150000
+max_steps = 10000
 start_warmup_step = 0
 warmup_proportion = 0
-warmup_steps = 0
+warmup_steps = 2000
 
-distributed_lamb = True
-learning_rate = 3.5e-4
+learning_rate = 1e-4
 weight_decay_rate = 0.01
 opt_lamb_beta_1 = 0.9
 opt_lamb_beta_2 = 0.999
-train_batch_size = 27
+train_batch_size = 12
 eval_batch_size = train_batch_size
-max_samples_termination = 45000000
-cache_eval_data = True
+max_samples_termination = 4500000
+cache_eval_data = False
 
 seed = 9031
 ```
@@ -202,7 +199,7 @@ seed = 9031
 2022-09-28 16:10:35,733    [INFO]    [run.py,467]--------------------------------------------------
 2022-09-28 16:10:35,733    [INFO]    [run.py,495]========= Step 2: Prepare and Run test cases. =========
 2022-09-28 16:10:35,733    [INFO]    [run.py,498]======= Testcase: BERT_TORCH_DEMO_A100_1X8 =======
-2022-09-28 16:10:35,733    [INFO]    [run.py,507]=== 2.1 Prepare docker image:flagperf-nvidia-pytorch:t_v0.1 ===
+2022-09-28 16:10:35,733    [INFO]    [run.py,507]=== 2.1 Prepare docker image:flagperf-nvidia-paddle:t_v0.1 ===
 ......中间日志省略......
 2022-09-28 16:16:00,924    [INFO]    [run.py,563]========= Step 3: Collect logs in the cluster. =========
 2022-09-28 16:16:00,924    [INFO]    [run.py,383]Collect logs in cluster.
@@ -224,16 +221,16 @@ ls
 
 cd 10.1.2.3_noderank0/
 ls
-cpu_monitor.log  pwr_monitor.log  rank2.out.log  rank5.out.log  start_pytorch_task.log
+cpu_monitor.log  pwr_monitor.log  rank2.out.log  rank5.out.log  start_paddle_task.log
 gpu_monitor.log  rank0.out.log    rank3.out.log  rank6.out.log
 mem_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 
 tail -n 5 rank<Y>.out.log # 可以看到rank<Y>训练过程和结果日志。
-[PerfLog] {"event": "STEP_END", "value": {"loss": 1.298828125, "mlm_acc": 0.7184170484542847, "epoch": 0, "end_training": true, "num_trained_samples": 10500864, "global_steps": 41020, "iter_dataloader_idx": 8, "learning_rate": 0.00020643, "seq/s": 1302.1523714815849}, "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/pytorch/run_pretraining.py", "lineno": 137, "time_ms": 1665310732959, "rank": 0}}
-[PerfLog] {"event": "EVALUATE", "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/pytorch/run_pretraining.py", "lineno": 137, "time_ms": 1665310732960, "rank": 0}}
-[PerfLog] {"event": "EPOCH_END", "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/pytorch/run_pretraining.py", "lineno": 137, "time_ms": 1665310733109, "rank": 0}}
-[PerfLog] {"event": "TRAIN_END", "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/pytorch/run_pretraining.py", "lineno": 147, "time_ms": 1665310733110, "rank": 0}}
-[PerfLog] {"event": "FINISHED", "value": {"e2e_time": 8649.404755353928, "training_sequences_per_second": 1221.242941532543, "converged": true, "final_loss": 1.3019317388534546, "final_mlm_accuracy": 0.7202467322349548, "raw_train_time": 8598.715, "init_time": 40.799}, "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/pytorch/run_pretraining.py", "lineno": 168, "time_ms": 1665310733121, "rank": 0}}
+[PerfLog] {"event": "STEP_END", "value": {"loss": 1.298828125, "mlm_acc": 0.7184170484542847, "epoch": 0, "end_training": true, "num_trained_samples": 10500864, "global_steps": 41020, "iter_dataloader_idx": 8, "learning_rate": 0.00020643, "seq/s": 1302.1523714815849}, "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/paddle/run_pretraining.py", "lineno": 137, "time_ms": 1665310732959, "rank": 0}}
+[PerfLog] {"event": "EVALUATE", "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/paddle/run_pretraining.py", "lineno": 137, "time_ms": 1665310732960, "rank": 0}}
+[PerfLog] {"event": "EPOCH_END", "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/paddle/run_pretraining.py", "lineno": 137, "time_ms": 1665310733109, "rank": 0}}
+[PerfLog] {"event": "TRAIN_END", "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/paddle/run_pretraining.py", "lineno": 147, "time_ms": 1665310733110, "rank": 0}}
+[PerfLog] {"event": "FINISHED", "value": {"e2e_time": 8649.404755353928, "training_sequences_per_second": 1221.242941532543, "converged": true, "final_loss": 1.3019317388534546, "final_mlm_accuracy": 0.7202467322349548, "raw_train_time": 8598.715, "init_time": 40.799}, "metadata": {"file": "/workspace/flagperf/training/benchmarks/bert/paddle/run_pretraining.py", "lineno": 168, "time_ms": 1665310733121, "rank": 0}}
 
 ```
 
