@@ -44,35 +44,16 @@ CASES = ['BERT_PADDLE_DEMO_A100_1X8',
          'GLM_TORCH_DEMO_A100_1X8',
          'CPM_TORCH_DEMO_A100_1X8']
 
-# Config each case in a dictionary like these.
-# <case name> = {
-#     # "Set model name"
-#     "model": <model name>
-#     # If test_type is default, framework should be pytorch.
-#     "framework": "<ai framework>",
-#     # Set config module in <vendor>/<model>-<framework>/<config>
-#     "config": "<testcase config module>",
-#     # Set how many times to run this case in container(s).
-#     "repeat": 1,
-#     # Set how many hosts to run this case
-#     "nnodes": 1,
-#     # Set how many processes will run on each host
-#     "nproc": 2,
-#     # Set data path on host: "/home/data_ckpt/bert/train"
-#     "data_dir_host": "<data direcotory on host>",
-#     # Set data path in container: /mnt/data/bert/train"
-#     "data_dir_container": "<data direcotory in container>",
-# }
-
-BERT_PADDLE_DEMO_A100_1X8 = {
-    "model": "bert",
-    "framework": "paddle",
-    "config": "config_A100x1x8",
-    "repeat": 1,
-    "nnodes": 1,
-    "nproc": 8,
-    "data_dir_host": "/home/datasets_ckpt/bert/train/",
-    "data_dir_container": "/mnt/data/bert/train/",
+# Config each case in a dictionary like this.
+BERT_PADDLE_DEMO_A100_1X8 = { # benchmark case name, one in CASES
+    "model": "bert",  # model name
+    "framework": "paddle",  # AI framework
+    "config": "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
+    "repeat": 1,  # How many times to run this case
+    "nnodes": 1,  #  How many hosts to run this case
+    "nproc": 8,  # How many processes will run on each host
+    "data_dir_host": "/home/datasets_ckpt/bert/train/",  # Data path on host
+    "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
 }
 
 GLM_TORCH_DEMO_A100_1X8 = {

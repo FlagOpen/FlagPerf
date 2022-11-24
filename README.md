@@ -126,35 +126,16 @@ CASES = ['BERT_PADDLE_DEMO_A100_1X8',
          'GLM_TORCH_DEMO_A100_1X8',
          'CPM_TORCH_DEMO_A100_1X8']
 
-# Config each case in a dictionary like these.
-# <case name> = {
-#     # "Set model name"
-#     "model": <model name>
-#     # If test_type is default, framework should be pytorch.
-#     "framework": "<ai framework>",
-#     # Set config module in <vendor>/<model>-<framework>/<config>
-#     "config": "<testcase config module>",
-#     # Set how many times to run this case in container(s).
-#     "repeat": 1,
-#     # Set how many hosts to run this case
-#     "nnodes": 1,
-#     # Set how many processes will run on each host
-#     "nproc": 2,
-#     # Set data path on host: "/home/data_ckpt/bert/train"
-#     "data_dir_host": "<data direcotory on host>",
-#     # Set data path in container: /mnt/data/bert/train"
-#     "data_dir_container": "<data direcotory in container>",
-# }
-
-BERT_PADDLE_DEMO_A100_1X8 = {
-    "model": "bert",
-    "framework": "paddle",
-    "config": "config_A100x1x8",
-    "repeat": 1,
-    "nnodes": 1,
-    "nproc": 8,
-    "data_dir_host": "/home/datasets_ckpt/bert/train/",
-    "data_dir_container": "/mnt/data/bert/train/",
+# Config each case in a dictionary like this.
+BERT_PADDLE_DEMO_A100_1X8 = { # benchmark case name, one in CASES
+    "model": "bert",  # model name
+    "framework": "paddle",  # AI framework
+    "config": "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
+    "repeat": 1,  # How many times to run this case
+    "nnodes": 1,  #  How many hosts to run this case
+    "nproc": 8,  # How many processes will run on each host
+    "data_dir_host": "/home/datasets_ckpt/bert/train/",  # Data path on host
+    "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
 }
 ```
 
@@ -250,7 +231,6 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 [PerfLog] {"event": "EVALUATE", "metadata": {"file": "/workspace/flagperf/training/benchmarks/cpm/pytorch/run_pretraining.py", "lineno": 127, "time_ms": 1669034171032, "rank": 0}}
 [PerfLog] {"event": "EPOCH_END", "metadata": {"file": "/workspace/flagperf/training/benchmarks/cpm/pytorch/run_pretraining.py", "lineno": 127, "time_ms": 1669034171159, "rank": 0}}
 [PerfLog] {"event": "TRAIN_END", "metadata": {"file": "/workspace/flagperf/training/benchmarks/cpm/pytorch/run_pretraining.py", "lineno": 136, "time_ms": 1669034171159, "rank": 0}}
-main out out length is 2
 [PerfLog] {"event": "FINISHED", "value": {"e2e_time": 1661.6114165782928, "training_sequences_per_second": 579.0933420700227, "converged": true, "final_loss": 3.066718101501465, "final_mlm_accuracy": 0.920166015625, "raw_train_time": 1501.713, "init_time": 148.937}, "metadata": {"file": "/workspace/flagperf/training/benchmarks/cpm/pytorch/run_pretraining.py", "lineno": 158, "time_ms": 1669034171646, "rank": 0}}
 
 ```
