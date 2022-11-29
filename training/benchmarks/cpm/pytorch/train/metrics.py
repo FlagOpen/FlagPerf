@@ -23,8 +23,8 @@ _EPSILON = 0.00000000001
 # See https://en.wikipedia.org/wiki/1.96 for details of this magic number.
 _95_CI_DEVIATE = 1.96
 
-CorpusLevelScore = collections.namedtuple('CorpusLevelScore',
-                                          ['mean', 'confidence_interval', 'standard_deviation'])
+CorpusLevelScore = collections.namedtuple(
+    'CorpusLevelScore', ['mean', 'confidence_interval', 'standard_deviation'])
 
 
 def _compute_corpus_score(scores):
@@ -79,7 +79,8 @@ def _get_average(sentence, embeddings):
     return total / total_norm
 
 
-def average_sentence_level(hypothesis_sentence, reference_sentence, embeddings):
+def average_sentence_level(hypothesis_sentence, reference_sentence,
+                           embeddings):
     """
     Compute Average on sentence level.
 
@@ -94,7 +95,8 @@ def average_sentence_level(hypothesis_sentence, reference_sentence, embeddings):
     )
 
 
-def average_corpus_level(hypothesis_corpus, reference_corpus, embeddings, loss_mask):
+def average_corpus_level(hypothesis_corpus, reference_corpus, embeddings,
+                         loss_mask):
     """
     Compute Average on corpus level.
 
@@ -171,7 +173,8 @@ def _map_to_embeddings(words, embeddings):
     return list(map(get, words))
 
 
-def extrema_sentence_level(hypothesis_sentence, reference_sentence, embeddings):
+def extrema_sentence_level(hypothesis_sentence, reference_sentence,
+                           embeddings):
     """
     Compute Extrema on sentence level.
 
@@ -223,11 +226,7 @@ def _greedy_match(a, b):
     :param b: a list of word vectors.
     :return: The greedy-matched value.
     """
-    sum_max_cosine = sum(
-        max(
-            _cos_sim(a_i, b_i) for b_i in b
-        ) for a_i in a
-    )
+    sum_max_cosine = sum(max(_cos_sim(a_i, b_i) for b_i in b) for a_i in a)
     if not len(a):
         raise ValueError('empty vector')
     return sum_max_cosine / len(a)
@@ -245,7 +244,8 @@ def _greedy_average(a, b):
     return (_greedy_match(a, b) + _greedy_match(b, a)) / 2
 
 
-def greedy_match_sentence_level(hypothesis_sentence, reference_sentence, embeddings):
+def greedy_match_sentence_level(hypothesis_sentence, reference_sentence,
+                                embeddings):
     """
     Compute Greedy Matching on sentence level.
 

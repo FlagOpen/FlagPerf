@@ -3,13 +3,8 @@ import logging
 import random
 import os
 from contextlib import contextmanager
-from torch.distributed import (
-    is_available,
-    is_initialized,
-    init_process_group,
-    broadcast,
-    all_reduce
-)
+from torch.distributed import (is_available, is_initialized,
+                               init_process_group, broadcast, all_reduce)
 
 
 def generate_seeds(rng, size):
@@ -140,7 +135,8 @@ def init_dist_training_env(config):
     else:
         torch.cuda.set_device(config.local_rank)
         config.device = torch.device("cuda", config.local_rank)
-        host_addr_full = 'tcp://' + os.environ["MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+        host_addr_full = 'tcp://' + os.environ[
+            "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
         #host_addr_full = 'env://'
         rank = int(os.environ["RANK"])
         world_size = int(os.environ["WORLD_SIZE"])
@@ -148,9 +144,12 @@ def init_dist_training_env(config):
         #print(f'rank: {rank}')
         #print(f'world_size: {world_size}')
 
-        torch.distributed.init_process_group(backend=config.dist_backend, init_method=host_addr_full, rank=rank, world_size=world_size)
+        torch.distributed.init_process_group(backend=config.dist_backend,
+                                             init_method=host_addr_full,
+                                             rank=rank,
+                                             world_size=world_size)
         #torch.distributed.init_process_group(backend=config.dist_backend, init_method=host_addr_full, rank=rank)
-        config.n_gpu = torch.distributed.get_world_size() 
+        config.n_gpu = torch.distributed.get_world_size()
     return
 
 

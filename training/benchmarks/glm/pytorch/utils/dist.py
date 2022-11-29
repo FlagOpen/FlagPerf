@@ -148,10 +148,14 @@ def init_dist_training_env(config):
     else:
         torch.cuda.set_device(config.local_rank)
         device = torch.device("cuda", config.local_rank)
-        host_addr_full = 'tcp://' + os.environ["MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+        host_addr_full = 'tcp://' + os.environ[
+            "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
         rank = int(os.environ["RANK"])
         world_size = int(os.environ["WORLD_SIZE"])
-        torch.distributed.init_process_group(backend=config.dist_backend, init_method=host_addr_full, rank=rank, world_size=world_size)
+        torch.distributed.init_process_group(backend=config.dist_backend,
+                                             init_method=host_addr_full,
+                                             rank=rank,
+                                             world_size=world_size)
         num_gpus = torch.distributed.get_world_size()
 
     return device, num_gpus
@@ -200,9 +204,10 @@ def print_rank_0(message):
             print(message, flush=True)
     else:
         print(message, flush=True)
-        
+
 
 class PyTorchDistributedDataParallel(DDP):
+
     def named_parameters(self, prefix: str = '', recurse: bool = True):
         return self.module.named_parameters(prefix=prefix, recurse=recurse)
 
@@ -212,4 +217,3 @@ class PyTorchDistributedDataParallel(DDP):
 
     def load_state_dict(self, state_dict, strict=True):
         return self.module.load_state_dict(state_dict, strict=strict)
-        

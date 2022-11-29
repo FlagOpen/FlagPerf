@@ -96,7 +96,11 @@ class FlagPerfLogger():
         self.logfile = None
         self.log_caller = False
 
-    def init(self, logpath, logfile, loglevel='info', mode="file",
+    def init(self,
+             logpath,
+             logfile,
+             loglevel='info',
+             mode="file",
              log_caller=False):
         '''Set log level and create the log file.
            Arguments:
@@ -122,7 +126,8 @@ class FlagPerfLogger():
         if self.mode == "file" or self.mode == "both":
             self.logpath = logpath
             curr_log_file = _create_log_file(logpath, logfile)
-            self.logfile_handler = logging.FileHandler(curr_log_file, 'a',
+            self.logfile_handler = logging.FileHandler(curr_log_file,
+                                                       'a',
                                                        encoding='utf-8')
             self.logfile_handler.setFormatter(handler_formatter)
             self.perf_logger.addHandler(self.logfile_handler)

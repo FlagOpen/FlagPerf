@@ -17,7 +17,7 @@ def set_extern_module_ns(module):
         raise ex
 
 
-def install_extern_modules(path: str, mod_dict: dict=None):
+def install_extern_modules(path: str, mod_dict: dict = None):
     """ Imports externel modules and installs them all under the `extern` package.
     This action is supposed to be invoked only once for setting up envrionment.
 
@@ -31,7 +31,7 @@ def install_extern_modules(path: str, mod_dict: dict=None):
     fullpath = os.path.abspath(path)
     basename = os.path.basename(fullpath)
     sys.path.append(os.path.dirname(fullpath))
-    
+
     try:
         base_module = importlib.import_module(basename)
     except Exception as ex:
@@ -50,7 +50,7 @@ def install_extern_modules(path: str, mod_dict: dict=None):
             raise ex
 
 
-def replace_submodules(package, mod_dict: dict=None):
+def replace_submodules(package, mod_dict: dict = None):
     assert inspect.ismodule(package)
     for name, _ in inspect.getmembers(package, inspect.ismodule):
         mod = mod_dict.get(name)
@@ -58,7 +58,7 @@ def replace_submodules(package, mod_dict: dict=None):
             package.__dict__[name] = mod
 
 
-def remap_modules(ns: dict, mod_dict: dict=None):
+def remap_modules(ns: dict, mod_dict: dict = None):
     if not mod_dict:
         return
     for name, mod in mod_dict.items():
@@ -69,7 +69,10 @@ def remap_modules(ns: dict, mod_dict: dict=None):
 
 
 def find_derived_classes(base: type, module):
-    for cls_name, cls in inspect.getmembers(module, lambda x: inspect.isclass(x) and issubclass(x, base)):
+    for cls_name, cls in inspect.getmembers(
+            module, lambda x: inspect.isclass(x) and issubclass(x, base)):
         yield cls
+
+
 #    for name, submodule in inspect.getmembers(module, inspect.ismodule):
 #        find_derived_classes(base, submodule)

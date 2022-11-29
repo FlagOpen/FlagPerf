@@ -3,6 +3,7 @@ import torch.nn.init as init
 import torch.nn.functional as F
 from torch.nn.parameter import Parameter
 
+
 class VocabEmbedding(torch.nn.Module):
     """Embedding in the vocabulary dimension.
 
@@ -14,7 +15,9 @@ class VocabEmbedding(torch.nn.Module):
         init_method: method to initialize weights.
     """
 
-    def __init__(self, num_embeddings, embedding_dim,
+    def __init__(self,
+                 num_embeddings,
+                 embedding_dim,
                  init_method=init.xavier_normal_):
         super(VocabEmbedding, self).__init__()
         # Keep the input dimensions.
@@ -29,25 +32,24 @@ class VocabEmbedding(torch.nn.Module):
         self._weight = None
 
         # Allocate weights.
-        self.weight = Parameter(torch.Tensor(self.num_embeddings,
-                                             self.embedding_dim))
+        self.weight = Parameter(
+            torch.Tensor(self.num_embeddings, self.embedding_dim))
 
         # initialize.
         init_method(self.weight)
 
     def forward(self, input_):
         # Get the embeddings.
-        output = F.embedding(input_, self.weight,
-                                      self.padding_idx, self.max_norm,
-                                      self.norm_type, self.scale_grad_by_freq,
-                                      self.sparse)
+        output = F.embedding(input_, self.weight, self.padding_idx,
+                             self.max_norm, self.norm_type,
+                             self.scale_grad_by_freq, self.sparse)
         return output
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     num_embeddings = 10
     embedding_dim = 3
     layer = VocabEmbedding(num_embeddings, embedding_dim)
     input_ = torch.tensor([[1, 2, 3]])
     print(layer(input_))
     print(layer.weight)
-

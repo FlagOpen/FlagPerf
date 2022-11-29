@@ -8,6 +8,7 @@ from model.losses.cross_entropy import cross_entropy
 from torch.nn import CrossEntropyLoss
 from model.fp16 import FP16_Module
 
+
 class Evaluator:
 
     def __init__(self, config, dataloader):
@@ -47,24 +48,29 @@ class Evaluator:
                     embeddings = model.module.word_embeddings.weight
 
                 #embedding_average 形状是[batch_size]
-                embedding_average = average_corpus_level(preds.cpu(), labels.cpu(), 
-                                                        embeddings.cpu(), no_model_batch["loss_mask"].cpu())
+                embedding_average = average_corpus_level(
+                    preds.cpu(), labels.cpu(), embeddings.cpu(),
+                    no_model_batch["loss_mask"].cpu())
                 all_embedding_average.append(embedding_average.mean)
 
                 #config.training_event_instance.device_synchronize()
         model.train()
 
-        all_embedding_average_tensor = torch.tensor(np.mean(all_embedding_average), dtype=torch.float32, device=device)
-        all_losses_tensor = torch.tensor(np.mean(all_losses), dtype=torch.float32, device=device)
+        all_embedding_average_tensor = torch.tensor(
+            np.mean(all_embedding_average), dtype=torch.float32, device=device)
+        all_losses_tensor = torch.tensor(np.mean(all_losses),
+                                         dtype=torch.float32,
+                                         device=device)
 
         if torch.distributed.is_initialized():
             # Collect total scores from all ranks
-            torch.distributed.all_reduce(all_losses_tensor, op=torch.distributed.ReduceOp.SUM)
-            torch.distributed.all_reduce(all_embedding_average_tensor, op=torch.distributed.ReduceOp.SUM)
+            torch.distributed.all_reduce(all_losses_tensor,
+                                         op=torch.distributed.ReduceOp.SUM)
+            torch.distributed.all_reduce(all_embedding_average_tensor,
+                                         op=torch.distributed.ReduceOp.SUM)
 
         # Average by number of examples
         all_losses_tensor /= world_size
-        all_embedding_average_tensor /=  world_size
+        all_embedding_average_tensor /= world_size
 
         return all_losses_tensor.item(), all_embedding_average_tensor.item()
-

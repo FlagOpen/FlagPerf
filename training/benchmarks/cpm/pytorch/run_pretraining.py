@@ -28,6 +28,7 @@ import train
 
 logger = None
 
+
 def main():
     import config
     global logger
@@ -42,7 +43,6 @@ def main():
     logger = driver.logger
 
     distributed.init_dist_training_env(config)
-
 
     # parser = argparse.ArgumentParser("CPM")
     # config.activate_config_env(parser=parser, with_config_env_name=True)
@@ -78,7 +78,11 @@ def main():
 
     # get the tokenizer
     base_path = os.path.abspath(os.path.dirname(__file__))
-    tokenizer = GPT2Tokenizer(os.path.join(base_path, 'dataloaders', config.tokenizer_path, 'vocab.json'), os.path.join(base_path, 'dataloaders', config.tokenizer_path, 'chinese_vocab.model'))
+    tokenizer = GPT2Tokenizer(
+        os.path.join(base_path, 'dataloaders', config.tokenizer_path,
+                     'vocab.json'),
+        os.path.join(base_path, 'dataloaders', config.tokenizer_path,
+                     'chinese_vocab.model'))
     train_dataloader, _ = load_data(config, 'train', tokenizer, 1)
     eval_dataloader, _ = load_data(config, 'valid', tokenizer, 1)
     print(f"train_dataset length:{len(train_dataloader.dataset)}")
@@ -89,9 +93,12 @@ def main():
     evaluator = Evaluator(config, eval_dataloader)
     training_state = TrainingState()
     # trainer = Trainer(config, training_event, evaluator, training_state, device=device)
-    trainer = Trainer(driver=driver, adapter=trainer_adapter, evaluator=evaluator,
-                      training_state=training_state, device=config.device, config=config)
-
+    trainer = Trainer(driver=driver,
+                      adapter=trainer_adapter,
+                      evaluator=evaluator,
+                      training_state=training_state,
+                      device=config.device,
+                      config=config)
 
     training_state._trainer = trainer
 
@@ -100,16 +107,18 @@ def main():
 
     utils.barrier()
     init_evaluation_start = time.time()
-    training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(trainer)
+    training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(
+        trainer)
     init_evaluation_end = time.time()
-    init_evaluation_info = dict(eval_loss=training_state.eval_avg_loss,
-                eval_embedding_average=training_state.eval_embedding_average,
-                time=init_evaluation_end - init_evaluation_start)
+    init_evaluation_info = dict(
+        eval_loss=training_state.eval_avg_loss,
+        eval_embedding_average=training_state.eval_embedding_average,
+        time=init_evaluation_end - init_evaluation_start)
     # training_event.on_init_evaluate(init_evaluation_info)
     driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     if not config.do_train:
-        return config, training_state,  init_evaluation_info["time"]
+        return config, training_state, init_evaluation_info["time"]
 
     # training_event.on_init_end()
     driver.event(Event.INIT_END)
@@ -120,16 +129,18 @@ def main():
     epoch = -1
     # training_event.on_train_begin()
     driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time    
+    raw_train_start_time = logger.previous_log_time
     while training_state.global_steps < config.max_steps and not training_state.end_training:
         epoch += 1
         training_state.epoch = epoch
         trainer.train_one_epoch(train_dataloader)
     # training_event.on_train_end()
     driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time    
-    training_state.raw_train_time = (raw_train_end_time - raw_train_start_time) / 1e+3    
+    raw_train_end_time = logger.previous_log_time
+    training_state.raw_train_time = (raw_train_end_time -
+                                     raw_train_start_time) / 1e+3
     return config, training_state
+
 
 if __name__ == "__main__":
     now = time.time()
@@ -142,7 +153,8 @@ if __name__ == "__main__":
 
     gpu_count = config.n_gpu
     e2e_time = time.time() - now
-    training_perf = (utils.global_batch_size(config) * state.global_steps) / state.raw_train_time
+    training_perf = (utils.global_batch_size(config) *
+                     state.global_steps) / state.raw_train_time
     if config.do_train:
         finished_info = {
             "e2e_time": e2e_time,

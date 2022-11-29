@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Batch samplers that work with either random or sequential data samplers."""
 
 import torch
@@ -64,8 +63,11 @@ class RandomSampler(data.sampler.Sampler):
         if self.epoch >= 0:
             g.manual_seed(self.epoch)
         if self.replacement:
-            return iter(torch.randint(high=n, size=(self.num_samples,),
-                                      dtype=torch.int64, generator=g).tolist())
+            return iter(
+                torch.randint(high=n,
+                              size=(self.num_samples, ),
+                              dtype=torch.int64,
+                              generator=g).tolist())
         return iter(torch.randperm(n, generator=g).tolist())
 
     def __len__(self):
@@ -92,8 +94,14 @@ class DistributedBatchSampler(data.sampler.BatchSampler):
     specifying False will result in the following samples:
         GPU0: [0,1,2,3] GPU1: [4,5,6,7]"""
 
-    def __init__(self, sampler, batch_size, drop_last, rank=-1,
-                 world_size=2, wrap_last=False, interleave=False):
+    def __init__(self,
+                 sampler,
+                 batch_size,
+                 drop_last,
+                 rank=-1,
+                 world_size=2,
+                 wrap_last=False,
+                 interleave=False):
         super(DistributedBatchSampler, self).__init__(sampler, batch_size,
                                                       drop_last)
         if rank == -1:

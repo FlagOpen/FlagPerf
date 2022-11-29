@@ -102,7 +102,7 @@ PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # If not set, it will be os.path.dirname(run.py)/../../training/
-FLAGPERF_PATH_HOST = "/home/flagperf/training"
+FLAGPERF_PATH_HOST = "/home/FlagPerf/training"
 
 # Set the mapping directory of flagperf in container.
 FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"

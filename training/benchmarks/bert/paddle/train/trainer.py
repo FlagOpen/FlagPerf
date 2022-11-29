@@ -3,7 +3,6 @@ import time
 from tabnanny import check
 from collections import OrderedDict
 
-
 import config
 import torch
 from model import create_model
@@ -19,10 +18,10 @@ from .driver import Driver, distributed
 
 import paddle
 
+
 class Trainer():
 
-    def __init__(self, driver: Driver, adapter,
-                 evaluator: Evaluator,
+    def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
                  training_state: TrainingState):
         super(Trainer, self).__init__()
         self.driver = driver
@@ -42,18 +41,22 @@ class Trainer():
         self.model = self._init_model(self.model)
         self.model = self.adapter.convert_model(self.model)
         self.lr_scheduler = create_scheduler(self.optimizer)
-        self.optimizer = self.adapter.create_optimizer(self.model,self.lr_scheduler)
+        self.optimizer = self.adapter.create_optimizer(self.model,
+                                                       self.lr_scheduler)
         self.model, self.optimizer = self.adapter.model_to_fp16(
-             self.model, self.optimizer)
+            self.model, self.optimizer)
         self.model = self.adapter.model_to_ddp(self.model)
-        
+
         self.global_batch_size = distributed.global_batch_size(config)
         # self.grad_scaler = self.adapter.create_grad_scaler()
 
     def _init_model(self, model):
-        def convert_pytorch_checkpoint_to_paddle(pytorch_checkpoint_path="pytorch_model.bin",
-                                                paddle_dump_path="model_state.pdparams",
-                                                version="old", ):
+
+        def convert_pytorch_checkpoint_to_paddle(
+            pytorch_checkpoint_path="pytorch_model.bin",
+            paddle_dump_path="model_state.pdparams",
+            version="old",
+        ):
             hf_to_paddle = {
                 "embeddings.LayerNorm": "embeddings.layer_norm",
                 "encoder.layer": "encoder.layers",
@@ -76,10 +79,12 @@ class Trainer():
                     ".gamma": ".weight",
                     ".beta": ".bias",
                 })
-                do_not_transpose = do_not_transpose + ["predictions.decoder.weight"]
+                do_not_transpose = do_not_transpose + [
+                    "predictions.decoder.weight"
+                ]
 
-            pytorch_state_dict = torch.load(
-                pytorch_checkpoint_path, map_location="cpu")
+            pytorch_state_dict = torch.load(pytorch_checkpoint_path,
+                                            map_location="cpu")
             pytorch_state_dict = pytorch_state_dict['model']
             paddle_state_dict = OrderedDict()
             for k, v in pytorch_state_dict.items():
@@ -103,11 +108,13 @@ class Trainer():
                 paddle_state_dict[k] = v.data.numpy()
 
             paddle.save(paddle_state_dict, paddle_dump_path)
-            return paddle_state_dict,pytorch_state_dict
+            return paddle_state_dict, pytorch_state_dict
 
-        checkpoint,_ = convert_pytorch_checkpoint_to_paddle(pytorch_checkpoint_path=config.data_dir+'/model.ckpt-28252.pt',
-                                                paddle_dump_path=config.data_dir+'/model_state.pdparams',
-                                                version="old", )
+        checkpoint, _ = convert_pytorch_checkpoint_to_paddle(
+            pytorch_checkpoint_path=config.data_dir + '/model.ckpt-28252.pt',
+            paddle_dump_path=config.data_dir + '/model_state.pdparams',
+            version="old",
+        )
 
         checkpoint_remapped = remap_segmented_model_parameters(checkpoint)
 
@@ -118,7 +125,7 @@ class Trainer():
         state = self.training_state
         driver = self.driver
         driver.event(Event.EPOCH_BEGIN, state.epoch)
-        
+
         step_start_time = time.time()
 
         for dataloader_idx, batch_idx, batch in dataloader.iter_batchs():
@@ -127,7 +134,7 @@ class Trainer():
             state.global_steps += 1
             state.iter_dataloader_idx = dataloader_idx
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
-            train_loss,train_mlm_acc = self.train_one_step(batch_idx, batch)
+            train_loss, train_mlm_acc = self.train_one_step(batch_idx, batch)
 
             other_state = dict()
             if state.global_steps % config.gradient_accumulation_steps == 0:
@@ -135,8 +142,9 @@ class Trainer():
                 step_total_time = step_end_time - step_start_time
                 step_start_time = step_end_time
 
-                sequences_per_second = (distributed.global_batch_size(
-                    config) * config.gradient_accumulation_steps) / step_total_time
+                sequences_per_second = (
+                    distributed.global_batch_size(config) *
+                    config.gradient_accumulation_steps) / step_total_time
                 other_state["seq/s"] = sequences_per_second
 
             eval_result = None
@@ -146,16 +154,20 @@ class Trainer():
                     self)
                 eval_end = time.time()
                 state.eval_loss = state.eval_loss
-                
-                eval_result = dict(global_steps=state.global_steps,
-                                   eval_loss=state.eval_loss,
-                                   eval_mlm_accuracy=state.eval_mlm_accuracy,
-                                   time=eval_end - eval_start)  # elapsed = eval_end - eval_start
+
+                eval_result = dict(
+                    global_steps=state.global_steps,
+                    eval_loss=state.eval_loss,
+                    eval_mlm_accuracy=state.eval_mlm_accuracy,
+                    time=eval_end -
+                    eval_start)  # elapsed = eval_end - eval_start
 
             end_training = self.detect_training_status(state)
             other_state["eval_mlm_accuracy"] = state.eval_mlm_accuracy
             state_info = state.to_dict(**other_state)
-            driver.event(Event.STEP_END, message=state_info, step=state.global_steps,
+            driver.event(Event.STEP_END,
+                         message=state_info,
+                         step=state.global_steps,
                          loss=state.loss)
 
             if eval_result is not None:
@@ -172,10 +184,12 @@ class Trainer():
 
         self.model.train()
         state.loss, state.mlm_acc, _ = self.forward(batch)
-        self.adapter.backward(state.global_steps, state.loss,
-                              self.optimizer, grad_scaler=self.grad_scaler)
-        self.driver.event(Event.BACKWARD, state.global_steps,
-                          state.loss, self.optimizer, self.grad_scaler)
+        self.adapter.backward(state.global_steps,
+                              state.loss,
+                              self.optimizer,
+                              grad_scaler=self.grad_scaler)
+        self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
+                          self.optimizer, self.grad_scaler)
         self.lr_scheduler.step()
 
         return state.loss.numpy(), state.mlm_acc.numpy()
@@ -193,21 +207,20 @@ class Trainer():
         do_eval = all([
             config.eval_dir is not None,
             state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps % math.ceil(
-                config.eval_interval_samples / distributed.global_batch_size(config)) == 0,
+            state.global_steps %
+            math.ceil(config.eval_interval_samples /
+                      distributed.global_batch_size(config)) == 0,
             config.eval_interval_samples > 0,
             state.global_steps > 1,
         ])
- 
-        
-
 
         return do_eval or state.global_steps >= config.max_steps
 
     def forward(self, batch):
         input_ids, segment_ids, input_mask, masked_lm_labels, next_sentence_labels = batch
-        loss, mlm_acc, num_valid = self.model(input_ids, segment_ids, input_mask,
-                                              masked_lm_labels, next_sentence_labels)
+        loss, mlm_acc, num_valid = self.model(input_ids, segment_ids,
+                                              input_mask, masked_lm_labels,
+                                              next_sentence_labels)
         return loss, mlm_acc, num_valid
 
     def inference(self, batch):

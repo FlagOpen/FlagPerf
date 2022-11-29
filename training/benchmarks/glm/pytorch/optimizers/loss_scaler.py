@@ -15,12 +15,14 @@
 
 import torch
 
+
 # item() is a recent addition, so this helps with backward compatibility.
 def to_python_float(t):
     if hasattr(t, 'item'):
         return t.item()
     else:
         return t[0]
+
 
 class LossScaler:
     """
@@ -56,8 +58,9 @@ class LossScaler:
         return tuple(self.loss_scale * g for g in grad_in)
 
     def backward(self, loss, retain_graph=False):
-        scaled_loss = loss*self.loss_scale
+        scaled_loss = loss * self.loss_scale
         scaled_loss.backward(retain_graph=retain_graph)
+
 
 class DynamicLossScaler:
     """
@@ -105,7 +108,8 @@ class DynamicLossScaler:
     # `params` is a list / generator of torch.Variable
     def has_overflow_serial(self, params):
         for p in params:
-            if p.grad is not None and DynamicLossScaler._has_inf_or_nan(p.grad.data):
+            if p.grad is not None and DynamicLossScaler._has_inf_or_nan(
+                    p.grad.data):
                 return True
 
         return False
@@ -123,12 +127,11 @@ class DynamicLossScaler:
         overflow = overflow_gpu[0].item()
         return bool(overflow)
 
-
     # `x` is a torch.Tensor
     def _has_inf_or_nan(x):
         try:
-            # if x is half, the .float() incurs an additional deep copy, but it's necessary if 
-            # Pytorch's .sum() creates a one-element tensor of the same type as x 
+            # if x is half, the .float() incurs an additional deep copy, but it's necessary if
+            # Pytorch's .sum() creates a one-element tensor of the same type as x
             # (which is true for some recent version of pytorch).
             cpu_sum = float(x.float().sum())
             # More efficient version that can be used if .sum() returns a Python scalar
@@ -141,7 +144,8 @@ class DynamicLossScaler:
                 raise
             return True
         else:
-            if cpu_sum == float('inf') or cpu_sum == -float('inf') or cpu_sum != cpu_sum:
+            if cpu_sum == float(
+                    'inf') or cpu_sum == -float('inf') or cpu_sum != cpu_sum:
                 return True
             return False
 
@@ -159,14 +163,16 @@ class DynamicLossScaler:
         if overflow:
             # self.cur_scale /= self.scale_factor
             if self.delayed_shift == 1 or self.cur_hysteresis == 1:
-                self.cur_scale = max(self.cur_scale/self.scale_factor, self.min_scale)
+                self.cur_scale = max(self.cur_scale / self.scale_factor,
+                                     self.min_scale)
             else:
                 self.cur_hysteresis -= 1
             self.last_overflow_iter = self.cur_iter
         else:
             if self.consecutive_hysteresis:
                 self.cur_hysteresis = self.delayed_shift
-            if (self.cur_iter - self.last_overflow_iter) % self.scale_window == 0:
+            if (self.cur_iter -
+                    self.last_overflow_iter) % self.scale_window == 0:
                 if not self.consecutive_hysteresis:
                     self.cur_hysteresis = self.delayed_shift
                 self.cur_scale *= self.scale_factor
@@ -180,10 +186,11 @@ class DynamicLossScaler:
         return tuple(self.loss_scale * g for g in grad_in)
 
     def backward(self, loss, retain_graph=False):
-        scaled_loss = loss*self.loss_scale
+        scaled_loss = loss * self.loss_scale
         scaled_loss.backward(retain_graph=retain_graph)
-        
-##############################################################        
+
+
+##############################################################
 # Example usage below here -- assuming it's in a separate file
 ##############################################################
 """

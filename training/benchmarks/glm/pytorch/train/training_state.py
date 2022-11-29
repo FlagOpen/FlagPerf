@@ -14,7 +14,7 @@ class TrainingState:
     iter_dataloader_idx = 0
 
     loss: float = 0.0
-    eval_accuracy: float = 0.0 
+    eval_accuracy: float = 0.0
 
     epoch: int = 1
     num_trained_samples = 0
@@ -44,8 +44,10 @@ class TrainingState:
         if isinstance(lr, (tuple, list)):
             lr = lr[0]
         state_dict["learning_rate"] = lr
-        exclude = ["eval_loss", "eval_mlm_accuracy", "skipped_steps",
-                   "converged", "init_time", "raw_train_time"]
+        exclude = [
+            "eval_loss", "eval_mlm_accuracy", "skipped_steps", "converged",
+            "init_time", "raw_train_time"
+        ]
         for exkey in exclude:
             if exkey in state_dict:
                 state_dict.pop(exkey)

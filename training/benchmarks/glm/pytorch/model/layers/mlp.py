@@ -5,6 +5,7 @@ import torch.nn as nn
 from model.layers.linear import ColumnLinear, RowLinear
 from model.layers.activations import gelu
 
+
 class GLMMLP(torch.nn.Module):
     """MLP for GPT2.
 
@@ -24,23 +25,25 @@ class GLMMLP(torch.nn.Module):
                                   use `init_method`.
     """
 
-    def __init__(self, hidden_size, output_dropout_prob, init_method,
+    def __init__(self,
+                 hidden_size,
+                 output_dropout_prob,
+                 init_method,
                  output_layer_init_method=None):
         super(GLMMLP, self).__init__()
         # Set output layer initialization if not provided.
         if output_layer_init_method is None:
             output_layer_init_method = init_method
         # Project to 4h.
-        self.dense_h_to_4h = ColumnLinear(hidden_size, 4 * hidden_size,
-                                                  gather_output=False,
-                                                  init_method=init_method)
+        self.dense_h_to_4h = ColumnLinear(hidden_size,
+                                          4 * hidden_size,
+                                          gather_output=False,
+                                          init_method=init_method)
         # Project back to h.
-        self.dense_4h_to_h = RowLinear(
-            4 * hidden_size,
-            hidden_size,
-            input_is_parallel=True,
-            init_method=output_layer_init_method
-            )
+        self.dense_4h_to_h = RowLinear(4 * hidden_size,
+                                       hidden_size,
+                                       input_is_parallel=True,
+                                       init_method=output_layer_init_method)
         self.dropout = torch.nn.Dropout(output_dropout_prob)
 
     def forward(self, hidden_states):
@@ -53,7 +56,8 @@ class GLMMLP(torch.nn.Module):
         output = self.dropout(output)
         return output
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     hidden_size = 1024
     seq_len = 512
     batch_size = 8
@@ -61,4 +65,3 @@ if __name__=="__main__":
     inputs = torch.rand([batch_size, seq_len, hidden_size])
     outputs = test_mlp(inputs)
     print(outputs.shape)
-

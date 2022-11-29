@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-
 '''This script is called in container to execute the real training task.
    Support pytorch DDP only.
 '''
@@ -8,6 +7,7 @@ import os
 import sys
 import subprocess
 from argparse import ArgumentParser
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from utils import flagperf_logger
@@ -19,11 +19,11 @@ def _get_model_path(vendor, test_type, model_name):
     '''Return the model path according to vendor or None if it doesn't exist.
     '''
     if test_type == "default":
-        model_path = os.path.join(CURR_PATH + "/../../benchmarks/" + model_name
-                                  + "/pytorch/")
+        model_path = os.path.join(CURR_PATH + "/../../benchmarks/" +
+                                  model_name + "/pytorch/")
     else:
-        model_path = os.path.join(CURR_PATH + "/../../" + vendor + "/benchmarks/"
-                                  + model_name + "/pytorch/")
+        model_path = os.path.join(CURR_PATH + "/../../" + vendor +
+                                  "/benchmarks/" + model_name + "/pytorch/")
     model_path = os.path.abspath(model_path)
     if not os.path.exists(model_path):
         START_LOGGER.error("Can't find model path: " + model_path)
@@ -36,13 +36,12 @@ def _get_config_dir_file(task_args):
        file does not exist.
     '''
     config_file = task_args.extern_config_file
-    config_dir = os.path.join(CURR_PATH + "/../../" + task_args.vendor
-                              + "/", task_args.model_name
-                              + "-pytorch/config/")
+    config_dir = os.path.join(CURR_PATH + "/../../" + task_args.vendor + "/",
+                              task_args.model_name + "-pytorch/config/")
     config_dir = os.path.abspath(config_dir)
     if not os.path.isfile(os.path.join(config_dir, config_file)):
-        START_LOGGER.error("Can't find config file: " + config_file + " in "
-                           + config_dir)
+        START_LOGGER.error("Can't find config file: " + config_file + " in " +
+                           config_dir)
         return None, None
     return config_dir, config_file
 
@@ -77,50 +76,84 @@ def parse_args():
        training script.
     '''
     parser = ArgumentParser(description="Start pytorch training porcess. ")
-    parser.add_argument("--node_rank", type=int, default=0,
+    parser.add_argument("--node_rank",
+                        type=int,
+                        default=0,
                         help="The rank of the node for multi-node distributed "
-                             "training")
-    parser.add_argument("--master_addr", default="127.0.0.1", type=str,
+                        "training")
+    parser.add_argument("--master_addr",
+                        default="127.0.0.1",
+                        type=str,
                         help="Master node (rank 0)'s address, should be either"
-                             "the IP address or the hostname of node 0, for "
-                             "single node multi-proc training, the "
-                             "--master_addr can simply be 127.0.0.1")
-    parser.add_argument("--master_port", default=29501, type=int,
+                        "the IP address or the hostname of node 0, for "
+                        "single node multi-proc training, the "
+                        "--master_addr can simply be 127.0.0.1")
+    parser.add_argument("--master_port",
+                        default=29501,
+                        type=int,
                         help="Master node (rank 0)'s free port that needs to "
-                             "be used for communciation during distributed "
-                             "training")
-    parser.add_argument("--nnodes", type=int, required=True,
+                        "be used for communciation during distributed "
+                        "training")
+    parser.add_argument("--nnodes",
+                        type=int,
+                        required=True,
                         help="how many hosts to run the testcase.")
-    parser.add_argument("--nproc", type=int, required=True,
+    parser.add_argument("--nproc",
+                        type=int,
+                        required=True,
                         help="how many processes will run on each host.")
 
-    parser.add_argument("--vendor", type=str, required=True,
+    parser.add_argument("--vendor",
+                        type=str,
+                        required=True,
                         help="The accelerator vendor that run the located.")
-    parser.add_argument("--visible_dev_env", type=str, default=None,
+    parser.add_argument("--visible_dev_env",
+                        type=str,
+                        default=None,
                         help="The accelerator XXX_VISIBLE_DEVICE env name.")
-    parser.add_argument("--test_type", type=str, default="default",
+    parser.add_argument("--test_type",
+                        type=str,
+                        default="default",
                         help="Test type of the benchmark. It should be "
-                             "\"default\" or \"customized\"")
-    parser.add_argument("--case_name", type=str, required=True,
+                        "\"default\" or \"customized\"")
+    parser.add_argument("--case_name",
+                        type=str,
+                        required=True,
                         help="Name of testcase.")
-    parser.add_argument("--round", type=int, required=True,
+    parser.add_argument("--round",
+                        type=int,
+                        required=True,
                         help="round of testcase, for repeating test.")
-    parser.add_argument("--model_name", type=str, required=True,
+    parser.add_argument("--model_name",
+                        type=str,
+                        required=True,
                         help="The model name of testcase.")
-    parser.add_argument("--host_addr", type=str, required=True,
+    parser.add_argument("--host_addr",
+                        type=str,
+                        required=True,
                         help="The host address that start task.")
-    parser.add_argument("--train_script", type=str, required=True,
+    parser.add_argument("--train_script",
+                        type=str,
+                        required=True,
                         help="The training script to start by this launcher.")
-    parser.add_argument("--enable_extern_config", action="store_true",
+    parser.add_argument("--enable_extern_config",
+                        action="store_true",
                         help="Sets to enable non-standard config parameters.")
-    parser.add_argument("--extern_config_file", type=str, required=True,
+    parser.add_argument("--extern_config_file",
+                        type=str,
+                        required=True,
                         help="The testcase config file.")
-    parser.add_argument("--data_dir", type=str, default="/mnt/dataset/",
+    parser.add_argument("--data_dir",
+                        type=str,
+                        default="/mnt/dataset/",
                         help="Data directory.")
-    parser.add_argument("--log_dir", type=str,
+    parser.add_argument("--log_dir",
+                        type=str,
                         default="/workspace/flagperf/training/result/",
                         help="Log directory in container.")
-    parser.add_argument("--log_level", type=str, default="debug",
+    parser.add_argument("--log_level",
+                        type=str,
+                        default="debug",
                         help="Log level.")
 
     args, unknown_args = parser.parse_known_args()
@@ -156,8 +189,8 @@ def _set_common_ddp_envs(task_args):
     # set GPU/MLU device env, TODO other vendor's device
     if task_args.visible_dev_env is not None:
         acce_visible = range(0, task_args.nproc)
-        current_env[task_args.visible_dev_env] = ",".join(str(_id) for _id in
-                                                          acce_visible)
+        current_env[task_args.visible_dev_env] = ",".join(
+            str(_id) for _id in acce_visible)
     return current_env
 
 
@@ -188,12 +221,15 @@ def main():
 
     # Create logger. We don't need to check the log path because logger.init()
     # will make it.
-    task_log_dir = os.path.join(task_args.log_dir, task_args.case_name + "/"
-                                + "round" + str(task_args.round) + "/"
-                                + task_args.host_addr + "_noderank"
-                                + str(task_args.node_rank))
-    START_LOGGER.init(task_log_dir, "start_pytorch_task.log",
-                      task_args.log_level, "both", log_caller=True)
+    task_log_dir = os.path.join(
+        task_args.log_dir,
+        task_args.case_name + "/" + "round" + str(task_args.round) + "/" +
+        task_args.host_addr + "_noderank" + str(task_args.node_rank))
+    START_LOGGER.init(task_log_dir,
+                      "start_pytorch_task.log",
+                      task_args.log_level,
+                      "both",
+                      log_caller=True)
     START_LOGGER.info(",".join(task_args.__dict__))
     write_pid_file(task_args.log_dir, "start_pytorch_task.pid")
 

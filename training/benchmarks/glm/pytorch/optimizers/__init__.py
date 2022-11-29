@@ -6,6 +6,7 @@ from utils import PyTorchDistributedDataParallel as TorchDDP
 from model.models.modeling import FP16_Module
 from utils import print_rank_0
 
+
 def create_optimizer(model, args):
     param_groups = get_optimizer_param_groups(model)
     # print("weight decay:",args.weight_decay)
@@ -27,7 +28,8 @@ def create_optimizer(model, args):
                                    dynamic_loss_args={
                                        'scale_window': args.loss_scale_window,
                                        'min_scale': args.min_scale,
-                                       'delayed_shift': args.hysteresis})
+                                       'delayed_shift': args.hysteresis
+                                   })
 
     return optimizer
 
@@ -53,15 +55,18 @@ def glm_get_params_for_weight_decay_optimization(module):
     no_weight_decay_params = {'params': [], 'weight_decay': 0.0}
     for module_ in module.modules():
         if isinstance(module_, (torch.nn.LayerNorm)):
-            no_weight_decay_params['params'].extend(
-                [p for p in list(module_._parameters.values())
-                 if p is not None and p.requires_grad])
+            no_weight_decay_params['params'].extend([
+                p for p in list(module_._parameters.values())
+                if p is not None and p.requires_grad
+            ])
         else:
-            weight_decay_params['params'].extend(
-                [p for n, p in list(module_._parameters.items())
-                 if p is not None and p.requires_grad and n != 'bias'])
-            no_weight_decay_params['params'].extend(
-                [p for n, p in list(module_._parameters.items())
-                 if p is not None and p.requires_grad and n == 'bias'])
+            weight_decay_params['params'].extend([
+                p for n, p in list(module_._parameters.items())
+                if p is not None and p.requires_grad and n != 'bias'
+            ])
+            no_weight_decay_params['params'].extend([
+                p for n, p in list(module_._parameters.items())
+                if p is not None and p.requires_grad and n == 'bias'
+            ])
 
     return weight_decay_params, no_weight_decay_params

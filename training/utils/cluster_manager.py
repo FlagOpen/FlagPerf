@@ -5,6 +5,7 @@
 
 import os
 import sys
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(CURR_PATH))
 import run_cmd
@@ -40,8 +41,8 @@ class ClusterManager():
             Return exit code of cmd and stdout/stderr messages.
         '''
         ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
-        self.logger.debug("Run cmd on host with ssh. ssh cmd=" + ssh_run_cmd
-                          + " host=" + host + " timeout=" + str(timeout))
+        self.logger.debug("Run cmd on host with ssh. ssh cmd=" + ssh_run_cmd +
+                          " host=" + host + " timeout=" + str(timeout))
         ret, outs = run_cmd.run_cmd_wait(ssh_run_cmd, timeout, retouts=True)
         return ret, outs
 
@@ -67,11 +68,14 @@ class ClusterManager():
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
-                self.logger.error("Run cmd on host " + host + " cmd=" + command
-                                  + " [FAILED]. Output: " + outs[0])
+                self.logger.error("Run cmd on host " + host + " cmd=" +
+                                  command + " [FAILED]. Output: " + outs[0])
         return failed_hosts_ret
 
-    def run_command_some_hosts(self, command, host_count, timeout=10,
+    def run_command_some_hosts(self,
+                               command,
+                               host_count,
+                               timeout=10,
                                no_log=False):
         '''Run a command on each host with ssh.
         '''
@@ -83,11 +87,16 @@ class ClusterManager():
             if ret != 0:
                 failed_hosts_ret[host] = ret
                 if not no_log:
-                    self.logger.error("Run cmd on host " + host + " cmd=" + command
-                                      + " [FAILED]. Output: " + outs[0])
+                    self.logger.error("Run cmd on host " + host + " cmd=" +
+                                      command + " [FAILED]. Output: " +
+                                      outs[0])
         return failed_hosts_ret
 
-    def start_monitors_some_hosts(self, base_command, case_log_dir, host_count, timeout=10):
+    def start_monitors_some_hosts(self,
+                                  base_command,
+                                  case_log_dir,
+                                  host_count,
+                                  timeout=10):
         '''Start monitors on hosts with ssh.
         '''
         failed_hosts_ret = {}
@@ -100,11 +109,14 @@ class ClusterManager():
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
-                self.logger.error("Run cmd on host " + host + " cmd=" + command
-                                  + " [FAILED]. Output: " + outs[0])
+                self.logger.error("Run cmd on host " + host + " cmd=" +
+                                  command + " [FAILED]. Output: " + outs[0])
         return failed_hosts_ret
 
-    def run_command_some_hosts_torch_ddp(self, base_cmd, host_count, timeout=10):
+    def run_command_some_hosts_torch_ddp(self,
+                                         base_cmd,
+                                         host_count,
+                                         timeout=10):
         '''Run a command with torch ddp options on each host with ssh.
         '''
         failed_hosts_ret = {}
@@ -118,12 +130,15 @@ class ClusterManager():
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
-                self.logger.debug("Run cmd on host " + host + " cmd=" + command
-                                  + " node_rank=" + str(i)
-                                  + " [FAILED]. Output: " + outs[0])
+                self.logger.debug("Run cmd on host " + host + " cmd=" +
+                                  command + " node_rank=" + str(i) +
+                                  " [FAILED]. Output: " + outs[0])
         return failed_hosts_ret
 
-    def _scp_file_to_remote_host(self, host, local_file, remote_dir,
+    def _scp_file_to_remote_host(self,
+                                 host,
+                                 local_file,
+                                 remote_dir,
                                  timeout=600):
         ''' Run scp command to copy local_file to remote_dir.
         '''
@@ -133,7 +148,10 @@ class ClusterManager():
         ret, outs = run_cmd.run_cmd_wait(scp_cmd, timeout, retouts=True)
         return ret, outs
 
-    def sync_file_to_some_hosts(self, local_file, remote_dir, host_count,
+    def sync_file_to_some_hosts(self,
+                                local_file,
+                                remote_dir,
+                                host_count,
                                 timeout=600):
         '''scp local_file to remote_dir on hosts in the cluster .'''
         failed_hosts_ret = {}
@@ -145,17 +163,21 @@ class ClusterManager():
 
         for i in range(0, host_count):
             host = self.hosts[i]
-            ret, outs = self._scp_file_to_remote_host(host, local_file,
+            ret, outs = self._scp_file_to_remote_host(host,
+                                                      local_file,
                                                       remote_dir,
                                                       timeout=timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
-                self.logger.debug("Scp local file " + local_file + "to " + host
-                                  + ":" + remote_dir + " [FAILED]. Output: "
-                                  + outs[0])
+                self.logger.debug("Scp local file " + local_file + "to " +
+                                  host + ":" + remote_dir +
+                                  " [FAILED]. Output: " + outs[0])
         return failed_hosts_ret
 
-    def _scp_dir_from_remote_host(self, host, remote_dir, local_dir,
+    def _scp_dir_from_remote_host(self,
+                                  host,
+                                  remote_dir,
+                                  local_dir,
                                   timeout=600):
         ''' Run scp command to copy remote_dir to local_dir.
         '''
@@ -165,7 +187,11 @@ class ClusterManager():
         ret, outs = run_cmd.run_cmd_wait(scp_cmd, timeout, retouts=True)
         return ret, outs
 
-    def collect_files_some_hosts(self, remote_dir, local_dir, host_count, timeout=600):
+    def collect_files_some_hosts(self,
+                                 remote_dir,
+                                 local_dir,
+                                 host_count,
+                                 timeout=600):
         '''scp remote_dir from hosts in the cluster to <local_dir>/<host>.
         '''
         failed_hosts_ret = {}
@@ -174,12 +200,13 @@ class ClusterManager():
             if not os.path.exists(local_dir):
                 self.logger.debug("Make local dir:" + local_dir)
                 os.makedirs(local_dir)
-            ret, outs = self._scp_dir_from_remote_host(host, remote_dir,
+            ret, outs = self._scp_dir_from_remote_host(host,
+                                                       remote_dir,
                                                        local_dir,
                                                        timeout=timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
-                self.logger.debug("Scp from " + host + ":" + remote_dir
-                                  + " to " + local_dir + " [FAILED]. Output: "
-                                  + outs[0])
+                self.logger.debug("Scp from " + host + ":" + remote_dir +
+                                  " to " + local_dir + " [FAILED]. Output: " +
+                                  outs[0])
         return failed_hosts_ret

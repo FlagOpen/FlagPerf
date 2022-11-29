@@ -28,7 +28,6 @@ attention_dropout: float = 0.5
 
 layernorm_epsilon: float = 1.0e-5
 
-
 ## lr_scheduler args
 # initial learning rate
 learning_rate: float = 0.0001
@@ -44,7 +43,6 @@ warmup: float = 0.01
 
 warmup_steps: int = 0
 
-
 ## optimizer args
 # weight decay coefficient for L2 regularization
 weight_decay_rate: float = 0.05
@@ -52,7 +50,6 @@ weight_decay_rate: float = 0.05
 beta_1: float = 0.9
 beta_2: float = 0.99
 eps: float = 1e-08
-
 
 ##fp16 config args
 # Run model in fp16 mode
@@ -72,11 +69,9 @@ loss_scale_window: float = 1000
 # Minimum loss scale for dynamic loss scale
 min_scale: float = 1
 
-
 ## distributed args
 # Turn ON gradient_as_bucket_view optimization in native DDP.
 use_gradient_as_bucket_view: bool = False
-
 
 ## load and save args
 # Path to a directory containing a model checkpoint.
@@ -93,7 +88,6 @@ no_save_optim: bool = False
 
 # Do not save current rng state.
 no_save_rng: bool = False
-
 
 ## data args
 # Training data dir
@@ -113,7 +107,6 @@ eval_batch_size: int = 32
 
 # Maximum sequence length to process
 seq_length: int = 200
-
 
 ## trainer args
 # Do trainingFalse
@@ -139,7 +132,6 @@ target_embedding_average: float = 0.92
 
 # Total number of training samples to run.
 max_samples_termination: float = 43912600
-
 
 eval_interval_samples: int = 20000
 

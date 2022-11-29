@@ -5,11 +5,13 @@ from torch import nn, Tensor
 from typing import Tuple
 
 from apex.optimizers import FusedAdam as Adam
-from optimizers import FP16_Optimizer,get_optimizer_param_groups
+from optimizers import FP16_Optimizer, get_optimizer_param_groups
 from utils import main_proc_print
+
 
 def convert_model(model: nn.Module) -> nn.Module:
     return model
+
 
 def create_optimizer(model, args):
     param_groups = get_optimizer_param_groups(model)
@@ -27,22 +29,27 @@ def create_optimizer(model, args):
                                    dynamic_loss_args={
                                        'scale_window': args.loss_scale_window,
                                        'min_scale': args.min_scale,
-                                       'delayed_shift': args.hysteresis})
+                                       'delayed_shift': args.hysteresis
+                                   })
 
     return optimizer
 
-def model_to_fp16(model: nn.Module, optimizer: Optimizer) -> Tuple[nn.Module, Optimizer]:
+
+def model_to_fp16(model: nn.Module,
+                  optimizer: Optimizer) -> Tuple[nn.Module, Optimizer]:
     return model, optimizer
+
 
 def model_to_ddp(model: nn.Module) -> nn.Module:
     return model
 
+
 def create_grad_scaler():
     return None
+
 
 def backward(step: int, loss: Tensor, optimizer, **kwarg):
     loss.backward()
     optimizer.step()
     optimizer.zero_grad()
     return
-

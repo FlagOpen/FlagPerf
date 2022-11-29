@@ -38,13 +38,14 @@ def broadcast_seeds(seeds, device):
     #     broadcast(seeds_tensor, 0)
     #     seeds = seeds_tensor.tolist()
     # return seeds
-    if dist.is_initialized() :
+    if dist.is_initialized():
         #seeds_tensor = paddle.to_tensor(seeds,dtype='float64').to(device)
         #seeds_tensor = paddle.to_tensor(seeds,dtype='float64',place=paddle.CUDAPlace())
-        seeds_tensor = paddle.to_tensor(seeds,dtype='int64')
+        seeds_tensor = paddle.to_tensor(seeds, dtype='int64')
         dist.broadcast(seeds_tensor, 0)
         seeds = seeds_tensor.tolist()
     return seeds
+
 
 def setup_seeds(master_seed, epochs, device):
     """
@@ -95,10 +96,9 @@ def barrier():
     doesn't implement barrier for NCCL backend.
     Calls all_reduce on dummy tensor and synchronizes with GPU.
     """
-    if dist.is_initialized() :
+    if dist.is_initialized():
         dist.all_reduce(paddle.to_tensor(1))
         paddle.device.cuda.synchronize()
-    
 
 
 def get_rank(default=0):
@@ -117,7 +117,7 @@ def get_world_size():
     Gets total number of distributed workers or returns one if distributed is
     not initialized.
     """
-    if dist.is_initialized() :
+    if dist.is_initialized():
         world_size = dist.get_world_size()
     else:
         world_size = 1
@@ -129,11 +129,9 @@ def main_proc_print(*args, **kwargs):
         print(*args, **kwargs)
 
 
-
-
 def init_dist_training_env(config):
     if dist.get_world_size() <= 1:
-     #   paddle.set_device('gpu')
+        #   paddle.set_device('gpu')
         config.device = paddle.device.get_device()
         config.n_device = get_world_size()
     else:
@@ -142,13 +140,13 @@ def init_dist_training_env(config):
         config.device = paddle.device.get_device()
         config.n_device = get_world_size()
         print('------------------------')
-        print('device numbers:',config.n_device)
-        print('the processing uses',config.device)
+        print('device numbers:', config.n_device)
+        print('the processing uses', config.device)
         return
 
 
 def global_batch_size(config):
-   
+
     return config.train_batch_size * config.n_device
 
 

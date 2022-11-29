@@ -17,7 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 # Parts of the code here are adapted from PyTorch
 # repo: https://github.com/pytorch/pytorch
 import contextlib
@@ -27,19 +26,20 @@ from torch import _C
 from torch.cuda import _lazy_call, device as device_ctx_manager
 #from torch.utils.checkpoint import detach_variable
 
-
 import torch.distributed as dist
+
 PARTITION_ACTIVATIONS = False
 
 mp_rank = None  #get_model_parallel_rank()
 mp_size = None  #get_model_parallel_world_size()
 mp_group = None  #get_model_parallel_group()
 
-
 # Default name for the model parallel rng tracker.
 _MODEL_PARALLEL_RNG_TRACKER_NAME = 'model-parallel-rng'
-transport_stream = None 
-cuda_device=None
+transport_stream = None
+cuda_device = None
+
+
 def detach_variable(inputs, device=None):
     if isinstance(inputs, tuple):
         out = []
@@ -54,14 +54,16 @@ def detach_variable(inputs, device=None):
                 x = inp.to(device=device)
             else:
                 x = inp
- 
+
             x = x.detach()
             x.requires_grad = requires_grad
             out.append(x)
         return tuple(out)
     else:
         raise RuntimeError(
-            "Only tuple of tensors is supported. Got Unsupported input type: ", type(inputs).__name__)
+            "Only tuple of tensors is supported. Got Unsupported input type: ",
+            type(inputs).__name__)
+
 
 def _set_cuda_rng_state(new_state, device=-1):
     """Sets the random number generator state of the current GPU.
@@ -96,7 +98,6 @@ def _set_cuda_rng_state(new_state, device=-1):
     _lazy_call(cb)
 
 
-
 class CudaRNGStatesTracker:
     """Tracker for the cuda RNG states.
 
@@ -105,6 +106,7 @@ class CudaRNGStatesTracker:
     rng state, we can perform operations and return to our starting
     cuda state.
     """
+
     def __init__(self):
         # Map from a string name to the cuda rng state.
         self.states_ = {}
@@ -176,29 +178,32 @@ def get_cuda_rng_tracker():
     return _CUDA_RNG_STATE_TRACKER
 
 
-
 def get_partition_start(item):
     global mp_rank, mp_size, mp_group
     partition_size = get_partition_size(item)
     start = partition_size * mp_rank
     return int(start)
 
+
 def get_partition_size(item):
     global mp_rank, mp_size, mp_group
     size = item.numel()
-    partition_size = size/mp_size
+    partition_size = size / mp_size
     return int(partition_size)
-    
+
+
 def get_full_inputs(tensors):
-    inputs=[]
+    inputs = []
     global mp_rank, mp_size, mp_group
-    for i in range(int(len(tensors)/2)-1):
+    for i in range(int(len(tensors) / 2) - 1):
         item = tensors[2 * i]
-        size = tensors[2* i + 1]
+        size = tensors[2 * i + 1]
         partition_size = item.numel()
         tensor_size = partition_size * mp_size
-        flat_tensor = torch.zeros([tensor_size], dtype=item.dtype, device=item.device)
-        partitions=[]
+        flat_tensor = torch.zeros([tensor_size],
+                                  dtype=item.dtype,
+                                  device=item.device)
+        partitions = []
         for i in range(mp_size):
             part_i = flat_tensor.narrow(0, partition_size * i, partition_size)
             if i == mp_rank:
@@ -206,14 +211,13 @@ def get_full_inputs(tensors):
             partitions.append(part_i)
         dist.all_gather(partitions, partitions[mp_rank], group=mp_group)
         input_tensor = flat_tensor.view(list(size.numpy()))
-        item.data=input_tensor.data
+        item.data = input_tensor.data
 
         inputs.append(item)
     inputs.append(tensors[-2])
-        
+
     return tuple(inputs)
 
-        
 
 class CheckpointFunction(torch.autograd.Function):
     """This function is adapted from torch.utils.checkpoint with
@@ -222,6 +226,7 @@ class CheckpointFunction(torch.autograd.Function):
            2) the states in the model parallel tracker are also properly
               tracked/set/reset.
     """
+
     @staticmethod
     def forward(ctx, run_function, *args):
         ctx.run_function = run_function
@@ -230,20 +235,23 @@ class CheckpointFunction(torch.autograd.Function):
         if cuda_device is None:
             # if dist.get_rank()  == 0:
             #     print(f"Partition Activations {PARTITION_ACTIVATIONS} and Correctness Check {PA_CORRECTNESS_TEST}")
-            
+
             cuda_device = torch.cuda.current_device()
             #The transport stream is used to overlap the allgather communication for the activations
             #with the computation in the backward pass
             transport_stream = torch.cuda.Stream(device=cuda_device)
 
         if PARTITION_ACTIVATIONS:
-            inputs = [item.detach().contiguous().view(-1).narrow(0, get_partition_start(item), 
-                    get_partition_size(item)).clone() for item in args[:-1]]
+            inputs = [
+                item.detach().contiguous().view(-1).narrow(
+                    0, get_partition_start(item),
+                    get_partition_size(item)).clone() for item in args[:-1]
+            ]
             inputs.append(args[-1])
 
         #just in case something funky is happening such as reuse of inputs
         inputs_cuda = [item.to(cuda_device) for item in args]
-        
+
         # Copy the rng states.
         ctx.fwd_cpu_rng_state = torch.get_rng_state()
         ctx.fwd_cuda_rng_state = torch.cuda.get_rng_state()
@@ -254,18 +262,18 @@ class CheckpointFunction(torch.autograd.Function):
             outputs = run_function(*inputs_cuda)
 
         del inputs_cuda
-        
+
         if PARTITION_ACTIVATIONS:
             new_args = []
-            for arg, inp in zip(args, inputs):                
-                size= torch.tensor(arg.size())
+            for arg, inp in zip(args, inputs):
+                size = torch.tensor(arg.size())
                 arg.data = inp.data
                 new_args.append(arg)
                 new_args.append(size)
             ctx.save_for_backward(*new_args)
         else:
             ctx.save_for_backward(*args)
-        
+
         return outputs
 
     @staticmethod
@@ -273,9 +281,9 @@ class CheckpointFunction(torch.autograd.Function):
         if not torch.autograd._is_checkpoint_valid():
             raise RuntimeError("Checkpointing is not compatible with .grad(), "
                                "please use .backward() if possible")
-        
+
         global cuda_device, transport_stream, PARTITION_ACTIVATIONS
-        
+
         if PARTITION_ACTIVATIONS:
             with torch.cuda.stream(transport_stream):
                 inputs = get_full_inputs(ctx.saved_tensors)
@@ -293,9 +301,9 @@ class CheckpointFunction(torch.autograd.Function):
         torch.set_rng_state(ctx.fwd_cpu_rng_state)
         _set_cuda_rng_state(ctx.fwd_cuda_rng_state)
         get_cuda_rng_tracker().set_states(ctx.fwd_cuda_rng_state_tracker)
-        
+
         if PARTITION_ACTIVATIONS:
-            current_stream=torch.cuda.current_stream()
+            current_stream = torch.cuda.current_stream()
             current_stream.wait_stream(transport_stream)
 
         with torch.enable_grad():
@@ -307,13 +315,12 @@ class CheckpointFunction(torch.autograd.Function):
         get_cuda_rng_tracker().set_states(bwd_cuda_rng_state_tracker)
 
         if isinstance(outputs, torch.Tensor):
-            outputs = (outputs,)
+            outputs = (outputs, )
         torch.autograd.backward(outputs, args)
-        return (None,) + tuple(inp.grad for inp in detached_inputs)
+        return (None, ) + tuple(inp.grad for inp in detached_inputs)
 
 
 def checkpoint(function, *args):
     """Checkpoint a model or part of the model.
     This has been directly copied from torch.utils.checkpoint."""
     return CheckpointFunction.apply(function, *args)
-

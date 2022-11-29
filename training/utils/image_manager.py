@@ -17,21 +17,34 @@ from container_manager import ContainerManager
 def _parse_args():
     ''' Check script input parameter. '''
     parser = argparse.ArgumentParser(description='Docker managment script')
-    parser.add_argument('-o', type=str, metavar='[operation]', required=True,
+    parser.add_argument('-o',
+                        type=str,
+                        metavar='[operation]',
+                        required=True,
                         choices=['exist', 'remove', 'build'],
                         help="Operations for docker image:"
-                             "exist     Whether the image exists"
-                             "remove    Remove a docker image"
-                             "build     Build a docker image if not exists")
-    parser.add_argument('-i', type=str, metavar='[repository]', required=True,
+                        "exist     Whether the image exists"
+                        "remove    Remove a docker image"
+                        "build     Build a docker image if not exists")
+    parser.add_argument('-i',
+                        type=str,
+                        metavar='[repository]',
+                        required=True,
                         help='image repository')
-    parser.add_argument('-t', type=str, metavar='[tag]', required=True,
+    parser.add_argument('-t',
+                        type=str,
+                        metavar='[tag]',
+                        required=True,
                         help='image tag')
     args, _ = parser.parse_known_args()
     if args.o == "build":
-        parser.add_argument("-d", type=str, required=True,
+        parser.add_argument("-d",
+                            type=str,
+                            required=True,
                             help="dir contains dockerfile for building image.")
-        parser.add_argument("-f", type=str, required=True,
+        parser.add_argument("-f",
+                            type=str,
+                            required=True,
                             help="testcase framework of the image.")
     args = parser.parse_args()
     return args
@@ -44,6 +57,7 @@ class ImageManager():
         -- exists,     query if image exist local
         -- build_image,     build docker image
     '''
+
     def __init__(self, repository, tag):
         self.repository = repository
         self.tag = tag

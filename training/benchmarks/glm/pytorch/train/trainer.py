@@ -20,15 +20,14 @@ from train.training_state import TrainingState
 def process_batch(batch, device):
     """Process batch and produce inputs for the model."""
     batch = {t: batch[t].to(device) for t in batch if t != 'answer_idx'}
- 
+
     return batch
 
 
 class Trainer:
-    def __init__(self, driver: Driver, adapter,
-                 evaluator: Evaluator,
-                 training_state: TrainingState,
-                 device: Device, config):
+
+    def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
+                 training_state: TrainingState, device: Device, config):
         super(Trainer, self).__init__()
         self.driver = driver
         self.adapter = adapter
@@ -63,6 +62,7 @@ class Trainer:
             torch.distributed.get_rank(), checkpoint_name))
         # Load the checkpoint.
         sd = torch.load(checkpoint_name, map_location='cpu')
+
         # model = model.module
 
         # Model.
@@ -74,25 +74,36 @@ class Trainer:
             return new_weights
 
         if "transformer.block_position_embeddings.weight" in sd["module"]:
-            position_weights = sd['module']["transformer.position_embeddings.weight"]
+            position_weights = sd['module'][
+                "transformer.position_embeddings.weight"]
             if args.max_position_embeddings + 1 > position_weights.shape[0]:
-                sd['module']["transformer.position_embeddings.weight"] = extend_embedding_weights(
-                    position_weights, model.state_dict()["transformer.position_embeddings.weight"].data)
+                sd['module'][
+                    "transformer.position_embeddings.weight"] = extend_embedding_weights(
+                        position_weights,
+                        model.state_dict()
+                        ["transformer.position_embeddings.weight"].data)
                 main_proc_print(
-                    f"Extend position embedding to {args.max_position_embeddings + 1}")
+                    f"Extend position embedding to {args.max_position_embeddings + 1}"
+                )
         if "transformer.block_position_embeddings.weight" in sd["module"]:
-            block_position_weights = sd['module']["transformer.block_position_embeddings.weight"]
-            if args.max_position_embeddings + 1 > block_position_weights.shape[0]:
-                sd['module']["transformer.block_position_embeddings.weight"] = extend_embedding_weights(
-                    block_position_weights,
-                    model.state_dict()["transformer.block_position_embeddings.weight"].data)
+            block_position_weights = sd['module'][
+                "transformer.block_position_embeddings.weight"]
+            if args.max_position_embeddings + 1 > block_position_weights.shape[
+                    0]:
+                sd['module'][
+                    "transformer.block_position_embeddings.weight"] = extend_embedding_weights(
+                        block_position_weights,
+                        model.state_dict()
+                        ["transformer.block_position_embeddings.weight"].data)
                 main_proc_print(
-                    f"Extend block position embedding to {args.max_position_embeddings + 1}")
-        missing_keys, unexpected_keys = model.load_state_dict(
-            sd['module'], strict=False)
+                    f"Extend block position embedding to {args.max_position_embeddings + 1}"
+                )
+        missing_keys, unexpected_keys = model.load_state_dict(sd['module'],
+                                                              strict=False)
         if missing_keys or unexpected_keys:
             main_proc_print(
-                f"Missing keys {missing_keys}, unexpected keys {unexpected_keys}")
+                f"Missing keys {missing_keys}, unexpected keys {unexpected_keys}"
+            )
         model = model.to(device)
         return model
 
@@ -119,8 +130,9 @@ class Trainer:
                 step_end_time = time.time()
                 step_total_time = step_end_time - step_start_time
                 step_start_time = step_end_time
-                sequences_per_second = (utils.global_batch_size(
-                    self.config) * self.config.gradient_accumulation_steps) / step_total_time
+                sequences_per_second = (
+                    utils.global_batch_size(self.config) *
+                    self.config.gradient_accumulation_steps) / step_total_time
                 other_state["seq/s"] = sequences_per_second
 
             loss_scale = self.optimizer.loss_scaler.loss_scale
@@ -134,14 +146,17 @@ class Trainer:
                 eval_result = dict(global_steps=state.global_steps,
                                    eval_accuracy=state.eval_accuracy,
                                    time=eval_end - eval_start)
-            
+
             end_training = self.detect_training_status(state)
             step_info = state.to_dict(**other_state)
-            driver.event(Event.STEP_END, message=step_info, step=state.global_steps, loss=state.loss)
+            driver.event(Event.STEP_END,
+                         message=step_info,
+                         step=state.global_steps,
+                         loss=state.loss)
 
             if eval_result is not None:
                 driver.event(Event.EVALUATE, eval_result)
-            
+
             if end_training:
                 break
 
@@ -166,15 +181,16 @@ class Trainer:
         state.loss = lm_loss
         #lm_loss.backward()
         #self.optimizer.step()
-        self.adapter.backward(
-            state.global_steps, lm_loss, reduced_loss, self.optimizer, self.lr_scheduler, self.model)
+        self.adapter.backward(state.global_steps, lm_loss, reduced_loss,
+                              self.optimizer, self.lr_scheduler, self.model)
         #self.adapter.backward(state.global_steps, state.loss, self.optimizer)
         #self.adapter.backward(state.global_steps, reduced_loss, self.optimizer)
         #self.adapter.backward(state.global_steps, reduced_loss, self.optimizer, self.lr_scheduler)
         # self.training_event.on_backward(
         #     state.global_steps, lm_loss, reduced_loss, self.optimizer, self.lr_scheduler)
         #self.lr_scheduler.step()
-        self.driver.event(Event.BACKWARD, state.global_steps, state.loss, self.optimizer, self.grad_scaler)
+        self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
+                          self.optimizer, self.grad_scaler)
         #self.lr_scheduler.step()
 
     def detect_training_status(self, state):
@@ -192,7 +208,9 @@ class Trainer:
         do_eval = all([
             config.eval_data is not None,
             state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps % math.ceil(config.eval_interval_samples / utils.global_batch_size(config)) == 0,
+            state.global_steps %
+            math.ceil(config.eval_interval_samples /
+                      utils.global_batch_size(config)) == 0,
             config.eval_interval_samples > 0,
             state.global_steps > 1,
         ])
@@ -201,12 +219,12 @@ class Trainer:
 
     def forward(self, batch):
         data = batch
-        tokens, labels, position_ids, attention_mask = data[
-            'text'], data['label'], data['position'], data['mask']
+        tokens, labels, position_ids, attention_mask = data['text'], data[
+            'label'], data['position'], data['mask']
         target_ids, logit_mask = data['target'], data['logit_mask']
 
-        result = self.model(tokens, position_ids, attention_mask,
-                            target_ids, logit_mask)
+        result = self.model(tokens, position_ids, attention_mask, target_ids,
+                            logit_mask)
         logits, *mems = result
 
         loss_mask = data["loss_mask"]
@@ -316,15 +334,15 @@ class Trainer:
 #                 eval_result = dict(global_steps=state.global_steps,
 #                                    eval_accuracy=state.eval_accuracy,
 #                                    time=eval_end - eval_start)
-            
+
 #             end_training = self.detect_training_status(state)
-            
+
 #             step_info = state.to_dict(**other_state)
 #             self.training_event.on_step_end(state.global_steps, result=step_info)
 
 #             if eval_result is not None:
 #                 self.training_event.on_evaluate(eval_result)
-            
+
 #             if end_training:
 #                 break
 
@@ -386,7 +404,7 @@ class Trainer:
 #         loss = loss_func(logits.contiguous().float(), labels)
 
 #         return loss, mems
-    
+
 #     def can_do_eval(self, state):
 #         config = self.config
 #         do_eval = all([
@@ -398,7 +416,7 @@ class Trainer:
 #         ])
 
 #         return do_eval or state.num_trained_samples >= config.max_samples_termination
-    
+
 #     def detect_training_status(self, state):
 #         config = self.config
 #         if state.eval_accuracy >= config.target_accuracy:

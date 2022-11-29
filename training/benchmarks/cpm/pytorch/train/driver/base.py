@@ -17,6 +17,7 @@ from .event import Event, EventHandleRecord, EventManager
 
 
 class Driver(object):
+
     def __init__(self):
         self.config = config
         self.is_distributed = False
@@ -24,24 +25,34 @@ class Driver(object):
         self.extern_modules = dict()
 
     def setup_config(self, parser):
-        parser.add_argument("--extern_module_dir", type=str, required=False,
-                            help="The full path to the root of external modules")
-        parser.add_argument("--extern_config_dir", type=str, required=False,
-                            help="Specifies the directory of the external config files")
-        parser.add_argument("--extern_config_file", type=str,
-                            required=False, help="The external config file to use")
-        parser.add_argument("--enable_extern_config", action="store_true",
-                            help="Sets True if external config parameters are allowd")
+        parser.add_argument(
+            "--extern_module_dir",
+            type=str,
+            required=False,
+            help="The full path to the root of external modules")
+        parser.add_argument(
+            "--extern_config_dir",
+            type=str,
+            required=False,
+            help="Specifies the directory of the external config files")
+        parser.add_argument("--extern_config_file",
+                            type=str,
+                            required=False,
+                            help="The external config file to use")
+        parser.add_argument(
+            "--enable_extern_config",
+            action="store_true",
+            help="Sets True if external config parameters are allowd")
         path, args = parser.parse_known_args()
-        config.activate(path.extern_config_dir,
-                        path.extern_config_file, path.enable_extern_config, args)
+        config.activate(path.extern_config_dir, path.extern_config_file,
+                        path.enable_extern_config, args)
         if path.extern_module_dir:
-            mod_util.install_extern_modules(
-                path.extern_module_dir, self.extern_modules)
+            mod_util.install_extern_modules(path.extern_module_dir,
+                                            self.extern_modules)
         self.logger = perf_logger.PerfLogger.get_default_logger(
             rank=config.local_rank)
-        event_manager = log_event.LogEventManager(
-            self.logger, log_freq=config.log_freq)
+        event_manager = log_event.LogEventManager(self.logger,
+                                                  log_freq=config.log_freq)
         event_manager.register_event_handlers(self)
         for _, mod in self.extern_modules.items():
             for cls in mod_util.find_derived_classes(EventManager, mod):
@@ -62,7 +73,8 @@ class Driver(object):
         config_path: str = self.config.config
         config_dict = config.get_properties_from_config(self.config)
         for key, value in config_dict.items():
-            if type(value) not in [int, float, str, bool] and not isinstance(value, Iterable):
+            if type(value) not in [int, float, str, bool
+                                   ] and not isinstance(value, Iterable):
                 config_dict[key] = str(value)
 
         # Like /path/to/proj/submitter/model/config/config_xxx.py

@@ -18,18 +18,26 @@ import torch
 from torch.optim.lr_scheduler import _LRScheduler
 import math
 
+
 class AnnealingLR(_LRScheduler):
     """Anneals the learning rate from start to zero along a cosine curve."""
 
     DECAY_STYLES = ['linear', 'cosine', 'exponential', 'constant', 'None']
 
-    def __init__(self, optimizer, start_lr, warmup_iter, num_iters, decay_style=None, last_iter=-1):
+    def __init__(self,
+                 optimizer,
+                 start_lr,
+                 warmup_iter,
+                 num_iters,
+                 decay_style=None,
+                 last_iter=-1):
         self.optimizer = optimizer
         self.start_lr = start_lr
         self.warmup_iter = warmup_iter
         self.num_iters = last_iter + 1
         self.end_iter = num_iters
-        self.decay_style = decay_style.lower() if isinstance(decay_style, str) else None
+        self.decay_style = decay_style.lower() if isinstance(decay_style,
+                                                             str) else None
         self.step(self.num_iters)
         #if torch.distributed.get_rank() == 0:
         #    print('learning rate decaying:', decay_style)
@@ -40,10 +48,13 @@ class AnnealingLR(_LRScheduler):
             return float(self.start_lr) * self.num_iters / self.warmup_iter
         else:
             if self.decay_style == self.DECAY_STYLES[0]:
-                return self.start_lr*(max(1-(self.num_iters-self.warmup_iter)/self.end_iter, 0))
+                return self.start_lr * (max(
+                    1 -
+                    (self.num_iters - self.warmup_iter) / self.end_iter, 0))
             elif self.decay_style == self.DECAY_STYLES[1]:
-                return self.start_lr / 2.0 * (
-                    math.cos(math.pi * (self.num_iters - self.warmup_iter) / self.end_iter) + 1)
+                return self.start_lr / 2.0 * (math.cos(
+                    math.pi *
+                    (self.num_iters - self.warmup_iter) / self.end_iter) + 1)
             elif self.decay_style == self.DECAY_STYLES[2]:
                 return self.start_lr
             else:
@@ -59,11 +70,11 @@ class AnnealingLR(_LRScheduler):
 
     def state_dict(self):
         sd = {
-                'start_lr': self.start_lr,
-                'warmup_iter': self.warmup_iter,
-                'num_iters': self.num_iters,
-                'decay_style': self.decay_style,
-                'end_iter': self.end_iter
+            'start_lr': self.start_lr,
+            'warmup_iter': self.warmup_iter,
+            'num_iters': self.num_iters,
+            'decay_style': self.decay_style,
+            'end_iter': self.end_iter
         }
         return sd
 

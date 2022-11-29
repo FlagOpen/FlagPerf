@@ -12,12 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """GPT-2 model."""
 
 import torch
 import torch.nn.functional as F
 from model import models
+
 
 def init_method_normal(std=0.02):
     """Init method based on normal distribution.
@@ -25,8 +25,10 @@ def init_method_normal(std=0.02):
     This is only used for embeddings. The transformer has its
     own initializer.
     """
+
     def init_(tensor):
         return torch.nn.init.normal_(tensor, mean=0.0, std=std)
+
     return init_
 
 
@@ -55,7 +57,7 @@ class GPT2Model(torch.nn.Module):
         init_method = init_method_normal(std=0.02)
 
         # Shape of word_embeddings.weight: [vocab_size, hidden_size]
-        self.word_embeddings =torch.nn.Embedding(vocab_size, hidden_size)
+        self.word_embeddings = torch.nn.Embedding(vocab_size, hidden_size)
         init_method(self.word_embeddings.weight)
 
         # Position embedding (serial).
@@ -69,13 +71,10 @@ class GPT2Model(torch.nn.Module):
         self.embedding_dropout = torch.nn.Dropout(embedding_dropout_prob)
 
         # Transformer
-        self.transformer = models.GPT2ParallelTransformer(num_layers,
-                                                       hidden_size,
-                                                       num_attention_heads,
-                                                       attention_dropout_prob,
-                                                       output_dropout_prob,
-                                                       checkpoint_activations,
-                                                       checkpoint_num_layers)
+        self.transformer = models.GPT2ParallelTransformer(
+            num_layers, hidden_size, num_attention_heads,
+            attention_dropout_prob, output_dropout_prob,
+            checkpoint_activations, checkpoint_num_layers)
 
     def forward(self, input_ids, position_ids, attention_mask):
 
@@ -94,8 +93,7 @@ class GPT2Model(torch.nn.Module):
         transformer_output = self.transformer(embeddings, attention_mask)
 
         #logits_parallel 的形状[b,s,vocab_size_per_part]
-        logits = F.linear(transformer_output,
-                                   self.word_embeddings.weight)
+        logits = F.linear(transformer_output, self.word_embeddings.weight)
 
         #return 的形状[b,s,vocab_size]
         return logits
@@ -109,6 +107,7 @@ def judge_name(name):
             return False
     return True
 
+
 def gpt2_get_params_for_weight_decay_optimization(module):
 
     weight_decay_params = {'params': []}
@@ -116,16 +115,21 @@ def gpt2_get_params_for_weight_decay_optimization(module):
     for name, module_ in module.named_modules():
         # if not judge_name(name):
         #     continue
-        if isinstance(module_, (torch.nn.LayerNorm)) or 'LayerNorm' in module_.__class__.__name__:
-            no_weight_decay_params['params'].extend(
-                [p for n, p in list(module_._parameters.items())
-                 if p is not None])
+        if isinstance(
+                module_,
+            (torch.nn.LayerNorm)) or 'LayerNorm' in module_.__class__.__name__:
+            no_weight_decay_params['params'].extend([
+                p for n, p in list(module_._parameters.items())
+                if p is not None
+            ])
         else:
-            weight_decay_params['params'].extend(
-                [p for n, p in list(module_._parameters.items())
-                 if p is not None and n != 'bias'])
-            no_weight_decay_params['params'].extend(
-                [p for n, p in list(module_._parameters.items())
-                 if p is not None and n == 'bias'])
+            weight_decay_params['params'].extend([
+                p for n, p in list(module_._parameters.items())
+                if p is not None and n != 'bias'
+            ])
+            no_weight_decay_params['params'].extend([
+                p for n, p in list(module_._parameters.items())
+                if p is not None and n == 'bias'
+            ])
 
     return weight_decay_params, no_weight_decay_params

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-
 '''This script is called in container to prepare running environment.
 '''
 import os
 import sys
 import shutil
 from argparse import ArgumentParser
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 from utils import run_cmd
@@ -15,13 +15,21 @@ from utils import run_cmd
 def parse_args():
     '''Parse args with ArgumentParser.'''
     parser = ArgumentParser("Prepare running environment in Container.")
-    parser.add_argument("--model", type=str, default=None, required=True,
+    parser.add_argument("--model",
+                        type=str,
+                        default=None,
+                        required=True,
                         help="Model name.")
-    parser.add_argument("--vendor", type=str, required=True,
+    parser.add_argument("--vendor",
+                        type=str,
+                        required=True,
                         help="Accelerator vendor.")
-    parser.add_argument("--framework", type=str, required=True,
+    parser.add_argument("--framework",
+                        type=str,
+                        required=True,
                         help="AI framework.")
-    parser.add_argument("--pipsource", type=str,
+    parser.add_argument("--pipsource",
+                        type=str,
                         default="https://pypi.tuna.tsinghua.edu.cn/simple",
                         help="pip source.")
     args = parser.parse_args()

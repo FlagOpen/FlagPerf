@@ -8,8 +8,11 @@ import subprocess
 
 def run_cmd_wait(cmd, timeout, retouts=True):
     '''Run a shell command and wait <timeout> second(s).'''
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT, encoding='utf-8')
+    process = subprocess.Popen(cmd,
+                               shell=True,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT,
+                               encoding='utf-8')
     try:
         output = process.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:

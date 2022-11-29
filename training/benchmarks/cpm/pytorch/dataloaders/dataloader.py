@@ -1,10 +1,11 @@
-
 import os
 import numpy as np
 import torch
 from dataloaders.samplers import DistributedBatchSampler, RandomSampler
 
+
 class GenDataset(torch.utils.data.Dataset):
+
     def __init__(self, args, data_path, split, tokenizer, ratio=1):
         self.split = split
         self.tokenizer = tokenizer
@@ -28,9 +29,10 @@ class GenDataset(torch.utils.data.Dataset):
             start = 0
 
             while start + self.seq_length + 1 < len(token_ids):
-                samples.append(token_ids[start: start + self.seq_length + 1])
+                samples.append(token_ids[start:start + self.seq_length + 1])
                 start = start + self.seq_length + 1
-            samples.append(token_ids[start:] + [self.pad_id] * (self.seq_length + 1 - (len(token_ids) - start)))
+            samples.append(token_ids[start:] + [self.pad_id] *
+                           (self.seq_length + 1 - (len(token_ids) - start)))
 
         return samples
 
@@ -44,8 +46,11 @@ class GenDataset(torch.utils.data.Dataset):
         bs = len(samps)
 
         # triangle attention mask
-        attn_mask = torch.tril(torch.ones((self.seq_length, self.seq_length))).unsqueeze(0)
-        position_ids = torch.arange(self.seq_length, dtype=torch.long).unsqueeze(0).repeat(bs, 1)
+        attn_mask = torch.tril(torch.ones(
+            (self.seq_length, self.seq_length))).unsqueeze(0)
+        position_ids = torch.arange(self.seq_length,
+                                    dtype=torch.long).unsqueeze(0).repeat(
+                                        bs, 1)
 
         if self.args.fp16:
             attn_mask = attn_mask.half()
@@ -64,12 +69,17 @@ class GenDataset(torch.utils.data.Dataset):
         }
 
         for i, samp in enumerate(samps):
-            assert len(samp) == self.seq_length + 1, (len(samp), self.seq_length)
-            batch_sample["input_ids"][i] = torch.tensor(samp[:-1], dtype=torch.long)
-            no_model_sample["labels"][i] = torch.tensor(samp[1:], dtype=torch.long)
-            no_model_sample["loss_mask"][i] = (no_model_sample["labels"][i] != self.pad_id).float()
+            assert len(samp) == self.seq_length + 1, (len(samp),
+                                                      self.seq_length)
+            batch_sample["input_ids"][i] = torch.tensor(samp[:-1],
+                                                        dtype=torch.long)
+            no_model_sample["labels"][i] = torch.tensor(samp[1:],
+                                                        dtype=torch.long)
+            no_model_sample["loss_mask"][i] = (no_model_sample["labels"][i] !=
+                                               self.pad_id).float()
 
         return batch_sample, no_model_sample
+
 
 def check_md5_data_file(data_type, file_name):
     import hashlib
@@ -87,13 +97,14 @@ def check_md5_data_file(data_type, file_name):
 
     official_md5_train = '65bdbb2b3a8d3b61dbe63ea1a67eec62'
     official_md5_valid = 'b7d8356e0d921b512f9b6860138f2174'
-    
+
     file_md5 = get_file_md5(file_name)
-    
-    if  data_type=='train':
-        return file_md5==official_md5_train
+
+    if data_type == 'train':
+        return file_md5 == official_md5_train
     else:
-        return file_md5==official_md5_valid
+        return file_md5 == official_md5_valid
+
 
 def load_data(args, data_type, tokenizer, ratio=1):
     data_path = args.data_dir
@@ -101,7 +112,7 @@ def load_data(args, data_type, tokenizer, ratio=1):
         batch_size = args.train_batch_size
     else:
         batch_size = args.eval_batch_size
-        
+
     # Data parallel arguments.
     world_size = torch.distributed.get_world_size()
     rank = torch.distributed.get_rank()
@@ -111,7 +122,7 @@ def load_data(args, data_type, tokenizer, ratio=1):
     # Dataset
     filename = os.path.join(data_path, data_type + '.txt')
     dataset = GenDataset(args, filename, data_type, tokenizer, ratio=ratio)
-    
+
     # Use a random sampler with distributed batch sampler.
     if data_type == 'train':
         sampler = RandomSampler(dataset)
@@ -122,7 +133,7 @@ def load_data(args, data_type, tokenizer, ratio=1):
                                             drop_last=True,
                                             rank=rank,
                                             world_size=world_size)
-    
+
     # Torch dataloader.
     return torch.utils.data.DataLoader(dataset,
                                        batch_sampler=batch_sampler,

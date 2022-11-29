@@ -9,7 +9,6 @@ from collections import OrderedDict
 
 from enum import IntEnum
 
-
 _srcfile = os.path.normcase(logging.addLevelName.__code__.co_filename)
 
 
@@ -70,23 +69,23 @@ class LogEventField(NamedTuple):
 
 class LogEvent:
 
-    submitted_info    = LogEventField("SUBMITTED_INFO", rank=0)
-    launch_training   = LogEventField("LAUNCH_TRAINING")
-    convert_model     = LogEventField("CONVERT_MODEL", rank=0)
-    create_optimizer  = LogEventField("CREATE_OPTIMIZER", rank=0)
-    model_to_fp16     = LogEventField("MODEL_TO_FP16", rank=0)
-    model_to_ddp      = LogEventField("MODEL_TO_DDP", rank=0)
-    init_start        = LogEventField("INIT_START", rank=0)
-    init_end          = LogEventField("INIT_END", rank=0)
-    train_begin       = LogEventField("TRAIN_BEGIN", rank=0)
-    train_end         = LogEventField("TRAIN_END", rank=0)
-    epoch_begin       = LogEventField("EPOCH_BEGIN", rank=0, level=PerfLogLevel.INFO)
-    epoch_end         = LogEventField("EPOCH_END", rank=0, level=PerfLogLevel.INFO)
-    step_begin        = LogEventField("STEP_BEGIN", rank=0, level=PerfLogLevel.INFO)
-    step_end          = LogEventField("STEP_END", rank=0, level=PerfLogLevel.INFO)
-    init_evaluation   = LogEventField("INIT_EVALUATION", rank=0)
-    evaluation        = LogEventField("EVALUATION", rank=0)
-    finished          = LogEventField("FINISHED", rank=0)
+    submitted_info = LogEventField("SUBMITTED_INFO", rank=0)
+    launch_training = LogEventField("LAUNCH_TRAINING")
+    convert_model = LogEventField("CONVERT_MODEL", rank=0)
+    create_optimizer = LogEventField("CREATE_OPTIMIZER", rank=0)
+    model_to_fp16 = LogEventField("MODEL_TO_FP16", rank=0)
+    model_to_ddp = LogEventField("MODEL_TO_DDP", rank=0)
+    init_start = LogEventField("INIT_START", rank=0)
+    init_end = LogEventField("INIT_END", rank=0)
+    train_begin = LogEventField("TRAIN_BEGIN", rank=0)
+    train_end = LogEventField("TRAIN_END", rank=0)
+    epoch_begin = LogEventField("EPOCH_BEGIN", rank=0, level=PerfLogLevel.INFO)
+    epoch_end = LogEventField("EPOCH_END", rank=0, level=PerfLogLevel.INFO)
+    step_begin = LogEventField("STEP_BEGIN", rank=0, level=PerfLogLevel.INFO)
+    step_end = LogEventField("STEP_END", rank=0, level=PerfLogLevel.INFO)
+    init_evaluation = LogEventField("INIT_EVALUATION", rank=0)
+    evaluation = LogEventField("EVALUATION", rank=0)
+    finished = LogEventField("FINISHED", rank=0)
 
     @staticmethod
     def from_string(key: str):
@@ -97,9 +96,10 @@ class PerfLogger:
 
     _singleton = None
 
-    def __init__(self, rank: int,
-                 level: Union[str, PerfLogLevel]=PerfLogLevel.SUBMITTION,
-                 logger: logging.Logger=None):
+    def __init__(self,
+                 rank: int,
+                 level: Union[str, PerfLogLevel] = PerfLogLevel.SUBMITTION,
+                 logger: logging.Logger = None):
         self.rank = rank
 
         if isinstance(level, str):
@@ -119,7 +119,8 @@ class PerfLogger:
         self.previous_log_time = current
         return current
 
-    def init_logger(self, submitter: str, model: str, config_path: str, config: dict, *args, **kwargs):
+    def init_logger(self, submitter: str, model: str, config_path: str,
+                    config: dict, *args, **kwargs):
         message = {
             LogKeys.submmiter: submitter,
             LogKeys.model: model,
@@ -129,8 +130,11 @@ class PerfLogger:
 
         self.log(LogEvent.submitted_info, message, *args, **kwargs)
 
-
-    def log(self, event: Union[str, LogEventField], message: Optional[Union[str, dict]]=None, *args, **kwargs):
+    def log(self,
+            event: Union[str, LogEventField],
+            message: Optional[Union[str, dict]] = None,
+            *args,
+            **kwargs):
         if isinstance(event, str):
             event = LogEvent.from_string(event)
 
@@ -138,8 +142,7 @@ class PerfLogger:
             event.rank == 0 and self.rank == 0,
             event.rank == -1,
         ]) and any([
-            event.level == PerfLogLevel.SUBMITTION,
-            event.level == self.level
+            event.level == PerfLogLevel.SUBMITTION, event.level == self.level
         ])
 
         if not show_log:
@@ -154,11 +157,10 @@ class PerfLogger:
         message = self._encode_message(event, message, call_info)
         self.logger.log(self.level.value, message, *args, **kwargs)
 
-    def _encode_message(self, event: LogEventField,
-                        message: Union[str, dict],
+    def _encode_message(self, event: LogEventField, message: Union[str, dict],
                         call_info: Tuple[str, int]) -> str:
         if isinstance(message, str):
-            message ={LogKeys.other_message: message}
+            message = {LogKeys.other_message: message}
         message = OrderedDict({
             LogKeys.event: event.name,
             LogKeys.value: message
@@ -177,7 +179,8 @@ class PerfLogger:
         return self._log_template(message)
 
     def _log_template(self, message: str):
-        return LogKeys.log_template.format(header=LogKeys.log_header, message=message)
+        return LogKeys.log_template.format(header=LogKeys.log_header,
+                                           message=message)
 
     def get_caller(self, stacklevel=1) -> Tuple[str, int]:
         f = currentframe()
@@ -209,27 +212,13 @@ class PerfLogger:
             break
         return rv
 
-
     @classmethod
-    def get_default_logger(cls, rank: int=-1,
-                 level: Union[str, PerfLogLevel]=PerfLogLevel.SUBMITTION,
-                 logger: logging.Logger=None):
+    def get_default_logger(
+            cls,
+            rank: int = -1,
+            level: Union[str, PerfLogLevel] = PerfLogLevel.SUBMITTION,
+            logger: logging.Logger = None):
         if cls._singleton is None:
             cls._singleton = cls(rank=rank, level=level, logger=logger)
 
         return cls._singleton
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

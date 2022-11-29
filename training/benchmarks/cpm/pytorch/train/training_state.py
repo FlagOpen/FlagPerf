@@ -48,8 +48,10 @@ class TrainingState:
             lr = lr[0]
         state_dict["learning_rate"] = lr
 
-        exclude = ["eval_avg_loss", "eval_embedding_average", "skipped_steps", 
-                   "converged", "init_time", "raw_train_time"]
+        exclude = [
+            "eval_avg_loss", "eval_embedding_average", "skipped_steps",
+            "converged", "init_time", "raw_train_time"
+        ]
         for exkey in exclude:
             if exkey in state_dict:
                 state_dict.pop(exkey)

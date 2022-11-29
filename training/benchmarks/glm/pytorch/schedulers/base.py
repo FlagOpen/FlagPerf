@@ -24,18 +24,29 @@ class AnnealingLR(_LRScheduler):
 
     DECAY_STYLES = ['linear', 'cosine', 'exponential', 'constant', 'None']
 
-    def __init__(self, optimizer, start_lr, warmup_iter, num_iters, decay_style=None, last_iter=-1, decay_ratio=0.5):
+    def __init__(self,
+                 optimizer,
+                 start_lr,
+                 warmup_iter,
+                 num_iters,
+                 decay_style=None,
+                 last_iter=-1,
+                 decay_ratio=0.5):
         assert warmup_iter <= num_iters
         self.optimizer = optimizer
         self.start_lr = start_lr
         self.warmup_iter = warmup_iter
         self.num_iters = last_iter + 1
         self.end_iter = num_iters
-        self.decay_style = decay_style.lower() if isinstance(decay_style, str) else None
+        self.decay_style = decay_style.lower() if isinstance(decay_style,
+                                                             str) else None
         self.decay_ratio = 1 / decay_ratio
         self.step(self.num_iters)
-        if not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0:
-            print(f'learning rate decaying style {self.decay_style}, ratio {self.decay_ratio}')
+        if not torch.distributed.is_initialized(
+        ) or torch.distributed.get_rank() == 0:
+            print(
+                f'learning rate decaying style {self.decay_style}, ratio {self.decay_ratio}'
+            )
 
     def get_lr(self):
         # https://openreview.net/pdf?id=BJYwwY9ll pg. 4
@@ -43,17 +54,20 @@ class AnnealingLR(_LRScheduler):
             return float(self.start_lr) * self.num_iters / self.warmup_iter
         else:
             if self.decay_style == self.DECAY_STYLES[0]:
-                decay_step_ratio = (self.num_iters - self.warmup_iter) / self.end_iter
-                return self.start_lr - self.start_lr * (1 - 1 / self.decay_ratio) * decay_step_ratio
+                decay_step_ratio = (self.num_iters -
+                                    self.warmup_iter) / self.end_iter
+                return self.start_lr - self.start_lr * (
+                    1 - 1 / self.decay_ratio) * decay_step_ratio
             elif self.decay_style == self.DECAY_STYLES[1]:
-                decay_step_ratio = min(1.0, (self.num_iters - self.warmup_iter) / self.end_iter)
+                decay_step_ratio = min(
+                    1.0, (self.num_iters - self.warmup_iter) / self.end_iter)
                 return self.start_lr / self.decay_ratio * (
-                        (math.cos(math.pi * decay_step_ratio) + 1) * (self.decay_ratio - 1) / 2 + 1)
+                    (math.cos(math.pi * decay_step_ratio) + 1) *
+                    (self.decay_ratio - 1) / 2 + 1)
             elif self.decay_style == self.DECAY_STYLES[2]:
                 return self.start_lr
             else:
                 return self.start_lr
-
 
     def step(self, step_num=None):
         if step_num is None:

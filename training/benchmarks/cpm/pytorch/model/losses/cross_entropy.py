@@ -1,9 +1,10 @@
 import torch
 
+
 def cross_entropy(outputs, target):
     #para:   outputs, [b, s, vocab_size]
     #        target, [b, s]
-    #return: loss, [b, s] 
+    #return: loss, [b, s]
 
     logits = outputs.clone()
     # logits = outputs
@@ -17,8 +18,9 @@ def cross_entropy(outputs, target):
 
     logits_2d = logits.view(-1, logits.size()[-1])
     target_1d = target.view(-1)
-    arange_1d = torch.arange(start=0, end=logits_2d.size()[0],
-                            device=logits_2d.device)
+    arange_1d = torch.arange(start=0,
+                             end=logits_2d.size()[0],
+                             device=logits_2d.device)
     predit_ligits_1d = logits_2d[arange_1d, target_1d]
     predit_ligits = predit_ligits_1d.view_as(target)
 

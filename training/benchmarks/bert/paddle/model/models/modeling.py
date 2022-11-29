@@ -27,8 +27,6 @@ from functools import reduce
 from io import open
 from operator import mul
 
-
-
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
@@ -38,12 +36,9 @@ try:
 except ImportError:
     FusedTransformerEncoderLayer = None
 
-
-
 # from model.layers.activations import ACT2FN
 # #from model.layers.embeddings import BertEmbeddings
 # from train.driver.distributed import get_rank
-
 
 logger = logging.getLogger(__name__)
 
@@ -88,9 +83,11 @@ class BertConfig(object):
             initializer_range: The sttdev of the truncated_normal_initializer for
                 initializing all weight matrices.
         """
-        if isinstance(vocab_size_or_config_json_file, str) or (sys.version_info[0] == 2
-                                                               and isinstance(vocab_size_or_config_json_file, unicode)):
-            with open(vocab_size_or_config_json_file, "r", encoding='utf-8') as reader:
+        if isinstance(vocab_size_or_config_json_file,
+                      str) or (sys.version_info[0] == 2 and isinstance(
+                          vocab_size_or_config_json_file, unicode)):
+            with open(vocab_size_or_config_json_file, "r",
+                      encoding='utf-8') as reader:
                 json_config = json.loads(reader.read())
             for key, value in json_config.items():
                 self.__dict__[key] = value
@@ -107,8 +104,9 @@ class BertConfig(object):
             self.type_vocab_size = type_vocab_size
             self.initializer_range = initializer_range
         else:
-            raise ValueError("First argument must be either a vocabulary size (int)"
-                             "or the path to a pretrained model config file (str)")
+            raise ValueError(
+                "First argument must be either a vocabulary size (int)"
+                "or the path to a pretrained model config file (str)")
 
     @classmethod
     def from_dict(cls, json_object):
@@ -143,13 +141,15 @@ class BertEmbeddings(Layer):
     Include embeddings from word, position and token_type embeddings
     """
 
-    def __init__(self,config):
+    def __init__(self, config):
 
         super(BertEmbeddings, self).__init__()
-        self.word_embeddings = nn.Embedding(config.vocab_size, config.hidden_size)
+        self.word_embeddings = nn.Embedding(config.vocab_size,
+                                            config.hidden_size)
         self.position_embeddings = nn.Embedding(config.max_position_embeddings,
                                                 config.hidden_size)
-        self.token_type_embeddings = nn.Embedding(config.type_vocab_size, config.hidden_size)
+        self.token_type_embeddings = nn.Embedding(config.type_vocab_size,
+                                                  config.hidden_size)
         self.layer_norm = nn.LayerNorm(config.hidden_size)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
@@ -186,6 +186,7 @@ class BertPooler(Layer):
     """
     Pool the result of BertEncoder.
     """
+
     def __init__(self, hidden_size, pool_act="tanh"):
         super(BertPooler, self).__init__()
         self.dense = nn.Linear(hidden_size, hidden_size)
@@ -262,6 +263,7 @@ class BertModel(Layer):
             The non-linear activation function in the pooling layer.
             Defaults to `"tanh"`.
     """
+
     def init_weights(self, layer):
         """ Initialization hook """
         if isinstance(layer, (nn.Linear, nn.Embedding)):
@@ -276,7 +278,7 @@ class BertModel(Layer):
                                          shape=layer.weight.shape))
         elif isinstance(layer, nn.LayerNorm):
             layer._epsilon = 1e-12
-    
+
     def __init__(self,
                  config,
                  initializer_range=0.02,
@@ -289,15 +291,15 @@ class BertModel(Layer):
         self.initializer_range = initializer_range
         self.embeddings = BertEmbeddings(config)
         encoder_layer = nn.TransformerEncoderLayer(
-        config.hidden_size,
-        config.num_attention_heads,
-        config.intermediate_size,
-        dropout=config.hidden_dropout_prob,
-        activation=config.hidden_act,
-        attn_dropout=config.attention_probs_dropout_prob,
-        act_dropout=0)
+            config.hidden_size,
+            config.num_attention_heads,
+            config.intermediate_size,
+            dropout=config.hidden_dropout_prob,
+            activation=config.hidden_act,
+            attn_dropout=config.attention_probs_dropout_prob,
+            act_dropout=0)
         self.encoder = nn.TransformerEncoder(encoder_layer,
-                                            config.num_hidden_layers)
+                                             config.num_hidden_layers)
         self.pooler = BertPooler(config.hidden_size, pool_act)
         self.apply(self.init_weights)
 
@@ -421,10 +423,11 @@ class BertModel(Layer):
         encoder_outputs = self.encoder(
             embedding_output,
             src_mask=attention_mask,
-            cache=past_key_values,)
-            # output_attentions=output_attentions,
-            # output_hidden_states=output_hidden_states,
-            # return_dict=return_dict
+            cache=past_key_values,
+        )
+        # output_attentions=output_attentions,
+        # output_hidden_states=output_hidden_states,
+        # return_dict=return_dict
         if isinstance(encoder_outputs, type(embedding_output)):
             sequence_output = encoder_outputs
             pooled_output = self.pooler(sequence_output)
@@ -433,8 +436,7 @@ class BertModel(Layer):
             sequence_output = encoder_outputs[0]
             pooled_output = self.pooler(sequence_output)
             if not return_dict:
-                return (sequence_output,
-                        pooled_output) + encoder_outputs[1:]
+                return (sequence_output, pooled_output) + encoder_outputs[1:]
             # return BaseModelOutputWithPoolingAndCrossAttentions(
             #     last_hidden_state=sequence_output,
             #     pooler_output=pooled_output,
@@ -451,6 +453,7 @@ class BertPreTrainedModel(Layer):
     loading pretrained models.
     See :class:`~paddlenlp.transformers.model_utils.PretrainedModel` for more details.
     """
+
     def __init__(self, config, *inputs, **kwargs):
         super(BertPreTrainedModel, self).__init__()
         if not isinstance(config, BertConfig):
@@ -458,8 +461,7 @@ class BertPreTrainedModel(Layer):
                 "Parameter config in `{}(config)` should be an instance of class `BertConfig`. "
                 "To create a model from a Google pretrained model use "
                 "`model = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
-                    self.__class__.__name__, self.__class__.__name__
-                ))
+                    self.__class__.__name__, self.__class__.__name__))
         self.config = config
 
         # we want to make sure vocab size is padded to % 8 == 0
@@ -469,19 +471,20 @@ class BertPreTrainedModel(Layer):
             #     print(f'Padded vocab_size to : {self.config.vocab_size}')
 
     def init_weights(self, layer):
-            """ Initialization hook """
-            if isinstance(layer, (nn.Linear, nn.Embedding)):
-                # In the dygraph mode, use the `set_value` to reset the parameter directly,
-                # and reset the `state_dict` to update parameter in static mode.
-                if isinstance(layer.weight, paddle.Tensor):
-                    layer.weight.set_value(
-                        paddle.tensor.normal(mean=0.0,
-                                            std=self.initializer_range if hasattr(
-                                                self, "initializer_range") else
-                                            self.bert_model_segment.bert.initializer_range,
-                                            shape=layer.weight.shape))
-            elif isinstance(layer, nn.LayerNorm):
-                layer._epsilon = 1e-12
+        """ Initialization hook """
+        if isinstance(layer, (nn.Linear, nn.Embedding)):
+            # In the dygraph mode, use the `set_value` to reset the parameter directly,
+            # and reset the `state_dict` to update parameter in static mode.
+            if isinstance(layer.weight, paddle.Tensor):
+                layer.weight.set_value(
+                    paddle.tensor.normal(
+                        mean=0.0,
+                        std=self.initializer_range if hasattr(
+                            self, "initializer_range") else
+                        self.bert_model_segment.bert.initializer_range,
+                        shape=layer.weight.shape))
+        elif isinstance(layer, nn.LayerNorm):
+            layer._epsilon = 1e-12
 
 
 class BertLMPredictionHead(Layer):
@@ -489,9 +492,7 @@ class BertLMPredictionHead(Layer):
     Bert Model with a `language modeling` head on top for CLM fine-tuning.
     """
 
-    def __init__(self,
-                 config,
-                 embedding_weights=None):
+    def __init__(self, config, embedding_weights=None):
         super(BertLMPredictionHead, self).__init__()
         self.transform = nn.Linear(config.hidden_size, config.hidden_size)
         self.activation = getattr(nn.functional, config.hidden_act)
@@ -501,7 +502,9 @@ class BertLMPredictionHead(Layer):
             dtype=self.transform.weight.dtype,
             is_bias=False) if embedding_weights is None else embedding_weights
         self.decoder_bias = self.create_parameter(
-            shape=[config.vocab_size], dtype=self.decoder_weight.dtype, is_bias=True)
+            shape=[config.vocab_size],
+            dtype=self.decoder_weight.dtype,
+            is_bias=True)
 
     def forward(self, hidden_states, masked_positions=None):
         if masked_positions is not None:
@@ -538,11 +541,9 @@ class BertPretrainingHeads(Layer):
 
     """
 
-    def __init__(self,
-                 config,
-                 embedding_weights=None):
+    def __init__(self, config, embedding_weights=None):
         super(BertPretrainingHeads, self).__init__()
-        
+
         self.predictions = BertLMPredictionHead(config, embedding_weights)
         self.seq_relationship = nn.Linear(config.hidden_size, 2)
 
@@ -581,36 +582,55 @@ class BertPretrainingHeads(Layer):
         seq_relationship_score = self.seq_relationship(pooled_output)
         return prediction_scores, seq_relationship_score
 
+
 #这个东西似乎就是一个bert_model而已，为了对齐，所以先加上了
 class BertForPreTrainingModelOnly(Layer):
+
     def __init__(self, config):
         super(BertForPreTrainingModelOnly, self).__init__()
         self.bert = BertModel(config)
 
-    def forward(self, input_ids, token_type_ids=None, attention_mask=None, checkpoint_activations=False):
-        sequence_output, pooled_output = self.bert(input_ids, token_type_ids, attention_mask,
-                                                   )
+    def forward(self,
+                input_ids,
+                token_type_ids=None,
+                attention_mask=None,
+                checkpoint_activations=False):
+        sequence_output, pooled_output = self.bert(
+            input_ids,
+            token_type_ids,
+            attention_mask,
+        )
         return sequence_output, pooled_output
 
 
 class BertForPreTrainingHeadsOnly(Layer):
+
     def __init__(self, config, bert_model_embedding_weights):
         super(BertForPreTrainingHeadsOnly, self).__init__()
         self.cls = BertPretrainingHeads(config, bert_model_embedding_weights)
         self.config = config
 
-    def forward(self,sequence_output, pooled_output,labels=None, next_sentence_label=None,return_dict=False):
+    def forward(self,
+                sequence_output,
+                pooled_output,
+                labels=None,
+                next_sentence_label=None,
+                return_dict=False):
         # if dense_seq_output, prediction scores returned by this function is already masked out with masked_lm_labels, and first dimension is flattened
         # with paddle.static.amp.fp16_guard():
         prediction_scores, seq_relationship_score = self.cls(
-            sequence_output, pooled_output, labels)#masked_positions这个参数应该是找到那些被mask的值
+            sequence_output, pooled_output,
+            labels)  #masked_positions这个参数应该是找到那些被mask的值
 
         total_loss = None
         if labels is not None and next_sentence_label is not None:
             loss_fct = paddle.nn.CrossEntropyLoss()
             masked_lm_labels_flat = labels.reshape([-1])
-            masked_lm_labels_dense = masked_lm_labels_flat[masked_lm_labels_flat != 0]
-            masked_lm_loss = loss_fct(prediction_scores.reshape([-1, self.config.vocab_size]), masked_lm_labels_dense)
+            masked_lm_labels_dense = masked_lm_labels_flat[
+                masked_lm_labels_flat != 0]
+            masked_lm_loss = loss_fct(
+                prediction_scores.reshape([-1, self.config.vocab_size]),
+                masked_lm_labels_dense)
             # masked_lm_loss = loss_fct(
             #     prediction_scores.reshape(
             #         (-1, prediction_scores.shape[-1])),
@@ -624,12 +644,12 @@ class BertForPreTrainingHeadsOnly(Layer):
         num_valid = valid_mask.sum(dtype='int64')
         mlm_labels = masked_lm_labels_flat[masked_lm_labels_flat != 0]
         mlm_predictions = prediction_scores.argmax(axis=-1).reshape([-1])
-        mlm_acc = (mlm_predictions == mlm_labels).sum(dtype='int64') / num_valid
+        mlm_acc = (mlm_predictions
+                   == mlm_labels).sum(dtype='int64') / num_valid
         return total_loss, mlm_acc, num_valid
 
         if not return_dict:
-            output = (prediction_scores,
-                        seq_relationship_score) + outputs[2:]
+            output = (prediction_scores, seq_relationship_score) + outputs[2:]
             return ((total_loss, ) +
                     output) if total_loss is not None else output
 
@@ -647,9 +667,9 @@ class BertForPreTraining(BertPreTrainedModel):
     def __init__(self, config):
         super(BertForPreTraining, self).__init__(config)
         self.bert_model_segment = BertForPreTrainingModelOnly(config)
-        self.heads_only_segment = BertForPreTrainingHeadsOnly(config,
-                                self.bert_model_segment.bert.embeddings.word_embeddings.weight)
-        
+        self.heads_only_segment = BertForPreTrainingHeadsOnly(
+            config,
+            self.bert_model_segment.bert.embeddings.word_embeddings.weight)
 
         self.apply(self.init_weights)
 
@@ -703,14 +723,14 @@ class BertForPreTraining(BertPreTrainedModel):
             not None (depending on the input arguments) fields of :class:`~paddlenlp.transformers.bert.BertForPreTrainingOutput`.
 
         """
-        sequence_output, pooled_output = self.bert_model_segment(input_ids, token_type_ids, attention_mask)
-        return self.heads_only_segment(sequence_output, pooled_output, labels, next_sentence_label, return_dict)
-            # return BertForPreTrainingOutput(
-            #     loss=total_loss,
-            #     prediction_logits=prediction_scores,
-            #     seq_relationship_logits=seq_relationship_score,
-            #     hidden_states=outputs.hidden_states,
-            #     attentions=outputs.attentions,
-            # )
-
-
+        sequence_output, pooled_output = self.bert_model_segment(
+            input_ids, token_type_ids, attention_mask)
+        return self.heads_only_segment(sequence_output, pooled_output, labels,
+                                       next_sentence_label, return_dict)
+        # return BertForPreTrainingOutput(
+        #     loss=total_loss,
+        #     prediction_logits=prediction_scores,
+        #     seq_relationship_logits=seq_relationship_score,
+        #     hidden_states=outputs.hidden_states,
+        #     attentions=outputs.attentions,
+        # )

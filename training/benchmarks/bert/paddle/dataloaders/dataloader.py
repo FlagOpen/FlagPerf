@@ -11,22 +11,19 @@ import paddle.distributed as dist
 #from torch.utils.data.distributed import DistributedSampler
 from train.driver import distributed
 
-from .dataset import PretrainingDataset,MyDataset
+from .dataset import PretrainingDataset, MyDataset
 
-from paddle.io import (BatchSampler,DistributedBatchSampler,SequenceSampler,RandomSampler,
-                        DataLoader,ComposeDataset)
-
-
+from paddle.io import (BatchSampler, DistributedBatchSampler, SequenceSampler,
+                       RandomSampler, DataLoader, ComposeDataset)
 
 
-def get_sampler(dataset, sampler_type,batch_size):
+def get_sampler(dataset, sampler_type, batch_size):
     eval_sampler = SequenceSampler(dataset)
-        
-    sampler =dict(
+
+    sampler = dict(
         random=RandomSampler,
         sequential=SequenceSampler,
-        distributed=DistributedBatchSampler
-    )[sampler_type.lower()](dataset)
+        distributed=DistributedBatchSampler)[sampler_type.lower()](dataset)
     batch_sampler = BatchSampler(sampler=eval_sampler, batch_size=batch_size)
     return batch_sampler
 
@@ -50,17 +47,15 @@ class WorkerInitializer(object):
 
 
 # sampler: Random | Sequential | Distributed
-def create_train_dataloader(
-        dataset,
-        batch_size,
-        worker_init_fn: WorkerInitializer = None,
-        sampler_type='Random',
-        pin_memory=True
-):
+def create_train_dataloader(dataset,
+                            batch_size,
+                            worker_init_fn: WorkerInitializer = None,
+                            sampler_type='Random',
+                            pin_memory=True):
     if worker_init_fn is None:
         worker_init_fn = WorkerInitializer.default()
 
-    batch_sampler = get_sampler(dataset, sampler_type,batch_size)
+    batch_sampler = get_sampler(dataset, sampler_type, batch_size)
     num_workers = (0 if batch_size <= 8 else 4)
     num_workers = 0
     dataloader = DataLoader(
@@ -75,13 +70,15 @@ def create_train_dataloader(
     return dataloader
 
 
-def create_eval_dataloader(eval_dir, eval_batch_size, max_predictions_per_seq, num_eval_examples, worker_init_fn):
+def create_eval_dataloader(eval_dir, eval_batch_size, max_predictions_per_seq,
+                           num_eval_examples, worker_init_fn):
     eval_data = []
     for eval_file in sorted(os.listdir(eval_dir)):
         eval_file_path = os.path.join(eval_dir, eval_file)
         if os.path.isfile(eval_file_path) and 'part' in eval_file_path:
-            eval_data.extend(PretrainingDataset(
-                eval_file_path, max_pred_length=max_predictions_per_seq))
+            eval_data.extend(
+                PretrainingDataset(eval_file_path,
+                                   max_pred_length=max_predictions_per_seq))
             if len(eval_data) > num_eval_examples:
                 eval_data = eval_data[:num_eval_examples]
                 break
@@ -99,26 +96,30 @@ def create_eval_dataloader(eval_dir, eval_batch_size, max_predictions_per_seq, n
     #     batch_sampler = BatchSampler(sampler=eval_sampler, batch_size=16)    #改eval_batch_size
     if dist.is_initialized():
         chunk_size = num_eval_examples // dist.get_world_size()
-        batch_sampler = DistributedBatchSampler(eval_data, batch_size=eval_batch_size, shuffle=False)
+        batch_sampler = DistributedBatchSampler(eval_data,
+                                                batch_size=eval_batch_size,
+                                                shuffle=False)
         # eval_sampler = SequenceSampler(eval_data)
         # batch_sampler = BatchSampler(sampler=eval_sampler, batch_size=16)
     else:
         chunk_size = num_eval_examples
         eval_sampler = SequenceSampler(eval_data)
-        batch_sampler = BatchSampler(sampler=eval_sampler, batch_size=eval_batch_size)
-     
-    eval_dataloader = DataLoader(eval_data, batch_sampler=batch_sampler, 
-                                num_workers=0 if min(
-                                    chunk_size, eval_batch_size) <= 10 else 0,
-                                )
+        batch_sampler = BatchSampler(sampler=eval_sampler,
+                                     batch_size=eval_batch_size)
 
-    
+    eval_dataloader = DataLoader(
+        eval_data,
+        batch_sampler=batch_sampler,
+        num_workers=0 if min(chunk_size, eval_batch_size) <= 10 else 0,
+    )
+
     return eval_dataloader
 
 
 class PretrainingDataloaders:
 
-    def __init__(self, train_dir: str,
+    def __init__(self,
+                 train_dir: str,
                  max_predictions_per_seq: int,
                  batch_size: int = 2,
                  shuffle: bool = True,
@@ -155,7 +156,6 @@ class PretrainingDataloaders:
             math.ceil(self.num_files / self.num_replicas))
         self.total_files = self.num_files_per_replica * self.num_replicas
 
-
         self.files_per_replica: List[str] = None
 
         # Prefetch dataloader
@@ -169,32 +169,32 @@ class PretrainingDataloaders:
 
     def get_files(self):
         join = os.path.join
-        files = [join(self.train_dir, f) for f in os.listdir(self.train_dir) if
-                 os.path.isfile(join(self.train_dir, f)) and 'part' in f]
+        files = [
+            join(self.train_dir, f) for f in os.listdir(self.train_dir)
+            if os.path.isfile(join(self.train_dir, f)) and 'part' in f
+        ]
         files.sort()
 
         return files
-
 
     def set_epoch(self, epoch):
         if self.shuffle:
             random.Random(self.get_seed(epoch)).shuffle(self.files)
 
-        files_per_replica = self.files[self.rank:
-                                       self.total_files: self.num_replicas]
+        files_per_replica = self.files[self.rank:self.total_files:self.
+                                       num_replicas]
         padding_size = self.num_files_per_replica - len(files_per_replica)
         if padding_size > 0:
-            files_per_replica = files_per_replica + self.files[: padding_size]
+            files_per_replica = files_per_replica + self.files[:padding_size]
         self.files_per_replica = files_per_replica
 
     @staticmethod
     def next_dataloader(idx: int, max_predictions_per_seq: int,
                         files_per_replica: List, num_files_per_iter: int,
                         batch_size: int, shuffle: bool,
-                        worker_init: WorkerInitializer,
-                         pin_memory: bool):
-        files_per_iter = files_per_replica[idx *
-                                           num_files_per_iter: (idx + 1) * num_files_per_iter]
+                        worker_init: WorkerInitializer, pin_memory: bool):
+        files_per_iter = files_per_replica[idx * num_files_per_iter:(idx + 1) *
+                                           num_files_per_iter]
         datasets = []
         for file in files_per_iter:
             datasets.append(PretrainingDataset(file, max_predictions_per_seq))
@@ -204,11 +204,11 @@ class PretrainingDataloaders:
 
         #sampler_type = "Random" if shuffle else "Sequential"
         sampler_type = "Sequential"
-        return create_train_dataloader(
-            datasets, batch_size, 
-            worker_init,
-            sampler_type=sampler_type, pin_memory=pin_memory
-        )
+        return create_train_dataloader(datasets,
+                                       batch_size,
+                                       worker_init,
+                                       sampler_type=sampler_type,
+                                       pin_memory=pin_memory)
 
     def iter_batchs(self) -> Tuple[int, int, Any]:
         for dataloader_idx, sub_dataloader in enumerate(self):
@@ -230,17 +230,12 @@ class PretrainingDataloaders:
                 batch_size=self.batch_size,
                 shuffle=self.shuffle,
                 worker_init=self.worker_init,
-                pin_memory=self.pin_memory
-            )
-           
-            data = self.next_dataloader(
-                    idx=self._next_index,
-                    **next_dataloader_args
-                )
+                pin_memory=self.pin_memory)
+
+            data = self.next_dataloader(idx=self._next_index,
+                                        **next_dataloader_args)
             self._next_index += 1
             self.sub_dataloader = data
             return data
         else:
             raise StopIteration()
-
-

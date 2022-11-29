@@ -4,6 +4,7 @@ from torch.nn.parameter import Parameter
 import torch.nn.functional as F
 import math
 
+
 def ensure_divisibility(numerator, denominator):
     """Ensure that numerator is divisible by the denominator."""
     assert numerator % denominator == 0, '{} is not divisible by {}'.format(
@@ -16,9 +17,15 @@ def divide(numerator, denominator):
     ensure_divisibility(numerator, denominator)
     return numerator // denominator
 
-def _initialize_affine_weight(weight, output_size, input_size,
-                              per_partition_size, partition_dim, init_method,
-                              stride=1, return_master_weight=False):
+
+def _initialize_affine_weight(weight,
+                              output_size,
+                              input_size,
+                              per_partition_size,
+                              partition_dim,
+                              init_method,
+                              stride=1,
+                              return_master_weight=False):
     """Initialize affine weight for model parallel.
 
     Build the master weight on all processes and scatter
@@ -30,6 +37,7 @@ def _initialize_affine_weight(weight, output_size, input_size,
         if return_master_weight:
             return weight
         return None
+
 
 class ColumnLinear(torch.nn.Module):
     """Linear layer with column parallelism.
@@ -52,8 +60,13 @@ class ColumnLinear(torch.nn.Module):
                                      used for initialization.
     """
 
-    def __init__(self, input_size, output_size, bias=True, gather_output=True,
-                 init_method=init.xavier_normal_, stride=1,
+    def __init__(self,
+                 input_size,
+                 output_size,
+                 bias=True,
+                 gather_output=True,
+                 init_method=init.xavier_normal_,
+                 stride=1,
                  keep_master_weight_for_test=False):
         super(ColumnLinear, self).__init__()
 
@@ -68,8 +81,8 @@ class ColumnLinear(torch.nn.Module):
         # Parameters.
         # Note: torch.nn.functional.linear performs XA^T + b and as a result
         # we allocate the transpose.
-        self.weight = Parameter(torch.Tensor(self.output_size_per_partition,
-                                             self.input_size))
+        self.weight = Parameter(
+            torch.Tensor(self.output_size_per_partition, self.input_size))
         self.weight.model_parallel = True
         if bias:
             self.bias = Parameter(torch.Tensor(self.output_size_per_partition))
@@ -82,9 +95,14 @@ class ColumnLinear(torch.nn.Module):
 
         # Initialize weight.
         self.master_weight = _initialize_affine_weight(
-            self.weight, self.output_size, self.input_size,
-            self.output_size_per_partition, 0, init_method,
-            stride=stride, return_master_weight=keep_master_weight_for_test)
+            self.weight,
+            self.output_size,
+            self.input_size,
+            self.output_size_per_partition,
+            0,
+            init_method,
+            stride=stride,
+            return_master_weight=keep_master_weight_for_test)
 
     def forward(self, input_):
         # Set up backprop all-reduce.
@@ -93,6 +111,7 @@ class ColumnLinear(torch.nn.Module):
         output_parallel = F.linear(input_parallel, self.weight, self.bias)
         output = output_parallel
         return output
+
 
 class RowLinear(torch.nn.Module):
     """Linear layer with row parallelism.
@@ -121,9 +140,13 @@ class RowLinear(torch.nn.Module):
                                      used for initialization.
     """
 
-    def __init__(self, input_size, output_size, bias=True,
+    def __init__(self,
+                 input_size,
+                 output_size,
+                 bias=True,
                  input_is_parallel=False,
-                 init_method=init.xavier_normal_, stride=1,
+                 init_method=init.xavier_normal_,
+                 stride=1,
                  keep_master_weight_for_test=False):
         super(RowLinear, self).__init__()
 
@@ -138,8 +161,8 @@ class RowLinear(torch.nn.Module):
         # Parameters.
         # Note: torch.nn.functional.linear performs XA^T + b and as a result
         # we allocate the transpose.
-        self.weight = Parameter(torch.Tensor(self.output_size,
-                                             self.input_size_per_partition))
+        self.weight = Parameter(
+            torch.Tensor(self.output_size, self.input_size_per_partition))
         self.weight.model_parallel = True
         if bias:
             self.bias = Parameter(torch.Tensor(self.output_size))
@@ -151,27 +174,35 @@ class RowLinear(torch.nn.Module):
 
         # Initialize weight.
         self.master_weight = _initialize_affine_weight(
-            self.weight, self.output_size, self.input_size,
-            self.input_size_per_partition, 1, init_method,
-            stride=stride, return_master_weight=keep_master_weight_for_test)
+            self.weight,
+            self.output_size,
+            self.input_size,
+            self.input_size_per_partition,
+            1,
+            init_method,
+            stride=stride,
+            return_master_weight=keep_master_weight_for_test)
 
     def forward(self, input_):
         # Matrix multiply.
         output_ = F.linear(input_, self.weight)
-     
+
         if self.bias is not None:
             output = output_ + self.bias
         else:
             output = output_
         return output
 
+
 if __name__ == "__main__":
     print("test for ColumnLinear")
     hidden_size = 1024
-    test_col_layer = ColumnLinear(hidden_size, 3 * hidden_size,
-                                      stride=3,
-                                      gather_output=False,
-                                      )
+    test_col_layer = ColumnLinear(
+        hidden_size,
+        3 * hidden_size,
+        stride=3,
+        gather_output=False,
+    )
     inputs = torch.rand([2, 512, hidden_size])
     output = test_col_layer(inputs)
     print(output.shape)

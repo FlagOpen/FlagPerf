@@ -18,6 +18,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch._utils import _flatten_dense_tensors, _unflatten_dense_tensors
 
+
 class tofp16(nn.Module):
     """
     Utility module that implements::
@@ -39,7 +40,9 @@ def BN_convert_float(module):
 
     Retained for legacy purposes.
     """
-    if isinstance(module, torch.nn.modules.batchnorm._BatchNorm) and module.affine is True:
+    if isinstance(
+            module,
+            torch.nn.modules.batchnorm._BatchNorm) and module.affine is True:
         module.float()
     for child in module.children():
         BN_convert_float(child)
@@ -76,7 +79,8 @@ def convert_network(network, dtype):
     Converts a network's parameters and buffers to dtype.
     """
     for module in network.modules():
-        if isinstance(module, torch.nn.modules.batchnorm._BatchNorm) and module.affine is True:
+        if isinstance(module, torch.nn.modules.batchnorm._BatchNorm
+                      ) and module.affine is True:
             continue
         convert_module(module, dtype)
     return network
@@ -97,7 +101,9 @@ class FP16Model(nn.Module):
 
 
 def backwards_debug_hook(grad):
-    raise RuntimeError("master_params recieved a gradient in the backward pass!")
+    raise RuntimeError(
+        "master_params recieved a gradient in the backward pass!")
+
 
 def prep_param_lists(model, flat_master=False):
     """
@@ -120,17 +126,22 @@ def prep_param_lists(model, flat_master=False):
     .. _`Training Neural Networks with Mixed Precision:  Real Examples`:
         http://on-demand.gputechconf.com/gtc/2018/video/S81012/
     """
-    model_params = [param for param in model.parameters() if param.requires_grad]
+    model_params = [
+        param for param in model.parameters() if param.requires_grad
+    ]
 
     if flat_master:
         # Give the user some more useful error messages
         try:
             # flatten_dense_tensors returns a contiguous flat array.
             # http://pytorch.org/docs/master/_modules/torch/_utils.html
-            master_params = _flatten_dense_tensors([param.data for param in model_params]).float()
+            master_params = _flatten_dense_tensors(
+                [param.data for param in model_params]).float()
         except:
-            print("Error in prep_param_lists:  model may contain a mixture of parameters "
-                      "of different types.  Use flat_master=False, or use F16_Optimizer.")
+            print(
+                "Error in prep_param_lists:  model may contain a mixture of parameters "
+                "of different types.  Use flat_master=False, or use F16_Optimizer."
+            )
             raise
         master_params = torch.nn.Parameter(master_params)
         master_params.requires_grad = True
@@ -139,13 +150,17 @@ def prep_param_lists(model, flat_master=False):
             master_params.grad = master_params.new(*master_params.size())
         return model_params, [master_params]
     else:
-        master_params = [param.clone().float().detach() for param in model_params]
+        master_params = [
+            param.clone().float().detach() for param in model_params
+        ]
         for param in master_params:
             param.requires_grad = True
         return model_params, master_params
 
 
-def model_grads_to_master_grads(model_params, master_params, flat_master=False):
+def model_grads_to_master_grads(model_params,
+                                master_params,
+                                flat_master=False):
     """
     Copy model gradients to master gradients.  
 
@@ -161,13 +176,16 @@ def model_grads_to_master_grads(model_params, master_params, flat_master=False):
         for model, master in zip(model_params, master_params):
             if model.grad is not None:
                 if master.grad is None:
-                    master.grad = Variable(master.data.new(*master.data.size()))
+                    master.grad = Variable(
+                        master.data.new(*master.data.size()))
                 master.grad.data.copy_(model.grad.data)
             else:
                 master.grad = None
 
 
-def master_params_to_model_params(model_params, master_params, flat_master=False):
+def master_params_to_model_params(model_params,
+                                  master_params,
+                                  flat_master=False):
     """
     Copy master parameters to model parameters.
 
@@ -176,20 +194,24 @@ def master_params_to_model_params(model_params, master_params, flat_master=False
         master_params:  List of FP32 master parameters created by :func:`prep_param_lists`.  If ``master_params`` was created with ``flat_master=True``, ``flat_master=True`` should also be supplied to :func:`master_params_to_model_params`.
     """
     if flat_master:
-        for model, master in zip(model_params, 
-                                 _unflatten_dense_tensors(master_params[0].data, model_params)):
+        for model, master in zip(
+                model_params,
+                _unflatten_dense_tensors(master_params[0].data, model_params)):
             model.data.copy_(master)
     else:
         for model, master in zip(model_params, master_params):
             model.data.copy_(master.data)
 
+
 # Backward compatibility fixes
+
 
 def to_python_float(t):
     if hasattr(t, 'item'):
         return t.item()
     else:
         return t[0]
+
 
 TORCH_MAJOR = int(torch.__version__.split('.')[0])
 TORCH_MINOR = int(torch.__version__.split('.')[1])

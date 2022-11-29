@@ -26,9 +26,19 @@ class Daemon:
     verbose: debug mode, disabled default.
     '''
 
-    def __init__(self, pid_file, log_file, err_file, gpu_log, log_path, rate=5,
-                 stdin=os.devnull, stdout=os.devnull, stderr=os.devnull, home_dir='.',
-                 umask=0o22, verbose=0):
+    def __init__(self,
+                 pid_file,
+                 log_file,
+                 err_file,
+                 gpu_log,
+                 log_path,
+                 rate=5,
+                 stdin=os.devnull,
+                 stdout=os.devnull,
+                 stderr=os.devnull,
+                 home_dir='.',
+                 umask=0o22,
+                 verbose=0):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
@@ -66,8 +76,11 @@ class Daemon:
         def gpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "nvidia-smi |grep 'Default'|awk '{print $3,$5,$9,$11,$13}'"
-            process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT, encoding='utf-8')
+            process = subprocess.Popen(cmd,
+                                       shell=True,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT,
+                                       encoding='utf-8')
             try:
                 out = process.communicate(timeout=10)
             except subprocess.TimeoutExpired:
@@ -81,7 +94,7 @@ class Daemon:
                 f.write(result)
 
         def timer_gpu_mon():
-            gpu_process = Process(target=gpu_mon, args=(self.gpufile,))
+            gpu_process = Process(target=gpu_mon, args=(self.gpufile, ))
             gpu_process.start()
 
         schedule.every(self.rate).seconds.do(timer_gpu_mon)
@@ -97,7 +110,8 @@ class Daemon:
             if pid > 0:
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write('fork #1 failed: %d (%s)\n' % (e.errno, e.strerror))
+            sys.stderr.write('fork #1 failed: %d (%s)\n' %
+                             (e.errno, e.strerror))
             sys.exit(1)
         os.chdir(self.home_dir)
         os.setsid()
@@ -107,7 +121,8 @@ class Daemon:
             if pid > 0:
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write('fork #2 failed: %d (%s)\n' % (e.errno, e.strerror))
+            sys.stderr.write('fork #2 failed: %d (%s)\n' %
+                             (e.errno, e.strerror))
             sys.exit(1)
         sys.stdout.flush()
         sys.stderr.flush()
@@ -187,10 +202,17 @@ class Daemon:
 def parse_args():
     ''' Check script input parameter. '''
     parse = argparse.ArgumentParser(description='Sys monitor script')
-    parse.add_argument('-o', type=str, metavar='[operation]', required=True,
+    parse.add_argument('-o',
+                       type=str,
+                       metavar='[operation]',
+                       required=True,
                        help='start|stop|restart|status')
-    parse.add_argument('-l', type=str, metavar='[log_path]', required=False,
-                       default='./logs/', help='log path')
+    parse.add_argument('-l',
+                       type=str,
+                       metavar='[log_path]',
+                       required=False,
+                       default='./logs/',
+                       help='log path')
     args = parse.parse_args()
     return args
 
@@ -206,7 +228,13 @@ def main():
     # result for gpu
     gpu_fn = str(log_path + '/nvidia_monitor.log')
 
-    subdaemon = Daemon(pid_fn, log_fn, err_fn, gpu_fn, log_path, verbose=1, rate=sample_rate1)
+    subdaemon = Daemon(pid_fn,
+                       log_fn,
+                       err_fn,
+                       gpu_fn,
+                       log_path,
+                       verbose=1,
+                       rate=sample_rate1)
     if operation == 'start':
         subdaemon.start()
     elif operation == 'stop':

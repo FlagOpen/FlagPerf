@@ -31,6 +31,7 @@ class WorkerInitializer(object):
 
 
 class H5pyDataSet(Dataset):
+
     def __init__(self, split, args):
         self.split = split
         self.args = args
@@ -45,9 +46,16 @@ class H5pyDataSet(Dataset):
         else:
             assert "split should be 'train' or 'evel'"
 
-        self.data = {'text': [], 'answer_idx': [], 'position': [],
-                     'mask': [], 'target': [], 'logit_mask': [],
-                     'choice_start_end': [], 'answer_start_end': []}
+        self.data = {
+            'text': [],
+            'answer_idx': [],
+            'position': [],
+            'mask': [],
+            'target': [],
+            'logit_mask': [],
+            'choice_start_end': [],
+            'answer_start_end': []
+        }
 
         with h5sparse.File(h5_file, 'r') as f:
             for key in f.keys():
@@ -55,12 +63,13 @@ class H5pyDataSet(Dataset):
                 if key in ['text', 'position', 'target', 'logit_mask']:
                     self.data[key] = csr_matrix(f[key][()])
                 else:
-                    if key in ['answer_start_end', 'answer_idx'] and self.split == 'train':
+                    if key in ['answer_start_end', 'answer_idx'
+                               ] and self.split == 'train':
                         continue
                     self.data[key] = f[key][()].toarray()
 
-        self.data['answer_idx'] = np.array(
-            self.data['answer_idx']).reshape([-1])
+        self.data['answer_idx'] = np.array(self.data['answer_idx']).reshape(
+            [-1])
         self.data['mask'] = np.array(self.data['mask']).reshape([-1])
 
         # # for key in self.data:
@@ -71,9 +80,13 @@ class H5pyDataSet(Dataset):
         return len(self.data['choice_start_end'])
 
     def __getitem__(self, idx):
-        sample = {'text': [], 'position': [],
-                  'mask': [], 'target': [],
-                  'logit_mask': []}
+        sample = {
+            'text': [],
+            'position': [],
+            'mask': [],
+            'target': [],
+            'logit_mask': []
+        }
         c_start, c_end = self.data['choice_start_end'][idx]
         sample['mask'] = self.data['mask'][c_start:c_end]
         for i in range(c_start, c_end):
@@ -83,10 +96,10 @@ class H5pyDataSet(Dataset):
             sample['logit_mask'].append(
                 self.data['logit_mask'].getrow(i).toarray())
 
+            sample['position'].append(self.data['position'].getrow(
+                2 * i).toarray())
             sample['position'].append(
-                self.data['position'].getrow(2*i).toarray())
-            sample['position'].append(
-                self.data['position'].getrow(2*i+1).toarray())
+                self.data['position'].getrow(2 * i + 1).toarray())
         sample['text'] = np.concatenate(sample['text'], axis=0)
         sample['position'] = np.concatenate(sample['position'], axis=0)
         sample['position'] = sample['position'].reshape(
@@ -113,8 +126,8 @@ def my_collate(batch):
 
     def pad_choice_dim(data, choice_num):
         if len(data) < choice_num:
-            data = np.concatenate([data] + [data[0:1]]
-                                  * (choice_num - len(data)))
+            data = np.concatenate([data] + [data[0:1]] *
+                                  (choice_num - len(data)))
         return data
 
     new_batch = []
@@ -141,7 +154,13 @@ def my_collate(batch):
     return new_batch
 
 
-def build_data_loader(dataset, batch_size, num_workers, drop_last, shuffle=True, only_rank0=False, worker_init_fn: WorkerInitializer = None):
+def build_data_loader(dataset,
+                      batch_size,
+                      num_workers,
+                      drop_last,
+                      shuffle=True,
+                      only_rank0=False,
+                      worker_init_fn: WorkerInitializer = None):
     """Data loader. Note that batch-size is the local (per GPU) batch-size."""
     if worker_init_fn is None:
         worker_init_fn = WorkerInitializer.default()
@@ -168,19 +187,26 @@ def build_train_dataloader(args, worker_init_fn: WorkerInitializer = None):
     """Traing and validation dataloaders."""
     utils.main_proc_print('building train dataloaders ...')
     train_dataset = H5pyDataSet("train", args)
-    train_dataloader = build_data_loader(
-        train_dataset, args.train_batch_size, args.num_workers, drop_last=False, worker_init_fn=worker_init_fn)
+    train_dataloader = build_data_loader(train_dataset,
+                                         args.train_batch_size,
+                                         args.num_workers,
+                                         drop_last=False,
+                                         worker_init_fn=worker_init_fn)
 
     utils.main_proc_print(
-        f'train samples:{len(train_dataset)}, batch size:{args.train_batch_size}')
+        f'train samples:{len(train_dataset)}, batch size:{args.train_batch_size}'
+    )
     return train_dataloader
 
 
 def build_eval_dataloaders(args):
     utils.main_proc_print('building eval dataloaders ...')
     eval_dataset = H5pyDataSet("eval", args)
-    eval_dataloader = build_data_loader(
-        eval_dataset, args.eval_batch_size, args.num_workers, shuffle=False, drop_last=False)
+    eval_dataloader = build_data_loader(eval_dataset,
+                                        args.eval_batch_size,
+                                        args.num_workers,
+                                        shuffle=False,
+                                        drop_last=False)
     utils.main_proc_print(
         f'eval samples:{len(eval_dataset)}, batch size:{args.eval_batch_size}')
     return eval_dataloader

@@ -6,6 +6,7 @@
 import os
 import sys
 from argparse import ArgumentParser
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(CURR_PATH))
 import run_cmd
@@ -122,35 +123,51 @@ class ContainerManager():
 def _parse_args():
     '''Get command args from input. '''
     parser = ArgumentParser(description="Manage a container. ")
-    parser.add_argument("-o", type=str, required=True,
-                        choices=['start', 'stop', 'rm', 'exists', 'runnew',
-                                 'runcmdin', 'pidrunning'],
+    parser.add_argument("-o",
+                        type=str,
+                        required=True,
+                        choices=[
+                            'start', 'stop', 'rm', 'exists', 'runnew',
+                            'runcmdin', 'pidrunning'
+                        ],
                         help="Operation on the container:"
-                             "start    Start a stopped container."
-                             "stop     Stop a container."
-                             "rm       Remove a container."
-                             "exists   Check whether a container exists."
-                             "runnew   Start a new container with run args."
-                             "runcmdin Run a command in the container."
-                             "pidrunning Check wether the process is running.")
+                        "start    Start a stopped container."
+                        "stop     Stop a container."
+                        "rm       Remove a container."
+                        "exists   Check whether a container exists."
+                        "runnew   Start a new container with run args."
+                        "runcmdin Run a command in the container."
+                        "pidrunning Check wether the process is running.")
     parser.add_argument("-c", type=str, required=True, help="Container name")
 
     args, _ = parser.parse_known_args()
 
     if args.o == 'runnew':
-        parser.add_argument("-i", type=str, required=True,
+        parser.add_argument("-i",
+                            type=str,
+                            required=True,
                             help="Docker image.")
-        parser.add_argument("-a", type=str, required=True,
+        parser.add_argument("-a",
+                            type=str,
+                            required=True,
                             help="container start args.")
     elif args.o == 'runcmdin':
-        parser.add_argument("-r", type=str, required=True,
+        parser.add_argument("-r",
+                            type=str,
+                            required=True,
                             help="command to run")
-        parser.add_argument("-d", action='store_true', default=False,
+        parser.add_argument("-d",
+                            action='store_true',
+                            default=False,
                             help="command to run")
-        parser.add_argument("-t", type=int, default=60,
+        parser.add_argument("-t",
+                            type=int,
+                            default=60,
                             help="timeout of running")
     elif args.o == 'pidrunning':
-        parser.add_argument("-f", type=str, required=True,
+        parser.add_argument("-f",
+                            type=str,
+                            required=True,
                             help="pid file path in container.")
     args = parser.parse_args()
     return args

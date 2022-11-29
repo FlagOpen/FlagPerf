@@ -1,4 +1,3 @@
-
 import torch
 
 from .models.modeling import GLMModel, GLMForMultiTokenCloze, FP16_Module
@@ -21,6 +20,7 @@ def create_model(config):
     model = GLMForMultiTokenCloze(model)
 
     print_rank_0(
-        f" > number of parameters: {sum([p.nelement() for p in model.parameters()])}")
+        f" > number of parameters: {sum([p.nelement() for p in model.parameters()])}"
+    )
 
     return model

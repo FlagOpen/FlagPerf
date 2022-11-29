@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 # Parts of the code here are adapted from PyTorch
 # repo: https://github.com/pytorch/pytorch
-
 
 import math
 
@@ -25,10 +23,12 @@ import torch.nn.functional as F
 import torch.nn.init as init
 from torch.nn.parameter import Parameter
 
+
 def ensure_divisibility(numerator, denominator):
     """Ensure that numerator is divisible by the denominator."""
     assert numerator % denominator == 0, '{} is not divisible by {}'.format(
         numerator, denominator)
+
 
 def divide(numerator, denominator):
     """Ensure that numerator is divisible by the denominator and return
@@ -36,9 +36,15 @@ def divide(numerator, denominator):
     ensure_divisibility(numerator, denominator)
     return numerator // denominator
 
-def _initialize_affine_weight(weight, output_size, input_size,
-                              per_partition_size, partition_dim, init_method,
-                              stride=1, return_master_weight=False):
+
+def _initialize_affine_weight(weight,
+                              output_size,
+                              input_size,
+                              per_partition_size,
+                              partition_dim,
+                              init_method,
+                              stride=1,
+                              return_master_weight=False):
     """Initialize affine weight for model parallel.
 
     Build the master weight on all processes and scatter
@@ -52,14 +58,16 @@ def _initialize_affine_weight(weight, output_size, input_size,
         return None
 
     # Initialize master weight
-    master_weight = torch.empty(output_size, input_size,
+    master_weight = torch.empty(output_size,
+                                input_size,
                                 dtype=weight.dtype,
                                 requires_grad=False)
     init_method(master_weight)
 
     # Split and copy
     per_partition_per_stride_size = divide(per_partition_size, stride)
-    weight_list = torch.split(master_weight, per_partition_per_stride_size,
+    weight_list = torch.split(master_weight,
+                              per_partition_per_stride_size,
                               dim=partition_dim)
     rank = torch.distributed.get_rank()
     my_weight_list = weight_list[rank::world_size]
@@ -69,6 +77,7 @@ def _initialize_affine_weight(weight, output_size, input_size,
     if return_master_weight:
         return master_weight
     return None
+
 
 class ColumnParallelLinear(torch.nn.Module):
     """Linear layer with column parallelism.
@@ -90,8 +99,14 @@ class ColumnParallelLinear(torch.nn.Module):
                                      set to False. It returns the master weights
                                      used for initialization.
     """
-    def __init__(self, input_size, output_size, bias=True, gather_output=True,
-                 init_method=init.xavier_normal_, stride=1,
+
+    def __init__(self,
+                 input_size,
+                 output_size,
+                 bias=True,
+                 gather_output=True,
+                 init_method=init.xavier_normal_,
+                 stride=1,
                  keep_master_weight_for_test=False):
         super(ColumnParallelLinear, self).__init__()
 
@@ -105,8 +120,8 @@ class ColumnParallelLinear(torch.nn.Module):
         # Parameters.
         # Note: torch.nn.functional.linear performs XA^T + b and as a result
         # we allocate the transpose.
-        self.weight = Parameter(torch.Tensor(self.output_size_per_partition,
-                                             self.input_size))
+        self.weight = Parameter(
+            torch.Tensor(self.output_size_per_partition, self.input_size))
         if bias:
             self.bias = Parameter(torch.Tensor(self.output_size_per_partition))
             # self.bias.model_parallel = True
@@ -118,9 +133,14 @@ class ColumnParallelLinear(torch.nn.Module):
 
         # Initialize weight.
         self.master_weight = _initialize_affine_weight(
-            self.weight, self.output_size, self.input_size,
-            self.output_size_per_partition, 0, init_method,
-            stride=stride, return_master_weight=keep_master_weight_for_test)
+            self.weight,
+            self.output_size,
+            self.input_size,
+            self.output_size_per_partition,
+            0,
+            init_method,
+            stride=stride,
+            return_master_weight=keep_master_weight_for_test)
 
     def forward(self, input_):
         return F.linear(input_, self.weight, self.bias)
@@ -152,9 +172,14 @@ class RowParallelLinear(torch.nn.Module):
                                      set to False. It returns the master weights
                                      used for initialization.
     """
-    def __init__(self, input_size, output_size, bias=True,
+
+    def __init__(self,
+                 input_size,
+                 output_size,
+                 bias=True,
                  input_is_parallel=False,
-                 init_method=init.xavier_normal_, stride=1,
+                 init_method=init.xavier_normal_,
+                 stride=1,
                  keep_master_weight_for_test=False):
         super(RowParallelLinear, self).__init__()
 
@@ -169,8 +194,8 @@ class RowParallelLinear(torch.nn.Module):
         # Parameters.
         # Note: torch.nn.functional.linear performs XA^T + b and as a result
         # we allocate the transpose.
-        self.weight = Parameter(torch.Tensor(self.output_size,
-                                             self.input_size_per_partition))
+        self.weight = Parameter(
+            torch.Tensor(self.output_size, self.input_size_per_partition))
         self.weight.model_parallel = True
         if bias:
             self.bias = Parameter(torch.Tensor(self.output_size))
@@ -182,10 +207,14 @@ class RowParallelLinear(torch.nn.Module):
 
         # Initialize weight.
         self.master_weight = _initialize_affine_weight(
-            self.weight, self.output_size, self.input_size,
-            self.input_size_per_partition, 1, init_method,
-            stride=stride, return_master_weight=keep_master_weight_for_test)
+            self.weight,
+            self.output_size,
+            self.input_size,
+            self.input_size_per_partition,
+            1,
+            init_method,
+            stride=stride,
+            return_master_weight=keep_master_weight_for_test)
 
     def forward(self, input_):
         return F.linear(input_, self.weight, self.bias)
-

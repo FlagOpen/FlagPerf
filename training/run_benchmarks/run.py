@@ -3,7 +3,6 @@
 # Licensed under the Apache License, Version 2.0 (the "License")
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-
 ''' TODO Copyright and Other info '''
 
 import os
@@ -12,6 +11,7 @@ import time
 import getpass
 from config import cluster_conf as cc
 from config import test_conf as tc
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 from utils import cluster_manager
@@ -35,8 +35,8 @@ def check_cluster_health():
     ''' Try to ssh login to all the hosts in cluster_conf.hosts.
         Return None if everything goes well.
     '''
-    RUN_LOGGER.debug("Cluster healthcheck ssh. Hosts are: "
-                     + ",".join(CLUSTER_MGR.get_hosts_list()))
+    RUN_LOGGER.debug("Cluster healthcheck ssh. Hosts are: " +
+                     ",".join(CLUSTER_MGR.get_hosts_list()))
     bad_hosts = CLUSTER_MGR.healthcheck()
     if len(bad_hosts) != 0:
         for bad_host in bad_hosts:
@@ -63,13 +63,13 @@ def check_cluster_deploy_path(dp_path):
     RUN_LOGGER.debug("Check flagperf deployment path: " + dp_path)
     bad_hosts = CLUSTER_MGR.run_command_all_hosts("cd " + dp_path)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't find deployed path: "
-                         + ",".join(bad_hosts.keys()))
-        RUN_LOGGER.error("Check cluster deploy path " + dp_path
-                         + "......[FAILED] [EXIT]")
+        RUN_LOGGER.error("Hosts that can't find deployed path: " +
+                         ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Check cluster deploy path " + dp_path +
+                         "......[FAILED] [EXIT]")
         sys.exit(3)
-    RUN_LOGGER.info("Check flagperf deployment path: " + dp_path
-                    + "...[SUCCESS]")
+    RUN_LOGGER.info("Check flagperf deployment path: " + dp_path +
+                    "...[SUCCESS]")
 
 
 def check_testconf():
@@ -95,14 +95,16 @@ def check_case_config(case, case_config, test_type, vendor):
        right and config file exists.
     '''
     RUN_LOGGER.debug("Check config of test case: " + case)
-    must_configs = ["model", "framework", "nnodes", "nproc", "config",
-                    "repeat", "data_dir_host", "data_dir_container"]
+    must_configs = [
+        "model", "framework", "nnodes", "nproc", "config", "repeat",
+        "data_dir_host", "data_dir_container"
+    ]
     for config_item in case_config.keys():
         if config_item in must_configs:
             must_configs.remove(config_item)
     if len(must_configs) > 0:
-        RUN_LOGGER.warning("Case " + case + " misses some config items: "
-                           + ",".join(must_configs))
+        RUN_LOGGER.warning("Case " + case + " misses some config items: " +
+                           ",".join(must_configs))
         return False
 
     if test_type == "default":
@@ -113,24 +115,24 @@ def check_case_config(case, case_config, test_type, vendor):
                      case_config["model"] + "/" + case_config["framework"]
     model_path = os.path.abspath(model_path)
     if not os.path.exists(model_path):
-        RUN_LOGGER.warning("Case " + case + ": deploy path doesn't exist: "
-                           + model_path)
+        RUN_LOGGER.warning("Case " + case + ": deploy path doesn't exist: " +
+                           model_path)
         return False
 
     config_path = CURR_PATH + "/../" + vendor + "/" + case_config["model"] + \
         "-" + case_config["framework"] + "/config/" + \
         case_config["config"] + ".py"
     if not os.path.isfile(config_path):
-        RUN_LOGGER.warning("Case " + case + ": config file doesn't exist: "
-                           + config_path)
+        RUN_LOGGER.warning("Case " + case + ": config file doesn't exist: " +
+                           config_path)
         return False
     nnodes = case_config["nnodes"]
     cluster_host_counts = CLUSTER_MGR.get_hosts_count()
     # TODO Check nprocs < 8?
     if nnodes > cluster_host_counts:
-        RUN_LOGGER.error("This case seems need more hosts than cluster has. "
-                         + "The count of need hosts is " + str(nnodes)
-                         + ", but cluster has " + str(cluster_host_counts))
+        RUN_LOGGER.error("This case seems need more hosts than cluster has. " +
+                         "The count of need hosts is " + str(nnodes) +
+                         ", but cluster has " + str(cluster_host_counts))
         return False
 
     RUN_LOGGER.debug("Check config of test case: " + case + " ...[SUCCESS]")
@@ -141,23 +143,23 @@ def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes):
     '''Prepare docker image in registry and in the cluster.
     '''
     vendor = tc.VENDOR
-    image_vendor_dir = os.path.join(CURR_PATH, "../" + vendor
-                                    + "/docker_image/" + framework)
+    image_vendor_dir = os.path.join(
+        CURR_PATH, "../" + vendor + "/docker_image/" + framework)
     image_name = image_mgr.repository + ":" + image_mgr.tag
-    RUN_LOGGER.debug("Prepare docker image in cluster. image_name="
-                     + image_name + "image_vendor_dir=" + image_vendor_dir)
+    RUN_LOGGER.debug("Prepare docker image in cluster. image_name=" +
+                     image_name + "image_vendor_dir=" + image_vendor_dir)
     prepare_image_cmd = "cd " + dp_path + " && " + sys.executable \
                         + " utils/image_manager.py -o build -i " \
                         + image_mgr.repository + " -t " + image_mgr.tag \
                         + " -d " + image_vendor_dir + " -f " + framework
     timeout = 1200
-    RUN_LOGGER.debug("Run cmd in the cluster to prepare docker image: "
-                     + prepare_image_cmd + " timeout=" + str(timeout))
-    bad_hosts = CLUSTER_MGR.run_command_some_hosts(prepare_image_cmd,
-                                                   nnodes, timeout)
+    RUN_LOGGER.debug("Run cmd in the cluster to prepare docker image: " +
+                     prepare_image_cmd + " timeout=" + str(timeout))
+    bad_hosts = CLUSTER_MGR.run_command_some_hosts(prepare_image_cmd, nnodes,
+                                                   timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't pull image: "
-                         + ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Hosts that can't pull image: " +
+                         ",".join(bad_hosts.keys()))
         return False
     return True
 
@@ -176,13 +178,14 @@ def prepare_running_env(dp_path, container_name, case_config):
                   + framework + " --model " + model + " --vendor " \
                   + tc.VENDOR + " --pipsource " + tc.PIP_SOURCE + "\""
     timeout = 1800
-    RUN_LOGGER.debug("Run cmd in the cluster to prepare running environment: "
-                     + prepare_cmd + " timeout=" + str(timeout))
+    RUN_LOGGER.debug(
+        "Run cmd in the cluster to prepare running environment: " +
+        prepare_cmd + " timeout=" + str(timeout))
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(prepare_cmd, nnodes,
                                                    timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't prepare running environment "
-                         + "properly: " + ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Hosts that can't prepare running environment " +
+                         "properly: " + ",".join(bad_hosts.keys()))
         return False
     return True
 
@@ -197,8 +200,8 @@ def start_container_in_cluster(dp_path, run_args, container_name, image_name,
     RUN_LOGGER.debug("Run cmd in the cluster to start container: " + start_cmd)
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(start_cmd, nnodes, 600)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't start docker container: "
-                         + ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Hosts that can't start docker container: " +
+                         ",".join(bad_hosts.keys()))
         return False
     return True
 
@@ -208,13 +211,14 @@ def stop_container_in_cluster(dp_path, container_name, nnodes):
     stop_cont_cmd = "cd " + dp_path + " && " + sys.executable \
                     + " utils/container_manager.py -o stop" \
                     + " -c " + container_name
-    RUN_LOGGER.debug("Run cmd to stop container(s) in the cluster:"
-                     + stop_cont_cmd)
-    failed_hosts = CLUSTER_MGR.run_command_some_hosts(stop_cont_cmd, nnodes, 60)
+    RUN_LOGGER.debug("Run cmd to stop container(s) in the cluster:" +
+                     stop_cont_cmd)
+    failed_hosts = CLUSTER_MGR.run_command_some_hosts(stop_cont_cmd, nnodes,
+                                                      60)
     if len(failed_hosts) != 0:
-        RUN_LOGGER.warning("Hosts that stop container " + container_name
-                           + " failed:" + ",".join(failed_hosts.keys())
-                           + " Continue.")
+        RUN_LOGGER.warning("Hosts that stop container " + container_name +
+                           " failed:" + ",".join(failed_hosts.keys()) +
+                           " Continue.")
         return False
     RUN_LOGGER.info("All containers stoped in the cluster")
     return True
@@ -228,13 +232,13 @@ def clear_caches_cluster(clear, nnodes):
 
     clear_cmd = "sync && sudo /sbin/sysctl vm.drop_caches=3"
     timeout = 30
-    RUN_LOGGER.debug("Run cmd in the cluster to clear the system cache: "
-                     + clear_cmd + " timeout=" + str(timeout))
+    RUN_LOGGER.debug("Run cmd in the cluster to clear the system cache: " +
+                     clear_cmd + " timeout=" + str(timeout))
     failed_hosts = CLUSTER_MGR.run_command_some_hosts(clear_cmd, nnodes,
                                                       timeout)
     if len(failed_hosts) != 0:
-        RUN_LOGGER.warning("Hosts that clear cache failed: "
-                           + ",".join(failed_hosts.keys()) + ". Continue.")
+        RUN_LOGGER.warning("Hosts that clear cache failed: " +
+                           ",".join(failed_hosts.keys()) + ". Continue.")
     RUN_LOGGER.info("Clear system caches if it set......[SUCCESS]")
 
 
@@ -243,26 +247,26 @@ def start_monitors_in_cluster(dp_path, case_log_dir, nnodes):
     start_mon_cmd = "cd " + dp_path + " && " + sys.executable \
                     + " utils/sys_monitor.py -o restart -l "
     timeout = 60
-    RUN_LOGGER.debug("Run cmd in the cluster to start system monitors: "
-                     + start_mon_cmd)
+    RUN_LOGGER.debug("Run cmd in the cluster to start system monitors: " +
+                     start_mon_cmd)
     bad_hosts = CLUSTER_MGR.start_monitors_some_hosts(start_mon_cmd,
                                                       case_log_dir, nnodes,
                                                       timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't start system monitors: "
-                         + ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Hosts that can't start system monitors: " +
+                         ",".join(bad_hosts.keys()))
 
     ven_mon_path = os.path.join(dp_path, tc.VENDOR, tc.VENDOR + "_monitor.py")
     start_mon_cmd = "cd " + dp_path + " && " + sys.executable \
                     + " " + ven_mon_path + " -o restart -l "
-    RUN_LOGGER.debug("Run cmd in the cluster to start vendor's monitors: "
-                     + start_mon_cmd)
+    RUN_LOGGER.debug("Run cmd in the cluster to start vendor's monitors: " +
+                     start_mon_cmd)
     bad_hosts = CLUSTER_MGR.start_monitors_some_hosts(start_mon_cmd,
                                                       case_log_dir, nnodes,
                                                       timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't start vendor's monitors: "
-                         + ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Hosts that can't start vendor's monitors: " +
+                         ",".join(bad_hosts.keys()))
 
 
 def stop_monitors_in_cluster(dp_path, nnodes):
@@ -270,24 +274,24 @@ def stop_monitors_in_cluster(dp_path, nnodes):
     stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
                    + " utils/sys_monitor.py -o stop"
     timeout = 60
-    RUN_LOGGER.debug("Run cmd in the cluster to stop system monitors: "
-                     + stop_mon_cmd)
+    RUN_LOGGER.debug("Run cmd in the cluster to stop system monitors: " +
+                     stop_mon_cmd)
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(stop_mon_cmd, nnodes,
                                                    timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't stop system monitors: "
-                         + ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Hosts that can't stop system monitors: " +
+                         ",".join(bad_hosts.keys()))
 
     ven_mon_path = os.path.join(dp_path, tc.VENDOR, tc.VENDOR + "_monitor.py")
     stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
                    + " " + ven_mon_path + " -o stop"
-    RUN_LOGGER.debug("Run cmd in the cluster to start vendor's monitors: "
-                     + stop_mon_cmd)
+    RUN_LOGGER.debug("Run cmd in the cluster to start vendor's monitors: " +
+                     stop_mon_cmd)
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(stop_mon_cmd, nnodes,
                                                    timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't start vendor's monitors: "
-                         + ",".join(bad_hosts.keys()))
+        RUN_LOGGER.error("Hosts that can't start vendor's monitors: " +
+                         ",".join(bad_hosts.keys()))
 
 
 def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
@@ -319,10 +323,11 @@ def wait_for_finish(dp_path, container_name, pid_file_path, nnodes):
                 + " utils/container_manager.py -o pidrunning -c " \
                 + container_name + " -f " + pid_file_path
 
-    RUN_LOGGER.debug("Run cmd to check whether the training tasks is running: "
-                     + check_cmd)
+    RUN_LOGGER.debug(
+        "Run cmd to check whether the training tasks is running: " + check_cmd)
     while True:
-        bad_hosts = CLUSTER_MGR.run_command_some_hosts(check_cmd, nnodes,
+        bad_hosts = CLUSTER_MGR.run_command_some_hosts(check_cmd,
+                                                       nnodes,
                                                        no_log=True)
         if len(bad_hosts) == nnodes:
             break
@@ -389,30 +394,30 @@ def collect_and_merge_logs(curr_log_path, cases):
     for case in cases:
         case_config = tc.__dict__[case]
         repeat = case_config["repeat"]
-        for i in range(1, repeat+1):
+        for i in range(1, repeat + 1):
             case_log_dir = os.path.join(curr_log_path, case, "round" + str(i))
-            RUN_LOGGER.debug("Case " + case + ", round " + str(i)
-                             + ", log dir: " + case_log_dir)
+            RUN_LOGGER.debug("Case " + case + ", round " + str(i) +
+                             ", log dir: " + case_log_dir)
             nnodes = case_config["nnodes"]
             failed_hosts = CLUSTER_MGR.collect_files_some_hosts(curr_log_path,
                                                                 curr_log_path,
                                                                 nnodes,
                                                                 timeout=600)
             if len(failed_hosts) != 0:
-                RUN_LOGGER.error("Case " + case + ", round " + str(i)
-                                 + ", log dir: " + case_log_dir
-                                 + " collect log failed on hosts: "
-                                 + ",".join(failed_hosts))
+                RUN_LOGGER.error("Case " + case + ", round " + str(i) +
+                                 ", log dir: " + case_log_dir +
+                                 " collect log failed on hosts: " +
+                                 ",".join(failed_hosts))
                 get_all = False
             else:
-                RUN_LOGGER.info("Case " + case + ", round " + str(i)
-                                + ", get all logs in dir: " + case_log_dir)
+                RUN_LOGGER.info("Case " + case + ", round " + str(i) +
+                                ", get all logs in dir: " + case_log_dir)
 
     if get_all:
         RUN_LOGGER.info("Congrats! See all logs in " + curr_log_path)
     else:
-        RUN_LOGGER.warning("Sorry! Not all logs have been collected in "
-                           + curr_log_path)
+        RUN_LOGGER.warning("Sorry! Not all logs have been collected in " +
+                           curr_log_path)
 
 
 def get_valid_cases():
@@ -434,10 +439,10 @@ def get_valid_cases():
         RUN_LOGGER.error("No valid cases found in test_conf...[EXIT]")
         sys.exit(4)
     RUN_LOGGER.debug("Valid cases: " + ",".join(valid_cases))
-    RUN_LOGGER.debug("Invalid cases that can't find config: "
-                     + ",".join(cases_config_not_found))
-    RUN_LOGGER.debug("Invalid cases that config is error: "
-                     + ",".join(cases_config_error))
+    RUN_LOGGER.debug("Invalid cases that can't find config: " +
+                     ",".join(cases_config_not_found))
+    RUN_LOGGER.debug("Invalid cases that config is error: " +
+                     ",".join(cases_config_error))
     RUN_LOGGER.info("Get valid cases list......[SUCCESS]")
     return valid_cases
 
@@ -467,8 +472,8 @@ def prepare_case_config_cluster(dp_path, case_config, case):
     failed_hosts = CLUSTER_MGR.sync_file_to_some_hosts(case_config_file,
                                                        case_config_dir, nnodes)
     if len(failed_hosts) != 0:
-        RUN_LOGGER.error("Hosts that sync vendor case config file failed: "
-                         + ",".join(failed_hosts.keys()))
+        RUN_LOGGER.error("Hosts that sync vendor case config file failed: " +
+                         ",".join(failed_hosts.keys()))
         return False
     return True
 
@@ -494,15 +499,20 @@ def main():
     # Set logger first
     timestamp_log_dir = "run" + time.strftime("%Y%m%d%H%M%S", time.localtime())
     curr_log_path = os.path.join(tc.FLAGPERF_LOG_PATH_HOST, timestamp_log_dir)
-    RUN_LOGGER.init(curr_log_path, "flagperf_run.log",
-                    tc.FLAGPERF_LOG_LEVEL, "both", log_caller=True)
+    RUN_LOGGER.init(curr_log_path,
+                    "flagperf_run.log",
+                    tc.FLAGPERF_LOG_LEVEL,
+                    "both",
+                    log_caller=True)
 
     RUN_LOGGER.info("======== Step 1: Check environment and configs. ========")
-    RUN_LOGGER.info("Initialize logger with log path: " + curr_log_path
-                    + "......[SUCCESS]")
+    RUN_LOGGER.info("Initialize logger with log path: " + curr_log_path +
+                    "......[SUCCESS]")
 
     # Check test environment and configs of testcases.
-    CLUSTER_MGR.init(cc.HOSTS, cc.SSH_PORT, getpass.getuser(),
+    CLUSTER_MGR.init(cc.HOSTS,
+                     cc.SSH_PORT,
+                     getpass.getuser(),
                      logger=RUN_LOGGER)
     check_cluster_health()
     dp_path = _get_deploy_path()
@@ -518,16 +528,16 @@ def main():
         case_config = tc.__dict__[case]
 
         # Prepare docker image.
-        image_mgr = image_manager.ImageManager("flagperf-" + tc.VENDOR + "-"
-                                               + case_config["framework"],
-                                               "t_" + VERSION)
+        image_mgr = image_manager.ImageManager(
+            "flagperf-" + tc.VENDOR + "-" + case_config["framework"],
+            "t_" + VERSION)
         image_name = image_mgr.repository + ":" + image_mgr.tag
         nnodes = case_config["nnodes"]
         RUN_LOGGER.info("=== 2.1 Prepare docker image:" + image_name + " ===")
         if not prepare_docker_image_cluster(dp_path, image_mgr,
                                             case_config["framework"], nnodes):
-            RUN_LOGGER.error("=== 2.1 Prepare docker image...[FAILED] "
-                             + "Ignore this case " + case + " ===")
+            RUN_LOGGER.error("=== 2.1 Prepare docker image...[FAILED] " +
+                             "Ignore this case " + case + " ===")
             continue
 
         # Set command to start docker container in the cluster
@@ -551,37 +561,37 @@ def main():
 
         RUN_LOGGER.info("=== 2.2 Prepare case config in cluster. ===")
         if not prepare_case_config_cluster(dp_path, case_config, case):
-            RUN_LOGGER.warning("Prepare case config in cluster...[FAILED]. "
-                               + "Ignore case " + case)
+            RUN_LOGGER.warning("Prepare case config in cluster...[FAILED]. " +
+                               "Ignore case " + case)
             continue
         RUN_LOGGER.info("=== 2.3 Setup container and run testcases. ===")
-        for count in range(1, case_config["repeat"]+1):
-            RUN_LOGGER.info("-== Testcase " + case + " Round " + str(count)
-                            + " starts ==-")
+        for count in range(1, case_config["repeat"] + 1):
+            RUN_LOGGER.info("-== Testcase " + case + " Round " + str(count) +
+                            " starts ==-")
             RUN_LOGGER.info("1) Prepare container environments in cluster...")
-            case_log_dir = os.path.join(curr_log_path, case, "round"
-                                        + str(count))
+            case_log_dir = os.path.join(curr_log_path, case,
+                                        "round" + str(count))
             if not prepare_containers_env_cluster(dp_path, case_log_dir,
                                                   container_name, image_name,
                                                   case_config):
                 RUN_LOGGER.error("1) Prepare container environments in cluster"
-                                 "...[FAILED]. Ignore case " + case + " round "
-                                 + str(count))
+                                 "...[FAILED]. Ignore case " + case +
+                                 " round " + str(count))
                 continue
             RUN_LOGGER.info("2) Start tasks in the cluster...")
             start_tasks_in_cluster(dp_path, container_name, case_config,
                                    base_args, count)
             # Wait until start_xxx_task.py finished.
             RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
-            pid_file_path = os.path.join(log_dir_container, "start_"
-                                         + case_config["framework"]
-                                         + "_task.pid")
+            pid_file_path = os.path.join(
+                log_dir_container,
+                "start_" + case_config["framework"] + "_task.pid")
             wait_for_finish(dp_path, container_name, pid_file_path, nnodes)
             RUN_LOGGER.info("3) Training tasks end in the cluster...")
             RUN_LOGGER.info("4) Clean container environments in cluster...")
             clean_containers_env_cluster(dp_path, container_name, nnodes)
-            RUN_LOGGER.info("-== Testcase " + case + " Round " + str(count)
-                            + " finished ==-")
+            RUN_LOGGER.info("-== Testcase " + case + " Round " + str(count) +
+                            " finished ==-")
         RUN_LOGGER.info("=== 2.3 Setup container and run testcases finished."
                         " ===")
     RUN_LOGGER.info("========= Step 3: Collect logs in the cluster. =========")

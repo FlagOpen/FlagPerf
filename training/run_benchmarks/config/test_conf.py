@@ -40,15 +40,17 @@ CLEAR_CACHES = True
 
 # Set cases you want to run here.
 # cases is a list of case name.
-CASES = ['BERT_PADDLE_DEMO_A100_1X8',
-         'GLM_TORCH_DEMO_A100_1X8',
-         'CPM_TORCH_DEMO_A100_1X8']
+CASES = [
+    'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
+    'CPM_TORCH_DEMO_A100_1X8'
+]
 
 # Config each case in a dictionary like this.
-BERT_PADDLE_DEMO_A100_1X8 = { # benchmark case name, one in CASES
+BERT_PADDLE_DEMO_A100_1X8 = {  # benchmark case name, one in CASES
     "model": "bert",  # model name
     "framework": "paddle",  # AI framework
-    "config": "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
+    "config":
+    "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
     "repeat": 1,  # How many times to run this case
     "nnodes": 1,  #  How many hosts to run this case
     "nproc": 8,  # How many processes will run on each host

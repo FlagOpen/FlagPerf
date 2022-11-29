@@ -70,7 +70,10 @@ class PerfLogger:
 
     _singleton = None
 
-    def __init__(self, rank: int, level: LogLevel=LogLevel.SUBMITTION, logger: logging.Logger=None):
+    def __init__(self,
+                 rank: int,
+                 level: LogLevel = LogLevel.SUBMITTION,
+                 logger: logging.Logger = None):
         self.rank = rank
         self.level = level
         self.logger = logger or logging.Logger(LogMeta.default_logger_name)
@@ -82,7 +85,8 @@ class PerfLogger:
         self.previous_log_time = current
         return current
 
-    def init_logger(self, submitter: str, model: str, config_path: str, config: dict, *args, **kwargs):
+    def init_logger(self, submitter: str, model: str, config_path: str,
+                    config: dict, *args, **kwargs):
         message = {
             LogKeys.submmiter: submitter,
             LogKeys.model: model,
@@ -92,7 +96,13 @@ class PerfLogger:
 
         self.log(Event.SUBMIT_INFO, message, *args, **kwargs)
 
-    def log(self, event: Event, level=None, rank=-1, message: Optional[Union[str, dict]]=None, *args, **kwargs):
+    def log(self,
+            event: Event,
+            level=None,
+            rank=-1,
+            message: Optional[Union[str, dict]] = None,
+            *args,
+            **kwargs):
         level = level or self.level
         show_log = any([rank == self.rank, rank == -1])
         if not show_log:
@@ -104,13 +114,12 @@ class PerfLogger:
 
         call_info = self.get_caller(stacklevel=stacklevel)
 
-        message = self._encode_message(event, message, call_info, *args, **kwargs)
+        message = self._encode_message(event, message, call_info, *args,
+                                       **kwargs)
         self.logger.log(self.level.value, message)
 
-    def _encode_message(self, event: Event,
-                        message: Union[str, dict],
-                        call_info: Tuple[str, int],
-                        *args, **kwargs) -> str:
+    def _encode_message(self, event: Event, message: Union[str, dict],
+                        call_info: Tuple[str, int], *args, **kwargs) -> str:
         if isinstance(message, str):
             message = OrderedDict({
                 LogKeys.event: event.name,
@@ -125,7 +134,7 @@ class PerfLogger:
             message = OrderedDict({
                 LogKeys.event: event.name,
             })
-            
+
         for k, v in kwargs.items():
             if k in LogKeys.__dict__:
                 message[k] = v
@@ -142,7 +151,8 @@ class PerfLogger:
         return self._log_template(message)
 
     def _log_template(self, message: str):
-        return LogMeta.log_template.format(header=LogMeta.log_header, message=message)
+        return LogMeta.log_template.format(header=LogMeta.log_header,
+                                           message=message)
 
     def get_caller(self, stacklevel=1) -> Tuple[str, int]:
         f = currentframe()
@@ -175,9 +185,10 @@ class PerfLogger:
         return rv
 
     @classmethod
-    def get_default_logger(cls, rank: int,
-                 level: LogLevel=LogLevel.SUBMITTION,
-                 logger: logging.Logger=None):
+    def get_default_logger(cls,
+                           rank: int,
+                           level: LogLevel = LogLevel.SUBMITTION,
+                           logger: logging.Logger = None):
         if cls._singleton is None:
             cls._singleton = cls(rank=rank, level=level, logger=logger)
 

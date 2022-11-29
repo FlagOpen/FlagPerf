@@ -5,10 +5,12 @@ import torch.nn.functional as F
 import contextlib
 import math
 
-from model.layers.linear import RowLinear,ColumnLinear
+from model.layers.linear import RowLinear, ColumnLinear
 from torch.nn import Linear
 
-def split_tensor_along_last_dim(tensor, num_partitions,
+
+def split_tensor_along_last_dim(tensor,
+                                num_partitions,
                                 contiguous_split_chunks=False):
     """Split a tensor along its last dimension.
     Arguments:
@@ -28,6 +30,7 @@ def split_tensor_along_last_dim(tensor, num_partitions,
 
     return tensor_list
 
+
 def ensure_divisibility(numerator, denominator):
     """Ensure that numerator is divisible by the denominator."""
     assert numerator % denominator == 0, '{} is not divisible by {}'.format(
@@ -39,7 +42,7 @@ def divide(numerator, denominator):
     the division value."""
     ensure_divisibility(numerator, denominator)
     return numerator // denominator
-    
+
 
 class SelfAttention(torch.nn.Module):
     """Parallel self-attention layer for GPT2.
@@ -68,10 +71,16 @@ class SelfAttention(torch.nn.Module):
         s: sequence length
     """
 
-    def __init__(self, hidden_size, num_attention_heads,
-                 attention_dropout_prob, output_dropout_prob,
-                 init_method, output_layer_init_method=None, relative_encoding=False,
-                 performer=False, attention_scale=1.0):
+    def __init__(self,
+                 hidden_size,
+                 num_attention_heads,
+                 attention_dropout_prob,
+                 output_dropout_prob,
+                 init_method,
+                 output_layer_init_method=None,
+                 relative_encoding=False,
+                 performer=False,
+                 attention_scale=1.0):
         super(SelfAttention, self).__init__()
         self.performer = performer
         # Set output layer initialization if not provided.
@@ -80,28 +89,31 @@ class SelfAttention(torch.nn.Module):
         # Per attention head and per partition values.
 
         self.hidden_size_per_partition = hidden_size
-        self.hidden_size_per_attention_head = divide(
-            hidden_size, num_attention_heads)
+        self.hidden_size_per_attention_head = divide(hidden_size,
+                                                     num_attention_heads)
 
         self.num_attention_heads_per_partition = num_attention_heads
         self.attention_scale = attention_scale
         # Strided linear layer.
-        self.query_key_value = ColumnLinear(hidden_size, 3 * hidden_size,
-                                                    stride=3,
-                                                    gather_output=False,
-                                                    init_method=init_method)
+        self.query_key_value = ColumnLinear(hidden_size,
+                                            3 * hidden_size,
+                                            stride=3,
+                                            gather_output=False,
+                                            init_method=init_method)
 
         if relative_encoding:
-            self.relative = ColumnLinear(hidden_size, hidden_size, gather_output=False,
-                                                 init_method=init_method)
+            self.relative = ColumnLinear(hidden_size,
+                                         hidden_size,
+                                         gather_output=False,
+                                         init_method=init_method)
 
         self.attention_dropout = torch.nn.Dropout(attention_dropout_prob)
 
         # Output.
         self.dense = RowLinear(hidden_size,
-                                hidden_size,
-                                input_is_parallel=True,
-                                init_method=output_layer_init_method)
+                               hidden_size,
+                               input_is_parallel=True,
+                               init_method=output_layer_init_method)
 
         self.output_dropout = torch.nn.Dropout(output_dropout_prob)
 
@@ -120,7 +132,8 @@ class SelfAttention(torch.nn.Module):
         # ql x kl x bsz x h
         # bsz x h x ql x kl
         zero_pad = torch.zeros((*x.size()[:-2], x.size(-2), 1),
-                               device=x.device, dtype=x.dtype)
+                               device=x.device,
+                               dtype=x.dtype)
         x_padded = torch.cat([zero_pad, x], dim=-1)
 
         x_padded = x_padded.view(*x.size()[:-2], x.size(-1) + 1, x.size(-2))
@@ -133,7 +146,13 @@ class SelfAttention(torch.nn.Module):
 
         return x
 
-    def forward(self, hidden_states, ltor_mask, position_embeddings=None, r_w_bias=None, r_r_bias=None, mem=None):
+    def forward(self,
+                hidden_states,
+                ltor_mask,
+                position_embeddings=None,
+                r_w_bias=None,
+                r_r_bias=None,
+                mem=None):
         # hidden_states: [b, s, h]
         # ltor_mask: [1, 1, s, s]
 
@@ -142,36 +161,40 @@ class SelfAttention(torch.nn.Module):
 
         if mem is None:
             mixed_x_layer = self.query_key_value(hidden_states)
-            (mixed_query_layer,
-             mixed_key_layer,
-             mixed_value_layer) = split_tensor_along_last_dim(mixed_x_layer, 3)
+            (mixed_query_layer, mixed_key_layer,
+             mixed_value_layer) = split_tensor_along_last_dim(
+                 mixed_x_layer, 3)
         else:
             cat = torch.cat((mem, hidden_states), 1)
             mixed_x_layer = self.query_key_value(cat)
-            (mixed_query_layer,
-             mixed_key_layer,
-             mixed_value_layer) = split_tensor_along_last_dim(mixed_x_layer, 3)
+            (mixed_query_layer, mixed_key_layer,
+             mixed_value_layer) = split_tensor_along_last_dim(
+                 mixed_x_layer, 3)
             mixed_query_layer = mixed_query_layer[:, -query_length:]
 
         # Reshape and transpose [b, np, s, hn]
         query_layer = self._transpose_for_scores(mixed_query_layer)
         key_layer = self._transpose_for_scores(mixed_key_layer)
         value_layer = self._transpose_for_scores(mixed_value_layer)
-        
+
         if self.attention_scale > 1.0:
             # Raw attention scores. [b, np, s, s]
-            attention_scores = torch.matmul(query_layer / math.sqrt(self.attention_scale),
-                                            key_layer.transpose(-1, -2) / math.sqrt(
-                                            self.hidden_size_per_attention_head * self.attention_scale))
+            attention_scores = torch.matmul(
+                query_layer / math.sqrt(self.attention_scale),
+                key_layer.transpose(-1, -2) /
+                math.sqrt(self.hidden_size_per_attention_head *
+                          self.attention_scale))
         else:
-            attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2) / math.sqrt(
-                self.hidden_size_per_attention_head))
+            attention_scores = torch.matmul(
+                query_layer,
+                key_layer.transpose(-1, -2) /
+                math.sqrt(self.hidden_size_per_attention_head))
 
         # Apply the left to right attention mask.
         attention_scores = torch.mul(attention_scores, ltor_mask)
         if self.attention_scale > 1.0:
-            max_attention_scores = attention_scores.max(
-                dim=-1, keepdim=True)[0]
+            max_attention_scores = attention_scores.max(dim=-1,
+                                                        keepdim=True)[0]
             attention_scores -= max_attention_scores
             attention_scores *= self.attention_scale
         # if torch.distributed.get_rank() == 0:
@@ -201,6 +224,7 @@ class SelfAttention(torch.nn.Module):
 
         return output
 
+
 if __name__ == "__main__":
     max_seq_length: int = 512
     num_layers = 24
@@ -213,13 +237,11 @@ if __name__ == "__main__":
     checkpoint_num_layers = 1
     attention_scale = 1
     vocab_size = 30592
-    test_att = SelfAttention(hidden_size,num_attention_heads,attention_dropout,attention_dropout,init.xavier_normal_,init.xavier_normal_,False,True,1.0)
-    input_2 = torch.rand([2,max_seq_length,hidden_size])
-    mask = torch.ones([1,1,max_seq_length,max_seq_length])
-    output = test_att(input_2,mask)
+    test_att = SelfAttention(hidden_size, num_attention_heads,
+                             attention_dropout, attention_dropout,
+                             init.xavier_normal_, init.xavier_normal_, False,
+                             True, 1.0)
+    input_2 = torch.rand([2, max_seq_length, hidden_size])
+    mask = torch.ones([1, 1, max_seq_length, max_seq_length])
+    output = test_att(input_2, mask)
     print(output.shape)
-
-
-
-   
-    

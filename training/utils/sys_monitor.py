@@ -27,9 +27,19 @@ class Daemon:
     verbose: debug mode, disabled default.
     '''
 
-    def __init__(self, pid_file, log_file, err_file, log_path, rate1=5,
-                 rate2=120, stdin=os.devnull, stdout=os.devnull, stderr=os.devnull, home_dir='.',
-                 umask=0o22, verbose=0):
+    def __init__(self,
+                 pid_file,
+                 log_file,
+                 err_file,
+                 log_path,
+                 rate1=5,
+                 rate2=120,
+                 stdin=os.devnull,
+                 stdout=os.devnull,
+                 stderr=os.devnull,
+                 home_dir='.',
+                 umask=0o22,
+                 verbose=0):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
@@ -100,15 +110,15 @@ class Daemon:
                 f.write(result)
 
         def timer_cpu_mon():
-            cpu_process = Process(target=cpu_mon, args=(self.cpulog,))
+            cpu_process = Process(target=cpu_mon, args=(self.cpulog, ))
             cpu_process.start()
 
         def timer_mem_mon():
-            mem_process = Process(target=mem_mon, args=(self.memlog,))
+            mem_process = Process(target=mem_mon, args=(self.memlog, ))
             mem_process.start()
 
         def timer_pwr_mon():
-            pwr_process = Process(target=pwr_mon, args=(self.pwrlog,))
+            pwr_process = Process(target=pwr_mon, args=(self.pwrlog, ))
             pwr_process.start()
 
         schedule.every(self.rate1).seconds.do(timer_cpu_mon)
@@ -126,7 +136,8 @@ class Daemon:
             if pid > 0:
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write('fork #1 failed: %d (%s)\n' % (e.errno, e.strerror))
+            sys.stderr.write('fork #1 failed: %d (%s)\n' %
+                             (e.errno, e.strerror))
             sys.exit(1)
         os.chdir(self.home_dir)
         os.setsid()
@@ -136,7 +147,8 @@ class Daemon:
             if pid > 0:
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write('fork #2 failed: %d (%s)\n' % (e.errno, e.strerror))
+            sys.stderr.write('fork #2 failed: %d (%s)\n' %
+                             (e.errno, e.strerror))
             sys.exit(1)
         sys.stdout.flush()
         sys.stderr.flush()
@@ -221,10 +233,17 @@ class Daemon:
 def parse_args():
     ''' Check script input parameter. '''
     parse = argparse.ArgumentParser(description='Sys monitor script')
-    parse.add_argument('-o', type=str, metavar='[operation]', required=True,
+    parse.add_argument('-o',
+                       type=str,
+                       metavar='[operation]',
+                       required=True,
                        help='start|stop|restart|status')
-    parse.add_argument('-l', type=str, metavar='[log_path]', required=False,
-                       default='./logs/', help='log path')
+    parse.add_argument('-l',
+                       type=str,
+                       metavar='[log_path]',
+                       required=False,
+                       default='./logs/',
+                       help='log path')
     args = parse.parse_args()
     return args
 
@@ -239,7 +258,12 @@ def main():
     log_fn = str(path + '/sys_monitor.log')
     err_fn = str(path + '/sys_monitor.err')
 
-    subdaemon = Daemon(pid_fn, log_fn, err_fn, path, verbose=1, rate1=sample_rate1,
+    subdaemon = Daemon(pid_fn,
+                       log_fn,
+                       err_fn,
+                       path,
+                       verbose=1,
+                       rate1=sample_rate1,
                        rate2=sample_rate2)
     if operation == 'start':
         subdaemon.start()

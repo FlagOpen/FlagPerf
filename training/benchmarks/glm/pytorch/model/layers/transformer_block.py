@@ -70,13 +70,18 @@ class GLMTransformerLayer(torch.nn.Module):
                                                   eps=layernorm_epsilon)
 
         # MLP
-        self.mlp = GLMMLP(
-            hidden_size,
-            output_dropout_prob,
-            init_method,
-            output_layer_init_method=output_layer_init_method)
+        self.mlp = GLMMLP(hidden_size,
+                          output_dropout_prob,
+                          init_method,
+                          output_layer_init_method=output_layer_init_method)
 
-    def forward(self, hidden_states, ltor_mask, position_embeddings=None, r_w_bias=None, r_r_bias=None, mem=None):
+    def forward(self,
+                hidden_states,
+                ltor_mask,
+                position_embeddings=None,
+                r_w_bias=None,
+                r_r_bias=None,
+                mem=None):
         # hidden_states: [b, s, h]
         # ltor_mask: [1, 1, s, s]
 
@@ -84,8 +89,9 @@ class GLMTransformerLayer(torch.nn.Module):
         layernorm_output = self.input_layernorm(hidden_states)
         mem = self.input_layernorm(mem) if mem is not None else None
         # Self attention.
-        attention_output = self.attention(
-            layernorm_output, ltor_mask, position_embeddings, r_w_bias, r_r_bias, mem)
+        attention_output = self.attention(layernorm_output, ltor_mask,
+                                          position_embeddings, r_w_bias,
+                                          r_r_bias, mem)
         # Residual connection.
         layernorm_input = hidden_states + attention_output
         # Layer norm post the self attention.
@@ -107,9 +113,11 @@ if __name__ == "__main__":
     output_dropout_prob = 0.1
     layernorm_epsilon = 1e-10
     init_method = torch.nn.init.xavier_normal_
-    test_transformer = GLMTransformerLayer(
-        hidden_size, num_attention_heads, attention_dropout_prob, output_dropout_prob, layernorm_epsilon, init_method)
-    
+    test_transformer = GLMTransformerLayer(hidden_size, num_attention_heads,
+                                           attention_dropout_prob,
+                                           output_dropout_prob,
+                                           layernorm_epsilon, init_method)
+
     hidden_states = torch.rand([batch_size, seq_len, hidden_size])
     ltor_mask = torch.ones([1, 1, seq_len, seq_len])
 

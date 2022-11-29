@@ -16,8 +16,10 @@ from optimizers.loss_scaler import DynamicLossScaler
 
 clip_grad_norm = torch.nn.utils.clip_grad_norm_
 
+
 def convert_model(model: torch.nn.Module) -> torch.nn.Module:
     return _convert_model(model, config)
+
 
 def create_optimizer(model, args):
     param_groups = get_optimizer_param_groups(model)
@@ -35,9 +37,11 @@ def create_optimizer(model, args):
                                    dynamic_loss_args={
                                        'scale_window': args.loss_scale_window,
                                        'min_scale': args.min_scale,
-                                       'delayed_shift': args.hysteresis})
+                                       'delayed_shift': args.hysteresis
+                                   })
 
     return optimizer
+
 
 def model_to_fp16(model):
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
@@ -53,13 +57,16 @@ def model_to_fp16(model):
         model = FP16_Module(model)
     return model
 
+
 def model_to_ddp(model: nn.Module) -> nn.Module:
     i = torch.cuda.current_device()
     model = TorchDDP(model, device_ids=[i], output_device=i)
     return model
 
+
 def create_grad_scaler():
     return None
+
 
 def backward(step, lm_loss, reduced_loss, optimizer, lr_scheduler, model):
     args = config

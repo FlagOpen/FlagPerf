@@ -67,14 +67,17 @@ def add_to_argparser(config: dict, parser: ArgumentParser):
         if dtype in (str, int, float):
             parser.add_argument('--' + prefix + name, type=dtype, default=None)
         elif dtype == bool:
-            parser.add_argument(
-                '--' + prefix + name, action=f"store_{str(not value).lower()}", default=None)
+            parser.add_argument('--' + prefix + name,
+                                action=f"store_{str(not value).lower()}",
+                                default=None)
         elif isinstance(value, Mapping):
             for k, v in value.items():
                 add_args(parser, k, v, prefix=prefix + name + ".")
         elif isinstance(value, Iterable) and not isinstance(value, Mapping):
             parser.add_argument('--' + prefix + name,
-                                type=type(value[0]), nargs='+', default=None)
+                                type=type(value[0]),
+                                nargs='+',
+                                default=None)
         # else:
         #     print(f'WARN: Cannot parse key {prefix + name} of type {type(value)}.')
 
@@ -91,7 +94,10 @@ def _merge_dict_to_config(src: dict, target: dict, ignore_none=True):
         target[arg] = value
 
 
-def parse_from_args_and_config(base_params: dict, args=None, config=None, enable_extern_config=False):
+def parse_from_args_and_config(base_params: dict,
+                               args=None,
+                               config=None,
+                               enable_extern_config=False):
     parser = ArgumentParser()
     add_to_argparser(base_params, parser)
     parsed_args = parser.parse_args(args)
@@ -113,7 +119,10 @@ def parse_from_args_and_config(base_params: dict, args=None, config=None, enable
     return parsed_args
 
 
-def activate(path: str = None, config_file: str = None, enable_extern_config=False, cmd_args=None):
+def activate(path: str = None,
+             config_file: str = None,
+             enable_extern_config=False,
+             cmd_args=None):
     """ Find and activates externally defined config parameters by
     adding or updating attributes in the base config module.
 
@@ -135,8 +144,8 @@ def activate(path: str = None, config_file: str = None, enable_extern_config=Fal
 
     ext_config = os.path.join(os.path.abspath(path), config_file)
 
-    parsed_params = parse_from_args_and_config(
-        params, cmd_args, ext_config, enable_extern_config)
+    parsed_params = parse_from_args_and_config(params, cmd_args, ext_config,
+                                               enable_extern_config)
 
     _merge_dict_to_config(parsed_params.__dict__, base_config.__dict__)
 

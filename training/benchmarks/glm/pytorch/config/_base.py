@@ -6,7 +6,7 @@ fp16 = True
 # =========================================================
 # data
 # =========================================================
-data_dir:str = "/mnt/data/glm/train/"
+data_dir: str = "/mnt/data/glm/train/"
 train_data: str = ""
 eval_data: str = ""
 output_dir: str = ""
@@ -55,10 +55,9 @@ gradient_accumulation_steps: int = 1
 warmup: float = 0.1
 lr_decay_ratio: float = 0.1
 
-clip_grad:float = 1.0
+clip_grad: float = 1.0
 
 seed: int = 10483
-
 
 # Stop training after reaching this accuracy
 target_accuracy: float = 0.8
