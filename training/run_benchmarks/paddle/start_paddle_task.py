@@ -14,15 +14,11 @@ from utils import flagperf_logger
 START_LOGGER = flagperf_logger.FlagPerfLogger()
 
 
-def _get_model_path(vendor, test_type, model_name):
+def _get_model_path(vendor, model_name):
     '''Return the model path according to vendor or None if it doesn't exist.
     '''
-    if test_type == "default":
-        model_path = os.path.join(CURR_PATH + "/../../benchmarks/" +
-                                  model_name + "/paddle/")
-    else:
-        model_path = os.path.join(CURR_PATH + "/../../" + vendor +
-                                  "/benchmarks/" + model_name + "/paddle/")
+    model_path = os.path.join(CURR_PATH + "/../../benchmarks/" + model_name +
+                              "/paddle/")
     model_path = os.path.abspath(model_path)
     if not os.path.exists(model_path):
         START_LOGGER.error("Can't find model path: " + model_path)
@@ -47,8 +43,7 @@ def _get_config_dir_file(task_args):
 
 def _get_train_script_path(task_args):
     '''Return training script path, or None if it does not exist.'''
-    model_path = _get_model_path(task_args.vendor, task_args.test_type,
-                                 task_args.model_name)
+    model_path = _get_model_path(task_args.vendor, task_args.model_name)
     if model_path is None:
         return None
     train_script_path = os.path.join(model_path, task_args.train_script)
@@ -117,11 +112,6 @@ def parse_args():
                         type=str,
                         default=None,
                         help="The accelerator XXX_VISIBLE_DEVICE env name.")
-    parser.add_argument("--test_type",
-                        type=str,
-                        default="default",
-                        help="Test type of the benchmark. It should be "
-                        "\"default\" or \"customized\"")
     parser.add_argument("--case_name",
                         type=str,
                         required=True,

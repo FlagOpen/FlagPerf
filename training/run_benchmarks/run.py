@@ -74,23 +74,16 @@ def check_cluster_deploy_path(dp_path):
 
 def check_testconf():
     ''' Check test config.
-        Make sure TEST_TYPE is valid and all CASES are configed.
+        Make sure all CASES are configed.
     '''
-    RUN_LOGGER.debug("Check test config: TEST_TYPE and VENDOR")
-    if 'TEST_TYPE' not in tc.__dict__.keys():
-        RUN_LOGGER.error("TEST_TYPE MUST be set in test_conf...[EXIT]")
-        sys.exit(2)
-    elif ((tc.TEST_TYPE != "default") and (tc.TEST_TYPE != "customized")):
-        RUN_LOGGER.error("TEST_TYPE MUST be default or customized...[EXIT]")
-        sys.exit(2)
-
+    RUN_LOGGER.debug("Check test config: VENDOR")
     if 'VENDOR' not in tc.__dict__.keys():
         RUN_LOGGER.error("VENDOR MUST be set in test_conf...[EXIT]")
         sys.exit(2)
-    RUN_LOGGER.info("Check test config: TEST_TYPE and VENDOR......[SUCCESS]")
+    RUN_LOGGER.info("Check test config: VENDOR......[SUCCESS]")
 
 
-def check_case_config(case, case_config, test_type, vendor):
+def check_case_config(case, case_config, vendor):
     '''Check config of the testcase. Make sure its path exists, framework is
        right and config file exists.
     '''
@@ -107,12 +100,8 @@ def check_case_config(case, case_config, test_type, vendor):
                            ",".join(must_configs))
         return False
 
-    if test_type == "default":
-        model_path = CURR_PATH + "/../benchmarks/" + case_config["model"] + \
-            "/" + case_config["framework"]
-    else:
-        model_path = CURR_PATH + "/../" + vendor + "/benchmarks/" + \
-                     case_config["model"] + "/" + case_config["framework"]
+    model_path = CURR_PATH + "/../benchmarks/" + case_config["model"] + \
+                 "/" + case_config["framework"]
     model_path = os.path.abspath(model_path)
     if not os.path.exists(model_path):
         RUN_LOGGER.warning("Case " + case + ": deploy path doesn't exist: " +
@@ -431,7 +420,7 @@ def get_valid_cases():
             cases_config_not_found.append(case)
             continue
         case_config = tc.__dict__[case]
-        if not check_case_config(case, case_config, tc.TEST_TYPE, tc.VENDOR):
+        if not check_case_config(case, case_config, tc.VENDOR):
             cases_config_error.append(case)
             continue
         valid_cases.append(case)
@@ -484,7 +473,6 @@ def log_test_configs(cases, curr_log_path, dp_path):
     RUN_LOGGER.info("Prepare to run flagperf benchmakrs with configs: ")
     RUN_LOGGER.info("Deploy path on host:\t" + dp_path)
     RUN_LOGGER.info("Vendor:\t\t" + tc.VENDOR)
-    RUN_LOGGER.info("Test type:\t\t" + tc.TEST_TYPE)
     RUN_LOGGER.info("Testcases:\t\t[" + ','.join(cases) + "]")
     RUN_LOGGER.info("Log path on host:\t" + curr_log_path)
     RUN_LOGGER.info("Cluster:\t\t[" + ",".join(cc.HOSTS) + "]")
@@ -548,7 +536,6 @@ def main():
         log_dir_container = os.path.join(tc.FLAGPERF_LOG_PATH_CONTAINER,
                                          timestamp_log_dir)
         base_args = " --vendor " + tc.VENDOR + " --case_name " + case \
-                    + " --test_type " + tc.TEST_TYPE \
                     + " --model_name " + case_config["model"] \
                     + " --train_script " + "run_pretraining.py" \
                     + " --nnodes " + str(nnodes) \

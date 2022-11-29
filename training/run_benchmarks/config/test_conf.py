@@ -10,11 +10,6 @@ ACCE_CONTAINER_OPT = " --gpus all"
 # nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
-# Set type of benchmarks, default or customized.
-# default: run benchmarks in training/benchmarks/
-# [NOT SUPPORTED] customized: run benchmarks in training/<vendor>/benchmarks/
-TEST_TYPE = "default"
-
 # Set pip source, which will be used in preparing envs in container
 PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
 
@@ -29,7 +24,7 @@ FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
 FLAGPERF_LOG_PATH_HOST = FLAGPERF_PATH_HOST + "/result/"
 # Set log path in container here.
 FLAGPERF_LOG_PATH_CONTAINER = FLAGPERF_PATH_CONTAINER + "/result/"
-# Set log level. It should be 'debug', 'info', 'warning' or 'error'.
+# Set log level. It should be 'debug', 'info', 'warning', or 'error'.
 FLAGPERF_LOG_LEVEL = 'debug'
 
 # System config
@@ -38,8 +33,8 @@ SHM_SIZE = "32G"
 # Clear cache config. Clean system cache before running testcase.
 CLEAR_CACHES = True
 
-# Set cases you want to run here.
-# cases is a list of case name.
+# Set the case list you want to run here.
+# CASES is a list of case names.
 CASES = [
     'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
     'CPM_TORCH_DEMO_A100_1X8'

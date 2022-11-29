@@ -12,10 +12,10 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
 
 
 ```
-    OS：Ubuntu 20.04
-    Kernel：5.4.0-52-generic
-    Docker：20.10.9
-    Python：3.8
+    OS: Ubuntu 20.04
+    Kernel: 5.4.0-52-generic
+    Docker: 20.10.9
+    Python: 3.8
 ```
 
 #### 代码目录说明
@@ -29,7 +29,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     ├── nvidia      # 厂商配置及扩展
     ├── requirements.txt # FlagPerf依赖的python包
     ├── run_benchmarks # 测试任务的脚本和配置
-    └── utils # 测试任务执行需要胡工具
+    └── utils # 测试任务执行需要的工具
 ```
 
 #### 下载FlagPerf并部署
@@ -92,11 +92,6 @@ ACCE_CONTAINER_OPT = " --gpus all"
 # nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
-# Set type of benchmarks, default or customized.
-# default: run benchmarks in training/benchmarks/
-# [NOT SUPPORTED] customized: run benchmarks in training/<vendor>/benchmarks/
-TEST_TYPE = "default"
-
 # Set pip source, which will be used in preparing envs in container
 PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
 
@@ -111,7 +106,7 @@ FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
 FLAGPERF_LOG_PATH_HOST = FLAGPERF_PATH_HOST + "/result/"
 # Set log path in container here.
 FLAGPERF_LOG_PATH_CONTAINER = FLAGPERF_PATH_CONTAINER + "/result/"
-# Set log level. It should be 'debug', 'info', 'warning' or 'error'.
+# Set log level. It should be 'debug', 'info', 'warning', or 'error'.
 FLAGPERF_LOG_LEVEL = 'debug'
 
 # System config
@@ -120,8 +115,8 @@ SHM_SIZE = "32G"
 # Clear cache config. Clean system cache before running testcase.
 CLEAR_CACHES = True
 
-# Set cases you want to run here.
-# cases is a list of case name.
+# Set the case list you want to run here.
+# CASES is a list of case names.
 CASES = ['BERT_PADDLE_DEMO_A100_1X8',
          'GLM_TORCH_DEMO_A100_1X8',
          'CPM_TORCH_DEMO_A100_1X8']
@@ -173,7 +168,7 @@ seed = 9031
 
 ```
 ==============================================
-          Welcome to flagperf!
+          Welcome to FlagPerf!
       See more at https://baai.ac.cn/ 
 ==============================================
 2022-11-21 19:19:24,013	[INFO]	[run.py,500]======== Step 1: Check environment and configs. ========
@@ -184,8 +179,8 @@ seed = 9031
 2022-11-21 19:19:24,997	[DEBUG]	[run.py,63]Check flagperf deployment path: /home/FlagPerf/training
 2022-11-21 19:19:24,997	[DEBUG]	[cluster_manager.py,43]Run cmd on host with ssh. ssh cmd=ssh -o ConnectTimeout=3 -o StrictHostKeyChecking=no -l root -p 22 10.1.2.2 'cd /home/FlagPerf/training' host=10.1.2.2 timeout=10
 2022-11-21 19:19:25,780	[INFO]	[run.py,71]Check flagperf deployment path: /home/FlagPerf/training...[SUCCESS]
-2022-11-21 19:19:25,780	[DEBUG]	[run.py,79]Check test config: TEST_TYPE and VENDOR
-2022-11-21 19:19:25,780	[INFO]	[run.py,90]Check test config: TEST_TYPE and VENDOR......[SUCCESS]
+2022-11-21 19:19:25,780	[DEBUG]	[run.py,79]Check test config: VENDOR
+2022-11-21 19:19:25,780	[INFO]	[run.py,90]Check test config: VENDOR......[SUCCESS]
 2022-11-21 19:19:25,780	[DEBUG]	[run.py,420]Check configs of all test cases: GLM_TORCH_DEMO_A100_1X8,CPM_TORCH_DEMO_A100_1X8
 2022-11-21 19:19:25,780	[DEBUG]	[run.py,97]Check config of test case: GLM_TORCH_DEMO_A100_1X8
 
