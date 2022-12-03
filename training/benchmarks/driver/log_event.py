@@ -10,12 +10,15 @@ STACKLEVEL = 4
 
 class LogEventManager(EventManager):
 
-    def __init__(self, local_rank, logger: PerfLogger = None, log_freq: int = 0):
+    def __init__(self,
+                 local_rank,
+                 logger: PerfLogger = None,
+                 log_freq: int = 0):
         super(LogEventManager, self).__init__()
         self.log_freq = log_freq
         level = LogLevel.INFO if log_freq > 0 else LogLevel.SUBMITTION
-        self.logger = logger or PerfLogger.get_default_logger(
-            rank=local_rank, level=level)
+        self.logger = logger or PerfLogger.get_default_logger(rank=local_rank,
+                                                              level=level)
 
     def on_launch_training(self):
         self._log_event(Event.LAUNCH_TRAINING,
