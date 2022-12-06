@@ -16,16 +16,20 @@ from container_manager import ContainerManager
 
 def _parse_args():
     ''' Check script input parameter. '''
-    parser = argparse.ArgumentParser(description='Docker managment script')
+    help_message = '''Operations for docker image:
+exist     Whether the image exists
+remove    Remove a docker image
+build     Build a docker image with two options if the image doesn't exist:
+          -d [directory]  Directory contains dockerfile and install script
+          -f [framework]  AI framework '''
+
+    parser = argparse.ArgumentParser(description='Docker managment script', formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-o',
                         type=str,
                         metavar='[operation]',
                         required=True,
                         choices=['exist', 'remove', 'build'],
-                        help="Operations for docker image:"
-                        "exist     Whether the image exists"
-                        "remove    Remove a docker image"
-                        "build     Build a docker image if not exists")
+                        help=help_message)
     parser.add_argument('-i',
                         type=str,
                         metavar='[repository]',
