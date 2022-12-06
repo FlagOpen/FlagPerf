@@ -6,14 +6,15 @@ import os
 import inspect
 from typing import Iterable
 
-from . import log_event, mod_util, perf_logger
+from . import log_event, mod_util, perf_logger, config_manager
 from .event import Event, EventHandleRecord, EventManager
 
 
 class Driver(object):
 
-    def __init__(self, config):
+    def __init__(self, config, mutable_params):
         self.config = config
+        self.mutable_params = mutable_params
         self.is_distributed = False
         self.event_handlers = dict()
         self.extern_modules = dict()
@@ -39,8 +40,10 @@ class Driver(object):
             action="store_true",
             help="Sets True if external config parameters are allowd")
         path, args = parser.parse_known_args()
-        self.config.activate(path.extern_config_dir, path.extern_config_file,
-                             path.enable_extern_config, args)
+        config_manager.activate(self.config, self.mutable_params,
+                                path.extern_config_dir,
+                                path.extern_config_file,
+                                path.enable_extern_config, args)
         if path.extern_module_dir:
             mod_util.install_extern_modules(path.extern_module_dir,
                                             self.extern_modules)

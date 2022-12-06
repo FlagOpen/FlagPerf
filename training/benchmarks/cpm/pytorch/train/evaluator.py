@@ -1,7 +1,6 @@
 import imp
 import torch
 
-import config
 import numpy as np
 from train.metrics import average_corpus_level
 from model.losses.cross_entropy import cross_entropy
@@ -53,7 +52,6 @@ class Evaluator:
                     no_model_batch["loss_mask"].cpu())
                 all_embedding_average.append(embedding_average.mean)
 
-                #config.training_event_instance.device_synchronize()
         model.train()
 
         all_embedding_average_tensor = torch.tensor(

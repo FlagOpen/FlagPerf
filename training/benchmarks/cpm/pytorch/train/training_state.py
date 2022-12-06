@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 import torch
-import utils
+import inspect
 
 
 @dataclass
@@ -36,11 +36,20 @@ class TrainingState:
         self.end_training = True
         self.converged = True
 
+    def _is_property(self, value):
+        status = [
+            not callable(value), not inspect.isclass(value),
+            not inspect.ismodule(value), not inspect.ismethod(value),
+            not inspect.isfunction(value), not inspect.isbuiltin(value),
+            "classmethod object" not in str(value)
+        ]
+        return all(status)
+
     def to_dict(self, **kwargs):
         state_dict = dict()
 
         for var_name, value in self.__dict__.items():
-            if not var_name.startswith("_") and utils.is_property(value):
+            if not var_name.startswith("_") and self._is_property(value):
                 state_dict[var_name] = value
 
         lr = self._trainer.lr_scheduler.get_lr()

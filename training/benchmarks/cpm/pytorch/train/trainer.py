@@ -1,25 +1,22 @@
 import math
 import time
 import os
+import sys
 
 import torch
 from torch.types import Device
 
-import utils
 from model import create_model
 from schedulers import create_scheduler
 from train.evaluator import Evaluator
-from train.training_state import TrainingState
-# from train.event import TrainingEventCompose as TrainingEvent
 from train.metrics import average_corpus_level
+from train.training_state import TrainingState
 from model.losses.cross_entropy import cross_entropy
 from model.fp16 import FP16_Module
 
-from .driver import Driver, distributed
-
-from train.driver import Event
-from train.evaluator import Evaluator
-from train.training_state import TrainingState
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver import Driver, Event, dist_pytorch
 
 
 class Trainer():
@@ -42,30 +39,16 @@ class Trainer():
         self.global_batch_size = None
         self.overflow_buf = None
 
-    # def __init__(self, config, training_event: TrainingEvent,
-    #              evaluator: Evaluator,
-    #              training_state: TrainingState,
-    #              device: Device):
-    #     super(Trainer, self).__init__()
-    #     self.config = config
-    #     # self.training_event = training_event
-    #     self.training_state = training_state
-    #     self.device = device
-    #     self.optimizer = None
-    #     self.model = None
-    #     self.evaluator = evaluator
-    #     self.lr_scheduler = None
-
     def init(self):
         self.model_config, self.model = create_model(self.config)
         self.model = self._init_model(self.model, self.device)
-        self.model = self.adapter.convert_model(self.model)
+        self.model = self.adapter.convert_model(self.config, self.model)
         self.model = self.model.to(self.config.device)
 
         self.optimizer = self.adapter.create_optimizer(self.config, self.model)
         self.model, self.optimizer = self.adapter.model_to_fp16(
-            self.model, self.optimizer)
-        self.model = self.adapter.model_to_ddp(self.model)
+            self.config, self.model, self.optimizer)
+        self.model = self.adapter.model_to_ddp(self.config, self.model)
 
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
 
@@ -92,7 +75,7 @@ class Trainer():
             batch, no_model_batch = data[0], data[1]
 
             state.global_steps += 1
-            state.num_trained_samples = state.global_steps * utils.global_batch_size(
+            state.num_trained_samples = state.global_steps * dist_pytorch.global_batch_size(
                 self.config)
 
             #self.training_event.on_step_begin(state.global_steps)
@@ -105,7 +88,7 @@ class Trainer():
                 step_total_time = step_end_time - step_start_time
                 step_start_time = step_end_time
                 sequences_per_second = (
-                    utils.global_batch_size(self.config) *
+                    dist_pytorch.global_batch_size(self.config) *
                     self.config.gradient_accumulation_steps) / step_total_time
                 other_state["seq/s"] = sequences_per_second
 
@@ -174,7 +157,8 @@ class Trainer():
         state.embedding_average = float(embedding_average.mean)
         #loss.backward()
         #self.optimizer.step()
-        self.adapter.backward(state.global_steps, state.loss, self.optimizer)
+        self.adapter.backward(self.config, state.global_steps, state.loss,
+                              self.optimizer)
         #self.training_event.on_backward(state.global_steps, state.loss, self.optimizer)
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
                           self.optimizer)
@@ -197,7 +181,7 @@ class Trainer():
             state.global_steps > 1,
             state.global_steps %
             math.ceil(self.config.eval_interval_samples /
-                      utils.global_batch_size(self.config)) == 0,
+                      dist_pytorch.global_batch_size(self.config)) == 0,
         ])
 
         return do_eval or state.global_steps >= self.config.max_steps

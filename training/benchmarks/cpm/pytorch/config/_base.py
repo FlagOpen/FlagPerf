@@ -145,7 +145,7 @@ log_freq: int = 1
 # Whether to read local rank from ENVVAR
 use_env: bool = True
 
-# local_rank for distributed training on gpus
+# local_rank for distributed training on gpus or other accelerators
 local_rank: int = -1
 
 # Communication backend for distributed training on gpus
@@ -155,7 +155,7 @@ ddp_type: str = "native"
 
 # device
 device: str = None
-n_gpu: int = 1
+n_device: int = 1
 
 # A object to provide some core components in training
 # training_event: ClassVar[BaseTrainingEventInterface] = None

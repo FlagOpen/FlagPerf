@@ -1,3 +1,2 @@
 from ._base import *
-
-from .config_manager import activate, get_properties_from_config
+from .mutable_params import mutable_params
