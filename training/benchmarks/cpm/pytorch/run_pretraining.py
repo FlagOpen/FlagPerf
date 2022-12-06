@@ -60,9 +60,9 @@ def main():
     base_path = os.path.abspath(os.path.dirname(__file__))
     tokenizer = GPT2Tokenizer(
         os.path.join(base_path, 'dataloaders', config.tokenizer_path,
-                     'vocab.json'),
+                     config.tokenizer_vocab_file),
         os.path.join(base_path, 'dataloaders', config.tokenizer_path,
-                     'chinese_vocab.model'))
+                     config.tokenizer_vocab_model))
     train_dataloader, _ = load_data(config, 'train', tokenizer, 1)
     eval_dataloader, _ = load_data(config, 'valid', tokenizer, 1)
     print(f"train_dataset length:{len(train_dataloader.dataset)}")

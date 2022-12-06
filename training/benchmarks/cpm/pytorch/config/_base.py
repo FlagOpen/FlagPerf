@@ -95,6 +95,8 @@ data_dir: str = "/mnt/data/cpm/train/"
 
 # path used to save/load sentencepiece tokenization models
 tokenizer_path: str = "bpe_3w_new/"
+tokenizer_vocab_file = 'vocab.json'
+tokenizer_vocab_model = 'chinese_vocab.model'
 
 # Number of workers to use for dataloading
 num_workers: int = 2
