@@ -10,58 +10,9 @@ from argparse import ArgumentParser
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from utils import flagperf_logger
+from utils import start_task_helper as helper
 
 START_LOGGER = flagperf_logger.FlagPerfLogger()
-
-
-def _get_model_path(vendor, model_name):
-    '''Return the model path according to vendor or None if it doesn't exist.
-    '''
-    model_path = os.path.join(CURR_PATH + "/../../benchmarks/" + model_name +
-                              "/paddle/")
-    model_path = os.path.abspath(model_path)
-    if not os.path.exists(model_path):
-        START_LOGGER.error("Can't find model path: " + model_path)
-        return None
-    return model_path
-
-
-def _get_config_dir_file(task_args):
-    '''Return config path and file path in vendor's dir, or None if the config
-       file does not exist.
-    '''
-    config_file = task_args.extern_config_file
-    config_dir = os.path.join(CURR_PATH + "/../../" + task_args.vendor + "/",
-                              task_args.model_name + "-paddle/config/")
-    config_dir = os.path.abspath(config_dir)
-    if not os.path.isfile(os.path.join(config_dir, config_file)):
-        START_LOGGER.error("Can't find config file: " + config_file + " in " +
-                           config_dir)
-        return None, None
-    return config_dir, config_file
-
-
-def _get_train_script_path(task_args):
-    '''Return training script path, or None if it does not exist.'''
-    model_path = _get_model_path(task_args.vendor, task_args.model_name)
-    if model_path is None:
-        return None
-    train_script_path = os.path.join(model_path, task_args.train_script)
-    if not os.path.isfile(train_script_path):
-        START_LOGGER.error("Can't find training strcipt:" + train_script_path)
-        return None
-    return train_script_path
-
-
-def _get_extern_module_dir(task_args):
-    '''Return extern module dir or None if something wrong.'''
-    extern_module_dir = os.path.join(CURR_PATH + "/../../" + task_args.vendor,
-                                     task_args.model_name + "-paddle/extern/")
-    extern_module_dir = os.path.abspath(extern_module_dir)
-    if not os.path.isdir(extern_module_dir):
-        START_LOGGER.error("Can't find extern module dir:" + extern_module_dir)
-        return None
-    return extern_module_dir
 
 
 def parse_args():
@@ -157,18 +108,6 @@ def parse_args():
     return args
 
 
-def write_pid_file(pid_file_path, pid_file):
-    '''Write pid file for watching the process later.
-       In each round of case, we will write the current pid in the same path.
-    '''
-    pid_file_path = os.path.join(pid_file_path, pid_file)
-    if os.path.exists(pid_file_path):
-        os.remove(pid_file_path)
-    file_d = open(pid_file_path, "w")
-    file_d.write("%s\n" % os.getpid())
-    file_d.close()
-
-
 def _set_common_ddp_envs(task_args):
     '''Set and return common ddp env items
     '''
@@ -181,9 +120,9 @@ def _set_common_ddp_envs(task_args):
     current_env["PADDLE_RANK_IN_NODE"] = str(task_args.node_rank)
     current_env['PADDLE_WORLD_DEVICE_IDS'] = ','.join(
         [str(i) for i in range(task_args.nproc)])
+
     # set GPU/MLU device env, TODO other vendor's device
     if task_args.visible_dev_env is not None:
-        acce_visible = range(0, task_args.nproc)
         current_env[
             task_args.visible_dev_env] = current_env['PADDLE_WORLD_DEVICE_IDS']
     return current_env
@@ -191,22 +130,23 @@ def _set_common_ddp_envs(task_args):
 
 def _get_basic_train_script_args(task_args):
     '''Generate basic train script args according to the script options.'''
-    config_dir, config_file = _get_config_dir_file(task_args)
+    config_dir, config_file = helper.get_config_dir_file(task_args)
     if config_dir is None or config_file is None:
+        START_LOGGER.error("Can't find config dir or config file.")
         return None
     if task_args.enable_extern_config:
-        extern_module_dir = _get_extern_module_dir(task_args)
+        extern_module_dir = helper.get_extern_module_dir(task_args)
+        if extern_module_dir is None:
+            START_LOGGER.error("Can't find extern module dir.")
+            return None
 
     basic_train_script_args = " --data_dir " + task_args.data_dir \
                               + " --extern_config_dir " + config_dir \
                               + " --extern_config_file " + config_file
 
     if task_args.enable_extern_config:
-        basic_train_script_args += " --enable_extern_config "
-    if extern_module_dir is None:
-        START_LOGGER.warning("Can't find extern module dir. NO EXTERN MODULE.")
-    else:
-        basic_train_script_args += " --extern_module_dir " + extern_module_dir
+        basic_train_script_args += " --enable_extern_config " \
+                                   + "--extern_module_dir " + extern_module_dir
     return basic_train_script_args
 
 
@@ -214,6 +154,7 @@ def main():
     '''Parse args and start the training task. Support DDP.
     '''
     task_args = parse_args()
+    task_args.framework = "paddle"
 
     # Create logger. We don't need to check the log path because logger.init()
     # will make it.
@@ -227,13 +168,18 @@ def main():
                       "both",
                       log_caller=True)
     START_LOGGER.info(",".join(task_args.__dict__))
-    write_pid_file(task_args.log_dir, "start_paddle_task.pid")
+    helper.write_pid_file(task_args.log_dir, "start_paddle_task.pid")
 
     # Check and get train script & its basic args.
     basic_train_script_args = _get_basic_train_script_args(task_args)
-    train_script_path = _get_train_script_path(task_args)
-    if train_script_path is None or basic_train_script_args is None:
+    if basic_train_script_args is None:
+        START_LOGGER.error("Can't get args of train script.")
         sys.exit(3)
+
+    train_script_path = helper.get_train_script_path(task_args)
+    if train_script_path is None:
+        START_LOGGER.error("Can't find path of train script.")
+        sys.exit(4)
 
     current_env = _set_common_ddp_envs(task_args)
 
