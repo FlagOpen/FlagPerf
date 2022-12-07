@@ -1,9 +1,9 @@
-import utils
+from driver import dist_pytorch
 from .layers.transformer import GLMTransformer
 
 
 def convert_model(model, config):
-    if utils.get_rank() == 0:
+    if dist_pytorch.get_rank() == 0:
         print("use apex layer norm", flush=True)
     state_dict = model.state_dict()
     transformer_layer = GLMTransformer(

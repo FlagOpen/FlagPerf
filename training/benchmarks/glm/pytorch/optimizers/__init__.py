@@ -1,10 +1,14 @@
+import os
+import sys
 from torch.optim import AdamW as Adam
 import torch
 
 from .fp16_optimizer import FP16_Optimizer
-from utils import PyTorchDistributedDataParallel as TorchDDP
 from model.models.modeling import FP16_Module
-from utils import print_rank_0
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver.dist_pytorch import PyTorchDistributedDataParallel as TorchDDP
 
 
 def create_optimizer(model, args):
@@ -19,7 +23,6 @@ def create_optimizer(model, args):
                      weight_decay=args.weight_decay,
                      betas=(args.adam_beta1, args.adam_beta2),
                      eps=args.adam_eps)
-    print_rank_0(f'Optimizer = {optimizer.__class__.__name__}')
     # Wrap into fp16 optimizer.
     if args.fp16:
         optimizer = FP16_Optimizer(optimizer,

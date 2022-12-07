@@ -6,11 +6,11 @@ from torch import nn, Tensor
 
 from .converter import convert_model as _convert_model
 from optimizers import FP16_Optimizer, get_optimizer_param_groups
-from utils import main_proc_print
+from driver.dist_pytorch import main_proc_print
 from apex.optimizers import FusedAdam as Adam
 from typing import Tuple
 from model.models.modeling import FP16_Module
-from utils import PyTorchDistributedDataParallel as TorchDDP
+from driver.dist_pytorch import PyTorchDistributedDataParallel as TorchDDP
 
 from optimizers.loss_scaler import DynamicLossScaler
 

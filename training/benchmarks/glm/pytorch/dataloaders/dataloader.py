@@ -1,15 +1,18 @@
 # coding=utf-8
-import numpy as np
+
+import os
+import sys
 import random
+import numpy as np
 import torch
 from torch.utils.data import Dataset
 import torch.distributed as dist
 from torch.utils.data.dataloader import default_collate
 import h5sparse
 from scipy.sparse import csr_matrix
-import glob
-import os
-import utils
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver import dist_pytorch
 
 
 class WorkerInitializer(object):
@@ -167,7 +170,7 @@ def build_data_loader(dataset,
     world_size = dist.get_world_size()
     sampler = torch.utils.data.distributed.DistributedSampler(
         dataset, num_replicas=world_size, shuffle=shuffle)
-    utils.main_proc_print(
+    dist_pytorch.main_proc_print(
         f"use sampler: DistributedSampler, num_replicas:{world_size}")
 
     # Data loader. Note that batch size is the per GPU batch size.
@@ -185,7 +188,7 @@ def build_data_loader(dataset,
 
 def build_train_dataloader(args, worker_init_fn: WorkerInitializer = None):
     """Traing and validation dataloaders."""
-    utils.main_proc_print('building train dataloaders ...')
+    dist_pytorch.main_proc_print('building train dataloaders ...')
     train_dataset = H5pyDataSet("train", args)
     train_dataloader = build_data_loader(train_dataset,
                                          args.train_batch_size,
@@ -193,21 +196,21 @@ def build_train_dataloader(args, worker_init_fn: WorkerInitializer = None):
                                          drop_last=False,
                                          worker_init_fn=worker_init_fn)
 
-    utils.main_proc_print(
+    dist_pytorch.main_proc_print(
         f'train samples:{len(train_dataset)}, batch size:{args.train_batch_size}'
     )
     return train_dataloader
 
 
 def build_eval_dataloaders(args):
-    utils.main_proc_print('building eval dataloaders ...')
+    dist_pytorch.main_proc_print('building eval dataloaders ...')
     eval_dataset = H5pyDataSet("eval", args)
     eval_dataloader = build_data_loader(eval_dataset,
                                         args.eval_batch_size,
                                         args.num_workers,
                                         shuffle=False,
                                         drop_last=False)
-    utils.main_proc_print(
+    dist_pytorch.main_proc_print(
         f'eval samples:{len(eval_dataset)}, batch size:{args.eval_batch_size}')
     return eval_dataloader
 

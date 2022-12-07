@@ -60,8 +60,10 @@ class Driver(object):
     def setup_modules(self, *args):
         for arg in args:
             if inspect.ismodule(arg):
+                print(str(arg) + " replace by " + str(self.extern_modules))
                 mod_util.replace_submodules(arg, self.extern_modules)
             elif isinstance(arg, dict):
+                print(str(arg) + " remap by " + str(self.extern_modules))
                 mod_util.remap_modules(arg, self.extern_modules)
             else:
                 raise TypeError('Can either be a module or a dict')

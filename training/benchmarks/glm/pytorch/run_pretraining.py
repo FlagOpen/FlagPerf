@@ -1,60 +1,52 @@
+"""GLM Pretraining"""
+
 import time
 import argparse
 import os
+import sys
 import numpy as np
 import torch
 import random
 
 from dataloaders import (WorkerInitializer, build_train_dataloader,
                          build_eval_dataloaders)
-import utils
 from train.trainer import Trainer, Evaluator
 from train.training_state import TrainingState
 # from train.event import TrainingEventCompose, TrainingLogger, BaseTrainingEventInterface
 
-import train
-from train.driver import LogEventManager, Driver, Event
-from train.driver import mod_util, check, backend, distributed, trainer_adapter
+from train import trainer_adapter
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+import driver
+from driver import Driver, Event, dist_pytorch, check
 
 logger = None
 
 
 def main():
-    global logger
     import config
+    from config import mutable_params
+    global logger
 
     if config.use_env and 'LOCAL_RANK' in os.environ:
         config.local_rank = int(os.environ['LOCAL_RANK'])
 
-    driver = Driver()
-    driver.setup_config(argparse.ArgumentParser("Glm"))
-    driver.setup_modules(train.driver, globals(), locals())
-    # mod_util.replace_submodules(train.driver, driver.extern_modules)
-    # mod_util.remap_modules(globals(), driver.extern_modules)
-    # mod_util.remap_modules(locals(), driver.extern_modules)
+    glm_driver = Driver(config, config.mutable_params)
+    glm_driver.setup_config(argparse.ArgumentParser("Glm"))
+    glm_driver.setup_modules(driver, globals(), locals())
 
-    logger = driver.logger
+    logger = glm_driver.logger
 
-    distributed.init_dist_training_env(config)
-    #check.check_config(config)
+    dist_pytorch.init_dist_training_env(config)
 
-    utils.check_config(config)
+    check.check_config(config, "blocklm-large-blank/200000/mp_rank_00_model_states.pt")
 
-    # events = [
-    #     TrainingLogger(config, log_freq=config.log_freq)
-    # ]
-    # training_event = TrainingEventCompose(interface, events)
-    # training_event.launch()
-
-    # global logger
-    # logger = events[0].logger
-
-    utils.barrier()
-    # training_event.on_init_start()
-    driver.event(Event.INIT_START)
+    dist_pytorch.barrier()
+    glm_driver.event(Event.INIT_START)
     init_start_time = logger.previous_log_time
 
-    worker_seeds, shuffling_seeds = utils.setup_seeds(
+    worker_seeds, shuffling_seeds = dist_pytorch.setup_seeds(
         config.seed, config.num_epochs_to_generate_seeds_for, config.device)
 
     if torch.distributed.is_initialized():
@@ -69,7 +61,7 @@ def main():
 
     evaluator = Evaluator(config, None)
     training_state = TrainingState()
-    trainer = Trainer(driver=driver,
+    trainer = Trainer(driver=glm_driver,
                       adapter=trainer_adapter,
                       evaluator=evaluator,
                       training_state=training_state,
@@ -77,12 +69,12 @@ def main():
                       config=config)
     training_state._trainer = trainer
 
-    utils.barrier()
+    dist_pytorch.barrier()
     trainer.init()
 
     eval_dataloader = build_eval_dataloaders(config)
 
-    utils.barrier()
+    dist_pytorch.barrier()
     init_evaluation_start = time.time()
     evaluator.dataloader = eval_dataloader
     score = trainer.evaluator.evaluate(trainer)
@@ -92,7 +84,7 @@ def main():
                                 time=init_evaluation_end -
                                 init_evaluation_start)
     # training_event.on_init_evaluate(init_evaluation_info)
-    driver.event(Event.INIT_EVALUATION, init_evaluation_info)
+    glm_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     train_dataloader = build_train_dataloader(config, worker_init)
 
@@ -100,15 +92,15 @@ def main():
         return config, training_state
 
     # training_event.on_init_end()
-    driver.event(Event.INIT_END)
+    glm_driver.event(Event.INIT_END)
     init_end_time = logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
-    utils.barrier()
+    dist_pytorch.barrier()
 
     epoch = -1
     # training_event.on_train_begin()
-    driver.event(Event.TRAIN_START)
+    glm_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time
 
     while training_state.num_trained_samples < config.max_samples_termination and not training_state.end_training:
@@ -118,7 +110,7 @@ def main():
         trainer.train_one_epoch(train_dataloader)
 
     # training_event.on_train_end()
-    driver.event(Event.TRAIN_END)
+    glm_driver.event(Event.TRAIN_END)
     raw_train_end_time = logger.previous_log_time
     training_state.raw_train_time = (raw_train_end_time -
                                      raw_train_start_time) / 1e+3
@@ -131,13 +123,12 @@ if __name__ == "__main__":
     now = time.time()
     config, state = main()
 
-    if not utils.is_main_process():
-        exit()
+    if not dist_pytorch.is_main_process():
+        sys.exit()
 
-    gpu_count = config.n_gpu
     e2e_time = time.time() - now
     if config.do_train:
-        training_perf = (utils.global_batch_size(config) *
+        training_perf = (dist_pytorch.global_batch_size(config) *
                          state.global_steps) / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,

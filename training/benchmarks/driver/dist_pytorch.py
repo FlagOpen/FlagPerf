@@ -21,7 +21,7 @@ import os
 from contextlib import contextmanager
 
 import torch
-
+from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 
 def generate_seeds(rng, size):
     """
@@ -200,3 +200,15 @@ def format_step(step):
     if len(step) > 2:
         s += "Validation Iteration: {} ".format(step[2])
     return s
+
+
+class PyTorchDistributedDataParallel(DDP):
+    def named_parameters(self, prefix: str = '', recurse: bool = True):
+        return self.module.named_parameters(prefix=prefix, recurse=recurse)
+
+    def state_dict(self, destination=None, prefix='', keep_vars=False):
+        sd = self.module.state_dict(destination, prefix, keep_vars)
+        return sd
+
+    def load_state_dict(self, state_dict, strict=True):
+        return self.module.load_state_dict(state_dict, strict=strict)

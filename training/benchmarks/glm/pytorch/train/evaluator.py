@@ -1,11 +1,5 @@
 # coding=utf-8
 import torch
-import datetime
-import subprocess
-
-import config
-from utils import print_rank_0
-#from train.trainer import process_batch
 
 
 class Evaluator:
@@ -15,7 +9,6 @@ class Evaluator:
         self.args = args
 
     def evaluate(self, trainer):
-        print_rank_0("calculating evaluate metrics ...")
         score = multichoice_evaluate(trainer.model, self.dataloader, self.args)
         return score
 

@@ -26,13 +26,23 @@ def check_config(config, model_pt_file):
                 config.fp16))
 
     data_dir = get_config_arg(config, "data_dir")
+    if data_dir is None:
+        raise ValueError("Invalid data_dir, should be given a path.")
+    if not ospath.isdir(data_dir):
+        raise ValueError(f"data_dir '{data_dir}' not exists.")
+    config.data_dir = data_dir
+
+
+    train_data = get_config_arg(config, "train_data")
+    if train_data is not None:
+        config.train_data = ospath.join(data_dir, train_data)
+
+    eval_data = get_config_arg(config, "eval_data")
+    if eval_data is not None:
+        config.eval_data = ospath.join(data_dir, eval_data)
 
     init_checkpoint = get_config_arg(config, "init_checkpoint")
     if init_checkpoint is None:
-        if data_dir is None:
-            raise ValueError(
-                "Invalid init_checkpoint and data_dir, should be given a path."
-            )
         config.init_checkpoint = ospath.join(data_dir, model_pt_file)
     else:
         config.init_checkpoint = init_checkpoint

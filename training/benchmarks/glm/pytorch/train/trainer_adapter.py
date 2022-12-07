@@ -1,12 +1,17 @@
-import config, optimizers
+import os
+import sys
 
 from torch.optim import Optimizer
 from torch import nn, Tensor
 from typing import Tuple
 
+import optimizers
 from apex.optimizers import FusedAdam as Adam
 from optimizers import FP16_Optimizer, get_optimizer_param_groups
-from utils import main_proc_print
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver.dist_pytorch import main_proc_print
 
 
 def convert_model(model: nn.Module) -> nn.Module:
