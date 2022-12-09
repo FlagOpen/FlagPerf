@@ -156,18 +156,7 @@ def main():
     task_args = parse_args()
     task_args.framework = "paddle"
 
-    # Create logger. We don't need to check the log path because logger.init()
-    # will make it.
-    task_log_dir = os.path.join(
-        task_args.log_dir,
-        task_args.case_name + "/" + "round" + str(task_args.round) + "/" +
-        task_args.host_addr + "_noderank" + str(task_args.node_rank))
-    START_LOGGER.init(task_log_dir,
-                      "start_paddle_task.log",
-                      task_args.log_level,
-                      "both",
-                      log_caller=True)
-    START_LOGGER.info(",".join(task_args.__dict__))
+    task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
     helper.write_pid_file(task_args.log_dir, "start_paddle_task.pid")
 
     # Check and get train script & its basic args.
