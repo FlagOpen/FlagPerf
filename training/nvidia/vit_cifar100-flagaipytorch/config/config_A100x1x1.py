@@ -1,0 +1,10 @@
+batch_size = 150
+gradient_accumulation_steps = 1
+lr = 2e-5
+weight_decay = 1e-5
+max_epochs = 50
+log_freq = 100
+eval_interval = 1000
+save_dir = "checkpoints_vit_cifar100_8gpu"
+save_interval = 1000
+num_checkpoints = 1
