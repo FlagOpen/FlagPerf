@@ -19,10 +19,22 @@ RUN mkdir /root/.ssh
 RUN printf "#StrictHostKeyChecking no\n#UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config && \
  ssh-keygen -t rsa -f /root/.ssh/id_rsa -N "" && cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys && \
    chmod og-wx /root/.ssh/authorized_keys
-CMD service ssh start
 
-RUN echo "Host 127.0.0.1\n    Hostname 127.0.0.1\n    Port ${SSH_PORT}\n    User root\n" > /root/.ssh/config
-RUN echo "Host localhost\n    Hostname localhost\n    Port ${SSH_PORT}\n    User root\n" > /root/.ssh/config
+RUN echo $'Host 127.0.0.1 \n\
+    Hostname 127.0.0.1 \n\
+    Port 6001 \n\
+    StrictHostKeyChecking no \n\
+    User root' > /root/.ssh/config
+RUN echo $'Host localhost \n\
+    Hostname localhost \n\
+    Port 6001 \n\
+    StrictHostKeyChecking no \n\
+    User root' >> /root/.ssh/config
+
+RUN echo "service ssh start" >> /root/.bashrc
+
 #TODO: flagai version
 #RUN git clone https://github.com/FlagAI-Open/FlagAI.git && cd FlagAI && python setup.py install
 RUN pip install -U flagai
+
+CMD service ssh start && tail -f /dev/null
