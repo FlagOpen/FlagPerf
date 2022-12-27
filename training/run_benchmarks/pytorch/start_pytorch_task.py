@@ -21,7 +21,7 @@ def parse_args():
        args such as --data_dir_xxx. Then pass all useful args to the real
        training script.
     '''
-    parser = ArgumentParser(description="Start pytorch training porcess. ")
+    parser = ArgumentParser(description="Start pytorch training process. ")
     parser.add_argument("--node_rank",
                         type=int,
                         default=0,
@@ -38,7 +38,7 @@ def parse_args():
                         default=29501,
                         type=int,
                         help="Master node (rank 0)'s free port that needs to "
-                        "be used for communciation during distributed "
+                        "be used for communication during distributed "
                         "training")
     parser.add_argument("--nnodes",
                         type=int,

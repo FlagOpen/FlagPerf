@@ -83,7 +83,7 @@ dist_backend: str = "nccl"
 # random seed for initialization
 seed: int = 42
 
-# Number of updates steps to accumualte before performing a backward/update pass.
+# Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: int = 1
 
 # Whether to use 16-bit float precision instead of 32-bit
