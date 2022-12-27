@@ -8,7 +8,7 @@ seed: int = 1234
 # num decoder layers
 num_layers: int = 24
 
-# tansformer hidden size
+# transformer hidden size
 hidden_size: int = 1024
 
 # num of transformer attention heads
@@ -117,7 +117,7 @@ do_train: bool = True
 # total number of iterations to train over all training runs
 epoch: int = 10
 
-# Number of updates steps to accumualte before performing a backward/update pass.
+# Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: int = 1
 
 # checkpoint activation to allow for training with larger models and sequences

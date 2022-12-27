@@ -20,7 +20,7 @@ def parse_args():
        args such as --data_dir_xxx. Then pass all useful args to the real
        training script.
     '''
-    parser = ArgumentParser(description="Start paddle training porcess. ")
+    parser = ArgumentParser(description="Start paddle training process. ")
     parser.add_argument("--node_rank",
                         type=int,
                         default=0,
@@ -37,13 +37,13 @@ def parse_args():
                         default=12532,
                         type=int,
                         help="Master node (rank 0)'s free port that needs to "
-                        "be used for communciation during distributed "
+                        "be used for communication during distributed "
                         "training")
     parser.add_argument("--master_port2",
                         default=58759,
                         type=int,
                         help="Master node (rank 0)'s free port that needs to "
-                        "be used for communciation during distributed "
+                        "be used for communication during distributed "
                         "training")
 
     parser.add_argument("--nnodes",
