@@ -1,0 +1,6 @@
+# Build and Release Folders
+.idea/
+.ijwb/
+.vscode/
+__pycache__/
+.pytest_cache
