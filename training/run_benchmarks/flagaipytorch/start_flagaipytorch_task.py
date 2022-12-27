@@ -177,7 +177,7 @@ def main():
         current_env["LOCAL_RANK"] = str(local_rank)
 
         start_cmd = sys.executable + " -u " + train_script_path + " " \
-				   + "-local_rank " + str(local_rank) + " " \
+				   + "--local_rank %d" % local_rank + " " \
                                    + basic_train_script_args + " 2>&1 | tee " \
                                    + task_log_dir + "/rank" + str(dist_rank) \
                                    + ".out.log"
