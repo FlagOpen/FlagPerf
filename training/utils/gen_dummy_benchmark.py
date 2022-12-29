@@ -75,14 +75,14 @@ for environ in current_env.keys():
     def print_dummy_test_conf(self):
         print("You can add the dummy benchmark case in test_conf like this:")
         print("DUMMY_TEST = {")
-        print("    \"model\": \"dummy\"")
-        print("    \"framework\": \"" + self.framework + "\"")
-        print("    \"config\": \"" + self.config_file + "\"")
-        print("    \"repeat\": <times to run>")
-        print("    \"nnodes\": <hosts count>")
-        print("    \"nproc\": <count of processes on each host>")
-        print("    \"data_dir_host\": \"", self.data_dir, "\"")
-        print("    \"data_dir_container\": \"/mnt/data/dummy\"")
+        print("    \"model\": \"dummy\",")
+        print("    \"framework\": \"" + self.framework + "\",")
+        print("    \"config\": \"" + self.config_file + "\",")
+        print("    \"repeat\": <times to run>,")
+        print("    \"nnodes\": <hosts count>,")
+        print("    \"nproc\": <count of processes on each host>,")
+        print("    \"data_dir_host\": \"" + self.data_dir + "\",")
+        print("    \"data_dir_container\": \"/mnt/data/dummy\",")
         print("}")
 
 
