@@ -19,6 +19,7 @@ dummy_config2 = False
 dummy_config3 = 99
 '''
     PRETRAIN_CONTENT = '''
+import os
 import sys
 print("Get options:", str(sys.argv))
 current_env = os.environ.copy()
@@ -65,7 +66,7 @@ for environ in current_env.keys():
         vendor_config_file = os.path.join(vendor_config_dir,
                                           self.config_file + ".py")
         self._write_file(vendor_config_file, self.CONFIG_CONTENT)
-        pretrain_file = os.path.join(benchmark_code_dir, "run_pretrain.py")
+        pretrain_file = os.path.join(benchmark_code_dir, "run_pretraining.py")
         self._write_file(pretrain_file, self.PRETRAIN_CONTENT)
 
         print("You can run this command to clear dummy benchmark:")

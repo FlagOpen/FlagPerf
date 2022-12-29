@@ -540,6 +540,7 @@ def main():
                     + " --train_script " + "run_pretraining.py" \
                     + " --nnodes " + str(nnodes) \
                     + " --nproc " + str(case_config["nproc"]) \
+                    + " --hosts " + ",".join(cc.HOSTS) \
                     + " --data_dir " + case_config["data_dir_container"] \
                     + " --log_dir " + log_dir_container \
                     + " --log_level " + tc.FLAGPERF_LOG_LEVEL \
