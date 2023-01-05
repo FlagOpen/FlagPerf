@@ -1,0 +1,163 @@
+"""BERT Pretraining"""
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import argparse
+from copy import copy
+import os
+import random
+import time
+from concurrent.futures import ProcessPoolExecutor
+
+import numpy as np
+import torch
+from torch.cuda.amp import GradScaler
+
+import utils
+
+from dataloaders import WorkerInitializer
+from dataloaders.dataloader import PretrainingDataloaders
+from train.evaluator import Evaluator
+from train.trainer import Trainer
+from train.training_state import TrainingState
+from train import trainer_adapter
+
+import sys
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+import driver
+from driver import Driver, Event, dist_pytorch, check
+
+logger = None
+
+
+def main():
+    import config
+    from config import mutable_params
+    global logger
+
+    if config.use_env and 'LOCAL_RANK' in os.environ:
+        config.local_rank = int(os.environ['LOCAL_RANK'])
+    
+    bert_driver = Driver(config, config.mutable_params)
+    bert_driver.setup_config(argparse.ArgumentParser("Bert"))
+    bert_driver.setup_modules(driver, globals(), locals())
+
+    logger = bert_driver.logger
+
+    world_size = int(os.getenv('WORLD_SIZE', "1"))
+    if world_size == 1:
+        config.local_rank = -1
+    dist_pytorch.init_dist_training_env(config)
+    utils.check_config(config)
+
+    utils.barrier()
+    if world_size == 1:
+        config.local_rank = 0
+
+    bert_driver.event(Event.INIT_START)
+    init_start_time = logger.previous_log_time
+
+    worker_seeds, shuffling_seeds = dist_pytorch.setup_seeds(
+        config.seed, config.num_epochs_to_generate_seeds_for, config.device)
+
+    if torch.distributed.is_initialized():
+        worker_seed = worker_seeds[torch.distributed.get_rank()]
+    else:
+        worker_seed = worker_seeds[0]
+
+    random.seed(worker_seed)
+    np.random.seed(worker_seed)
+    torch.manual_seed(worker_seed)
+    worker_init = WorkerInitializer.default(worker_seed)
+    pool = ProcessPoolExecutor(1)
+    evaluator = Evaluator(
+        config.eval_dir,
+        proc_pool=pool,
+        global_batch_size=dist_pytorch.global_batch_size(config),
+        max_steps=config.max_steps,
+        worker_init=worker_init,
+        use_cache=config.cache_eval_data
+    )
+    grad_scaler = None
+    training_state = TrainingState()
+    trainer = Trainer(driver=bert_driver,
+                    adapter=trainer_adapter, 
+                    evaluator=evaluator, 
+                    training_state=training_state, 
+                    grad_scaler=grad_scaler, 
+                    device=config.device)
+    training_state._trainer = trainer
+
+    utils.barrier()
+    trainer.init()
+
+    utils.barrier()
+    init_evaluation_start = time.time()
+    eval_loss, eval_mlm_acc = evaluator.evaluate(trainer)
+    training_state.eval_loss = eval_loss
+    training_state.eval_mlm_accuracy = eval_mlm_acc
+    init_evaluation_end = time.time()
+    init_evaluation_info = dict(
+        eval_loss = eval_loss,
+        eval_mlm_accuracy = eval_mlm_acc,
+        time = init_evaluation_end - init_evaluation_start
+    )
+    bert_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
+    if not config.do_train:
+        return config, training_state, init_evaluation_info["time"]
+
+    dataloader = PretrainingDataloaders(
+        config.train_dir,
+        max_predictions_per_seq=config.max_predictions_per_seq,
+        batch_size=config.train_batch_size,
+        seed=shuffling_seeds, num_files_per_iter=1,
+        worker_init=worker_init, pool=pool,
+    )
+
+    bert_driver.event(Event.INIT_END)
+    init_end_time = logger.previous_log_time
+    training_state.init_time = (init_end_time - init_start_time) / 1e+3
+    epoch = -1
+    bert_driver.event(Event.TRAIN_START)
+    raw_train_start_time = logger.previous_log_time
+    while training_state.global_steps < config.max_steps and not training_state.end_training:
+        epoch += 1
+        training_state.epoch = epoch
+        dataloader.set_epoch(epoch)
+        trainer.train_one_epoch(dataloader)
+    bert_driver.event(Event.TRAIN_END)
+
+    raw_train_end_time = logger.previous_log_time
+    training_state.raw_train_time = (raw_train_end_time - raw_train_start_time) / 1e+3
+    return config, training_state
+
+
+if __name__ == "__main__":
+    now = time.time()
+    config, state = main()
+
+    if not utils.is_main_process():
+        exit()
+
+    gpu_count = config.n_gpu
+    e2e_time = time.time() - now
+    training_perf = (utils.global_batch_size(config) * state.global_steps) / state.raw_train_time
+    if config.do_train:
+        finished_info = {
+            "e2e_time": e2e_time,
+            "training_sequences_per_second": training_perf,
+            "converged": state.converged,
+            "final_loss": state.eval_loss,
+            "final_mlm_accuracy": state.eval_mlm_accuracy,
+            "raw_train_time": state.raw_train_time,
+            "init_time": state.init_time,
+        }
+    else:
+        finished_info = {"e2e_time": e2e_time}
+    logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
+
+    if np.isnan(float(state.eval_loss)):
+        raise Exception("Error: state.eval_loss find NaN, please check!")
