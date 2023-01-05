@@ -1,8 +1,3 @@
-# Copyright © 2022 BAAI. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License")
-# Modified some functions to support FlagPerf.
-#
 # Copyright (c) 2019-2021 NVIDIA CORPORATION. All rights reserved.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +10,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import logging
-import random
 import os
-from contextlib import contextmanager
 
 import torch
-from torch.nn.parallel.distributed import DistributedDataParallel as DDP
+import torch.distributed as dist
+
+from contextlib import contextmanager
+import logging.config
+import random
+
 
 def generate_seeds(rng, size):
     """
@@ -44,7 +41,9 @@ def broadcast_seeds(seeds, device):
     """
     if torch.distributed.is_available() and torch.distributed.is_initialized():
         seeds_tensor = torch.LongTensor(seeds).to(device)
+        seeds_tensor = seeds_tensor.to(torch.float32)
         torch.distributed.broadcast(seeds_tensor, 0)
+        seeds_tensor = seeds_tensor.to(torch.long)
         seeds = seeds_tensor.tolist()
     return seeds
 
@@ -87,6 +86,7 @@ def setup_seeds(master_seed, epochs, device):
     # broadcast seeds from rank=0 to other workers
     worker_seeds = broadcast_seeds(worker_seeds, device)
     shuffling_seeds = broadcast_seeds(shuffling_seeds, device)
+
     return worker_seeds, shuffling_seeds
 
 
@@ -97,8 +97,10 @@ def barrier():
     Calls all_reduce on dummy tensor and synchronizes with GPU.
     """
     if torch.distributed.is_available() and torch.distributed.is_initialized():
-        torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
-        torch.cuda.synchronize()
+        torch.distributed.barrier()
+        # torch.distributed.all_reduce(torch.FloatTensor(1))
+        #torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
+        #torch.cuda.synchronize()
 
 
 def get_rank(default=0):
@@ -131,7 +133,6 @@ def main_proc_print(*args, **kwargs):
 
 def set_device(cuda, local_rank):
     """
-    TODO: Support other accelarators.
     Sets device based on local_rank and returns instance of torch.device.
 
     :param cuda: if True: use cuda
@@ -146,40 +147,38 @@ def set_device(cuda, local_rank):
 
 
 def init_dist_training_env(config):
-    ''' TODO: Support other accelarators.  '''
     if config.use_xpu:
         import torch_xmlir.core.xpu_model as xm
         if config.local_rank == -1:
-            config.device = xm.xpu_device()
-            config.n_device = 1
+            device = xm.xpu_device()
+            num_gpus = 1
         else:
-            config.device =  xm.xpu_device(config.local_rank)
+            device =  xm.xpu_device(config.local_rank)
             host_addr_full = 'tcp://' + os.environ["MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
             rank = int(os.environ["RANK"])
             world_size = int(os.environ["WORLD_SIZE"])
             torch.distributed.init_process_group(backend=config.dist_backend, init_method=host_addr_full, rank=rank, world_size=world_size)
-            config.n_device = torch.distributed.get_world_size()
+            num_gpus = torch.distributed.get_world_size()
     else:
         if config.local_rank == -1:
-            config.device = torch.device("cuda")
-            config.n_device = torch.cuda.device_count()
+            device = torch.device('cuda')
+            num_gpus = torch.cuda.device_count()
         else:
-            torch.cuda.set_device(config.local_rank)
-            config.device = torch.device("cuda", config.local_rank)
-            host_addr_full = 'tcp://' + os.environ[
-                "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+            #torch.cuda.set_device(config.local_rank)
+            #device = torch.device("cuda", config.local_rank)
+            device = torch.device('cpu', config.local_rank)
+            host_addr_full = 'tcp://' + os.environ["MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
             rank = int(os.environ["RANK"])
             world_size = int(os.environ["WORLD_SIZE"])
-            torch.distributed.init_process_group(backend=config.dist_backend,
-                                                init_method=host_addr_full,
-                                                rank=rank,
-                                                world_size=world_size)
-            config.n_device = torch.distributed.get_world_size()
-    return
+            torch.distributed.init_process_group(backend=config.dist_backend, init_method=host_addr_full, rank=rank, world_size=world_size)
+            num_gpus = torch.distributed.get_world_size()
+            num_gpus = 1
+
+    return device, num_gpus
 
 
 def global_batch_size(config):
-    return config.train_batch_size * config.n_device
+    return config.train_batch_size * config.n_gpu
 
 
 @contextmanager
@@ -193,7 +192,7 @@ def sync_workers():
 
 
 def is_main_process():
-    if torch.distributed.is_initialized():
+    if dist.is_initialized():
         if "LOCAL_RANK" in os.environ:
             return int(os.environ["LOCAL_RANK"]) == 0
         else:
@@ -213,15 +212,3 @@ def format_step(step):
     if len(step) > 2:
         s += "Validation Iteration: {} ".format(step[2])
     return s
-
-
-class PyTorchDistributedDataParallel(DDP):
-    def named_parameters(self, prefix: str = '', recurse: bool = True):
-        return self.module.named_parameters(prefix=prefix, recurse=recurse)
-
-    def state_dict(self, destination=None, prefix='', keep_vars=False):
-        sd = self.module.state_dict(destination, prefix, keep_vars)
-        return sd
-
-    def load_state_dict(self, state_dict, strict=True):
-        return self.module.load_state_dict(state_dict, strict=strict)
