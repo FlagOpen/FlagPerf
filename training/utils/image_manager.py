@@ -128,6 +128,7 @@ class ImageManager():
 
         # Third, install packages in container.
         install_script = framework + "_install.sh"
+        print("1!!!!!!!"*10)
         if not os.path.isfile(os.path.join(image_dir, install_script)):
             print("Can't find <framework>_install.sh")
             install_cmd = ":"
@@ -135,6 +136,7 @@ class ImageManager():
             install_cmd = "bash " + image_dir_in_container + "/" \
                           + install_script
         ret, outs = cont_mgr.run_cmd_in(install_cmd, 1800, detach=False)
+        print("2!!!!!!!"*10)
         if ret != 0:
             print("Run install command in temp container failed.")
             print("Error: " + outs[0])

@@ -144,8 +144,11 @@ def activate(base_config,
 
     parsed_params = parse_from_args_and_config(params, cmd_args, ext_config,
                                                enable_extern_config)
-
-    _merge_dict_to_config(parsed_params.__dict__, base_config.__dict__)
+    # tf2
+    if isinstance(base_config, object):
+        base_config.override(parsed_params.__dict__, False)
+    else:
+        _merge_dict_to_config(parsed_params.__dict__, base_config.__dict__)
 
     if ext_config:
         config_path = ext_config

@@ -4,3 +4,8 @@
 .vscode/
 __pycache__/
 .pytest_cache
+training/result/*
+training/result_ckpt/*
+training/result_ckpt/events.*
+training/result_save/*
+training/result_save/model.*

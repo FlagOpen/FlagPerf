@@ -134,7 +134,6 @@ def _get_basic_train_script_args(task_args):
         return None
     if task_args.enable_extern_config:
         extern_module_dir = helper.get_extern_module_dir(task_args)
-
     basic_train_script_args = " --data_dir " + task_args.data_dir \
                               + " --extern_config_dir " + config_dir \
                               + " --extern_config_file " + config_file
@@ -150,8 +149,8 @@ def main():
     '''
     task_args = parse_args()
     task_args.framework = "tensorflow2"
-
     task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
+    print("!!!task_log_dirtask_log_dir", task_log_dir, task_args.log_dir)
     helper.write_pid_file(task_args.log_dir, "start_tensorflow2_task.pid")
 
     # Check and get train script & its basic args.
@@ -170,12 +169,11 @@ def main():
     start_cmd = sys.executable + " -u " + train_script_path + " " \
                 + basic_train_script_args + " 2>&1 | tee " + task_log_dir \
                 + "/noderank" + str(task_args.node_rank) + ".out.log"
-
     START_LOGGER.info("Start task with command: " + start_cmd)
     START_LOGGER.debug("----------- Process envs -----------")
     for environ in current_env.keys():
         START_LOGGER.debug(environ + ":" + current_env[environ])
-
+    print("current_envcurrent_envcurrent_env",current_env)
     process = subprocess.Popen(start_cmd, shell=True, env=current_env)
     process.wait()
 
