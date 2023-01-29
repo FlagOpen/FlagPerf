@@ -358,7 +358,7 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
         RUN_LOGGER.info("Stop containers in cluster.")
         stop_container_in_cluster(dp_path, container_name, nnodes)
         return False
-    sys.exit(123)
+    # sys.exit(123)
     RUN_LOGGER.info("c) Prepare running environment......[SUCCESS]")
     RUN_LOGGER.info("d) Start monitors......")
     start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
