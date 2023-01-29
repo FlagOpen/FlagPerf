@@ -299,7 +299,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
                      + tc.ACCE_VISIBLE_DEVICE_ENV_NAME
     start_cmd += " \""
     RUN_LOGGER.debug("Run cmd in the cluster to start tasks, cmd=" + start_cmd)
-    CLUSTER_MGR.run_command_some_hosts_torch_ddp(start_cmd, nnodes, 15)
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
     # Wait a moment for starting tasks.
     time.sleep(60)
 
@@ -358,7 +358,7 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
         RUN_LOGGER.info("Stop containers in cluster.")
         stop_container_in_cluster(dp_path, container_name, nnodes)
         return False
-    # sys.exit(123)
+    sys.exit(123)
     RUN_LOGGER.info("c) Prepare running environment......[SUCCESS]")
     RUN_LOGGER.info("d) Start monitors......")
     start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
@@ -542,6 +542,7 @@ def main():
                     + " --nnodes " + str(nnodes) \
                     + " --nproc " + str(case_config["nproc"]) \
                     + " --hosts " + ",".join(cc.HOSTS) \
+                    + " --hosts_ports " + ",".join(cc.HOSTS_PORTS) \
                     + " --data_dir " + case_config["data_dir_container"] \
                     + " --log_dir " + log_dir_container \
                     + " --log_level " + tc.FLAGPERF_LOG_LEVEL \

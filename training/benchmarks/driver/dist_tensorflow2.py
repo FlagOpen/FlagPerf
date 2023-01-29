@@ -115,6 +115,31 @@ def configure_cluster(worker_hosts=None, task_index=-1):
   return num_workers
 
 
+def _collective_communication(all_reduce_alg):
+  """Return a CollectiveCommunication based on all_reduce_alg.
+
+  Args:
+    all_reduce_alg: a string specifying which collective communication to pick,
+      or None.
+
+  Returns:
+    tf.distribute.experimental.CollectiveCommunication object
+
+  Raises:
+    ValueError: if `all_reduce_alg` not in [None, "ring", "nccl"]
+  """
+  collective_communication_options = {
+      None: tf.distribute.experimental.CollectiveCommunication.AUTO,
+      "ring": tf.distribute.experimental.CollectiveCommunication.RING,
+      "nccl": tf.distribute.experimental.CollectiveCommunication.NCCL
+  }
+  if all_reduce_alg not in collective_communication_options:
+    raise ValueError(
+        "When used with `multi_worker_mirrored`, valid values for "
+        "all_reduce_alg are [`ring`, `nccl`].  Supplied value: {}".format(
+            all_reduce_alg))
+  return collective_communication_options[all_reduce_alg]
+
 def get_distribution_strategy(distribution_strategy="mirrored",
                               num_gpus=0,
                               all_reduce_alg=None,
@@ -177,9 +202,8 @@ def get_distribution_strategy(distribution_strategy="mirrored",
     return tf.distribute.TPUStrategy(cluster_resolver)
 
   if distribution_strategy == "multi_worker_mirrored":
-    return tf.distribute.experimental.MultiWorkerMirroredStrategy()
-        # communication=_collective_communication(all_reduce_alg))
-        # TODO 
+    return tf.distribute.experimental.MultiWorkerMirroredStrategy(
+        communication=_collective_communication(all_reduce_alg))
 
   if distribution_strategy == "one_device":
     if num_gpus == 0:

@@ -25,6 +25,8 @@ import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from  utils.flags import core as flags_core
 from  utils.misc import keras_utils
+import callbacks as custom_callbacks
+
 
 FLAGS = flags.FLAGS
 BASE_LEARNING_RATE = 0.1  # This matches Jing's version.
@@ -184,12 +186,13 @@ def build_stats(history, eval_output, callbacks):
   # Look for the time history callback which was used during keras.fit
   for callback in callbacks:
     if isinstance(callback, keras_utils.TimeHistory):
-      timestamp_log = callback.timestamp_log
-      stats['step_timestamp_log'] = timestamp_log
+      # timestamp_log = callback.timestamp_log
+      # stats['step_timestamp_log'] = timestamp_log
       stats['train_finish_time'] = callback.train_finish_time
       if callback.epoch_runtime_log:
         stats['avg_exp_per_second'] = callback.average_examples_per_second
-
+    elif isinstance(callback, custom_callbacks.GetTrainingStatus):
+      stats['converged'] = callback.converged
   return stats
 
 

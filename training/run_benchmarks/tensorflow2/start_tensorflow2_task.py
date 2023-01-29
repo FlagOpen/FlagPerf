@@ -53,6 +53,12 @@ def parse_args():
                         required=True,
                         help="a list of all hosts of the cluster, which is "
                         "separated by a comma.")
+    parser.add_argument("--hosts_ports",
+                        default="2023",
+                        type=str,
+                        required=True,
+                        help="a list of all hosts's port of the cluster, which is "
+                        "separated by a comma.")
 
     parser.add_argument("--vendor",
                         type=str,
@@ -117,6 +123,7 @@ def _set_tf_container_envs(task_args):
     current_env["FLAGPERF_BASE_PORT"] = str(task_args.master_port)
     current_env["FLAGPERF_NODE_RANK"] = str(task_args.node_rank)
     current_env["FLAGPERF_HOSTS"] = task_args.hosts
+    current_env["FLAGPERF_HOSTS_PORTS"] = task_args.hosts_ports
 
     # set GPU/MLU device env, TODO other vendor's device
     if task_args.visible_dev_env is not None:
@@ -150,7 +157,6 @@ def main():
     task_args = parse_args()
     task_args.framework = "tensorflow2"
     task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
-    print("!!!task_log_dirtask_log_dir", task_log_dir, task_args.log_dir)
     helper.write_pid_file(task_args.log_dir, "start_tensorflow2_task.pid")
 
     # Check and get train script & its basic args.
@@ -173,7 +179,6 @@ def main():
     START_LOGGER.debug("----------- Process envs -----------")
     for environ in current_env.keys():
         START_LOGGER.debug(environ + ":" + current_env[environ])
-    print("current_envcurrent_envcurrent_env",current_env)
     process = subprocess.Popen(start_cmd, shell=True, env=current_env)
     process.wait()
 

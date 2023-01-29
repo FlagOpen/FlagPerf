@@ -113,7 +113,7 @@ class ClusterManager():
                                   command + " [FAILED]. Output: " + outs[0])
         return failed_hosts_ret
 
-    def run_command_some_hosts_torch_ddp(self,
+    def run_command_some_hosts_distribution_info(self,
                                          base_cmd,
                                          host_count,
                                          timeout=10):

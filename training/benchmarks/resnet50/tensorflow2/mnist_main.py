@@ -95,7 +95,6 @@ def run(flags_obj, datasets_override=None, strategy_override=None):
   atexit.register(strategy._extended._collective_ops._pool.close) # type: ignore
 
   strategy_scope = distribute_utils.get_strategy_scope(strategy)
-  print(flags_obj.data_dir, flags_obj.model_dir, flags_obj.num_gpus, "11111")
   mnist = tfds.builder('mnist', data_dir=flags_obj.data_dir)
   if flags_obj.download:
     mnist.download_and_prepare()
@@ -171,7 +170,6 @@ def define_mnist_flags():
 
 def main(_):
   model_helpers.apply_clean(FLAGS)
-  print(flags.FLAGS,"22222")
   stats = run(flags.FLAGS)
   logging.info('Run stats:\n%s', stats)
 

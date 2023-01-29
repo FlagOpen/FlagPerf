@@ -15,13 +15,13 @@
 """Runs a ResNet model on the ImageNet dataset using custom training loops."""
 
 import orbit
-import tensorflow as tf
-from  .legacy.image_classification.resnet import common
-from  .legacy.image_classification.resnet import imagenet_preprocessing
-from  .legacy.image_classification.resnet import resnet_model
-from  .modeling import grad_utils
-from  .modeling import performance
-from  .utils.flags import core as flags_core
+import tensorflow as tf  # E0401:import-error
+from  ..resnet import common
+from  ..resnet import imagenet_preprocessing
+from  ..resnet import resnet_model
+from  ..modeling import grad_utils
+from  ..modeling import performance
+from  ..utils.flags import core as flags_core
 
 
 class ResnetRunnable(orbit.StandardTrainer, orbit.StandardEvaluator):

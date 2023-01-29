@@ -37,6 +37,7 @@ def get_callbacks(
     initial_step: int = 0,
     batch_size: int = 0,
     log_steps: int = 0,
+    target_accuracy: float = 0,
     model_dir: Optional[str] = None,
     backup_and_restore: bool = False) -> List[tf.keras.callbacks.Callback]:
   """Get all callbacks."""
@@ -77,6 +78,7 @@ def get_callbacks(
             save_weights_only=True,
             verbose=1))
     callbacks.append(MovingAverageCallback())
+  callbacks.append(GetTrainingStatus(target_accuracy))
   return callbacks
 
 
@@ -87,6 +89,17 @@ def get_scalar_from_tensor(t: tf.Tensor) -> int:
     return t()
   else:
     return t
+
+
+class GetTrainingStatus(tf.keras.callbacks.Callback):
+  def __init__(self, target_accuracy):
+    self.target_accuracy = target_accuracy
+    self.converged = False
+
+  def on_batch_end(self, batch, logs=None):
+    if logs["accuracy"] >= self.target_accuracy:
+        self.converged = True
+        self.model.stop_training = True
 
 
 class CustomTensorBoard(tf.keras.callbacks.TensorBoard):

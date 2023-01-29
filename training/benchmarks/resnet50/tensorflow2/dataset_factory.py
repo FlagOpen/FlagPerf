@@ -362,7 +362,6 @@ class DatasetBuilder:
   def load_records(self) -> tf.data.Dataset:
     """Return a dataset loading files with TFRecords."""
     logging.info('Using TFRecords to load data.')
-    print("11111",self.config.filenames, self.config.data_dir)
     if self.config.filenames is None:
       if self.config.data_dir is None:
         raise ValueError('Dataset must specify a path for the data files.')
@@ -370,7 +369,6 @@ class DatasetBuilder:
       file_pattern = os.path.join(self.config.data_dir, self.config.split,
                                   '{}*'.format(self.config.split))
       dataset = tf.data.Dataset.list_files(file_pattern, shuffle=False)
-      print("444444",file_pattern)
     else:
       dataset = tf.data.Dataset.from_tensor_slices(self.config.filenames)
 

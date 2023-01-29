@@ -26,8 +26,6 @@ def get_config_dir_file(task_args):
         CURR_PATH + "/../" + task_args.vendor + "/",
         task_args.model_name + "-" + task_args.framework + "/config/")
     config_dir = os.path.abspath(config_dir)
-    print("11111", config_dir)
-    print("22222", config_file)
     if not os.path.isfile(os.path.join(config_dir, config_file)):
         return None, None
     return config_dir, config_file

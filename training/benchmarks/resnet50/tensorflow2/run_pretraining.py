@@ -139,10 +139,27 @@ def get_loss_scale(params: base_configs.ExperimentConfig,
     return fp16_default
 
 
+def check_must_envconfigs(params):
+    must_configs = [
+        "FLAGPERF_NPROC", "FLAGPERF_HOSTS", "FLAGPERF_NODE_RANK","FLAGPERF_HOSTS_PORTS"]
+    for config_item in os.environ.keys():
+        if config_item in must_configs:
+            must_configs.remove(config_item)
+    if len(must_configs) > 0:
+        raise ValueError("misses some env var items: " + ", ".join(must_configs))
+    params.local_rank = int(os.environ['FLAGPERF_NODE_RANK'])
+    params.runtime.num_gpus = int(os.environ["FLAGPERF_NPROC"])
+    if params.runtime.distribution_strategy == 'multi_worker_mirrored':
+      hosts = os.environ["FLAGPERF_HOSTS"].split(",")
+      ports = os.environ["FLAGPERF_HOSTS_PORTS"].split(",")
+      params.runtime.worker_hosts = ",".join([hosts[i] + ":" + ports[i] for i in range(len(hosts))])
+      params.runtime.task_index = int(os.environ['FLAGPERF_NODE_RANK'])
+
+    return params
+
+
 def _get_params_from_flags(flags_obj: flags.FlagValues):
     """Get ParamsDict from flags."""
-
-
 
     global logger
     pp = pprint.PrettyPrinter()
@@ -154,10 +171,7 @@ def _get_params_from_flags(flags_obj: flags.FlagValues):
     driver.setup_config(argparse.ArgumentParser("renset50"))
     driver.setup_modules(driver, globals(), locals())
     params = driver.config
-
-    if 'FLAGPERF_NODE_RANK' in os.environ:
-        params.local_rank = int(os.environ['FLAGPERF_NODE_RANK'])
-
+    params = check_must_envconfigs(params)
     logger = driver.logger
 
     params.validate()
@@ -356,7 +370,6 @@ def train_and_eval(
     if params.train.resume_checkpoint:
       initial_epoch = resume_from_checkpoint(
           model=model, model_dir=params.model_dir, train_steps=train_steps)
-
     callbacks = custom_callbacks.get_callbacks(
         model_checkpoint=params.train.callbacks.enable_checkpoint_and_export,
         include_tensorboard=params.train.callbacks.enable_tensorboard,
@@ -366,6 +379,7 @@ def train_and_eval(
         initial_step=initial_epoch * train_steps,
         batch_size=train_builder.global_batch_size,
         log_steps=params.train.time_history.log_steps,
+        target_accuracy=params.target_accuracy,
         model_dir=params.model_dir,
         backup_and_restore=params.train.callbacks.enable_backup_and_restore)
   serialize_config(params=params, model_dir=params.model_dir)
@@ -459,7 +473,7 @@ def main(_):
       finished_info = {
           "e2e_time": e2e_time,
           "training_sequences_per_second": training_perf.numpy().tolist(), #EagerTensor cannot be converted to JSON 
-          "converged": "state.converged",
+          "converged": stats["converged"],
           "final_accuracy": stats["accuracy_top_1"],
           "final_loss": stats["eval_loss"],
           "raw_train_time": params.raw_train_time,
@@ -473,4 +487,3 @@ if __name__ == '__main__':
   logging.set_verbosity(logging.INFO)
   define_classifier_flags()
   app.run(main)
-

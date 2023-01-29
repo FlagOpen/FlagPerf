@@ -24,8 +24,6 @@ from absl import logging
 import tensorflow as tf
 import sys
 sys.path.insert(0,"/home/wuwenli/models")
-print(sys.path)
-
 from driver import dist_tensorflow2
 from . import callbacks as custom_callbacks
 from . import dataset_factory
