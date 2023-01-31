@@ -21,10 +21,8 @@ import dataset_factory
 import optimizer_factory
 from configs import base_configs
 from configs import configs
-from efficientnet import efficientnet_model
 from resnet import common
 from resnet import resnet_model
-from vgg import vgg_model
 from modeling import hyperparams
 from modeling import performance
 from utils import hyperparams_flags
@@ -36,9 +34,7 @@ logger = None
 def get_models() -> Mapping[str, tf.keras.Model]:
   """Returns the mapping from model type name to Keras model."""
   return {
-      'efficientnet': efficientnet_model.EfficientNet.from_name,
       'resnet': resnet_model.resnet50,
-      'vgg': vgg_model.vgg16,
   }
 
 
