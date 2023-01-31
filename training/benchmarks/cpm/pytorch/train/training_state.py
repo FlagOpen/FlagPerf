@@ -26,7 +26,6 @@ class TrainingState:
 
     init_time = 0
     raw_train_time = 0
-    best_acc1 = 0
 
     def status(self):
         if self.converged:
