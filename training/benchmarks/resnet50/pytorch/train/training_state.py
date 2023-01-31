@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-
-import torch
 import inspect
+import torch
 
 
 @dataclass
@@ -14,19 +13,15 @@ class TrainingState:
     iter_dataloader_idx = 0
 
     loss: float = 0.0
-    embedding_average: float = 0.0
+    eval_accuracy: float = 0.0
 
     epoch: int = 1
     num_trained_samples = 0
     end_training: bool = False
     converged: bool = False
 
-    eval_avg_loss = 0
-    eval_embedding_average = 0
-
     init_time = 0
     raw_train_time = 0
-    best_acc1 = 0
 
     def status(self):
         if self.converged:
@@ -57,10 +52,9 @@ class TrainingState:
         if isinstance(lr, (tuple, list)):
             lr = lr[0]
         state_dict["learning_rate"] = lr
-
         exclude = [
-            "eval_avg_loss", "eval_embedding_average", "skipped_steps",
-            "converged", "init_time", "raw_train_time"
+            "eval_loss", "eval_mlm_accuracy", "skipped_steps", "converged",
+            "init_time", "raw_train_time"
         ]
         for exkey in exclude:
             if exkey in state_dict:
