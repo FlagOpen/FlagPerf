@@ -11,11 +11,12 @@ ACCE_CONTAINER_OPT = " --gpus all"
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
+# PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
+PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # If not set, it will be os.path.dirname(run.py)/../../training/
-FLAGPERF_PATH_HOST = "/home/flagperf/training"
+FLAGPERF_PATH_HOST = "/home/zhouyu/workspace/FlagPerf/training"
 
 # Set the mapping directory of flagperf in container.
 FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
@@ -37,7 +38,8 @@ CLEAR_CACHES = True
 # CASES is a list of case names.
 CASES = [
     'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
-    'CPM_TORCH_DEMO_A100_1X8'
+    'CPM_TORCH_DEMO_A100_1X8',
+    # 'RESNET50_TORCH_DEMO_A100_2X8',
 ]
 
 # Config each case in a dictionary like this.
@@ -84,4 +86,26 @@ CPM_TORCH_DEMO_A100_1X8 = {
     "nproc": 8,
     "data_dir_host": "/home/datasets_ckpt/cpm/train/",
     "data_dir_container": "/mnt/data/cpm/train/",
+}
+
+RESNET50_TORCH_DEMO_A100_1X8 = {
+    "model": "resnet50",
+    "framework": "pytorch",
+    "config": "config_A100x1x8",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 8,
+    "data_dir_host": "/raid/dataset/ImageNet/imagenet",
+    "data_dir_container": "/mnt/data/resnet50/train/",
+}
+
+RESNET50_TORCH_DEMO_A100_2X8 = {
+    "model": "resnet50",
+    "framework": "pytorch",
+    "config": "config_A100x2x8",
+    "repeat": 1,
+    "nnodes": 2,
+    "nproc": 8,
+    "data_dir_host": "/raid/dataset/ImageNet/imagenet",
+    "data_dir_container": "/mnt/data/resnet50/train/",
 }

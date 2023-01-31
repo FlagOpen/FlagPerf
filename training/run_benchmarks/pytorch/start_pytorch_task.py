@@ -57,6 +57,10 @@ def parse_args():
                         type=str,
                         default=None,
                         help="The accelerator XXX_VISIBLE_DEVICE env name.")
+    parser.add_argument("--gpus",
+                        type=str,
+                        default=None,
+                        help="The accelerator list to run test cases. multiple accelerators seperated by comma. eg. 2,4")
     parser.add_argument("--case_name",
                         type=str,
                         required=True,
@@ -117,9 +121,12 @@ def _set_common_ddp_envs(task_args):
 
     # set GPU/MLU device env, TODO other vendor's device
     if task_args.visible_dev_env is not None:
-        acce_visible = range(0, task_args.nproc)
-        current_env[task_args.visible_dev_env] = ",".join(
-            str(_id) for _id in acce_visible)
+        # acce_visible = range(0, task_args.nproc)
+        acce_visible = task_args.gpus.lower()
+        if acce_visible == "all":
+            available_devices_ids = list(range(0, task_args.nproc))
+            acce_visible = ",".join( map(str, available_devices_ids))
+        current_env[task_args.visible_dev_env] = acce_visible
     return current_env
 
 

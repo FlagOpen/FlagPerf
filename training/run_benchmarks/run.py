@@ -545,7 +545,7 @@ def main():
                     + " --log_dir " + log_dir_container \
                     + " --log_level " + tc.FLAGPERF_LOG_LEVEL \
                     + " --extern_config_file " + case_config["config"] \
-                    + ".py" + " --enable_extern_config "
+                    + ".py" + " --enable_extern_config " + tc.ACCE_CONTAINER_OPT
 
         RUN_LOGGER.info("=== 2.2 Prepare case config in cluster. ===")
         if not prepare_case_config_cluster(dp_path, case_config, case):

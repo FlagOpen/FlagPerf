@@ -1,0 +1,4 @@
+numpy>=1.15.4
+sentencepiece>=0.1.8
+jieba
+gdown
