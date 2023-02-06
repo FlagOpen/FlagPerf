@@ -248,7 +248,7 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、天数智芯、与百度PaddlePaddle共同建设中。
+本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯共同建设中。
 诚邀各框架、芯片团队与个人参与！
 ### 联系我们
 
