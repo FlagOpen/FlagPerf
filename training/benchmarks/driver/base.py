@@ -54,6 +54,7 @@ class Driver(object):
                                             self.extern_modules)
         self.logger = perf_logger.PerfLogger.get_default_logger(
             rank=self.config.local_rank)
+        # consider different config format between framework，e.g. pytorch & tensorflow
         try:
             log_freq = self.config.log_freq
         except AttributeError:
@@ -66,7 +67,7 @@ class Driver(object):
                 event_manager = cls()
                 event_manager.register_event_handlers(self)
 
-    def setup_modules(self, *args):
+def setup_modules(self, *args):
         for arg in args:
             if inspect.ismodule(arg):
                 print(str(arg) + " replace by " + str(self.extern_modules))

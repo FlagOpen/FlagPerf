@@ -5,7 +5,6 @@
 do_train = True
 model_dir = 'result_ckpt'
 mode = 'train_and_eval'
-resume_from = '/mnt/data/ImageNet2012/resnet50_ckpt/'
 target_accuracy: float = 0.001
 # runtime = dict(
 #   distribution_strategy = 'multi_worker_mirrored',

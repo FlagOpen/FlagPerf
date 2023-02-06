@@ -2,9 +2,7 @@
 import os
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-# from utils import flagperf_logger
-# START_LOGGER = flagperf_logger.FlagPerfLogger()
-from start_tensorflow2_task import START_LOGGER
+
 
 def _get_model_path(model_name, framework):
     '''Return the model path according to modelname and framework.
