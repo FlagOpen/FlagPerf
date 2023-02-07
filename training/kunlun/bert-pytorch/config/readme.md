@@ -4,11 +4,11 @@
 - 厂商名称：昆仑芯
 - 推荐环境配置
   - 硬件
-    - 机器型号：KUNLUN_R480
-    - 芯片/加速卡型号:  执行xpu_smi命令得到的加速卡信息，可能叫做 KUNLUN_R480， 备注：R300机型显示的是KUNLUN_R300
+    - 机器型号：R480
+    - 芯片/加速卡型号：R300
   - 软件
     - OS类型：Linux
-    - OS kernel版本: Linux 5.4.0-26-generic x86_64
+    - OS kernel版本：Linux 5.4.0-26-generic x86_64
     - Docker 版本：20.10.9
     - 加速卡监控命令：xpu_smi
 - 厂商对于模型的适配
