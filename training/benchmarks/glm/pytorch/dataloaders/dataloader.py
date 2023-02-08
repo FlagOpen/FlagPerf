@@ -10,6 +10,7 @@ import torch.distributed as dist
 from torch.utils.data.dataloader import default_collate
 import h5sparse
 from scipy.sparse import csr_matrix
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import dist_pytorch

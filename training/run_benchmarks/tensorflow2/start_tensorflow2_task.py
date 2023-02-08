@@ -20,7 +20,8 @@ def parse_args():
        args such as --data_dir_xxx. Then pass all useful args to the real
        training script.
     '''
-    parser = ArgumentParser(description="Start tensorflow2 training processes. ")
+    parser = ArgumentParser(
+        description="Start tensorflow2 training processes. ")
     parser.add_argument("--node_rank",
                         type=int,
                         default=0,
