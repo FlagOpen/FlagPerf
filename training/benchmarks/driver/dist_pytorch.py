@@ -23,6 +23,7 @@ from contextlib import contextmanager
 import torch
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 
+
 def generate_seeds(rng, size):
     """
     Generate list of random seeds
@@ -203,6 +204,7 @@ def format_step(step):
 
 
 class PyTorchDistributedDataParallel(DDP):
+
     def named_parameters(self, prefix: str = '', recurse: bool = True):
         return self.module.named_parameters(prefix=prefix, recurse=recurse)
 
