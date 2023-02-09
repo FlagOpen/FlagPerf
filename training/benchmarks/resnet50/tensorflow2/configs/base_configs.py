@@ -50,7 +50,7 @@ class CallbacksConfig(hyperparams.Config):
     enable_time_history: Whether or not to enable TimeHistory Callbacks.
       Defaults to True.
   """
-    enable_checkpoint_and_export: bool = True
+    enable_checkpoint_and_export: bool = False
     enable_backup_and_restore: bool = False
     enable_tensorboard: bool = True
     enable_time_history: bool = True

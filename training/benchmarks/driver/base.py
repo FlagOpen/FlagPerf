@@ -68,42 +68,40 @@ class Driver(object):
                 event_manager = cls()
                 event_manager.register_event_handlers(self)
 
+    def setup_modules(self, *args):
+        for arg in args:
+            if inspect.ismodule(arg):
+                print(str(arg) + " replace by " + str(self.extern_modules))
+                mod_util.replace_submodules(arg, self.extern_modules)
+            elif isinstance(arg, dict):
+                print(str(arg) + " remap by " + str(self.extern_modules))
+                mod_util.remap_modules(arg, self.extern_modules)
+            elif isinstance(arg, object):  # TODO
+                pass
+            else:
+                raise TypeError('Can either be a module or a dict')
 
-def setup_modules(self, *args):
-    for arg in args:
-        if inspect.ismodule(arg):
-            print(str(arg) + " replace by " + str(self.extern_modules))
-            mod_util.replace_submodules(arg, self.extern_modules)
-        elif isinstance(arg, dict):
-            print(str(arg) + " remap by " + str(self.extern_modules))
-            mod_util.remap_modules(arg, self.extern_modules)
-        elif isinstance(arg, object):  # TODO
-            pass
-        else:
-            raise TypeError('Can either be a module or a dict')
+    def launch(self):
+        self.event(Event.LAUNCH_TRAINING)
+        config_path: str = self.config.config
+        config_dict = config.get_properties_from_config(self.config)
+        for key, value in config_dict.items():
+            if type(value) not in [int, float, str, bool
+                                   ] and not isinstance(value, Iterable):
+                config_dict[key] = str(value)
 
+        # Like /path/to/vendor/model-framework/config/config_xxx.py
+        if config_path.startswith("."):
+            config_path = os.path.abspath(config_path)
 
-def launch(self):
-    self.event(Event.LAUNCH_TRAINING)
-    config_path: str = self.config.config
-    config_dict = config.get_properties_from_config(self.config)
-    for key, value in config_dict.items():
-        if type(value) not in [int, float, str, bool
-                               ] and not isinstance(value, Iterable):
-            config_dict[key] = str(value)
-
-    # Like /path/to/vendor/model-framework/config/config_xxx.py
-    if config_path.startswith("."):
-        config_path = os.path.abspath(config_path)
-
-    config_path_nodes = config_path.rsplit(sep="/", maxsplit=4)
-    vendor = config_path_nodes[1]
-    model = config_path_nodes[2]
-    self.logger.init_logger(vendor=vendor,
-                            model=model,
-                            config_path=config_path,
-                            config=config_dict,
-                            stacklevel=log_event.STACKLEVEL)
+        config_path_nodes = config_path.rsplit(sep="/", maxsplit=4)
+        vendor = config_path_nodes[1]
+        model = config_path_nodes[2]
+        self.logger.init_logger(vendor=vendor,
+                                model=model,
+                                config_path=config_path,
+                                config=config_dict,
+                                stacklevel=log_event.STACKLEVEL)
 
     def register_event_handler(self, ehr: EventHandleRecord):
         e = ehr.event

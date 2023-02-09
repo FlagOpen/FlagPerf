@@ -3,7 +3,7 @@
 # Note = This configuration uses a scaled per-replica batch size based on the number of devices.
 # Base params  = base_configs.ExperimentConfig
 do_train = True
-model_dir = 'result_ckpt'
+model_dir = 'result'
 mode = 'train_and_eval'
 target_accuracy: float = 0.001
 # runtime = dict(
@@ -49,7 +49,8 @@ model = dict(name='resnet',
              loss=dict(label_smoothing=0.1))
 train = dict(resume_checkpoint=False,
              epochs=90,
-             time_history=dict(log_steps=100))
+             time_history=dict(log_steps=100),
+             callbacks=dict(enable_checkpoint_and_export=False))
 evaluation = dict(epochs_between_evals=1)
 
 # local_rank for distributed training on gpus

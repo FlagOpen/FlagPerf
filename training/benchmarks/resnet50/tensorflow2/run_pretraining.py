@@ -42,17 +42,11 @@ from resnet import common
 from resnet import resnet_model
 from modeling import hyperparams
 from modeling import performance
+from core import trainer_adapter
 from utils import hyperparams_flags
 from utils.misc import keras_utils
 
 logger = None
-
-
-def get_models() -> Mapping[str, tf.keras.Model]:
-    """Returns the mapping from model type name to Keras model."""
-    return {
-        'resnet': resnet_model.resnet50,
-    }
 
 
 def get_dtype_map() -> Mapping[str, tf.dtypes.DType]:
@@ -99,11 +93,6 @@ def _get_metrics(one_hot: bool) -> Mapping[Text, Any]:
 def get_image_size_from_model(
         params: base_configs.ExperimentConfig) -> Optional[int]:
     """If the given model has a preferred image size, return it."""
-    if params.model_name == 'efficientnet':
-        efficientnet_name = params.model.model_params.model_name
-        if efficientnet_name in efficientnet_model.MODEL_CONFIGS:
-            return efficientnet_model.MODEL_CONFIGS[
-                efficientnet_name].resolution
     return None
 
 
@@ -137,22 +126,6 @@ def _get_dataset_builders(params: base_configs.ExperimentConfig,
         builders.append(builder)
 
     return builders
-
-
-def get_loss_scale(params: base_configs.ExperimentConfig,
-                   fp16_default: float = 128.) -> float:
-    """Returns the loss scale for initializations."""
-    loss_scale = params.runtime.loss_scale
-    if loss_scale == 'dynamic':
-        return loss_scale
-    elif loss_scale is not None:
-        return float(loss_scale)
-    elif (params.train_dataset.dtype == 'float32'
-          or params.train_dataset.dtype == 'bfloat16'):
-        return 1.
-    else:
-        assert params.train_dataset.dtype == 'float16'
-        return fp16_default
 
 
 def check_must_envconfigs(params):
@@ -349,23 +322,11 @@ def train_and_eval(params: base_configs.ExperimentConfig,
     logging.info('Global batch size: %d', train_builder.global_batch_size)
 
     with strategy_scope:
-        model_params = params.model.model_params.as_dict()
-        model = get_models()[params.model.name](**model_params)
-        learning_rate = optimizer_factory.build_learning_rate(
-            params=params.model.learning_rate,
-            batch_size=train_builder.global_batch_size,
-            train_epochs=train_epochs,
-            train_steps=train_steps)
-        optimizer = optimizer_factory.build_optimizer(
-            optimizer_name=params.model.optimizer.name,
-            base_learning_rate=learning_rate,
-            params=params.model.optimizer.as_dict(),
-            model=model)
-        optimizer = performance.configure_optimizer(
-            optimizer,
-            use_float16=train_builder.dtype == 'float16',
-            loss_scale=get_loss_scale(params))
-
+        model = trainer_adapter.convert_model(params)
+        learning_rate = trainer_adapter.convert_learning_rate(
+            params, train_builder, train_epochs, train_steps)
+        optimizer = trainer_adapter.create_optimizer(params, learning_rate,
+                                                     model, train_builder)
         metrics_map = _get_metrics(one_hot)
         metrics = [metrics_map[metric] for metric in params.train.metrics]
         steps_per_loop = train_steps if params.train.set_epoch_loop else 1
@@ -442,8 +403,7 @@ def train_and_eval(params: base_configs.ExperimentConfig,
 def export(params: base_configs.ExperimentConfig):
     """Runs the model export functionality."""
     logging.info('Exporting model.')
-    model_params = params.model.model_params.as_dict()
-    model = get_models()[params.model.name](**model_params)
+    model = trainer_adapter.convert_model(params)
     checkpoint = params.export.checkpoint
     if checkpoint is None:
         logging.info('No export checkpoint was provided. Using the latest '
