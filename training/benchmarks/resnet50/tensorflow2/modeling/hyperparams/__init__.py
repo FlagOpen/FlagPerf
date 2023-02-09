@@ -11,9 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Hyperparams package definition."""
 # pylint: disable=g-multiple-import
-from  .base_config import *
-from  .oneof import *
-from  .params_dict import *
+from .base_config import *
+from .oneof import *
+from .params_dict import *

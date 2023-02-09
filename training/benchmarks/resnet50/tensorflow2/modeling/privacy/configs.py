@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Configs for differential privacy."""
 import dataclasses
 
@@ -20,7 +19,7 @@ from modeling.hyperparams import base_config
 
 @dataclasses.dataclass
 class DifferentialPrivacyConfig(base_config.Config):
-  # Applied to the gradients
-  # Setting to a large number so nothing is clipped.
-  clipping_norm: float = 100000000.0  # 10^9
-  noise_multiplier: float = 0.0
+    # Applied to the gradients
+    # Setting to a large number so nothing is clipped.
+    clipping_norm: float = 100000000.0  # 10^9
+    noise_multiplier: float = 0.0

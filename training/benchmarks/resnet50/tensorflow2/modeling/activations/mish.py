@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Self Regularized Non-Monotonic Activation Function."""
 
 import tensorflow as tf
@@ -21,7 +20,7 @@ from tensorflow_addons.utils import types
 
 @tf.keras.utils.register_keras_serializable(package='Text')
 def mish(x: types.TensorLike) -> tf.Tensor:
-  """Mish activation function.
+    """Mish activation function.
 
      Mish: A Self Regularized Non-Monotonic Activation Function
      https://arxiv.org/pdf/1908.08681.pdf
@@ -34,5 +33,5 @@ def mish(x: types.TensorLike) -> tf.Tensor:
   Returns:
     The activation value.
   """
-  x = tf.convert_to_tensor(x)
-  return x * tf.tanh(tf.nn.softplus(x))
+    x = tf.convert_to_tensor(x)
+    return x * tf.tanh(tf.nn.softplus(x))

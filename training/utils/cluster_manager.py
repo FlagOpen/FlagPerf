@@ -114,9 +114,9 @@ class ClusterManager():
         return failed_hosts_ret
 
     def run_command_some_hosts_distribution_info(self,
-                                         base_cmd,
-                                         host_count,
-                                         timeout=10):
+                                                 base_cmd,
+                                                 host_count,
+                                                 timeout=10):
         '''Run a command with torch ddp options on each host with ssh.
         '''
         failed_hosts_ret = {}

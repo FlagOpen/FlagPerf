@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Builder class for preparing tf.train.Example."""
 
 # https://www.python.org/dev/peps/pep-0563/#enabling-the-future-behavior-in-python-3-7
@@ -30,7 +29,7 @@ _to_bytes_array = lambda v: list(map(_to_bytes, _to_array(v)))
 
 
 class TfExampleBuilder(object):
-  """Builder class for preparing tf.train.Example.
+    """Builder class for preparing tf.train.Example.
 
   Read API doc at https://www.tensorflow.org/api_docs/python/tf/train/Example.
 
@@ -42,33 +41,34 @@ class TfExampleBuilder(object):
             .example)
   """
 
-  def __init__(self) -> None:
-    self._example = tf.train.Example()
+    def __init__(self) -> None:
+        self._example = tf.train.Example()
 
-  @property
-  def example(self) -> tf.train.Example:
-    """Returns a copy of the generated tf.train.Example proto."""
-    return self._example
+    @property
+    def example(self) -> tf.train.Example:
+        """Returns a copy of the generated tf.train.Example proto."""
+        return self._example
 
-  @property
-  def serialized_example(self) -> str:
-    """Returns a serialized string of the generated tf.train.Example proto."""
-    return self._example.SerializeToString()
+    @property
+    def serialized_example(self) -> str:
+        """Returns a serialized string of the generated tf.train.Example proto."""
+        return self._example.SerializeToString()
 
-  def set(self, example: tf.train.Example) -> TfExampleBuilder:
-    """Sets the example."""
-    self._example = example
-    return self
+    def set(self, example: tf.train.Example) -> TfExampleBuilder:
+        """Sets the example."""
+        self._example = example
+        return self
 
-  def reset(self) -> TfExampleBuilder:
-    """Resets the example to an empty proto."""
-    self._example = tf.train.Example()
-    return self
+    def reset(self) -> TfExampleBuilder:
+        """Resets the example to an empty proto."""
+        self._example = tf.train.Example()
+        return self
 
-  ###### Basic APIs for primitive data types ######
-  def add_feature_dict(
-      self, feature_dict: Mapping[str, tf.train.Feature]) -> TfExampleBuilder:
-    """Adds the predefined `feature_dict` to the example.
+    ###### Basic APIs for primitive data types ######
+    def add_feature_dict(
+            self, feature_dict: Mapping[str,
+                                        tf.train.Feature]) -> TfExampleBuilder:
+        """Adds the predefined `feature_dict` to the example.
 
     Note: Please prefer to using feature-type-specific methods.
 
@@ -79,13 +79,13 @@ class TfExampleBuilder(object):
     Returns:
       The builder object for subsequent method calls.
     """
-    for k, v in feature_dict.items():
-      self._example.features.feature[k].CopyFrom(v)
-    return self
+        for k, v in feature_dict.items():
+            self._example.features.feature[k].CopyFrom(v)
+        return self
 
-  def add_feature(self, key: str,
-                  feature: tf.train.Feature) -> TfExampleBuilder:
-    """Adds predefined `feature` with `key` to the example.
+    def add_feature(self, key: str,
+                    feature: tf.train.Feature) -> TfExampleBuilder:
+        """Adds predefined `feature` with `key` to the example.
 
     Args:
       key: String key of the feature.
@@ -94,12 +94,12 @@ class TfExampleBuilder(object):
     Returns:
       The builder object for subsequent method calls.
     """
-    self._example.features.feature[key].CopyFrom(feature)
-    return self
+        self._example.features.feature[key].CopyFrom(feature)
+        return self
 
-  def add_bytes_feature(self, key: str,
-                        value: BytesValueType) -> TfExampleBuilder:
-    """Adds byte(s) or string(s) with `key` to the example.
+    def add_bytes_feature(self, key: str,
+                          value: BytesValueType) -> TfExampleBuilder:
+        """Adds byte(s) or string(s) with `key` to the example.
 
     Args:
       key: String key of the feature.
@@ -108,14 +108,14 @@ class TfExampleBuilder(object):
     Returns:
       The builder object for subsequent method calls.
     """
-    return self.add_feature(
-        key,
-        tf.train.Feature(
-            bytes_list=tf.train.BytesList(value=_to_bytes_array(value))))
+        return self.add_feature(
+            key,
+            tf.train.Feature(bytes_list=tf.train.BytesList(
+                value=_to_bytes_array(value))))
 
-  def add_ints_feature(self, key: str,
-                       value: Union[int, Sequence[int]]) -> TfExampleBuilder:
-    """Adds integer(s) with `key` to the example.
+    def add_ints_feature(self, key: str,
+                         value: Union[int, Sequence[int]]) -> TfExampleBuilder:
+        """Adds integer(s) with `key` to the example.
 
     Args:
       key: String key of the feature.
@@ -124,13 +124,15 @@ class TfExampleBuilder(object):
     Returns:
       The builder object for subsequent method calls.
     """
-    return self.add_feature(
-        key,
-        tf.train.Feature(int64_list=tf.train.Int64List(value=_to_array(value))))
+        return self.add_feature(
+            key,
+            tf.train.Feature(int64_list=tf.train.Int64List(
+                value=_to_array(value))))
 
-  def add_floats_feature(
-      self, key: str, value: Union[float, Sequence[float]]) -> TfExampleBuilder:
-    """Adds float(s) with `key` to the example.
+    def add_floats_feature(
+            self, key: str, value: Union[float,
+                                         Sequence[float]]) -> TfExampleBuilder:
+        """Adds float(s) with `key` to the example.
 
     Args:
       key: String key of the feature.
@@ -139,6 +141,7 @@ class TfExampleBuilder(object):
     Returns:
       The builder object for subsequent method calls.
     """
-    return self.add_feature(
-        key,
-        tf.train.Feature(float_list=tf.train.FloatList(value=_to_array(value))))
+        return self.add_feature(
+            key,
+            tf.train.Feature(float_list=tf.train.FloatList(
+                value=_to_array(value))))

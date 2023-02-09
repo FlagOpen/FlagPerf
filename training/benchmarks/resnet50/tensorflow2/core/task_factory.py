@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """A global factory to register and access all registered tasks."""
 
 from official.core import registry
@@ -21,7 +20,7 @@ _REGISTERED_TASK_CLS = {}
 
 # TODO(b/158741360): Add type annotations once pytype checks across modules.
 def register_task_cls(task_config_cls):
-  """Decorates a factory of Tasks for lookup by a subclass of TaskConfig.
+    """Decorates a factory of Tasks for lookup by a subclass of TaskConfig.
 
   This decorator supports registration of tasks as follows:
 
@@ -52,19 +51,19 @@ def register_task_cls(task_config_cls):
     A callable for use as class decorator that registers the decorated class
     for creation from an instance of task_config_cls.
   """
-  return registry.register(_REGISTERED_TASK_CLS, task_config_cls)
+    return registry.register(_REGISTERED_TASK_CLS, task_config_cls)
 
 
 def get_task(task_config, **kwargs):
-  """Creates a Task (of suitable subclass type) from task_config."""
-  # TODO(hongkuny): deprecate the task factory to use config.BUILDER.
-  if task_config.BUILDER is not None:
-    return task_config.BUILDER(task_config, **kwargs)
-  return get_task_cls(task_config.__class__)(task_config, **kwargs)
+    """Creates a Task (of suitable subclass type) from task_config."""
+    # TODO(hongkuny): deprecate the task factory to use config.BUILDER.
+    if task_config.BUILDER is not None:
+        return task_config.BUILDER(task_config, **kwargs)
+    return get_task_cls(task_config.__class__)(task_config, **kwargs)
 
 
 # The user-visible get_task() is defined after classes have been registered.
 # TODO(b/158741360): Add type annotations once pytype checks across modules.
 def get_task_cls(task_config_cls):
-  task_cls = registry.lookup(_REGISTERED_TASK_CLS, task_config_cls)
-  return task_cls
+    task_cls = registry.lookup(_REGISTERED_TASK_CLS, task_config_cls)
+    return task_cls

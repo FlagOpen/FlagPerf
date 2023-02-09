@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Base ProgressivePolicy definition for progressive training.
 
 To write a progressive model, subclass ProgressivePolicy and implement its
@@ -25,19 +24,19 @@ from absl import logging
 import six
 import tensorflow as tf
 
-from  .common import streamz_counters
-from  .modeling.fast_training.progressive import utils
-from  .modeling.hyperparams import base_config
+from .common import streamz_counters
+from .modeling.fast_training.progressive import utils
+from .modeling.hyperparams import base_config
 
 
 @dataclasses.dataclass
 class ProgressiveConfig(base_config.Config):
-  pass
+    pass
 
 
 @six.add_metaclass(abc.ABCMeta)
 class ProgressivePolicy:
-  """The APIs for handling progressive training stages.
+    """The APIs for handling progressive training stages.
 
   Attributes:
     cur_model: The model for the current progressive training stage.
@@ -54,103 +53,108 @@ class ProgressivePolicy:
     update_pt_stage: Update progressive training stage.
   """
 
-  def __init__(self):
-    """Initialize stage policy."""
-    self._cur_train_dataset = None
-    self._cur_eval_dataset = None
-    self._volatiles = utils.VolatileTrackable(optimizer=None, model=None)
+    def __init__(self):
+        """Initialize stage policy."""
+        self._cur_train_dataset = None
+        self._cur_eval_dataset = None
+        self._volatiles = utils.VolatileTrackable(optimizer=None, model=None)
 
-    stage_id = 0
-    self._stage_id = tf.Variable(
-        stage_id,
-        trainable=False,
-        dtype=tf.int64,
-        aggregation=tf.VariableAggregation.ONLY_FIRST_REPLICA,
-        shape=[])
-    self._volatiles.reassign_trackable(
-        optimizer=self.get_optimizer(stage_id),
-        model=self.get_model(stage_id, old_model=None))  # pytype: disable=wrong-arg-types  # typed-keras
+        stage_id = 0
+        self._stage_id = tf.Variable(
+            stage_id,
+            trainable=False,
+            dtype=tf.int64,
+            aggregation=tf.VariableAggregation.ONLY_FIRST_REPLICA,
+            shape=[])
+        self._volatiles.reassign_trackable(
+            optimizer=self.get_optimizer(stage_id),
+            model=self.get_model(stage_id, old_model=None))  # pytype: disable=wrong-arg-types  # typed-keras
 
-    streamz_counters.progressive_policy_creation_counter.get_cell(
+        streamz_counters.progressive_policy_creation_counter.get_cell(
         ).increase_by(1)
 
-  def compute_stage_id(self, global_step: int) -> int:
-    for stage_id in range(self.num_stages()):
-      global_step -= self.num_steps(stage_id)
-      if global_step < 0:
-        return stage_id
-    logging.error('Global step %d found no matching progressive stages. '
-                  'Default to the last stage.', global_step)
-    return self.num_stages() - 1
+    def compute_stage_id(self, global_step: int) -> int:
+        for stage_id in range(self.num_stages()):
+            global_step -= self.num_steps(stage_id)
+            if global_step < 0:
+                return stage_id
+        logging.error(
+            'Global step %d found no matching progressive stages. '
+            'Default to the last stage.', global_step)
+        return self.num_stages() - 1
 
-  @abc.abstractmethod
-  def num_stages(self) -> int:
-    """Return the total number of progressive stages."""
-    pass
+    @abc.abstractmethod
+    def num_stages(self) -> int:
+        """Return the total number of progressive stages."""
+        pass
 
-  @abc.abstractmethod
-  def num_steps(self, stage_id: int) -> int:
-    """Return the total number of steps in this stage."""
-    pass
+    @abc.abstractmethod
+    def num_steps(self, stage_id: int) -> int:
+        """Return the total number of steps in this stage."""
+        pass
 
-  @abc.abstractmethod
-  def get_model(self,
-                stage_id: int,
-                old_model: tf.keras.Model = None) -> tf.keras.Model:  # pytype: disable=annotation-type-mismatch  # typed-keras
-    """Return model for this stage. For initialization, `old_model` = None."""
-    pass
+    @abc.abstractmethod
+    def get_model(
+        self,
+        stage_id: int,
+        old_model: tf.keras.Model = None
+    ) -> tf.keras.Model:  # pytype: disable=annotation-type-mismatch  # typed-keras
+        """Return model for this stage. For initialization, `old_model` = None."""
+        pass
 
-  @abc.abstractmethod
-  def get_optimizer(self, stage_id: int) -> tf.keras.optimizers.Optimizer:
-    """Return optimizer for this stage."""
-    pass
+    @abc.abstractmethod
+    def get_optimizer(self, stage_id: int) -> tf.keras.optimizers.Optimizer:
+        """Return optimizer for this stage."""
+        pass
 
-  @abc.abstractmethod
-  def get_train_dataset(self, stage_id: int) -> tf.data.Dataset:
-    """Return training Dataset for this stage."""
-    pass
+    @abc.abstractmethod
+    def get_train_dataset(self, stage_id: int) -> tf.data.Dataset:
+        """Return training Dataset for this stage."""
+        pass
 
-  @abc.abstractmethod
-  def get_eval_dataset(self, stage_id: int) -> tf.data.Dataset:
-    """Return evaluation Dataset for this stage."""
-    pass
+    @abc.abstractmethod
+    def get_eval_dataset(self, stage_id: int) -> tf.data.Dataset:
+        """Return evaluation Dataset for this stage."""
+        pass
 
-  @property
-  def cur_model(self) -> tf.keras.Model:
-    return self._volatiles.model
+    @property
+    def cur_model(self) -> tf.keras.Model:
+        return self._volatiles.model
 
-  @property
-  def cur_train_dataset(self) -> tf.data.Dataset:
-    if self._cur_train_dataset is None:
-      self._cur_train_dataset = self.get_train_dataset(self._stage_id.numpy())
-    return self._cur_train_dataset
+    @property
+    def cur_train_dataset(self) -> tf.data.Dataset:
+        if self._cur_train_dataset is None:
+            self._cur_train_dataset = self.get_train_dataset(
+                self._stage_id.numpy())
+        return self._cur_train_dataset
 
-  @property
-  def cur_eval_dataset(self) -> tf.data.Dataset:
-    if self._cur_eval_dataset is None:
-      self._cur_eval_dataset = self.get_eval_dataset(self._stage_id.numpy())
-    return self._cur_eval_dataset
+    @property
+    def cur_eval_dataset(self) -> tf.data.Dataset:
+        if self._cur_eval_dataset is None:
+            self._cur_eval_dataset = self.get_eval_dataset(
+                self._stage_id.numpy())
+        return self._cur_eval_dataset
 
-  @property
-  def cur_optimizer(self) -> tf.keras.optimizers.Optimizer:
-    return self._volatiles.optimizer
+    @property
+    def cur_optimizer(self) -> tf.keras.optimizers.Optimizer:
+        return self._volatiles.optimizer
 
-  @property
-  def is_last_stage(self) -> bool:
-    stage_id = self._stage_id.numpy()
-    return stage_id >= self.num_stages() - 1
+    @property
+    def is_last_stage(self) -> bool:
+        stage_id = self._stage_id.numpy()
+        return stage_id >= self.num_stages() - 1
 
-  @property
-  def cur_checkpoint_items(self) -> Mapping[str, Any]:
-    return dict(stage_id=self._stage_id, volatiles=self._volatiles)
+    @property
+    def cur_checkpoint_items(self) -> Mapping[str, Any]:
+        return dict(stage_id=self._stage_id, volatiles=self._volatiles)
 
-  def is_stage_advancing(self, global_step: int) -> bool:
-    old_stage_id = self._stage_id.numpy()
-    new_stage_id = self.compute_stage_id(global_step)
-    return old_stage_id != new_stage_id
+    def is_stage_advancing(self, global_step: int) -> bool:
+        old_stage_id = self._stage_id.numpy()
+        new_stage_id = self.compute_stage_id(global_step)
+        return old_stage_id != new_stage_id
 
-  def update_pt_stage(self, global_step: int, pass_old_model=True) -> None:
-    """Update progressive training internal status.
+    def update_pt_stage(self, global_step: int, pass_old_model=True) -> None:
+        """Update progressive training internal status.
 
     Call this after a training loop ends.
 
@@ -160,19 +164,20 @@ class ProgressivePolicy:
         This is set to False if the old_model is irrelevant (e.g, just a default
         model from stage 0).
     """
-    old_stage_id = self._stage_id.numpy()
-    new_stage_id = self.compute_stage_id(global_step)
-    logging.info('Switching stage from %d to %d', old_stage_id, new_stage_id)
+        old_stage_id = self._stage_id.numpy()
+        new_stage_id = self.compute_stage_id(global_step)
+        logging.info('Switching stage from %d to %d', old_stage_id,
+                     new_stage_id)
 
-    # Update stage id.
-    self._stage_id.assign(new_stage_id)
-    # Update dataset function.
-    self._cur_train_dataset = None
-    self._cur_eval_dataset = None
+        # Update stage id.
+        self._stage_id.assign(new_stage_id)
+        # Update dataset function.
+        self._cur_train_dataset = None
+        self._cur_eval_dataset = None
 
-    # Update optimizer and model.
-    new_optimizer = self.get_optimizer(new_stage_id)
-    self._volatiles.reassign_trackable(optimizer=new_optimizer)
-    new_model = self.get_model(
-        new_stage_id, old_model=self.cur_model if pass_old_model else None)
-    self._volatiles.reassign_trackable(model=new_model)
+        # Update optimizer and model.
+        new_optimizer = self.get_optimizer(new_stage_id)
+        self._volatiles.reassign_trackable(optimizer=new_optimizer)
+        new_model = self.get_model(
+            new_stage_id, old_model=self.cur_model if pass_old_model else None)
+        self._volatiles.reassign_trackable(model=new_model)

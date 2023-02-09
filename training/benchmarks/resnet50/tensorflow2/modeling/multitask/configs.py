@@ -11,73 +11,72 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Configuration definitions for multi-task training."""
 from typing import Optional, Tuple
 
 import dataclasses
 
-from  .core import config_definitions as cfg
-from  .modeling import hyperparams
-from  .modeling.privacy import configs as dp_configs
+from .core import config_definitions as cfg
+from .modeling import hyperparams
+from .modeling.privacy import configs as dp_configs
 
 
 @dataclasses.dataclass
 class TaskRoutine(hyperparams.Config):
-  # TODO(hongkuny): deprecate the task_name once we migrated client code.
-  task_name: str = ""
-  task_config: cfg.TaskConfig = None
-  eval_steps: Optional[int] = None
-  task_weight: Optional[float] = 1.0
+    # TODO(hongkuny): deprecate the task_name once we migrated client code.
+    task_name: str = ""
+    task_config: cfg.TaskConfig = None
+    eval_steps: Optional[int] = None
+    task_weight: Optional[float] = 1.0
 
 
 @dataclasses.dataclass
 class MultiTaskConfig(hyperparams.Config):
-  init_checkpoint: str = ""
-  model: hyperparams.Config = None
-  task_routines: Tuple[TaskRoutine, ...] = ()
-  differential_privacy_config: Optional[
-      dp_configs.DifferentialPrivacyConfig] = None
+    init_checkpoint: str = ""
+    model: hyperparams.Config = None
+    task_routines: Tuple[TaskRoutine, ...] = ()
+    differential_privacy_config: Optional[
+        dp_configs.DifferentialPrivacyConfig] = None
 
 
 @dataclasses.dataclass
 class ProportionalSampleConfig(hyperparams.Config):
-  alpha: float = 1.0
+    alpha: float = 1.0
 
 
 @dataclasses.dataclass
 class AnnealingSampleConfig(hyperparams.Config):
-  steps_per_epoch: int = 5
-  total_steps: int = 20
+    steps_per_epoch: int = 5
+    total_steps: int = 20
 
 
 @dataclasses.dataclass
 class TaskSamplingConfig(hyperparams.OneOfConfig):
-  type: str = ""
-  uniform: hyperparams.Config = hyperparams.Config()
-  proportional: ProportionalSampleConfig = ProportionalSampleConfig()
-  annealing: AnnealingSampleConfig = AnnealingSampleConfig()
+    type: str = ""
+    uniform: hyperparams.Config = hyperparams.Config()
+    proportional: ProportionalSampleConfig = ProportionalSampleConfig()
+    annealing: AnnealingSampleConfig = AnnealingSampleConfig()
 
 
 @dataclasses.dataclass
 class MultiTaskTrainerConfig(cfg.TrainerConfig):
-  trainer_type: str = "interleaving"
-  task_sampler: TaskSamplingConfig = TaskSamplingConfig(type="proportional")
+    trainer_type: str = "interleaving"
+    task_sampler: TaskSamplingConfig = TaskSamplingConfig(type="proportional")
 
 
 @dataclasses.dataclass
 class MultiTaskExperimentConfig(hyperparams.Config):
-  """An experiment config for multi-task training and multi-task evaluation."""
-  task: MultiTaskConfig = MultiTaskConfig()
-  trainer: MultiTaskTrainerConfig = MultiTaskTrainerConfig()
-  runtime: cfg.RuntimeConfig = cfg.RuntimeConfig()
+    """An experiment config for multi-task training and multi-task evaluation."""
+    task: MultiTaskConfig = MultiTaskConfig()
+    trainer: MultiTaskTrainerConfig = MultiTaskTrainerConfig()
+    runtime: cfg.RuntimeConfig = cfg.RuntimeConfig()
 
 
 @dataclasses.dataclass
 class MultiEvalExperimentConfig(cfg.ExperimentConfig):
-  """An experiment config for single-task training and multi-task evaluation.
+    """An experiment config for single-task training and multi-task evaluation.
 
   Attributes:
     eval_tasks: individual evaluation tasks.
   """
-  eval_tasks: Tuple[TaskRoutine, ...] = ()
+    eval_tasks: Tuple[TaskRoutine, ...] = ()

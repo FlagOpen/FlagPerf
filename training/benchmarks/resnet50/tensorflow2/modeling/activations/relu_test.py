@@ -11,22 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for the customized Relu activation."""
 
 import tensorflow as tf
 
-from  .modeling import activations
+from .modeling import activations
 
 
 class CustomizedReluTest(tf.test.TestCase):
 
-  def test_relu6(self):
-    features = [[.25, 0, -.25], [-1, -2, 3]]
-    customized_relu6_data = activations.relu6(features)
-    relu6_data = tf.nn.relu6(features)
-    self.assertAllClose(customized_relu6_data, relu6_data)
+    def test_relu6(self):
+        features = [[.25, 0, -.25], [-1, -2, 3]]
+        customized_relu6_data = activations.relu6(features)
+        relu6_data = tf.nn.relu6(features)
+        self.assertAllClose(customized_relu6_data, relu6_data)
 
 
 if __name__ == '__main__':
-  tf.test.main()
+    tf.test.main()

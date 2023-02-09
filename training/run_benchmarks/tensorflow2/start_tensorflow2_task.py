@@ -54,12 +54,13 @@ def parse_args():
                         required=True,
                         help="a list of all hosts of the cluster, which is "
                         "separated by a comma.")
-    parser.add_argument("--hosts_ports",
-                        default="2023",
-                        type=str,
-                        required=True,
-                        help="a list of all hosts's port of the cluster, which is "
-                        "separated by a comma.")
+    parser.add_argument(
+        "--hosts_ports",
+        default="2023",
+        type=str,
+        required=True,
+        help="a list of all hosts's port of the cluster, which is "
+        "separated by a comma.")
 
     parser.add_argument("--vendor",
                         type=str,

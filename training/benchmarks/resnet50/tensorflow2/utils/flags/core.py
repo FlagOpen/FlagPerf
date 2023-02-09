@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Public interface for flag definition.
 
 See _example.py for detailed instructions on defining flags.
@@ -34,18 +33,18 @@ from . import _performance
 
 
 def set_defaults(**kwargs):
-  for key, value in kwargs.items():
-    flags.FLAGS.set_default(name=key, value=value)
+    for key, value in kwargs.items():
+        flags.FLAGS.set_default(name=key, value=value)
 
 
 def parse_flags(argv=None):
-  """Reset flags and reparse. Currently only used in testing."""
-  flags.FLAGS.unparse_flags()
-  absl_app.parse_flags_with_usage(argv or sys.argv)
+    """Reset flags and reparse. Currently only used in testing."""
+    flags.FLAGS.unparse_flags()
+    absl_app.parse_flags_with_usage(argv or sys.argv)
 
 
 def register_key_flags_in_core(f):
-  """Defines a function in core.py, and registers its key flags.
+    """Defines a function in core.py, and registers its key flags.
 
   absl uses the location of a flags.declare_key_flag() to determine the context
   in which a flag is key. By making all declares in core, this allows model
@@ -59,11 +58,11 @@ def register_key_flags_in_core(f):
     The "core-defined" version of the input function.
   """
 
-  def core_fn(*args, **kwargs):
-    key_flags = f(*args, **kwargs)
-    [flags.declare_key_flag(fl) for fl in key_flags]  # pylint: disable=expression-not-assigned
+    def core_fn(*args, **kwargs):
+        key_flags = f(*args, **kwargs)
+        [flags.declare_key_flag(fl) for fl in key_flags]  # pylint: disable=expression-not-assigned
 
-  return core_fn
+    return core_fn
 
 
 define_base = register_key_flags_in_core(_base.define_base)
@@ -74,7 +73,8 @@ define_log_steps = register_key_flags_in_core(_benchmark.define_log_steps)
 define_benchmark = register_key_flags_in_core(_benchmark.define_benchmark)
 define_device = register_key_flags_in_core(_device.define_device)
 define_image = register_key_flags_in_core(_misc.define_image)
-define_performance = register_key_flags_in_core(_performance.define_performance)
+define_performance = register_key_flags_in_core(
+    _performance.define_performance)
 define_distribution = register_key_flags_in_core(
     _distribution.define_distribution)
 
@@ -88,18 +88,18 @@ require_cloud_storage = _device.require_cloud_storage
 
 
 def _get_nondefault_flags_as_dict():
-  """Returns the nondefault flags as a dict from flag name to value."""
-  nondefault_flags = {}
-  for flag_name in flags.FLAGS:
-    flag_value = getattr(flags.FLAGS, flag_name)
-    if (flag_name != flags.FLAGS[flag_name].short_name and
-        flag_value != flags.FLAGS[flag_name].default):
-      nondefault_flags[flag_name] = flag_value
-  return nondefault_flags
+    """Returns the nondefault flags as a dict from flag name to value."""
+    nondefault_flags = {}
+    for flag_name in flags.FLAGS:
+        flag_value = getattr(flags.FLAGS, flag_name)
+        if (flag_name != flags.FLAGS[flag_name].short_name
+                and flag_value != flags.FLAGS[flag_name].default):
+            nondefault_flags[flag_name] = flag_value
+    return nondefault_flags
 
 
 def get_nondefault_flags_as_str():
-  """Returns flags as a string that can be passed as command line arguments.
+    """Returns flags as a string that can be passed as command line arguments.
 
   E.g., returns: "--batch_size=256 --use_synthetic_data" for the following code
   block:
@@ -117,14 +117,14 @@ def get_nondefault_flags_as_str():
     A string with the flags, that can be passed as command line arguments to a
     program to use the flags.
   """
-  nondefault_flags = _get_nondefault_flags_as_dict()
-  flag_strings = []
-  for name, value in sorted(nondefault_flags.items()):
-    if isinstance(value, bool):
-      flag_str = '--{}'.format(name) if value else '--no{}'.format(name)
-    elif isinstance(value, list):
-      flag_str = '--{}={}'.format(name, ','.join(value))
-    else:
-      flag_str = '--{}={}'.format(name, value)
-    flag_strings.append(flag_str)
-  return ' '.join(shlex_quote(flag_str) for flag_str in flag_strings)
+    nondefault_flags = _get_nondefault_flags_as_dict()
+    flag_strings = []
+    for name, value in sorted(nondefault_flags.items()):
+        if isinstance(value, bool):
+            flag_str = '--{}'.format(name) if value else '--no{}'.format(name)
+        elif isinstance(value, list):
+            flag_str = '--{}={}'.format(name, ','.join(value))
+        else:
+            flag_str = '--{}={}'.format(name, value)
+        flag_strings.append(flag_str)
+    return ' '.join(shlex_quote(flag_str) for flag_str in flag_strings)

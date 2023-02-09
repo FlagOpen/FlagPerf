@@ -11,14 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Optimization package definition."""
 
 # pylint: disable=wildcard-import
-from  .configs.learning_rate_config import *
-from  .configs.optimization_config import *
-from  .configs.optimizer_config import *
-from  .ema_optimizer import ExponentialMovingAverage
-from  .lr_schedule import *
-from  .optimizer_factory import OptimizerFactory
-from  .optimizer_factory import register_optimizer_cls
+from .configs.learning_rate_config import *
+from .configs.optimization_config import *
+from .configs.optimizer_config import *
+from .ema_optimizer import ExponentialMovingAverage
+from .lr_schedule import *
+from .optimizer_factory import OptimizerFactory
+from .optimizer_factory import register_optimizer_cls

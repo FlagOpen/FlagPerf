@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Definitions for high level configuration groups.."""
 
 import dataclasses
@@ -25,7 +24,7 @@ RuntimeConfig = config_definitions.RuntimeConfig
 
 @dataclasses.dataclass
 class TensorBoardConfig(hyperparams.Config):
-  """Configuration for TensorBoard.
+    """Configuration for TensorBoard.
 
   Attributes:
     track_lr: Whether or not to track the learning rate in TensorBoard. Defaults
@@ -33,13 +32,13 @@ class TensorBoardConfig(hyperparams.Config):
     write_model_weights: Whether or not to write the model weights as images in
       TensorBoard. Defaults to False.
   """
-  track_lr: bool = True
-  write_model_weights: bool = False
+    track_lr: bool = True
+    write_model_weights: bool = False
 
 
 @dataclasses.dataclass
 class CallbacksConfig(hyperparams.Config):
-  """Configuration for Callbacks.
+    """Configuration for Callbacks.
 
   Attributes:
     enable_checkpoint_and_export: Whether or not to enable checkpoints as a
@@ -51,50 +50,50 @@ class CallbacksConfig(hyperparams.Config):
     enable_time_history: Whether or not to enable TimeHistory Callbacks.
       Defaults to True.
   """
-  enable_checkpoint_and_export: bool = True
-  enable_backup_and_restore: bool = False
-  enable_tensorboard: bool = True
-  enable_time_history: bool = True
+    enable_checkpoint_and_export: bool = True
+    enable_backup_and_restore: bool = False
+    enable_tensorboard: bool = True
+    enable_time_history: bool = True
 
 
 @dataclasses.dataclass
 class ExportConfig(hyperparams.Config):
-  """Configuration for exports.
+    """Configuration for exports.
 
   Attributes:
     checkpoint: the path to the checkpoint to export.
     destination: the path to where the checkpoint should be exported.
   """
-  checkpoint: str = None
-  destination: str = None
+    checkpoint: str = None
+    destination: str = None
 
 
 @dataclasses.dataclass
 class MetricsConfig(hyperparams.Config):
-  """Configuration for Metrics.
+    """Configuration for Metrics.
 
   Attributes:
     accuracy: Whether or not to track accuracy as a Callback. Defaults to None.
     top_5: Whether or not to track top_5_accuracy as a Callback. Defaults to
       None.
   """
-  accuracy: bool = None
-  top_5: bool = None
+    accuracy: bool = None
+    top_5: bool = None
 
 
 @dataclasses.dataclass
 class TimeHistoryConfig(hyperparams.Config):
-  """Configuration for the TimeHistory callback.
+    """Configuration for the TimeHistory callback.
 
   Attributes:
     log_steps: Interval of steps between logging of batch level stats.
   """
-  log_steps: int = None
+    log_steps: int = None
 
 
 @dataclasses.dataclass
 class TrainConfig(hyperparams.Config):
-  """Configuration for training.
+    """Configuration for training.
 
   Attributes:
     resume_checkpoint: Whether or not to enable load checkpoint loading.
@@ -110,19 +109,19 @@ class TrainConfig(hyperparams.Config):
       number of callbacks run per epoch which significantly improves end-to-end
       TPU training time.
   """
-  resume_checkpoint: bool = None
-  epochs: int = None
-  steps: int = None
-  callbacks: CallbacksConfig = CallbacksConfig()
-  metrics: MetricsConfig = None
-  tensorboard: TensorBoardConfig = TensorBoardConfig()
-  time_history: TimeHistoryConfig = TimeHistoryConfig()
-  set_epoch_loop: bool = False
+    resume_checkpoint: bool = None
+    epochs: int = None
+    steps: int = None
+    callbacks: CallbacksConfig = CallbacksConfig()
+    metrics: MetricsConfig = None
+    tensorboard: TensorBoardConfig = TensorBoardConfig()
+    time_history: TimeHistoryConfig = TimeHistoryConfig()
+    set_epoch_loop: bool = False
 
 
 @dataclasses.dataclass
 class EvalConfig(hyperparams.Config):
-  """Configuration for evaluation.
+    """Configuration for evaluation.
 
   Attributes:
     epochs_between_evals: The number of train epochs to run between evaluations.
@@ -132,27 +131,27 @@ class EvalConfig(hyperparams.Config):
       None.
     skip_eval: Whether or not to skip evaluation.
   """
-  epochs_between_evals: int = None
-  steps: int = None
-  skip_eval: bool = False
+    epochs_between_evals: int = None
+    steps: int = None
+    skip_eval: bool = False
 
 
 @dataclasses.dataclass
 class LossConfig(hyperparams.Config):
-  """Configuration for Loss.
+    """Configuration for Loss.
 
   Attributes:
     name: The name of the loss. Defaults to None.
     label_smoothing: Whether or not to apply label smoothing to the loss. This
       only applies to 'categorical_cross_entropy'.
   """
-  name: str = None
-  label_smoothing: float = None
+    name: str = None
+    label_smoothing: float = None
 
 
 @dataclasses.dataclass
 class OptimizerConfig(hyperparams.Config):
-  """Configuration for Optimizers.
+    """Configuration for Optimizers.
 
   Attributes:
     name: The name of the optimizer. Defaults to None.
@@ -170,21 +169,21 @@ class OptimizerConfig(hyperparams.Config):
       Adam optimizers. Defaults to None.
     epsilon: Small value used to avoid 0 denominator. Defaults to 1e-7.
   """
-  name: str = None
-  decay: float = None
-  epsilon: float = None
-  momentum: float = None
-  nesterov: bool = None
-  moving_average_decay: Optional[float] = None
-  lookahead: Optional[bool] = None
-  beta_1: float = None
-  beta_2: float = None
-  epsilon: float = None
+    name: str = None
+    decay: float = None
+    epsilon: float = None
+    momentum: float = None
+    nesterov: bool = None
+    moving_average_decay: Optional[float] = None
+    lookahead: Optional[bool] = None
+    beta_1: float = None
+    beta_2: float = None
+    epsilon: float = None
 
 
 @dataclasses.dataclass
 class LearningRateConfig(hyperparams.Config):
-  """Configuration for learning rates.
+    """Configuration for learning rates.
 
   Attributes:
     name: The name of the learning rate. Defaults to None.
@@ -202,21 +201,21 @@ class LearningRateConfig(hyperparams.Config):
       size. Set to 0 for no scaling (default).
     staircase: Apply exponential decay at discrete values instead of continuous.
   """
-  name: str = None
-  initial_lr: float = None
-  decay_epochs: float = None
-  decay_rate: float = None
-  warmup_epochs: int = None
-  examples_per_epoch: int = None
-  boundaries: List[int] = None
-  multipliers: List[float] = None
-  scale_by_batch_size: float = 0.
-  staircase: bool = None
+    name: str = None
+    initial_lr: float = None
+    decay_epochs: float = None
+    decay_rate: float = None
+    warmup_epochs: int = None
+    examples_per_epoch: int = None
+    boundaries: List[int] = None
+    multipliers: List[float] = None
+    scale_by_batch_size: float = 0.
+    staircase: bool = None
 
 
 @dataclasses.dataclass
 class ModelConfig(hyperparams.Config):
-  """Configuration for Models.
+    """Configuration for Models.
 
   Attributes:
     name: The name of the model. Defaults to None.
@@ -225,16 +224,16 @@ class ModelConfig(hyperparams.Config):
     loss: A `LossConfig` instance. Defaults to None.
     optimizer: An `OptimizerConfig` instance. Defaults to None.
   """
-  name: str = None
-  model_params: hyperparams.Config = None
-  num_classes: int = None
-  loss: LossConfig = None
-  optimizer: OptimizerConfig = None
+    name: str = None
+    model_params: hyperparams.Config = None
+    num_classes: int = None
+    loss: LossConfig = None
+    optimizer: OptimizerConfig = None
 
 
 @dataclasses.dataclass
 class ExperimentConfig(hyperparams.Config):
-  """Base configuration for an image classification experiment.
+    """Base configuration for an image classification experiment.
 
   Attributes:
     model_dir: The directory to use when running an experiment.
@@ -245,13 +244,13 @@ class ExperimentConfig(hyperparams.Config):
     model: A `ModelConfig` instance.
     export: An `ExportConfig` instance.
   """
-  model_dir: str = None
-  model_name: str = None
-  mode: str = None
-  runtime: RuntimeConfig = None
-  train_dataset: Any = None
-  validation_dataset: Any = None
-  train: TrainConfig = None
-  evaluation: EvalConfig = None
-  model: ModelConfig = None
-  export: ExportConfig = None
+    model_dir: str = None
+    model_name: str = None
+    mode: str = None
+    runtime: RuntimeConfig = None
+    train_dataset: Any = None
+    validation_dataset: Any = None
+    train: TrainConfig = None
+    evaluation: EvalConfig = None
+    model: ModelConfig = None
+    export: ExportConfig = None

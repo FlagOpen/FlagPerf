@@ -11,17 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Dataclasses for learning rate schedule config."""
 from typing import List, Optional
 
 import dataclasses
-from  ... hyperparams import base_config
+from ...hyperparams import base_config
 
 
 @dataclasses.dataclass
 class ConstantLrConfig(base_config.Config):
-  """Configuration for constant learning rate.
+    """Configuration for constant learning rate.
 
   This class is a containers for the constant learning rate decay configs.
 
@@ -29,13 +28,13 @@ class ConstantLrConfig(base_config.Config):
     name: The name of the learning rate schedule. Defaults to Constant.
     learning_rate: A float. The learning rate. Defaults to 0.1.
   """
-  name: str = 'Constant'
-  learning_rate: float = 0.1
+    name: str = 'Constant'
+    learning_rate: float = 0.1
 
 
 @dataclasses.dataclass
 class StepwiseLrConfig(base_config.Config):
-  """Configuration for stepwise learning rate decay.
+    """Configuration for stepwise learning rate decay.
 
   This class is a container for the piecewise constant learning rate scheduling
   configs. It will configure an instance of PiecewiseConstantDecay keras
@@ -58,15 +57,15 @@ class StepwiseLrConfig(base_config.Config):
               end]               -> values[n+1] Defaults to None.
     offset: An int. The offset applied to steps. Defaults to 0.
   """
-  name: str = 'PiecewiseConstantDecay'
-  boundaries: Optional[List[int]] = None
-  values: Optional[List[float]] = None
-  offset: int = 0
+    name: str = 'PiecewiseConstantDecay'
+    boundaries: Optional[List[int]] = None
+    values: Optional[List[float]] = None
+    offset: int = 0
 
 
 @dataclasses.dataclass
 class ExponentialLrConfig(base_config.Config):
-  """Configuration for exponential learning rate decay.
+    """Configuration for exponential learning rate decay.
 
   This class is a containers for the exponential learning rate decay configs.
 
@@ -80,17 +79,17 @@ class ExponentialLrConfig(base_config.Config):
       intervals. Defaults to False.
     offset: An int. The offset applied to steps. Defaults to 0.
   """
-  name: str = 'ExponentialDecay'
-  initial_learning_rate: Optional[float] = None
-  decay_steps: Optional[int] = None
-  decay_rate: Optional[float] = None
-  staircase: Optional[bool] = None
-  offset: int = 0
+    name: str = 'ExponentialDecay'
+    initial_learning_rate: Optional[float] = None
+    decay_steps: Optional[int] = None
+    decay_rate: Optional[float] = None
+    staircase: Optional[bool] = None
+    offset: int = 0
 
 
 @dataclasses.dataclass
 class PolynomialLrConfig(base_config.Config):
-  """Configuration for polynomial learning rate decay.
+    """Configuration for polynomial learning rate decay.
 
   This class is a containers for the polynomial learning rate decay configs.
 
@@ -105,18 +104,18 @@ class PolynomialLrConfig(base_config.Config):
       Defaults to False.
     offset: An int. The offset applied to steps. Defaults to 0.
   """
-  name: str = 'PolynomialDecay'
-  initial_learning_rate: Optional[float] = None
-  decay_steps: Optional[int] = None
-  end_learning_rate: float = 0.0001
-  power: float = 1.0
-  cycle: bool = False
-  offset: int = 0
+    name: str = 'PolynomialDecay'
+    initial_learning_rate: Optional[float] = None
+    decay_steps: Optional[int] = None
+    end_learning_rate: float = 0.0001
+    power: float = 1.0
+    cycle: bool = False
+    offset: int = 0
 
 
 @dataclasses.dataclass
 class CosineLrConfig(base_config.Config):
-  """Configuration for Cosine learning rate decay.
+    """Configuration for Cosine learning rate decay.
 
   This class is a containers for the cosine learning rate decay configs,
   tf.keras.experimental.CosineDecay.
@@ -130,16 +129,16 @@ class CosineLrConfig(base_config.Config):
       initial_learning_rate.
     offset: An int. The offset applied to steps. Defaults to 0.
   """
-  name: str = 'CosineDecay'
-  initial_learning_rate: Optional[float] = None
-  decay_steps: Optional[int] = None
-  alpha: float = 0.0
-  offset: int = 0
+    name: str = 'CosineDecay'
+    initial_learning_rate: Optional[float] = None
+    decay_steps: Optional[int] = None
+    alpha: float = 0.0
+    offset: int = 0
 
 
 @dataclasses.dataclass
 class DirectPowerLrConfig(base_config.Config):
-  """Configuration for DirectPower learning rate decay.
+    """Configuration for DirectPower learning rate decay.
 
   This class configures a schedule following follows lr * (step)^power.
 
@@ -148,14 +147,14 @@ class DirectPowerLrConfig(base_config.Config):
     initial_learning_rate: A float. The initial learning rate. Defaults to None.
     power: A float. Defaults to -0.5, for sqrt decay.
   """
-  name: str = 'DirectPowerDecay'
-  initial_learning_rate: Optional[float] = None
-  power: float = -0.5
+    name: str = 'DirectPowerDecay'
+    initial_learning_rate: Optional[float] = None
+    power: float = -0.5
 
 
 @dataclasses.dataclass
 class PowerAndLinearDecayLrConfig(base_config.Config):
-  """Configuration for DirectPower learning rate decay.
+    """Configuration for DirectPower learning rate decay.
 
   The schedule has the following behavoir.
   Let offset_step = step - offset.
@@ -180,17 +179,17 @@ class PowerAndLinearDecayLrConfig(base_config.Config):
       the learning rate will be multiplied by a linear decay. Defaults to 0.1.
     offset: An int. The offset applied to steps. Defaults to 0.
   """
-  name: str = 'PowerAndLinearDecay'
-  initial_learning_rate: Optional[float] = None
-  total_decay_steps: Optional[int] = None
-  power: float = -0.5
-  linear_decay_fraction: float = 0.1
-  offset: int = 0
+    name: str = 'PowerAndLinearDecay'
+    initial_learning_rate: Optional[float] = None
+    total_decay_steps: Optional[int] = None
+    power: float = -0.5
+    linear_decay_fraction: float = 0.1
+    offset: int = 0
 
 
 @dataclasses.dataclass
 class PowerDecayWithOffsetLrConfig(base_config.Config):
-  """Configuration for power learning rate decay with step offset.
+    """Configuration for power learning rate decay with step offset.
 
   Learning rate equals to `pre_offset_learning_rate` if `step` < `offset`.
   Otherwise, learning rate equals to lr * (step - offset)^power.
@@ -204,16 +203,16 @@ class PowerDecayWithOffsetLrConfig(base_config.Config):
     pre_offset_learning_rate: A float. The constant learning rate before
       `offset` steps.
   """
-  name: str = 'PowerDecayWithOffset'
-  initial_learning_rate: Optional[float] = None
-  power: float = -0.5
-  offset: int = 0
-  pre_offset_learning_rate: float = 1.0e6
+    name: str = 'PowerDecayWithOffset'
+    initial_learning_rate: Optional[float] = None
+    power: float = -0.5
+    offset: int = 0
+    pre_offset_learning_rate: float = 1.0e6
 
 
 @dataclasses.dataclass
 class StepCosineLrConfig(base_config.Config):
-  """Configuration for stepwise learning rate decay.
+    """Configuration for stepwise learning rate decay.
 
   This class is a container for the piecewise cosine learning rate scheduling
   configs. It will configure an instance of StepCosineDecayWithOffset keras
@@ -243,15 +242,15 @@ class StepCosineLrConfig(base_config.Config):
               [boundaries[n], end]               -> values[n+1] to 0.
     offset: An int. The offset applied to steps. Defaults to 0.
   """
-  name: str = 'StepCosineDecayWithOffset'
-  boundaries: Optional[List[int]] = None
-  values: Optional[List[float]] = None
-  offset: int = 0
+    name: str = 'StepCosineDecayWithOffset'
+    boundaries: Optional[List[int]] = None
+    values: Optional[List[float]] = None
+    offset: int = 0
 
 
 @dataclasses.dataclass
 class LinearWarmupConfig(base_config.Config):
-  """Configuration for linear warmup schedule config.
+    """Configuration for linear warmup schedule config.
 
   This class is a container for the linear warmup schedule configs.
   Warmup_learning_rate is the initial learning rate, the final learning rate of
@@ -267,14 +266,14 @@ class LinearWarmupConfig(base_config.Config):
     warmup_learning_rate: Initial learning rate for the warmup. Defaults to 0.
     warmup_steps: Warmup steps. Defaults to None.
   """
-  name: str = 'linear'
-  warmup_learning_rate: float = 0
-  warmup_steps: Optional[int] = None
+    name: str = 'linear'
+    warmup_learning_rate: float = 0
+    warmup_steps: Optional[int] = None
 
 
 @dataclasses.dataclass
 class PolynomialWarmupConfig(base_config.Config):
-  """Configuration for linear warmup schedule config.
+    """Configuration for linear warmup schedule config.
 
   This class is a container for the polynomial warmup schedule configs.
 
@@ -283,6 +282,6 @@ class PolynomialWarmupConfig(base_config.Config):
     power: Polynomial power. Defaults to 1.
     warmup_steps: Warmup steps. Defaults to None.
   """
-  name: str = 'polynomial'
-  power: float = 1
-  warmup_steps: Optional[int] = None
+    name: str = 'polynomial'
+    power: float = 1
+    warmup_steps: Optional[int] = None

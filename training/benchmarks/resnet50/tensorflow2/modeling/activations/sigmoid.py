@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Customized Sigmoid activation."""
 
 import tensorflow as tf
@@ -19,7 +18,7 @@ import tensorflow as tf
 
 @tf.keras.utils.register_keras_serializable(package='Text')
 def hard_sigmoid(features):
-  """Computes the hard sigmoid activation function.
+    """Computes the hard sigmoid activation function.
 
   Args:
     features: A `Tensor` representing preactivation values.
@@ -27,5 +26,5 @@ def hard_sigmoid(features):
   Returns:
     The activation value.
   """
-  features = tf.convert_to_tensor(features)
-  return tf.nn.relu6(features + tf.cast(3., features.dtype)) * 0.16667
+    features = tf.convert_to_tensor(features)
+    return tf.nn.relu6(features + tf.cast(3., features.dtype)) * 0.16667

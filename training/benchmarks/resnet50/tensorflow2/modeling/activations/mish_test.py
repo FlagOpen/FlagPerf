@@ -11,20 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for the customized Mish activation."""
 
 import tensorflow as tf
 
-from  .modeling import activations
+from .modeling import activations
 
 
 class MishTest(tf.test.TestCase):
 
-  def test_mish(self):
-    x = tf.constant([1.0, 0.0])
-    self.assertAllClose([0.86509839, 0.0], activations.mish(x))
+    def test_mish(self):
+        x = tf.constant([1.0, 0.0])
+        self.assertAllClose([0.86509839, 0.0], activations.mish(x))
 
 
 if __name__ == '__main__':
-  tf.test.main()
+    tf.test.main()

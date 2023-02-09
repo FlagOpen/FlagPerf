@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Data classes for tf.Example proto feature keys.
 
 Feature keys are grouped by feature types. Key names follow conventions in
@@ -27,7 +26,7 @@ dataclass = functools.partial(dataclasses.dataclass(init=False))
 
 @dataclass
 class TfExampleFeatureKeyBase:
-  """Base dataclass for defining tf.Example proto feature keys.
+    """Base dataclass for defining tf.Example proto feature keys.
 
   This class defines the logic of adding prefix to feature keys. Subclasses
   will define feature keys for a specific feature type in data fields.
@@ -36,8 +35,8 @@ class TfExampleFeatureKeyBase:
   for a new feature type.
   """
 
-  def __init__(self, prefix: Optional[str] = None):
-    """Instantiates the feature key class.
+    def __init__(self, prefix: Optional[str] = None):
+        """Instantiates the feature key class.
 
     Adds a string prefix to all fields of a feature key instance if `prefix` is
     not None nor empty.
@@ -55,8 +54,8 @@ class TfExampleFeatureKeyBase:
       prefix: A prefix string that will be added before the feature key string
         with a trailing slash '/'.
     """
-    if prefix:
-      for field in dataclasses.fields(self):
-        key_name = field.name
-        key_value = getattr(self, key_name)
-        setattr(self, key_name, f'{prefix}/{key_value}')
+        if prefix:
+            for field in dataclasses.fields(self):
+                key_name = field.name
+                key_value = getattr(self, key_name)
+                setattr(self, key_name, f'{prefix}/{key_value}')

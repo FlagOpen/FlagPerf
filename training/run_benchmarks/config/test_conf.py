@@ -36,8 +36,10 @@ CLEAR_CACHES = True
 # Set the case list you want to run here.
 # CASES is a list of case names.
 CASES = [
-    'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
-    'CPM_TORCH_DEMO_A100_1X8', 'RESNET50_TENSORFLOW2_DEMO_A100_1x8',
+    'BERT_PADDLE_DEMO_A100_1X8',
+    'GLM_TORCH_DEMO_A100_1X8',
+    'CPM_TORCH_DEMO_A100_1X8',
+    'RESNET50_TENSORFLOW2_DEMO_A100_1x8',
 ]
 
 # # Config each case in a dictionary like this.
@@ -94,6 +96,8 @@ RESNET50_TENSORFLOW2_DEMO_A100_1x8 = {  # benchmark case name, one in CASES
     "repeat": 1,  # How many times to run this case
     "nnodes": 1,  #  How many hosts to run this case
     "nproc": 8,  # How many processes will run on each host
-    "data_dir_host": "/raid/dataset/ImageNet2012/tf_records",  # Data path on host
-    "data_dir_container": "/mnt/data/ImageNet2012/tf_records",  # Data path in container
+    "data_dir_host":
+    "/raid/dataset/ImageNet2012/tf_records",  # Data path on host
+    "data_dir_container":
+    "/mnt/data/ImageNet2012/tf_records",  # Data path in container
 }

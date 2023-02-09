@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Some gradient util functions to help users writing custom training loop."""
 
 from absl import logging
@@ -20,32 +19,32 @@ import tensorflow as tf
 
 
 def _filter_grads(grads_and_vars):
-  """Filter out iterable with grad equal to None."""
-  grads_and_vars = tuple(grads_and_vars)
-  if not grads_and_vars:
-    return grads_and_vars
-  filtered = []
-  vars_with_empty_grads = []
-  for grad, var in grads_and_vars:
-    if grad is None:
-      vars_with_empty_grads.append(var)
-    else:
-      filtered.append((grad, var))
-  filtered = tuple(filtered)
-  if not filtered:
-    raise ValueError("No gradients provided for any variable: %s." %
-                     ([v.name for _, v in grads_and_vars],))
-  if vars_with_empty_grads:
-    logging.warning(
-        ("Gradients do not exist for variables %s when minimizing the loss."),
-        ([v.name for v in vars_with_empty_grads]))
-  return filtered
+    """Filter out iterable with grad equal to None."""
+    grads_and_vars = tuple(grads_and_vars)
+    if not grads_and_vars:
+        return grads_and_vars
+    filtered = []
+    vars_with_empty_grads = []
+    for grad, var in grads_and_vars:
+        if grad is None:
+            vars_with_empty_grads.append(var)
+        else:
+            filtered.append((grad, var))
+    filtered = tuple(filtered)
+    if not filtered:
+        raise ValueError("No gradients provided for any variable: %s." %
+                         ([v.name for _, v in grads_and_vars], ))
+    if vars_with_empty_grads:
+        logging.warning((
+            "Gradients do not exist for variables %s when minimizing the loss."
+        ), ([v.name for v in vars_with_empty_grads]))
+    return filtered
 
 
 def _filter_and_allreduce_gradients(grads_and_vars,
                                     allreduce_precision="float32",
                                     bytes_per_pack=0):
-  """Filter None grads and then allreduce gradients in specified precision.
+    """Filter None grads and then allreduce gradients in specified precision.
 
   This utils function is used when users intent to explicitly allreduce
   gradients and customize gradients operations before and after allreduce.
@@ -61,23 +60,26 @@ def _filter_and_allreduce_gradients(grads_and_vars,
   Returns:
       pairs of allreduced non-None gradients and variables.
   """
-  filtered_grads_and_vars = _filter_grads(grads_and_vars)
-  (grads, variables) = zip(*filtered_grads_and_vars)
-  if allreduce_precision == "float16":
-    grads = [tf.cast(grad, "float16") for grad in grads]
-  hints = tf.distribute.experimental.CommunicationOptions(
-      bytes_per_pack=bytes_per_pack)
-  allreduced_grads = tf.distribute.get_strategy(  # pylint: disable=protected-access
-  ).extended._replica_ctx_all_reduce(tf.distribute.ReduceOp.SUM, grads, hints)
-  if allreduce_precision == "float16":
-    allreduced_grads = [tf.cast(grad, "float32") for grad in allreduced_grads]
-  return allreduced_grads, variables
+    filtered_grads_and_vars = _filter_grads(grads_and_vars)
+    (grads, variables) = zip(*filtered_grads_and_vars)
+    if allreduce_precision == "float16":
+        grads = [tf.cast(grad, "float16") for grad in grads]
+    hints = tf.distribute.experimental.CommunicationOptions(
+        bytes_per_pack=bytes_per_pack)
+    allreduced_grads = tf.distribute.get_strategy(  # pylint: disable=protected-access
+    ).extended._replica_ctx_all_reduce(tf.distribute.ReduceOp.SUM, grads,
+                                       hints)
+    if allreduce_precision == "float16":
+        allreduced_grads = [
+            tf.cast(grad, "float32") for grad in allreduced_grads
+        ]
+    return allreduced_grads, variables
 
 
 def _run_callbacks(callbacks, grads_and_vars):
-  for callback in callbacks:
-    grads_and_vars = callback(grads_and_vars)
-  return grads_and_vars
+    for callback in callbacks:
+        grads_and_vars = callback(grads_and_vars)
+    return grads_and_vars
 
 
 def minimize_using_explicit_allreduce(tape,
@@ -87,7 +89,7 @@ def minimize_using_explicit_allreduce(tape,
                                       pre_allreduce_callbacks=None,
                                       post_allreduce_callbacks=None,
                                       allreduce_bytes_per_pack=0):
-  """Minimizes loss for one step by updating `trainable_variables`.
+    """Minimizes loss for one step by updating `trainable_variables`.
 
   Minimizes loss for one step by updating `trainable_variables`.
   This explicitly performs gradient allreduce, instead of relying on implicit
@@ -116,36 +118,38 @@ def minimize_using_explicit_allreduce(tape,
         operations into packs of certain size. If it's zero, all gradients are
         in one pack.
   """
-  if isinstance(optimizer,
-                tf.keras.mixed_precision.LossScaleOptimizer):
-    # FP16 GPU code path
-    with tape:
-      scaled_loss = optimizer.get_scaled_loss(loss)
-    scaled_grads = tape.gradient(scaled_loss, trainable_variables)
-    grads_and_vars = zip(scaled_grads, trainable_variables)
-    if pre_allreduce_callbacks:
-      grads_and_vars = _run_callbacks(pre_allreduce_callbacks, grads_and_vars)
-    (allreduced_scaled_grads,
-     filtered_training_vars) = _filter_and_allreduce_gradients(
-         grads_and_vars,
-         allreduce_precision="float16",
-         bytes_per_pack=allreduce_bytes_per_pack)
-    allreduced_unscaled_grads = optimizer.get_unscaled_gradients(
-        allreduced_scaled_grads)
-    grads_and_vars = zip(allreduced_unscaled_grads, filtered_training_vars)
-  else:
-    # TPU or FP32 GPU code path
-    grads = tape.gradient(loss, trainable_variables)
-    grads_and_vars = zip(grads, trainable_variables)
-    if pre_allreduce_callbacks:
-      grads_and_vars = _run_callbacks(pre_allreduce_callbacks, grads_and_vars)
-    (allreduced_grads,
-     filtered_training_vars) = _filter_and_allreduce_gradients(
-         grads_and_vars,
-         allreduce_precision="float32",
-         bytes_per_pack=allreduce_bytes_per_pack)
-    grads_and_vars = zip(allreduced_grads, filtered_training_vars)
-  if post_allreduce_callbacks:
-    grads_and_vars = _run_callbacks(post_allreduce_callbacks, grads_and_vars)
-  optimizer.apply_gradients(
-      grads_and_vars, experimental_aggregate_gradients=False)
+    if isinstance(optimizer, tf.keras.mixed_precision.LossScaleOptimizer):
+        # FP16 GPU code path
+        with tape:
+            scaled_loss = optimizer.get_scaled_loss(loss)
+        scaled_grads = tape.gradient(scaled_loss, trainable_variables)
+        grads_and_vars = zip(scaled_grads, trainable_variables)
+        if pre_allreduce_callbacks:
+            grads_and_vars = _run_callbacks(pre_allreduce_callbacks,
+                                            grads_and_vars)
+        (allreduced_scaled_grads,
+         filtered_training_vars) = _filter_and_allreduce_gradients(
+             grads_and_vars,
+             allreduce_precision="float16",
+             bytes_per_pack=allreduce_bytes_per_pack)
+        allreduced_unscaled_grads = optimizer.get_unscaled_gradients(
+            allreduced_scaled_grads)
+        grads_and_vars = zip(allreduced_unscaled_grads, filtered_training_vars)
+    else:
+        # TPU or FP32 GPU code path
+        grads = tape.gradient(loss, trainable_variables)
+        grads_and_vars = zip(grads, trainable_variables)
+        if pre_allreduce_callbacks:
+            grads_and_vars = _run_callbacks(pre_allreduce_callbacks,
+                                            grads_and_vars)
+        (allreduced_grads,
+         filtered_training_vars) = _filter_and_allreduce_gradients(
+             grads_and_vars,
+             allreduce_precision="float32",
+             bytes_per_pack=allreduce_bytes_per_pack)
+        grads_and_vars = zip(allreduced_grads, filtered_training_vars)
+    if post_allreduce_callbacks:
+        grads_and_vars = _run_callbacks(post_allreduce_callbacks,
+                                        grads_and_vars)
+    optimizer.apply_gradients(grads_and_vars,
+                              experimental_aggregate_gradients=False)
