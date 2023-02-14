@@ -7,7 +7,6 @@ import os
 import sys
 from argparse import ArgumentParser
 
-
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -26,6 +25,7 @@ current_env = os.environ.copy()
 for environ in current_env.keys():
      print(environ + ":" + current_env[environ])
 '''
+
     def __init__(self, vendor, framework, config_file, data_dir):
         self.vendor = vendor
         self.framework = framework
@@ -90,11 +90,26 @@ for environ in current_env.keys():
 def _parse_args():
     '''Get command args from input. '''
     parser = ArgumentParser(description="Generate a dummy benchmark case.")
-    parser.add_argument("-v", type=str, metavar='[vendor]', required=True, help="Vendor name")
-    parser.add_argument("-f", type=str, metavar='[framework]', required=True, help="Framework")
-    parser.add_argument("-c", type=str, metavar='[config]', required=True, 
+    parser.add_argument("-v",
+                        type=str,
+                        metavar='[vendor]',
+                        required=True,
+                        help="Vendor name")
+    parser.add_argument("-f",
+                        type=str,
+                        metavar='[framework]',
+                        required=True,
+                        help="Framework")
+    parser.add_argument("-c",
+                        type=str,
+                        metavar='[config]',
+                        required=True,
                         help="Config file name, e.g. config_A100_1x8.")
-    parser.add_argument("-d", type=str, metavar='[data dir]', required=True, help="Dummy data dir")
+    parser.add_argument("-d",
+                        type=str,
+                        metavar='[data dir]',
+                        required=True,
+                        help="Dummy data dir")
     args, _ = parser.parse_known_args()
     return args
 
@@ -105,6 +120,7 @@ def main():
     dummy_benchmark = DummyBenchmark(args.v, args.f, args.c, args.d)
     dummy_benchmark.add_to_perf()
     dummy_benchmark.print_dummy_test_conf()
+
 
 if __name__ == '__main__':
     main()

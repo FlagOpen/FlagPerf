@@ -23,7 +23,9 @@ build     Build a docker image with two options if the image doesn't exist:
           -d [directory]  Directory contains dockerfile and install script
           -f [framework]  AI framework '''
 
-    parser = argparse.ArgumentParser(description='Docker managment script', formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description='Docker managment script',
+        formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-o',
                         type=str,
                         metavar='[operation]',

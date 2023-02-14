@@ -32,7 +32,6 @@ def check_config(config, model_pt_file):
         raise ValueError(f"data_dir '{data_dir}' not exists.")
     config.data_dir = data_dir
 
-
     train_data = get_config_arg(config, "train_data")
     if train_data is not None:
         config.train_data = ospath.join(data_dir, train_data)
