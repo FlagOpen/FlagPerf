@@ -91,15 +91,18 @@ def setup_seeds(master_seed, epochs, device):
     return worker_seeds, shuffling_seeds
 
 
-def barrier():
+def barrier(config=None):
     """
     Works as a temporary distributed barrier, currently pytorch
     doesn't implement barrier for NCCL backend.
     Calls all_reduce on dummy tensor and synchronizes with GPU.
     """
     if torch.distributed.is_available() and torch.distributed.is_initialized():
-        torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
-        torch.cuda.synchronize()
+        if config and config.use_xpu:
+            torch.distributed.barrier()
+        else:
+            torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
+            torch.cuda.synchronize()
 
 
 def get_rank(default=0):

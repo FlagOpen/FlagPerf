@@ -53,7 +53,7 @@ def main():
     dist_pytorch.init_dist_training_env(config)
     utils.check_config(config)
 
-    utils.barrier()
+    dist_pytorch.barrier(config)
     if world_size == 1:
         config.local_rank = 0
 
@@ -91,10 +91,10 @@ def main():
                     device=config.device)
     training_state._trainer = trainer
 
-    utils.barrier()
+    dist_pytorch.barrier(config)
     trainer.init()
 
-    utils.barrier()
+    dist_pytorch.barrier(config)
     init_evaluation_start = time.time()
     eval_loss, eval_mlm_acc = evaluator.evaluate(trainer)
     training_state.eval_loss = eval_loss
@@ -139,12 +139,12 @@ if __name__ == "__main__":
     now = time.time()
     config, state = main()
 
-    if not utils.is_main_process():
+    if not dist_pytorch.is_main_process():
         exit()
 
     gpu_count = config.n_gpu
     e2e_time = time.time() - now
-    training_perf = (utils.global_batch_size(config) * state.global_steps) / state.raw_train_time
+    training_perf = (dist_pytorch.global_batch_size(config) * state.global_steps) / state.raw_train_time
     if config.do_train:
         finished_info = {
             "e2e_time": e2e_time,
