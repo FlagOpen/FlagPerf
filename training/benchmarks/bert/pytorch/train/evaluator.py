@@ -2,11 +2,14 @@ from concurrent.futures import ProcessPoolExecutor
 
 import torch
 import torch.distributed as dist
-import torch_xmlir.core.xpu_model as xm
 
 from dataloaders.dataloader import WorkerInitializer, create_eval_dataloader
 
 import config
+import os
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver import dist_pytorch
 
 class Evaluator:
 
@@ -74,9 +77,9 @@ class Evaluator:
                 total_eval_mlm_acc += mlm_acc * num_masked
                 total_masked += num_masked
                 #torch.cuda.synchronize()
-                if torch.distributed.is_initialized():
-                    torch.distributed.barrier()
-                else:
+                dist_pytorch.barrier()
+                if config.use_xpu:
+                    import torch_xmlir.core.xpu_model as xm
                     xm.mark_step()
         trainer.model.train()
 
