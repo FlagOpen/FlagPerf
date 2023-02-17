@@ -81,13 +81,12 @@ def main():
         worker_init=worker_init,
         use_cache=config.cache_eval_data
     )
-    grad_scaler = None
     training_state = TrainingState()
     trainer = Trainer(driver=bert_driver,
                     adapter=trainer_adapter, 
                     evaluator=evaluator, 
                     training_state=training_state, 
-                    grad_scaler=grad_scaler, 
+                    grad_scaler=config.grad_scaler, 
                     device=config.device)
     training_state._trainer = trainer
 

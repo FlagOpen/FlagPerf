@@ -6,7 +6,7 @@ start_warmup_step = 0
 warmup_proportion = 0
 warmup_steps = 0
 
-distributed_lamb = True
+distributed_lamb = False
 learning_rate = 3.5e-4
 weight_decay_rate = 0.01
 opt_lamb_beta_1 = 0.9

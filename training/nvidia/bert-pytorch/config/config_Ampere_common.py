@@ -1,4 +1,7 @@
 from config_common import *
+from torch.cuda.amp import GradScaler
+import os
+grad_scaler = GradScaler(init_scale=float(os.getenv("INIT_LOSS_SCALE", 2**20)), growth_interval=2000)
 
 
 fp16 = True
