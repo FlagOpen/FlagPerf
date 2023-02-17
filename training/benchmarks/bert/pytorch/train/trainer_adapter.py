@@ -9,8 +9,6 @@ from torch.nn.parallel import DistributedDataParallel as NativeDDP
 from torch.optim import Optimizer
 from torch.optim import Adam
 
-import torch_xmlir.core.xpu_model as xm
-
 import utils
 import config
 

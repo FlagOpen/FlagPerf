@@ -20,13 +20,14 @@ from torch.optim import Optimizer
 
 import utils
 import config
-from converter import convert_model
-from distributed_fused_lamb import _pipeline_block_reductions_patched, _pipeline_step_patched
+#from converter import convert_model
+from .distributed_fused_lamb import _pipeline_block_reductions_patched, _pipeline_step_patched
 
 BERT_MODEL = torch.nn.Module
 
 def convert_model(model: BERT_MODEL) -> BERT_MODEL:
-    return convert_model(model)
+    #return convert_model(model)
+    return model
 
 def create_optimizer(model: BERT_MODEL) -> Optimizer:
     param_optimizer = list(model.named_parameters())
