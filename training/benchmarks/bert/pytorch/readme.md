@@ -1,15 +1,26 @@
-### 模型Checkpoint下载
+# 模型信息与数据集、模型Checkpoint下载
 
-● 下载地址：
+
+● 模型Checkpoint下载地址：
 `https://drive.google.com/drive/u/0/folders/1oQF4diVHNPCclykwdvQJw8n_VIWwV0PT`
    
-
 ```
 文件列表：
 tf1_ckpt
 vocab.txt
 bert_config.json
 ```
+
+● 测试数据集下载地址：`https://drive.google.com/drive/folders/1cywmDnAsrP5-2vsr8GDc6QUc7VWe-M3v`
+
+```
+文件列表：
+results_text.tar.gz
+bert_reference_results_text_md5.txt
+```
+
+注：详情参考https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA/benchmarks/bert/implementations/pytorch
+# 数据集和模型Checkpoint文件处理
 
 
 ● 模型格式转换：
@@ -26,15 +37,6 @@ docker build --pull -t mlperf-nvidia:language_model .
 python convert_tf_checkpoint.py --tf_checkpoint /cks/model.ckpt-28252.index --bert_config_path /cks/bert_config.json --output_checkpoint model.ckpt-28252.pt
 ```
 
-### 测试数据集下载
-
-● 下载地址：`https://drive.google.com/drive/folders/1cywmDnAsrP5-2vsr8GDc6QUc7VWe-M3v`
-
-```
-文件列表：
-results_text.tar.gz
-bert_reference_results_text_md5.txt
-```
 
 ● 数据集格式转换：
 
@@ -72,30 +74,22 @@ python3 pick_eval_samples.py \
   --num_examples_to_pick=10000
 ```
 
-> 注：详情参考https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA/benchmarks/bert/implementations/pytorch
+# Nvidia GPU配置与运行信息参考
+## 环境配置
+### 硬件环境
+  - NVIDIA A100 SXM 40GB
+### 软件环境
+  - OS版本：Ubuntu 20.04
+  - OS kernel版本: 5.4.0-113-generic
+  - 加速卡驱动版本: 
+    - Driver Version: 470.129.06
+    - CUDA Version: 11.4
+  - Docker 版本: 20.10.16
+  - 训练框架版本：pytorch-1.8.0
+  - 依赖软件版本：无
+### 运行情况
+| 训练资源 | 配置文件 | 运行时长(s) | final_loss | final_mlm_accuracy | Steps数 | 性能 (seq/s) |
+| :-----| :---- | :---- | :---- | :---- | :---- | :---- |
+| 单机单卡 | config_A100x1x1.py | 4616 | 1.1465 | 0.7442 | 25000 | 65.89 |
+| 单机多卡 | config_A100x1x2.py | 4822 | 0.7836 | 0.8130 | 25000 | 125.57 |
 
-### Pytorch版本运行指南
-
-● 运行脚本:
-
-在该路径目录下
-
-```
-python run_pretraining.py 
---data_dir data_path
---extern_config_dir config_path
---extern_config_file config_file.py
-```
-
-example：
-```
-python run_pretraining.py 
---extern_config_dir /FlagPerf/training/kunlun/bert-pytorch/config
---extern_config_file config_R200x1x1.py
-```
-
-
-### 许可证
-
-本项目基于Apache 2.0 license。
-本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。
