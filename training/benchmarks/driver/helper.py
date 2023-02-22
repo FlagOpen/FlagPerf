@@ -31,25 +31,20 @@ class InitHelper:
             return int(os.environ['LOCAL_RANK'])
         return 0
 
-    def init_rand_seed(self) -> int:
-        """init random seed"""
-        config = self.config
-        worker_seeds, _ = distributed.setup_seeds(
-            config.seed, config.num_epochs_to_generate_seeds_for,
-            config.device)
-        worker_seed = worker_seeds[0]
-
-        random.seed(worker_seed)
-        np.random.seed(worker_seed)
-
-        # TODO 需适配芯片
-        torch.manual_seed(worker_seed)
-        torch.cuda.manual_seed(worker_seed)
-
-        torch.cuda.manual_seed_all(worker_seed)
-        torch.backends.cudnn.benchmark = False
-        torch.backends.cudnn.deterministic = True
-        return worker_seed
+    def set_seed(self, seed: int, vendor: str):
+        """set seed"""
+        random.seed(seed)
+        np.random.seed(seed)
+        lower_vendor = vendor.lower()
+        if lower_vendor == "nvidia":
+            torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = False
+            torch.backends.cudnn.deterministic = True
+        else:
+            # 其他厂商设置seed，在此扩展
+            pass
 
     def init_driver(self, name: str, device: str = None) -> Driver:
         """
