@@ -33,7 +33,7 @@ from dataloaders.dataloader import build_train_dataset, \
 logger = None
 
 
-def main() -> Tuple[Any, Any, Any]:
+def main() -> Tuple[Any, Any]:
     global logger
     init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(config.name)  # _base.py增加模型名称name
