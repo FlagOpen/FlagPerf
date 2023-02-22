@@ -55,8 +55,7 @@ def main() -> Tuple[Any, Any, Any]:
     3. 其他自定义方式
     """
 
-    # TODO _base.py, mutable_params.py 中都需要包含vendor参数
-    init_helper.set_seed(seed, config.vendor)
+    init_helper.set_seed(seed, model_driver.config.vendor)
 
     # TODO  构建dataset, dataloader 【train && validate】
     train_dataset = build_train_dataset()
