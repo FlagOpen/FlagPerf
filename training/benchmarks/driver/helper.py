@@ -43,7 +43,7 @@ class InitHelper:
             torch.backends.cudnn.benchmark = False
             torch.backends.cudnn.deterministic = True
         else:
-            # 其他厂商设置seed，在此扩展
+            # TODO 其他厂商设置seed，在此扩展
             pass
 
     def init_driver(self, name: str, device: str = None) -> Driver:
