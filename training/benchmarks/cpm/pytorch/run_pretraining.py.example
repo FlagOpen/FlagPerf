@@ -1,6 +1,6 @@
 """Pytorch Pretraining Example"""
 """
-说明：文档中所有TODO的地方，都需要自定义实现。尽量保证接口一致。没有标记TODO的地方，可以copy过来直接使用。
+说明：文档中所有TODO的地方，都需要自定义实现。尽量保证接口一致。没有标记TODO的地方，可以参考示例中的实现，或者在此基础上做些微调。
 """
 
 # 标准库
@@ -9,27 +9,26 @@ import sys
 import time
 from typing import Any, Tuple
 
+# 三方库
+
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
                                              "../../")))  # benchmarks目录
-
 # 本地库
-# TODO 导入model相关的模块、方法、变量, 这里保持名称一致，实现可以不同。
-from train import trainer_adapter
+import config
 from driver import Event, dist_pytorch, check
 from driver.helper import InitHelper, get_finished_info
+
+# TODO 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
+from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
-"""
-TODO 这里需要导入dataset, dataloader的相关方法。 这里尽量保证函数的接口一致，实现可以不同。
-"""
+# TODO 这里需要导入dataset, dataloader的相关方法。 这里尽量保证函数的接口一致，实现可以不同。
 from dataloaders.dataloader import build_train_dataset, \
     build_eval_dataset, build_train_dataloader, build_eval_dataloader
-import config
 
-# 三方库
 
 logger = None
 
@@ -56,7 +55,7 @@ def main() -> Tuple[Any, Any, Any]:
     3. 其他自定义方式
     """
 
-    # TODO _base.py, mutalbe_params.py 中都需要包含vendor参数
+    # TODO _base.py, mutable_params.py 中都需要包含vendor参数
     init_helper.set_seed(seed, config.vendor)
 
     # TODO  构建dataset, dataloader 【train && validate】
@@ -88,11 +87,20 @@ def main() -> Tuple[Any, Any, Any]:
     # evaluation统计
     init_evaluation_start = time.time()
 
-    # TODO evaluate()方法返回值不一致，自定义evaluate()返回值的赋值逻辑
+    """
+    TODO 实现Evaluator 类的evaluate()方法，用于返回关键指标信息，如loss，eval_embedding_average等。
+    例如：training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(trainer)
+    """
 
     init_evaluation_end = time.time()
 
-    # TODO 更新eval相关信息到init_evaluation_info中
+    """
+    TODO 收集eval关键信息，用于日志输出
+    例如： init_evaluation_info = dict(
+        eval_loss=training_state.eval_avg_loss,
+        eval_embedding_average=training_state.eval_embedding_average,
+        time=init_evaluation_end - init_evaluation_start)
+    """
     init_evaluation_info = dict(time=init_evaluation_end -
                                 init_evaluation_start)
     model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
