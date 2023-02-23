@@ -7,7 +7,6 @@ import random
 import time
 import numpy as np
 import torch
-from . import dist_pytorch as distributed
 from driver import perf_logger, Driver
 import driver
 
@@ -53,12 +52,6 @@ class InitHelper:
             device: cuda - nvidia
                     xpu - kulunxin
                     iluvatar - tianshu
-
-        """
-        """
-        1. init driver object
-        2. setup_config
-        3. setup_modules
         """
         config = self.config
         model_driver = Driver(config, config.mutable_params)
@@ -72,6 +65,8 @@ def get_finished_info(start_time: int, state: object, do_train: bool,
     """
     :param start_time start timestamp for training
     :param state training state
+    :param do_train if train or not
+    :param global_batch_size global batch size
     return train state info
     """
     e2e_time = time.time() - start_time
