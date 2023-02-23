@@ -86,7 +86,6 @@ local_rank: int = -1
 
 # Communication backend for distributed training on gpus
 dist_backend: str = "nccl"
-
 # random seed for initialization
 seed: int = 42
 
@@ -125,7 +124,7 @@ min_samples_to_start_checkpoints: int = 3000000
 save_checkpoint: bool = False
 
 # Whether to run training.
-do_train: bool = False
+do_train: bool = True
 
 # Whether to run with unpadding.
 exchange_padding: bool = False
@@ -169,6 +168,7 @@ use_gradient_as_bucket_view: bool = False
 
 # device
 device: str = None
+n_device: int = 1
 n_gpu: int = 1
 
 eval_interval_samples: int = 0
