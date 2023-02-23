@@ -147,7 +147,7 @@ fused_dropout_add: bool = False
 dense_seq_output: bool = False
 
 # Whether to read local rank from ENVVAR
-use_env: bool = False
+use_env: bool = True
 
 # Path bert_config.json is located in
 bert_config_path: str = None
