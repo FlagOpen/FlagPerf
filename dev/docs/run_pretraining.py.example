@@ -29,7 +29,6 @@ from train.training_state import TrainingState
 from dataloaders.dataloader import build_train_dataset, \
     build_eval_dataset, build_train_dataloader, build_eval_dataloader
 
-
 logger = None
 
 
@@ -85,14 +84,12 @@ def main() -> Tuple[Any, Any]:
 
     # evaluation统计
     init_evaluation_start = time.time()
-
     """
     TODO 实现Evaluator 类的evaluate()方法，用于返回关键指标信息，如loss，eval_embedding_average等。
     例如：training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(trainer)
     """
 
     init_evaluation_end = time.time()
-
     """
     TODO 收集eval关键信息，用于日志输出
     例如： init_evaluation_info = dict(
