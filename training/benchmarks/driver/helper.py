@@ -45,13 +45,11 @@ class InitHelper:
             # TODO 其他厂商设置seed，在此扩展
             pass
 
-    def init_driver(self, name: str, device: str = None) -> Driver:
+    def init_driver(self, name: str, vendor: str = None) -> Driver:
         """
         params:
             name: driver name
-            device: cuda - nvidia
-                    xpu - kulunxin
-                    iluvatar - tianshu
+            vendor: vendor name
         """
         config = self.config
         model_driver = Driver(config, config.mutable_params)
