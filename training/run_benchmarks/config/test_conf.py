@@ -7,7 +7,9 @@ VENDOR = "nvidia"
 # Accelerator options for docker. TODO FIXME support more accelerators.
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
-# nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
+# CUDA_VISIBLE_DEVICES for nvidia, iluvatar
+# MLU_VISIBLE_DEVICES for cambricon
+# XPU_VISIBLE_DEVICES for kunlun
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
