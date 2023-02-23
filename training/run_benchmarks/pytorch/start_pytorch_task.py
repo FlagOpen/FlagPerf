@@ -137,8 +137,8 @@ def _get_basic_train_script_args(task_args):
 
     basic_train_script_args = " --data_dir " + task_args.data_dir \
                               + " --extern_config_dir " + config_dir \
-                              + " --extern_config_file " + config_file
-
+                              + " --extern_config_file " + config_file \
+                              + " --vendor " + task_args.vendor
     if task_args.enable_extern_config:
         basic_train_script_args += " --enable_extern_config " \
                                    + "--extern_module_dir " + extern_module_dir
