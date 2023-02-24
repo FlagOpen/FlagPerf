@@ -44,7 +44,7 @@ def main():
     logger = cpm_driver.logger
     dist_pytorch.init_dist_training_env(config)
 
-    check.check_config(config, "cpm_model_states_medium.pt")
+    check.check_config(config)
 
     dist_pytorch.barrier()
     cpm_driver.event(Event.INIT_START)

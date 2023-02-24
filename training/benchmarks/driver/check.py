@@ -19,7 +19,7 @@ def get_config_arg(config, name):
     return None
 
 
-def check_config(config, model_pt_file):
+def check_config(config):
     print(
         "device: {} n_device: {}, distributed training: {}, 16-bits training: {}"
         .format(config.device, config.n_device, config.local_rank != -1,
@@ -41,12 +41,11 @@ def check_config(config, model_pt_file):
         config.eval_data = ospath.join(data_dir, eval_data)
 
     init_checkpoint = get_config_arg(config, "init_checkpoint")
-    if init_checkpoint is None:
-        config.init_checkpoint = ospath.join(data_dir, model_pt_file)
-    else:
-        config.init_checkpoint = init_checkpoint
+    if init_checkpoint is not None:
+        config.init_checkpoint = ospath.join(data_dir, config.init_checkpoint)
 
     if config.gradient_accumulation_steps < 1:
         raise ValueError(
             "Invalid gradient_accumulation_steps parameter: {}, should be >= 1"
             .format(config.gradient_accumulation_steps))
+    return config

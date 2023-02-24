@@ -7,7 +7,7 @@ import random
 import time
 import numpy as np
 import torch
-from driver import perf_logger, Driver
+from driver import perf_logger, Driver, check
 import driver
 
 
@@ -18,17 +18,29 @@ class InitHelper:
 
     def __init__(self, config: object) -> None:
         self.config = config
+        self.update_local_rank()
+        self.config = check.check_config(self.config)
+
+    def init_driver(self) -> Driver:
+        """
+        params:
+            name: model name
+        """
+        config = self.config
+        model_driver = Driver(config, config.mutable_params)
+        model_driver.setup_config(argparse.ArgumentParser(config.name))
+        model_driver.setup_modules(driver, globals(), locals())
+        return model_driver
 
     def get_logger(self) -> perf_logger.PerfLogger:
         """get logger for FlagPerf"""
         return perf_logger.PerfLogger.get_default_logger(
             rank=self.config.local_rank)
 
-    def get_local_rank(self) -> int:
-        """get local rank"""
-        if self.config.use_env and 'LOCAL_RANK' in os.environ:
-            return int(os.environ['LOCAL_RANK'])
-        return 0
+    def update_local_rank(self) -> int:
+        """set local rank"""
+        if 'LOCAL_RANK' in os.environ:
+            self.config.local_rank = int(os.environ['LOCAL_RANK'])
 
     def set_seed(self, seed: int, vendor: str):
         """set seed"""
@@ -45,17 +57,6 @@ class InitHelper:
             # TODO 其他厂商设置seed，在此扩展
             pass
 
-    def init_driver(self, name: str, vendor: str = None) -> Driver:
-        """
-        params:
-            name: driver name
-            vendor: vendor name
-        """
-        config = self.config
-        model_driver = Driver(config, config.mutable_params)
-        model_driver.setup_config(argparse.ArgumentParser(name))
-        model_driver.setup_modules(driver, globals(), locals())
-        return model_driver
 
 
 def get_finished_info(start_time: int, state: object, do_train: bool,
