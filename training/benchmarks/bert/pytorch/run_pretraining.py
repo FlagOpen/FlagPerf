@@ -106,7 +106,7 @@ def main():
     )
     bert_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
     if not config.do_train:
-        return config, training_state, init_evaluation_info["time"]
+        return config, training_state
 
     dataloader = PretrainingDataloaders(
         config.train_dir,
