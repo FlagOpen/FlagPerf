@@ -17,7 +17,7 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
                                              "../../")))  # benchmarks目录
 # 本地库
 import config
-from driver import Event, dist_pytorch, check
+from driver import Event, dist_pytorch
 from driver.helper import InitHelper, get_finished_info
 
 # TODO 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
@@ -37,12 +37,10 @@ def main() -> Tuple[Any, Any]:
     
     # init
     init_helper = InitHelper(config)
-    config = model_driver.config
-    check.check_config(config)
     model_driver = init_helper.init_driver()  # _base.py增加模型名称name
+    config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
-
     model_driver.event(Event.INIT_START)
 
     # logger
@@ -81,9 +79,9 @@ def main() -> Tuple[Any, Any]:
     training_state._trainer = trainer
 
     # 设置分布式环境, trainer init()
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     trainer.init()
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
 
     # evaluation统计
     init_evaluation_start = time.time()
@@ -114,7 +112,7 @@ def main() -> Tuple[Any, Any]:
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
     # TRAIN_START
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time
 

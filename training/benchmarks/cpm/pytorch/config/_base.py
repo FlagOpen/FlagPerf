@@ -75,7 +75,7 @@ use_gradient_as_bucket_view: bool = False
 
 ## load and save args
 # Path to a directory containing a model checkpoint.
-init_checkpoint: str = None
+init_checkpoint = "cpm_model_states_medium.pt"
 
 # Output directory to save checkpoints to.
 save: str = None

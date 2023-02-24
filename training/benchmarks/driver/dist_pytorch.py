@@ -102,7 +102,7 @@ def get_rank(default=0):
     return rank
 
 
-def get_world_size(vendor):
+def get_world_size(vendor="nvidia"):
     """
     Gets total number of distributed workers or returns one if distributed is
     not initialized.
@@ -148,15 +148,8 @@ def barrier(vendor):
             torch.cuda.synchronize()
 
 
-def set_native_env(config):
-    if config.vendor == "nvidia":
-        config.device = torch.device("cuda")
-        config.n_device = torch.cuda.device_count()
-    else:
-        pass
-
-
-def set_parallel_env(config):
+def init_dist_training_env(config):
+    ''' TODO: Support other accelarators.  '''
     if config.vendor == "nvidia":
         torch.cuda.set_device(config.local_rank)
         config.device = torch.device("cuda", config.local_rank)
@@ -169,15 +162,9 @@ def set_parallel_env(config):
                                              init_method=host_addr_full,
                                              rank=rank,
                                              world_size=world_size)
-
-
-def init_dist_training_env(config):
-    ''' TODO: Support other accelarators.  '''
-    if get_world_size(config.vendor) <= 1:
-        set_native_env(config)
     else:
-        set_parallel_env(config)
-
+        raise Exception("config.vendor should be right.")
+    
 
 def global_batch_size(config):
     return config.train_batch_size * config.n_device
