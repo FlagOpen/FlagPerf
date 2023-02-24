@@ -152,8 +152,6 @@ def init_dist_training_env(config):
     ''' TODO: Support other accelarators.  '''
     if config.vendor == "nvidia":
         torch.cuda.set_device(config.local_rank)
-        config.device = torch.device("cuda", config.local_rank)
-        config.n_device = torch.distributed.get_world_size()
         host_addr_full = 'tcp://' + os.environ[
             "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
         rank = int(os.environ["RANK"])
@@ -162,6 +160,8 @@ def init_dist_training_env(config):
                                              init_method=host_addr_full,
                                              rank=rank,
                                              world_size=world_size)
+        config.device = torch.device("cuda", config.local_rank)
+        config.n_device = torch.distributed.get_world_size()
     else:
         raise Exception("config.vendor should be right.")
     

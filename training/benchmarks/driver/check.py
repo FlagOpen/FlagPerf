@@ -42,8 +42,7 @@ def check_config(config):
 
     init_checkpoint = get_config_arg(config, "init_checkpoint")
     if init_checkpoint is not None:
-        if not os.path.exists(init_checkpoint):
-            config.init_checkpoint = ospath.join(data_dir, config.init_checkpoint)
+        config.init_checkpoint = ospath.join(data_dir, config.init_checkpoint)
 
     if config.gradient_accumulation_steps < 1:
         raise ValueError(
