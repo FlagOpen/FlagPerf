@@ -34,16 +34,19 @@ logger = None
 
 def main() -> Tuple[Any, Any]:
     global logger
+    
+    # init
     init_helper = InitHelper(config)
-    model_driver = init_helper.init_driver(config.name)  # _base.py增加模型名称name
-    config.local_rank = init_helper.get_local_rank()
-    logger = model_driver.logger
-
-    dist_pytorch.init_dist_training_env(config)
+    config = model_driver.config
     check.check_config(config)
+    model_driver = init_helper.init_driver()  # _base.py增加模型名称name
+    dist_pytorch.init_dist_training_env(config)
+    dist_pytorch.barrier(config.vendor)
 
-    dist_pytorch.barrier()
     model_driver.event(Event.INIT_START)
+
+    # logger
+    logger = model_driver.logger
     init_start_time = logger.previous_log_time
 
     # TODO 得到seed
