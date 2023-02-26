@@ -45,7 +45,7 @@ def main() -> Tuple[Any, Any]:
 
     # logger
     logger = model_driver.logger
-    init_start_time = logger.previous_log_time
+    init_start_time = logger.previous_log_time # init起始时间，单位ms
 
     # TODO 得到seed
     """
@@ -84,13 +84,13 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.barrier(config.vendor)
 
     # evaluation统计
-    init_evaluation_start = time.time()
+    init_evaluation_start = time.time() # evaluation起始时间，单位为秒
     """
     TODO 实现Evaluator 类的evaluate()方法，用于返回关键指标信息，如loss，eval_embedding_average等。
     例如：training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(trainer)
     """
 
-    init_evaluation_end = time.time()
+    init_evaluation_end = time.time() # evaluation结束时间，单位为秒
     """
     TODO 收集eval关键信息，用于日志输出
     例如： init_evaluation_info = dict(
@@ -98,6 +98,7 @@ def main() -> Tuple[Any, Any]:
         eval_embedding_average=training_state.eval_embedding_average,
         time=init_evaluation_end - init_evaluation_start)
     """
+    # time单位为秒
     init_evaluation_info = dict(time=init_evaluation_end -
                                 init_evaluation_start)
     model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
@@ -108,13 +109,13 @@ def main() -> Tuple[Any, Any]:
 
     # init 统计
     model_driver.event(Event.INIT_END)
-    init_end_time = logger.previous_log_time
-    training_state.init_time = (init_end_time - init_start_time) / 1e+3
+    init_end_time = logger.previous_log_time # init结束时间，单位为ms
+    training_state.init_time = (init_end_time - init_start_time) / 1e+3 # 初始化时长，单位为秒
 
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time
+    raw_train_start_time = logger.previous_log_time # 训练起始时间，单位为ms
 
     # 训练过程
     epoch = -1
@@ -126,7 +127,9 @@ def main() -> Tuple[Any, Any]:
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time
+    raw_train_end_time = logger.previous_log_time # 训练结束时间，单位为ms
+
+    # 训练时长，单位为秒
     training_state.raw_train_time = (raw_train_end_time -
                                      raw_train_start_time) / 1e+3
 
