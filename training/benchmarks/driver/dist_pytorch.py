@@ -102,12 +102,15 @@ def get_rank(default=0):
     return rank
 
 
-def get_world_size(vendor="nvidia"):
+def get_world_size(vendor):
     """
     Gets total number of distributed workers or returns one if distributed is
     not initialized.
     """
-    if vendor == "nvidia":
+    if vendor == "kunlun":
+        # TODO
+        pass
+    else: #nvidia
         if torch.distributed.is_available() and torch.distributed.is_initialized():
             world_size = torch.distributed.get_world_size()
         else:
@@ -143,7 +146,10 @@ def barrier(vendor):
     Calls all_reduce on dummy tensor and synchronizes with GPU.
     """
     if torch.distributed.is_available() and torch.distributed.is_initialized():
-        if vendor == "nvidia":
+        if vendor == "kunlun":
+            # TODO
+            pass
+        else:
             torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
             torch.cuda.synchronize()
 
