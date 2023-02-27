@@ -102,7 +102,7 @@ def get_rank(default=0):
     return rank
 
 
-def get_world_size(vendor):
+def get_world_size(vendor="nvidia"):
     """
     Gets total number of distributed workers or returns one if distributed is
     not initialized.
@@ -139,7 +139,7 @@ def set_device(cuda, local_rank):
     return device
 
 
-def barrier(vendor):
+def barrier(vendor="nvidia"):
     """
     Works as a temporary distributed barrier, currently pytorch
     doesn't implement barrier for NCCL backend.
@@ -156,7 +156,10 @@ def barrier(vendor):
 
 def init_dist_training_env(config):
     ''' TODO: Support other accelarators.  '''
-    if config.vendor == "nvidia":
+    if config.vendor == "kunlun":
+        # TODO 
+        pass
+    else: # nvidia
         torch.cuda.set_device(config.local_rank)
         host_addr_full = 'tcp://' + os.environ[
             "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
@@ -168,9 +171,7 @@ def init_dist_training_env(config):
                                              world_size=world_size)
         config.device = torch.device("cuda", config.local_rank)
         config.n_device = torch.distributed.get_world_size()
-    else:
-        raise Exception("config.vendor should be right.")
-    
+
 
 def global_batch_size(config):
     return config.train_batch_size * config.n_device
