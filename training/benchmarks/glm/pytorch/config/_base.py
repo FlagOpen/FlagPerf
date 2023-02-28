@@ -1,6 +1,12 @@
 from typing import ClassVar
 #from train.event.base import BaseTrainingEventInterface
 
+# case info
+# chip vendor: nvidia, kunlun,  iluvatar, cambricon etc. key vendor is requiered.
+vendor: str = None
+# model name
+name: str = "GLM"
+
 do_train = True
 fp16 = True
 # =========================================================
@@ -93,3 +99,4 @@ resume_from_checkpoint: bool = False
 #training_event: ClassVar[BaseTrainingEventInterface] = None
 
 #training_event_instance: BaseTrainingEventInterface = None
+
