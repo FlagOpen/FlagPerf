@@ -10,7 +10,7 @@ data_dir: str = "/mnt/data/glm/train/"
 train_data: str = "ReCoRD/glm_train_eval_hdf5_sparse/train_hdf5/train_sparse.hdf5"
 eval_data: str = "ReCoRD/glm_train_eval_hdf5_sparse/eval_hdf5/eval_sparse.hdf5"
 output_dir: str = ""
-init_checkpoint: str = None
+init_checkpoint = "blocklm-large-blank/200000/mp_rank_00_model_states.pt"
 
 # =========================================================
 # Model

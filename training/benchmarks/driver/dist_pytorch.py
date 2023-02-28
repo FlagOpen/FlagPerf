@@ -91,17 +91,6 @@ def setup_seeds(master_seed, epochs, device):
     return worker_seeds, shuffling_seeds
 
 
-def barrier():
-    """
-    Works as a temporary distributed barrier, currently pytorch
-    doesn't implement barrier for NCCL backend.
-    Calls all_reduce on dummy tensor and synchronizes with GPU.
-    """
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
-        torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
-        torch.cuda.synchronize()
-
-
 def get_rank(default=0):
     """
     Gets distributed rank or returns zero if distributed is not initialized.
@@ -113,16 +102,20 @@ def get_rank(default=0):
     return rank
 
 
-def get_world_size():
+def get_world_size(vendor="nvidia"):
     """
     Gets total number of distributed workers or returns one if distributed is
     not initialized.
     """
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
-        world_size = torch.distributed.get_world_size()
-    else:
-        world_size = 1
-    return world_size
+    if vendor == "kunlun":
+        # TODO
+        pass
+    else: #nvidia
+        if torch.distributed.is_available() and torch.distributed.is_initialized():
+            world_size = torch.distributed.get_world_size()
+        else:
+            world_size = 1
+        return world_size
 
 
 def main_proc_print(*args, **kwargs):
@@ -146,14 +139,28 @@ def set_device(cuda, local_rank):
     return device
 
 
+def barrier(vendor="nvidia"):
+    """
+    Works as a temporary distributed barrier, currently pytorch
+    doesn't implement barrier for NCCL backend.
+    Calls all_reduce on dummy tensor and synchronizes with GPU.
+    """
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        if vendor == "kunlun":
+            # TODO
+            pass
+        else:
+            torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
+            torch.cuda.synchronize()
+
+
 def init_dist_training_env(config):
     ''' TODO: Support other accelarators.  '''
-    if config.local_rank == -1:
-        config.device = torch.device("cuda")
-        config.n_device = torch.cuda.device_count()
-    else:
+    if config.vendor == "kunlun":
+        # TODO 
+        pass
+    else: # nvidia
         torch.cuda.set_device(config.local_rank)
-        config.device = torch.device("cuda", config.local_rank)
         host_addr_full = 'tcp://' + os.environ[
             "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
         rank = int(os.environ["RANK"])
@@ -162,8 +169,8 @@ def init_dist_training_env(config):
                                              init_method=host_addr_full,
                                              rank=rank,
                                              world_size=world_size)
+        config.device = torch.device("cuda", config.local_rank)
         config.n_device = torch.distributed.get_world_size()
-    return
 
 
 def global_batch_size(config):
