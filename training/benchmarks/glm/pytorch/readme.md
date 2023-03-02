@@ -1,8 +1,6 @@
 ### 模型Checkpoint下载
-
-`https://cloud.tsinghua.edu.cn/seafhttp/files/2f44f60f-d4d1-482c-a704-61884f04924a/glm-base-blank.tar.bz2`
+`https://cloud.tsinghua.edu.cn/d/13f5b03da9594e5490c4/files/?p=%2Fglm-base-blank.tar.bz2`
 ### 测试数据集下载
-
 `https://dl.fbaipublicfiles.com/glue/superglue/data/v2/ReCoRD.zip`
 
 
