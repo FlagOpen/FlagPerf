@@ -1,4 +1,4 @@
-train_batch_size = 4
+train_batch_size = 8
 eval_batch_size = 8
 
 dist_backend = "nccl"
