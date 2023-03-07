@@ -8,9 +8,10 @@ name: Lint Code Base
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master"  ]
   pull_request:
     branches: [ "main", "master" ]
+  workflow_dispatch: {} # Put here!!   
 jobs:
   run-lint:
     runs-on: ubuntu-latest
@@ -24,6 +25,10 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v4
         env:
+          LINTER_RULES_PATH: /.github/linters
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_PYTHON: true
+          VALIDATE_PYTHON_FLAKE8: true
+          PYTHON_FLAKE8_CONFIG_FILE: tox.ini
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
