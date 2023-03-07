@@ -168,9 +168,10 @@ def build_data_loader(dataset,
     """Data loader. Note that batch-size is the local (per GPU) batch-size."""
     if worker_init_fn is None:
         worker_init_fn = WorkerInitializer.default()
-    world_size = dist.get_world_size()
+    rank = dist_pytorch.get_rank()
+    world_size = dist_pytorch.get_world_size()
     sampler = torch.utils.data.distributed.DistributedSampler(
-        dataset, num_replicas=world_size, shuffle=shuffle)
+        dataset, rank=rank, num_replicas=world_size, shuffle=shuffle)
     dist_pytorch.main_proc_print(
         f"use sampler: DistributedSampler, num_replicas:{world_size}")
 

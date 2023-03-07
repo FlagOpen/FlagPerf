@@ -59,10 +59,11 @@ def multichoice_evaluate(model, dataloader, args, segment_length=10):
 
     model.train()
     #config.training_event_instance.device_barrier()
-    torch.distributed.all_reduce(total_sample,
-                                 op=torch.distributed.ReduceOp.SUM)
-    torch.distributed.all_reduce(total_score,
-                                 op=torch.distributed.ReduceOp.SUM)
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        torch.distributed.all_reduce(total_sample,
+                                    op=torch.distributed.ReduceOp.SUM)
+        torch.distributed.all_reduce(total_score,
+                                    op=torch.distributed.ReduceOp.SUM)
 
     # print(f"samples:{total_sample}, score:{total_score}")
     score = total_score / total_sample
