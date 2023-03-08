@@ -15,7 +15,7 @@
 > 无需预处理 
 
 ### 模型checkpoint 
-> `https://dl.fbaipublicfiles.com/glue/superglue/data/v2/ReCoRD.zip`
+> `https://cloud.tsinghua.edu.cn/d/13f5b03da9594e5490c4/files/?p=%2Fglm-large-blank.tar.bz2`
 
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|
