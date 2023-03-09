@@ -20,11 +20,6 @@ def get_config_arg(config, name):
 
 
 def check_config(config):
-    print(
-        "device: {} n_device: {}, distributed training: {}, 16-bits training: {}"
-        .format(config.device, config.n_device, config.local_rank != -1,
-                config.fp16))
-
     data_dir = get_config_arg(config, "data_dir")
     if data_dir is None:
         raise ValueError("Invalid data_dir, should be given a path.")
@@ -48,4 +43,6 @@ def check_config(config):
         raise ValueError(
             "Invalid gradient_accumulation_steps parameter: {}, should be >= 1"
             .format(config.gradient_accumulation_steps))
+    print(f"device: {config.device} n_device: {config.n_device}, \
+          distributed training: {config.local_rank != -1}, 16-bits training: {config.fp16}")
     return config
