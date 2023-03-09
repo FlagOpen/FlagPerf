@@ -1,16 +1,28 @@
 ![FlagAI](logo.png)
 ----------
 ### FlagPerf
+[![Lint Code Base](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml/badge.svg)](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml)
 
 FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望探索开源、开放、灵活、公正、客观的AI芯片评测体系，提供行业价值，促进AI产业生态发展。
 更多模型及框架支持持续开发中，欢迎加入共同建设，助力AI产业生态发展。
 
 ----------
+### 支持模型列表
+| 模型 | AI框架          |  状态 |已适配的厂商|
+| ---- | --------------- | -------- | ---- |
+| [BERT](training/benchmarks/bert/paddle/readme.md) | [paddle](training/benchmarks/bert/paddle/readme.md) |  已支持 | |
+| [CPM](training/benchmarks/cpm/pytorch/readme.md)  | [pytorch](training/benchmarks/cpm/pytorch/readme.md) | 已支持 | |
+| [GLM](training/benchmarks/glm/README.md)  | [pytorch](training/benchmarks/glm/pytorch/readme.md) |  已支持 ||
+| ResNet50  | pytorch |  DOING | |
+| MobileNetV2  | pytorch  | DOING ||
+| ViT  | pytorch |  DOING ||
+| EVA-CLIP  |pytorch  |  DOING ||
+| EVA-Seg  | pytorch |   DOING ||
+| EVA-Det  | pytorch |  DOING ||
+
 ### 部署说明
 
 #### 系统环境建议
-
-
 ```
     OS: Ubuntu 20.04
     Kernel: 5.4.0-52-generic
