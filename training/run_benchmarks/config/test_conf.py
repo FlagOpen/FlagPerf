@@ -14,7 +14,7 @@ ACCE_CONTAINER_OPT = " --gpus all"
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
+PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # If not set, it will be os.path.dirname(run.py)/../../training/
@@ -50,7 +50,7 @@ BERT_PADDLE_DEMO_A100_1X8 = {  # benchmark case name, one in CASES
     "config":
     "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
     "repeat": 1,  # How many times to run this case
-    "nnodes": 1,  #  How many hosts to run this case
+    "nnodes": 1,  # How many hosts to run this case
     "nproc": 8,  # How many processes will run on each host
     "data_dir_host": "/home/datasets_ckpt/bert/train/",  # Data path on host
     "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
