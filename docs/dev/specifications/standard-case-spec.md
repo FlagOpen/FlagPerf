@@ -94,16 +94,16 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 
 #### 1) 实现模型训练主体逻辑
 
-在training/benchmarks下添加<model>/<framework>子目录，pytroch和paddle的标准case可参考下面的目录结构组织代码：
+在training/benchmarks下添加<model>/<framework>子目录，pytorch和paddle的标准case可参考下面的目录结构组织代码：
 
 ```Bash
 .
 ├── config      # 【必选】case基本配置目录
-├── dataloaders 
+├── dataloaders
 ├── model
 ├── optimizers
 ├── readme.md   # 【必选】case文档，规范参考 https://qgsq1vkxhz.feishu.cn/docx/NMAGdJ3w6oltKJxJB9ccVL43n5c
-├── run_pretraining.py #【必选】执行训练入口脚本，可以使用dev/docs/run_pretaining.example.py作为模版
+├── run_pretraining.py #【必选】执行训练入口脚本，可以使用dev/docs/run_pretraining.example.py作为模版
 ├── schedulers
 └── train
 ```
@@ -190,3 +190,9 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 ## 4. 代码提交与Review合并
 
 FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://github.com/FlagOpen/FlagPerf/tree/main) 到个人帐号下，修改代码&验证通过后，提交PR给FlagPerf项目。FlagOpen相关研发人员Review通过后，合并代码。具体操作可参照：https://docs.github.com/en/get-started/quickstart/contributing-to-projects
+
+### 4.1 标准case修改的PR提交规范
+  1. Commit说明为什么要改/改了什么
+  2. 如果修改内容影响Case运行结果，在标准Case的README.md更新新的运行记录，随PR提交；
+  3. 如果修改内容影响Case运行结果，强烈建议在PR的comment里提交FlagPerf在Nvidia GPU上运行日志附件。
+  4. 如果该case已经有厂商已经适配，需要评估该修改对所有已经适配的厂商扩展不造成影响。
