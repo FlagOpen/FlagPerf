@@ -162,7 +162,7 @@ def init_dist_training_env(config):
     else: # nvidia
         if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
             config.device = torch.device("cuda")
-            config.n_device = torch.cuda.device_count()
+            config.n_device = 1
         else: 
             torch.cuda.set_device(config.local_rank)
             host_addr_full = 'tcp://' + os.environ[
