@@ -1,0 +1,5 @@
+numpy>=1.15.4
+sentencepiece>=0.1.8
+tqdm==4.46.0
+jieba==0.42.1
+gdown
