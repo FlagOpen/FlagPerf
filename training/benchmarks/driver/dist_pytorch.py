@@ -110,7 +110,7 @@ def get_world_size(vendor="nvidia"):
     if vendor == "kunlun":
         # TODO
         pass
-    else:  #nvidia
+    else:  # nvidia
         if torch.distributed.is_available(
         ) and torch.distributed.is_initialized():
             world_size = torch.distributed.get_world_size()
