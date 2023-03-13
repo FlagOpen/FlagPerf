@@ -110,8 +110,9 @@ def get_world_size(vendor="nvidia"):
     if vendor == "kunlun":
         # TODO
         pass
-    else: #nvidia
-        if torch.distributed.is_available() and torch.distributed.is_initialized():
+    else:  # nvidia
+        if torch.distributed.is_available(
+        ) and torch.distributed.is_initialized():
             world_size = torch.distributed.get_world_size()
         else:
             world_size = 1
@@ -157,20 +158,24 @@ def barrier(vendor="nvidia"):
 def init_dist_training_env(config):
     ''' TODO: Support other accelarators.  '''
     if config.vendor == "kunlun":
-        # TODO 
+        # TODO
         pass
-    else: # nvidia
-        torch.cuda.set_device(config.local_rank)
-        host_addr_full = 'tcp://' + os.environ[
-            "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
-        rank = int(os.environ["RANK"])
-        world_size = int(os.environ["WORLD_SIZE"])
-        torch.distributed.init_process_group(backend=config.dist_backend,
-                                             init_method=host_addr_full,
-                                             rank=rank,
-                                             world_size=world_size)
-        config.device = torch.device("cuda", config.local_rank)
-        config.n_device = torch.distributed.get_world_size()
+    else:  # nvidia
+        if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
+            config.device = torch.device("cuda")
+            config.n_device = 1
+        else:
+            torch.cuda.set_device(config.local_rank)
+            host_addr_full = 'tcp://' + os.environ[
+                "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+            rank = int(os.environ["RANK"])
+            world_size = int(os.environ["WORLD_SIZE"])
+            torch.distributed.init_process_group(backend=config.dist_backend,
+                                                 init_method=host_addr_full,
+                                                 rank=rank,
+                                                 world_size=world_size)
+            config.device = torch.device("cuda", config.local_rank)
+            config.n_device = torch.distributed.get_world_size()
 
 
 def global_batch_size(config):
