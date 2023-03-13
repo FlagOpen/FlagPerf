@@ -34,6 +34,7 @@ logger = None
 
 def main() -> Tuple[Any, Any]:
     global logger
+    global config
     
     # init
     init_helper = InitHelper(config)
