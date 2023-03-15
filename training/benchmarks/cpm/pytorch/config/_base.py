@@ -1,5 +1,7 @@
-from typing import ClassVar
-# from train.event.base import BaseTrainingEventInterface
+
+vendor: str = None
+# model name
+name: str = "CPM"
 
 # random seed
 seed: int = 1234
