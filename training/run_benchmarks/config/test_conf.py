@@ -1,16 +1,23 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlun.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 # Accelerator options for docker. TODO FIXME support more accelerators.
+# possible value of ACCE_CONTAINER_OPT are:
+#   kunlunxin:
+#       " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
+#       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
+#       " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+#   nvidia:
+#       " --gpus all"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
 #   MLU_VISIBLE_DEVICES for cambricon
-#   XPU_VISIBLE_DEVICES for kunlun
+#   XPU_VISIBLE_DEVICES for kunlunxin
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
@@ -87,4 +94,15 @@ CPM_TORCH_DEMO_A100_1X8 = {
     "nproc": 8,
     "data_dir_host": "/home/datasets_ckpt/cpm/train/",
     "data_dir_container": "/mnt/data/cpm/train/",
+}
+
+GLM_TORCH_DEMO_R300_1X8 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_R300x1x8",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 8,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
 }

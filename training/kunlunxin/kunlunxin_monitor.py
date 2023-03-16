@@ -4,7 +4,6 @@
 Usage:  python3 sys-monitor.py -o operation -l [log_path]
             -o, --operation     start|stop|restart|status
             -l, --log           log path , ./logs/ default
-            -v, --gpu vendor    nvidia|iluvatar|cambricon|kunlunxin
 '''
 
 import os
@@ -13,10 +12,10 @@ import time
 import signal
 import atexit
 import argparse
-import schedule
 import datetime
 from multiprocessing import Process
-from run_cmd import run_cmd_wait as rcw
+import subprocess
+import schedule
 
 
 class Daemon:
@@ -31,9 +30,9 @@ class Daemon:
                  pid_file,
                  log_file,
                  err_file,
+                 xpu_log,
                  log_path,
-                 rate1=5,
-                 rate2=120,
+                 rate=5,
                  stdin=os.devnull,
                  stdout=os.devnull,
                  stderr=os.devnull,
@@ -46,15 +45,11 @@ class Daemon:
         self.home_dir = home_dir
         self.verbose = verbose
         self.pidfile = pid_file
-        self.loggile = log_file
+        self.logfile = log_file
         self.errfile = err_file
-        # result for cpu,mem,gpu,pwr of system
-        self.log_path = log_path
-        self.cpulog = str(log_path + '/cpu_monitor.log')
-        self.memlog = str(log_path + '/mem_monitor.log')
-        self.pwrlog = str(log_path + '/pwr_monitor.log')
-        self.rate1 = rate1
-        self.rate2 = rate2
+        self.gpufile = xpu_log
+        self.logpath = log_path
+        self.rate = rate
         self.umask = umask
         self.verbose = verbose
         self.daemon_alive = True
@@ -78,52 +73,32 @@ class Daemon:
         NOTE: override the method in subclass
         '''
 
-        def cpu_mon(file):
+        def xpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "mpstat -P ALL 1 1|grep -v Average|grep all|awk '{print (100-$NF)/100}'"
-            res, out = rcw(cmd, 10, retouts=True)
-            if res:
+            cmd = 'xpu_smi|egrep "[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}.[0-9a-f]"|' \
+                  'awk \'{printf("%dC %3dW %dMiB %dMiB %d%\\n",$29,$27,$22,$24,$14)}\''
+            process = subprocess.Popen(cmd,
+                                       shell=True,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT,
+                                       encoding='utf-8')
+            try:
+                out = process.communicate(timeout=10)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                out = process.communicate()
+
+            if process.returncode != 0:
                 result = "error"
-            result = TIMESTAMP + "\t" + out[0]
+            result = TIMESTAMP + "\n" + out[0] + "\n"
             with open(file, 'a') as f:
                 f.write(result)
 
-        def mem_mon(file):
-            TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "free -g|grep -i mem|awk '{print $3/$2}'"
-            res, out = rcw(cmd, 10, retouts=True)
-            if res:
-                result = "error"
-            result = TIMESTAMP + "\t" + out[0]
-            with open(file, 'a') as f:
-                f.write(result)
+        def timer_xpu_mon():
+            xpu_process = Process(target=xpu_mon, args=(self.gpufile, ))
+            xpu_process.start()
 
-        def pwr_mon(file):
-            TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "ipmitool sdr list|grep -i Watts|awk 'BEGIN{FS = \"|\"}{for (f=1; f <= NF; f+=1) {if ($f ~ /Watts/)" \
-                  " {print $f}}}'|awk '{print $1}'|sort -n -r|head -n1"
-            res, out = rcw(cmd, 10, retouts=True)
-            if res:
-                result = "error"
-            result = TIMESTAMP + "\t" + out[0]
-            with open(file, 'a') as f:
-                f.write(result)
-
-        def timer_cpu_mon():
-            cpu_process = Process(target=cpu_mon, args=(self.cpulog, ))
-            cpu_process.start()
-
-        def timer_mem_mon():
-            mem_process = Process(target=mem_mon, args=(self.memlog, ))
-            mem_process.start()
-
-        def timer_pwr_mon():
-            pwr_process = Process(target=pwr_mon, args=(self.pwrlog, ))
-            pwr_process.start()
-
-        schedule.every(self.rate1).seconds.do(timer_cpu_mon)
-        schedule.every(self.rate1).seconds.do(timer_mem_mon)
-        schedule.every(self.rate2).seconds.do(timer_pwr_mon)
+        schedule.every(self.rate).seconds.do(timer_xpu_mon)
         while True:
             schedule.run_pending()
             time.sleep(5)
@@ -167,12 +142,10 @@ class Daemon:
             f.write('%s\n' % pid)
 
     def start(self):
-        if not os.path.exists(self.log_path):
-            os.makedirs(self.log_path)
-        else:
-            for i in self.cpulog, self.memlog, self.pwrlog:
-                if os.path.exists(i):
-                    os.remove(i)
+        if not os.path.exists(self.logpath):
+            os.makedirs(self.logpath)
+        elif os.path.exists(self.gpufile):
+            os.remove(self.gpufile)
         if self.verbose >= 1:
             print('ready to start ......')
         # check for a pid file to see if the daemon already runs
@@ -224,10 +197,7 @@ class Daemon:
         if pid:
             if os.path.exists('/proc/%d' % pid):
                 return pid
-            else:
-                return False
-        else:
-            return False
+        return False
 
 
 def parse_args():
@@ -250,21 +220,22 @@ def parse_args():
 
 def main():
     sample_rate1 = 5
-    sample_rate2 = 120
     args = parse_args()
     operation = args.o
-    path = args.l
-    pid_fn = str('/tmp/sys_monitor.pid')
-    log_fn = str(path + '/sys_monitor.log')
-    err_fn = str(path + '/sys_monitor.err')
+    log_path = args.l
+    pid_fn = str('/tmp/xpu_monitor.pid')
+    log_fn = str(log_path + '/kunlunxin_monitor.log')
+    err_fn = str(log_path + '/kunlunxin_monitor.err')
+    # result for gpu
+    xpu_fn = str(log_path + '/kunlunxin_monitor.log')
 
     subdaemon = Daemon(pid_fn,
                        log_fn,
                        err_fn,
-                       path,
+                       xpu_fn,
+                       log_path,
                        verbose=1,
-                       rate1=sample_rate1,
-                       rate2=sample_rate2)
+                       rate=sample_rate1)
     if operation == 'start':
         subdaemon.start()
     elif operation == 'stop':
