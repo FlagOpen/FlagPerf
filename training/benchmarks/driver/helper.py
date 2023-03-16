@@ -21,7 +21,8 @@ class InitHelper:
         self.update_local_rank()
         self.config = check.check_config(self.config)
 
-    def init_driver(self) -> Driver:
+    #def init_driver(self) -> Driver:
+    def init_driver(self, global_module, local_module) -> Driver:
         """
         params:
             name: model name
@@ -29,7 +30,8 @@ class InitHelper:
         config = self.config
         model_driver = Driver(config, config.mutable_params)
         model_driver.setup_config(argparse.ArgumentParser(config.name))
-        model_driver.setup_modules(driver, globals(), locals())
+        #model_driver.setup_modules(driver, globals(), locals())
+        model_driver.setup_modules(driver, global_module, local_module)
         return model_driver
 
     def get_logger(self) -> perf_logger.PerfLogger:
@@ -53,6 +55,8 @@ class InitHelper:
             torch.cuda.manual_seed_all(seed)
             torch.backends.cudnn.benchmark = False
             torch.backends.cudnn.deterministic = True
+        elif lower_vendor == "kunlun":
+            torch.manual_seed(seed)
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
