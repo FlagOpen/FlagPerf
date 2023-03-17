@@ -13,9 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Batch samplers that work with either random or sequential data samplers."""
+import os
+import sys
 
 import torch
 from torch.utils import data
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver import dist_pytorch
 
 
 class RandomSampler(data.sampler.Sampler):
@@ -106,7 +112,7 @@ class DistributedBatchSampler(data.sampler.BatchSampler):
                                                       drop_last)
         if rank == -1:
             assert False, 'should not be here'
-            rank = torch.distributed.get_rank()
+            rank = dist_pytorch.get_rank()
         self.rank = rank
         self.world_size = world_size
         self.sampler.wrap_around = 0
