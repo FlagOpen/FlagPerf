@@ -74,7 +74,7 @@ target_acc1: float = 0.6
 eval_iter_start_samples: int = 100
 
 # If set to -1, disable eval, else evaluate every eval_iter_samples during training
-eval_interval_samples: int = 600 * 8 * 4
+eval_interval_samples: int = 100 * 256 * 1
 
 # Total number of training samples to run.
 max_samples_termination: float = 1388270 * 4

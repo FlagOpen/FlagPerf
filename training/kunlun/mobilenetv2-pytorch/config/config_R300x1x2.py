@@ -1,7 +1,7 @@
-train_batch_size = 4
-eval_batch_size = 8
+from config_common import *
 
-dist_backend = "nccl"
+train_batch_size = 128
+eval_batch_size = 128
 
 lr = 1e-5
 weight_decay = 0.1
@@ -14,4 +14,3 @@ lr_decay_ratio = 0.1
 lr_decay_iters = 4338
 log_freq = 1
 
-training_event = None
