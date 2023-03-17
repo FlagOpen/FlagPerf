@@ -90,7 +90,7 @@ def main() -> Tuple[Any, Any]:
     TODO 实现Evaluator 类的evaluate()方法，用于返回关键指标信息，如loss，eval_embedding_average等。
     例如：training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(trainer)
     """
-    training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(trainer)
+    training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(trainer)
 
     init_evaluation_end = time.time() # evaluation结束时间，单位为秒
     """
@@ -147,7 +147,19 @@ if __name__ == "__main__":
         sys.exit(0)
     # 训练信息写日志
     global_batch_size = dist_pytorch.global_batch_size(config)
-    # TODO
-    finished_info = get_finished_info(start, state, config.do_train,
-                                      global_batch_size)
+    e2e_time = time.time() - start
+    finished_info = {"e2e_time": e2e_time}
+    if config.do_train:
+        training_perf = (global_batch_size *
+                         state.global_steps) / state.raw_train_time
+        finished_info = {
+            "e2e_time": e2e_time,
+            "training_images_per_second": training_perf,
+            "converged": state.converged,
+            "final_loss": state.eval_loss,
+            "final_acc1": state.eval_acc1,
+            "final_acc5": state.eval_acc5,
+            "raw_train_time": state.raw_train_time,
+            "init_time": state.init_time,
+        }
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)

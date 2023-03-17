@@ -110,7 +110,7 @@ class Trainer:
                 other_state['loss_scale'] = loss_scale
 
             eval_result = None
-            if self.can_do_eval(state) or True:
+            if self.can_do_eval(state):
                 eval_start = time.time()
                 state.eval_loss, state.eval_acc1, state.eval_acc5 = self.evaluator.evaluate(self)
                 eval_end = time.time()
@@ -144,17 +144,20 @@ class Trainer:
         batch = self.process_batch(batch, self.config.device)
         state = self.training_state
         self.model.train()
-        state.loss, acc1, acc5 = self.forward(batch)
+        state.loss, state.acc1, state.acc5 = self.forward(batch)
         self.adapter.backward(state.global_steps, state.loss, self.optimizer)
         if dist.is_available() and dist.is_initialized():
-            dist.all_reduce(state.loss, dist.ReduceOp.SUM, async_op=False)
-            state.loss = state.loss / dist.get_world_size()
+            total = torch.tensor([state.loss, state.acc1, state.acc5], 
+                                        dtype=torch.float32, device=self.config.device)
+            dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
+            total = total / dist.get_world_size()
+            state.loss, state.acc1, state.acc5 = total.tolist()
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
                                             self.optimizer, self.grad_scaler)
 
     def detect_training_status(self, state):
         config = self.config
-        if state.eval_accuracy >= config.target_accuracy:
+        if state.eval_acc1 >= config.target_acc1:
             state.converged_success()
 
         if state.num_trained_samples > config.max_samples_termination:
@@ -186,7 +189,8 @@ class Trainer:
     
     def inference(self, batch):
         self.model.eval()
-        return self.forward(batch)
+        output = self.forward(batch)
+        return output
     
     def process_batch(self, batch, device):
         """Process batch and produce inputs for the model."""

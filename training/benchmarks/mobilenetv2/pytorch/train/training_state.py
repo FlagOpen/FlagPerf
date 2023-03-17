@@ -53,13 +53,12 @@ class TrainingState:
             if not var_name.startswith("_") and self._is_property(value):
                 state_dict[var_name] = value
 
-        lr = self._trainer.lr_scheduler.get_lr()
+        lr = self._trainer.lr_scheduler.get_last_lr()
         if isinstance(lr, (tuple, list)):
             lr = lr[0]
         state_dict["learning_rate"] = lr
-        # TODO
         exclude = [
-            "eval_loss", "eval_mlm_accuracy", "skipped_steps", "converged",
+            "eval_loss", "eval_acc1", "eval_acc5", "skipped_steps", "converged",
             "init_time", "raw_train_time"
         ]
         for exkey in exclude:

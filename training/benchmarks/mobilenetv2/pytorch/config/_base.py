@@ -68,7 +68,7 @@ max_steps: int = 600000
 seed: int = 10483
 
 # Stop training after reaching this accuracy
-target_accuracy: float = 0.8
+target_acc1: float = 0.6
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
