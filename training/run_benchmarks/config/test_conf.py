@@ -89,7 +89,6 @@ CPM_TORCH_DEMO_A100_1X1 = {
     "data_dir_container": "/mnt/data/cpm/train/",
 }
 
-
 CPM_TORCH_DEMO_A100_1X2 = {
     "model": "cpm",
     "framework": "pytorch",
@@ -100,7 +99,6 @@ CPM_TORCH_DEMO_A100_1X2 = {
     "data_dir_host": "/home/datasets_ckpt/cpm/train/",
     "data_dir_container": "/mnt/data/cpm/train/",
 }
-
 
 CPM_TORCH_DEMO_A100_1X4 = {
     "model": "cpm",

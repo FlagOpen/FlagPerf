@@ -1,5 +1,4 @@
 #!/usr/bin/env /usr/bin/python3
-
 """
 1. This script is used to get a summary info for FlagPerf
 2. The preferred deployed location is /usr/local/bin/stat.py. 
@@ -87,7 +86,8 @@ def stats(filepath: str) -> dict:
 
             if line.find("e2e_time") > 0:
                 obj = json.loads(line)
-                e2e_time = round(float(obj.get("value").get("e2e_time")) / 60, 1)
+                e2e_time = round(
+                    float(obj.get("value").get("e2e_time")) / 60, 1)
                 converged = True
 
             if line.find('eval_accuracy') < 0:
@@ -127,36 +127,65 @@ def stats(filepath: str) -> dict:
             if len(eval_acc_stat[acc]) == 0:
                 eval_accuracy_stat_with_ts[acc]["elapsed_minutes"] = 0
             else:
-                eval_accuracy_stat_with_ts[acc]["elapsed_minutes"] = round(((max(eval_acc_stat[acc]) - min(
-                    eval_acc_stat[acc])) / 1000) / 60, 2)
+                eval_accuracy_stat_with_ts[acc]["elapsed_minutes"] = round(
+                    ((max(eval_acc_stat[acc]) - min(eval_acc_stat[acc])) /
+                     1000) / 60, 2)
 
             stat = {
-                "elapsed_minutes": round((int(last_ts) - train_start_ts) / 60, 1),
+                "elapsed_minutes": round((int(last_ts) - train_start_ts) / 60,
+                                         1),
                 "train_start_at": format_timestamp(train_start_ts),
                 "train_finish_at": format_timestamp(train_finished_at),
                 "converged": converged,
                 "e2e_time_minutes": e2e_time,
-                "eval_accuracy": {"min": min(eval_accuracy),
-                                  "max": max(eval_accuracy),
-                                  "dist": eval_accuracy_stat_with_ts},
-                "loss": {"min": min(loss), "max": max(loss), "size": len(loss)},
-                "lr": {"min": min(lr), "max": max(lr), "size": len(lr)},
-                "global_steps": {"min": min(global_steps), "max": max(global_steps), "size": len(global_steps)},
-                "num_trained_samples": {"min": min(num_trained_samples),
-                                        "max": max(num_trained_samples),
-                                        "samples_per_second": round(max(num_trained_samples) / max(global_steps), 1)},
-
+                "eval_accuracy": {
+                    "min": min(eval_accuracy),
+                    "max": max(eval_accuracy),
+                    "dist": eval_accuracy_stat_with_ts
+                },
+                "loss": {
+                    "min": min(loss),
+                    "max": max(loss),
+                    "size": len(loss)
+                },
+                "lr": {
+                    "min": min(lr),
+                    "max": max(lr),
+                    "size": len(lr)
+                },
+                "global_steps": {
+                    "min": min(global_steps),
+                    "max": max(global_steps),
+                    "size": len(global_steps)
+                },
+                "num_trained_samples": {
+                    "min":
+                    min(num_trained_samples),
+                    "max":
+                    max(num_trained_samples),
+                    "samples_per_second":
+                    round(max(num_trained_samples) / max(global_steps), 1)
+                },
             }
 
             if len(loss_scale) > 0:
-                stat.update({"loss_scale": {"min": min(loss_scale), "max": max(loss_scale), "size": len(loss_scale)}})
+                stat.update({
+                    "loss_scale": {
+                        "min": min(loss_scale),
+                        "max": max(loss_scale),
+                        "size": len(loss_scale)
+                    }
+                })
 
     return stat
 
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument("--file", type=str, default="./rank0.out.log", help="log file path")
+    parser.add_argument("--file",
+                        type=str,
+                        default="./rank0.out.log",
+                        help="log file path")
     args = parser.parse_args()
     f = args.file
     t = args.t

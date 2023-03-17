@@ -1,4 +1,3 @@
-
 vendor: str = None
 # model name
 name: str = "CPM"

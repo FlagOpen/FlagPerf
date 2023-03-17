@@ -122,9 +122,10 @@ class DynamicLossScaler:
             overflow_gpu = torch.cuda.ByteTensor([overflow])
         else:
             overflow_gpu = torch.ByteTensor([overflow])
-        if torch.distributed.is_available() and torch.distributed.is_initialized():
+        if torch.distributed.is_available(
+        ) and torch.distributed.is_initialized():
             torch.distributed.all_reduce(overflow_gpu,
-                                        op=torch.distributed.ReduceOp.MAX)
+                                         op=torch.distributed.ReduceOp.MAX)
         overflow = overflow_gpu[0].item()
         return bool(overflow)
 
