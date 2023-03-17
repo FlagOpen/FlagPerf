@@ -288,10 +288,14 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
     '''Start tasks in cluster, and NOT wait.'''
     framework = case_config["framework"]
     nnodes = case_config["nnodes"]
+    env_file = os.path.join(
+        tc.FLAGPERF_PATH_CONTAINER, tc.VENDOR,
+        case_config["model"] + "-" + case_config["framework"],
+        "config/environment_variables.sh")
     start_cmd = "cd " + dp_path + " && " + sys.executable \
                 + " utils/container_manager.py -o runcmdin -c " \
-                + container_name + " -d -r \"python3 " \
-                + tc.FLAGPERF_PATH_CONTAINER + "/run_benchmarks/" \
+                + container_name + " -d -r \"source " + env_file + "; " \
+                + "python3 " + tc.FLAGPERF_PATH_CONTAINER + "/run_benchmarks/" \
                 + framework + "/start_" + framework + "_task.py " \
                 + base_args + " --round " + str(count)
     if tc.ACCE_VISIBLE_DEVICE_ENV_NAME is not None:
