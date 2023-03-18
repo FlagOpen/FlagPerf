@@ -2,7 +2,7 @@
 
 > 重点写厂商适配的情况，以及在厂商芯片的机器上的运行情况。
 >
-> 文件路径：training/<vendor>/<model>-<framework>/ 目录下
+> 文件路径：training/&lt;vendor&gt;/&lt;model&gt;-&lt;framework&gt;/ 目录下
 >
 > 文档使用的语言：默认为中文README.md，可提供英文版本README.en.md
 

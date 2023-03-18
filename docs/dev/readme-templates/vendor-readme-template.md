@@ -1,6 +1,6 @@
 # 厂商README文件模版
 
-- 文档位置：每个厂商的REAMDE文档位于training/<vendor>/  目录下
+- 文档位置：每个厂商的REAMDE文档位于training/&lt;vendor&gt;/  目录下
 - 文档使用的语言：默认为中文README.md，可提供英文版本README.en.md
 - 文档的目的：向用户介绍厂商信息，说明适配FlagPerf测试Case的软、硬件环境信息及加速卡监控采集指标。
 
@@ -34,10 +34,10 @@
 ### 容器镜像信息
 
 - 容器构建信息
-  - Dockerfile路径：<vendor>/docker_image/<framework>/Dockerfile
-  - 构建后软件安装脚本：<vendor>/docker_image/<framework>/<framework>_install.sh
+  - Dockerfile路径：&lt;vendor&gt;/docker_image/&lt;framework&gt;/Dockerfile
+  - 构建后软件安装脚本：&lt;vendor&gt;/docker_image/&lt;framework&gt;/&lt;framework&gt;_install.sh
   - ​       *// 软件安装、目录创建、文件copy等*
-- 核心软件信息（例如cuda等，通常包含在容器的基础镜像中或软件安装脚本<framework>_install.sh）
+- 核心软件信息（例如cuda等，通常包含在容器的基础镜像中或软件安装脚本&lt;framework>_install.sh）
   - AI框架&版本
   - ​      *//* *例如pip install torch_xmlir --pipsource <pipsource>*
 
