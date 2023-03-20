@@ -5,7 +5,7 @@ mutable_params = [
     "beta_1", "beta_2", "eps", "seed", "target_embedding_average",
     "attention_dropout", "hidden_dropout", "loss_scale", "dynamic_loss_scale",
     "hysteresis", "loss_scale_window", "min_scale",
-    "use_gradient_as_bucket_view", "num_workers"
+    "use_gradient_as_bucket_view", "num_workers", "vendor"
 ]
 
 mutable_params += ["local_rank", "do_train", "data_dir", "log_freq"]

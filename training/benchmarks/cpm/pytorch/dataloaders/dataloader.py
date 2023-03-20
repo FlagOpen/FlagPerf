@@ -1,7 +1,12 @@
 import os
+import sys
 import numpy as np
 import torch
 from dataloaders.samplers import DistributedBatchSampler, RandomSampler
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver import dist_pytorch
 
 
 class GenDataset(torch.utils.data.Dataset):
@@ -114,8 +119,8 @@ def load_data(args, data_type, tokenizer, ratio=1):
         batch_size = args.eval_batch_size
 
     # Data parallel arguments.
-    world_size = torch.distributed.get_world_size()
-    rank = torch.distributed.get_rank()
+    world_size = dist_pytorch.get_world_size()
+    rank = dist_pytorch.get_rank()
     global_batch_size = batch_size * world_size
     num_workers = args.num_workers
 

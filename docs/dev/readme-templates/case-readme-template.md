@@ -1,8 +1,7 @@
 # case README文件模版
 
 > 文档信息说明：
->
-> - 文档位置：每个Case的REAMDE文档位于training/benchmarks/<model>/ <Framework> 目录下
+> - 文档位置：每个Case的REAMDE文档位于training/benchmarks/&lt;model&gt;/&lt;Framework&gt; 目录下
 > - 文档使用的语言：默认为中文README.md，可提供英文版本README.en.md
 > - 文档内容：数据集和模型文件的进一步处理/转换要求、英伟达GPU环境下的运行配置与运行信息参考
 

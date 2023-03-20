@@ -58,7 +58,6 @@ class InitHelper:
             pass
 
 
-
 def get_finished_info(start_time: int, state: object, do_train: bool,
                       global_batch_size: int) -> dict:
     """
