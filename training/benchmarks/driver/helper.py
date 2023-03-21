@@ -56,29 +56,3 @@ class InitHelper:
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
-
-
-def get_finished_info(start_time: int, state: object, do_train: bool,
-                      global_batch_size: int) -> dict:
-    """
-    :param start_time start timestamp for training
-    :param state training state
-    :param do_train if train or not
-    :param global_batch_size global batch size
-    return train state info
-    """
-    e2e_time = time.time() - start_time
-    finished_info = {"e2e_time": e2e_time}
-
-    if do_train:
-        training_perf = (global_batch_size *
-                         state.global_steps) / state.raw_train_time
-        finished_info = {
-            "e2e_time": e2e_time,
-            "training_sequences_per_second": training_perf,
-            "converged": state.converged,
-            "final_accuracy": state.eval_accuracy,
-            "raw_train_time": state.raw_train_time,
-            "init_time": state.init_time,
-        }
-    return finished_info

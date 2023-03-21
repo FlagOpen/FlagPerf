@@ -180,7 +180,7 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 
 - 可使用FlagPerf正常配置并运行训练
 - 训练可收敛到目标精度
-- 有训练过程和benchmark结果日志输出（nv机器上），包括训练中的N个steps的和最终结果输出
+- 有训练过程和benchmark结果日志输出（nv机器上），包括训练中的N个steps的和最终结果输出。finished_info包括不限于：e2e_time、training_sequences_per_second、 converged、final_accuracy、raw_train_time、init_time
 - 有可用的NVidia GPU适用的配置样例
 
 ### 3.7 文档要求

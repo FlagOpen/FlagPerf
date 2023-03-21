@@ -142,8 +142,23 @@ if __name__ == "__main__":
     config, state = main()
     if not dist_pytorch.is_main_process():
         sys.exit(0)
+    
     # 训练信息写日志
-    global_batch_size = dist_pytorch.global_batch_size(config)
-    finished_info = get_finished_info(start, state, config.do_train,
-                                      global_batch_size)
+    e2e_time = time.time() - now
+    if config.do_train:
+
+        # TODO 构建训练所需的统计信息，包括不限于：e2e_time、training_sequences_per_second、
+        # converged、final_accuracy、raw_train_time、init_time              
+        training_perf = (dist_pytorch.global_batch_size(config) *
+                         state.global_steps) / state.raw_train_time
+        finished_info = {
+            "e2e_time": e2e_time,
+            "training_sequences_per_second": training_perf,
+            "converged": state.converged,
+            "final_accuracy": state.eval_accuracy,
+            "raw_train_time": state.raw_train_time,
+            "init_time": state.init_time,
+        }
+    else:
+        finished_info = {"e2e_time": e2e_time}
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
