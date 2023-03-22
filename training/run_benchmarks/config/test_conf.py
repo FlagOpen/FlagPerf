@@ -56,6 +56,39 @@ BERT_PADDLE_DEMO_A100_1X8 = {  # benchmark case name, one in CASES
     "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
 }
 
+GLM_TORCH_DEMO_A100_1X1 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_A100x1x1",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 1,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
+GLM_TORCH_DEMO_A100_1X2 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_A100x1x2",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 2,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
+GLM_TORCH_DEMO_A100_1X4 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_A100x1x4",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 4,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
 GLM_TORCH_DEMO_A100_1X8 = {
     "model": "glm",
     "framework": "pytorch",
