@@ -9,13 +9,10 @@ import config
 from torch import nn, Tensor
 from driver.dist_pytorch import main_proc_print
 from typing import Tuple
-from driver.dist_pytorch import PyTorchDistributedDataParallel as TorchDDP
 
 from torch_xmlir.optimizer import SGD
 import torch_xmlir.core.xpu_model as xm
 
-
-clip_grad_norm = torch.nn.utils.clip_grad_norm_
 
 
 def convert_model(model: nn.Module) -> nn.Module:

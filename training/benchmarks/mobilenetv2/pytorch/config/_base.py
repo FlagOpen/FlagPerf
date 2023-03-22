@@ -65,7 +65,7 @@ momentum: float = 0.9
 clip_grad: float = 1.0
 
 max_steps: int = 600000
-seed: int = 10483
+seed: int = 41
 
 # Stop training after reaching this accuracy
 target_acc1: float = 0.6
