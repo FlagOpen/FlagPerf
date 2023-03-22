@@ -12,7 +12,7 @@ fp16 = True
 # =========================================================
 # data
 # =========================================================
-data_dir: str = "/home/data/ILSVRC2012_w"
+data_dir: str = "/home/data/imagenet"
 train_data: str = "train"
 eval_data: str = "val"
 output_dir: str = ""
@@ -91,7 +91,7 @@ use_env: bool = True
 num_epochs_to_generate_seeds_for: int = 2
 
 # frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 1
+log_freq: int = 10
 
 # Whether to resume training from checkpoint.
 # If set, precedes init_checkpoint/init_tf_checkpoint

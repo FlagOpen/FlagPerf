@@ -18,7 +18,7 @@ class Evaluator:
         self.total_sample += batch_nums
 
     def evaluate(self, trainer):
-        self.total_acc1, self.total_acc5 = 0.0, 0.0
+        self.total_loss, self.total_acc1, self.total_acc5 = 0.0, 0.0, 0.0
         self.total_sample = 0
         with torch.no_grad():
             for i, batch in enumerate(self.dataloader):
@@ -35,4 +35,5 @@ class Evaluator:
         loss = self.total_loss / self.total_sample
         acc1 = self.total_acc1 / self.total_sample
         acc5 = self.total_acc5 / self.total_sample
+        print(f"evaluate end, loss: {loss}, acc1: {acc1}, acc5: {acc5}")
         return loss, acc1, acc5
