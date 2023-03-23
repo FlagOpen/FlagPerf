@@ -68,7 +68,7 @@ max_steps: int = 600000
 seed: int = 41
 
 # Stop training after reaching this accuracy
-target_acc1: float = 0.6
+target_acc1: float = 50.0
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
@@ -77,7 +77,7 @@ eval_iter_start_samples: int = 100
 eval_interval_samples: int = 100 * 256 * 1
 
 # Total number of training samples to run.
-max_samples_termination: float = 1388270 * 4
+max_samples_termination: float = 1388270 * 4 * 30
 
 # number workers for dataloader
 num_workers: int = 4
