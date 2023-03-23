@@ -1,3 +1,6 @@
+# This is the original Dockerfile used to build `pytorch1.12.1-cpu-ubuntu18.04:v0.04`.
+# The Dockerfile only installs minimal dependencies for kunlunxin, i.e. numpy and pytorch1.12.1
+
 FROM ubuntu:18.04
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
