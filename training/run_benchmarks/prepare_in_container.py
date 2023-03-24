@@ -73,7 +73,7 @@ def install_extensions(vendor, model, framework):
 
     cmd = "source " + env_file + "; export EXTENSION_SOURCE_DIR=" \
           + source_path + " ;" + " mkdir -p " + sandbox_dir + "; cd " \
-          + sandbox_dir + "; " + sys.executable + " " + vend_model_path \
+          + sandbox_dir + "; " + sys.executable + " " + source_path \
           + "/setup.py install; " + " rm -rf " + sandbox_dir
     print(cmd)
     return run_cmd.run_cmd_wait(cmd, 1200)
@@ -87,7 +87,7 @@ def main():
     if ret != 0:
         sys.exit(ret)
     ret = install_extensions(args.vendor, args.model, args.framework)
-    sys.exit(ret)
+    # sys.exit(ret)
 
 
 if __name__ == '__main__':
