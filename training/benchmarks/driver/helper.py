@@ -21,7 +21,6 @@ class InitHelper:
         self.update_local_rank()
         self.config = check.check_config(self.config)
 
-    #def init_driver(self) -> Driver:
     def init_driver(self, global_module, local_module) -> Driver:
         """
         params:
