@@ -13,11 +13,16 @@ def run_cmd_wait(cmd, timeout, retouts=True):
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT,
                                encoding='utf-8')
+
     try:
         output = process.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:
         process.kill()
         output = process.communicate()
+    # print("cmd result: ")
+    print(f"{cmd} returncode: {process.returncode}")
+    print(f"{cmd} stdout: {output[0]}")
+    print(f"{cmd} stderr: {output[1]}")
 
     if retouts:
         return [process.returncode, output]
