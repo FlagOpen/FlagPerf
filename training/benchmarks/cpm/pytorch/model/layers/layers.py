@@ -69,7 +69,7 @@ def _initialize_affine_weight(weight,
     weight_list = torch.split(master_weight,
                               per_partition_per_stride_size,
                               dim=partition_dim)
-    rank = torch.distributed.get_rank()
+    rank = dist_pytorch.get_rank()
     my_weight_list = weight_list[rank::world_size]
 
     with torch.no_grad():

@@ -177,7 +177,8 @@ class Trainer:
         lm_loss, _ = self.forward(data)
         lm_loss /= self.config.gradient_accumulation_steps
         reduced_loss = lm_loss.detach().clone().view(1)
-        if torch.distributed.is_available() and torch.distributed.is_initialized():
+        if torch.distributed.is_available(
+        ) and torch.distributed.is_initialized():
             torch.distributed.all_reduce(reduced_loss.data)
         reduced_loss.data = reduced_loss.data / (dist_pytorch.get_world_size())
 

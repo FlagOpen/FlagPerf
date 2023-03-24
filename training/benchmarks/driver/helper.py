@@ -30,7 +30,6 @@ class InitHelper:
         config = self.config
         model_driver = Driver(config, config.mutable_params)
         model_driver.setup_config(argparse.ArgumentParser(config.name))
-        #model_driver.setup_modules(driver, globals(), locals())
         model_driver.setup_modules(driver, global_module, local_module)
         return model_driver
 
@@ -55,12 +54,11 @@ class InitHelper:
             torch.cuda.manual_seed_all(seed)
             torch.backends.cudnn.benchmark = False
             torch.backends.cudnn.deterministic = True
-        elif lower_vendor == "kunlun":
+        elif lower_vendor == "kunlunxin":
             torch.manual_seed(seed)
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
-
 
 
 def get_finished_info(start_time: int, state: object, do_train: bool,

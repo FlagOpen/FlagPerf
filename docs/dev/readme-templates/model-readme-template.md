@@ -2,7 +2,7 @@
 
 > 文档信息说明
 >
-> - 文档位置：每个模型的REAMDE文档位于training/benchmarks/<model>/  目录下
+> - 文档位置：每个模型的REAMDE文档位于training/benchmarks/&lt;model&gt;/  目录下
 > - 文档使用的语言：默认为中文README.md，可提供英文版本README.en.md
 > - 文档内容：标准模型的说明，包括：模型的信息（模型信息、原始模型代码），测试用的数据集和模型checkpoint下载方法，目前支持的框架
 
@@ -46,14 +46,12 @@
 
 ## 4. 框架与芯片支持情况说明
 
-- 目前FlagPerf提供 <Framework> 的实现，参见：*<对应Framework标准Case的README链接，中英文版本对应>*
+- 目前FlagPerf提供 &lt;Framework&gt; 的实现，参见：*<对应Framework标准Case的README链接，中英文版本对应>*
 - 目前已适配本模型的芯片如下：
 
-*//下表为样例，默认支持Nvidia GPU，对于各芯片，可放入厂商目录里对应Case的README链接，路径在 <vendor>/<model>-<framework>/README.md，如无对应的README文档，直接打✅即可*
+*//下表为样例，默认支持Nvidia GPU，对于各芯片，可放入厂商目录里对应Case的README链接，路径在 &lt;vendor>/&lt;model&gt;-&lt;framework&gt;/README.md，如无对应的README文档，直接打✅即可*
 
 |              | *Pytorch*                    | *Paddle* | *TensorFlow2* |
 | ------------ | ---------------------------- | -------- | ------------- |
 | *Nvidia GPU* | *✅*                          | *✅*      | *N/A*         |
 | *Kunlun XPU* | *<Kunlun对Case的README链接>* | *N/A*    | *N/A*         |
-
-- ## 

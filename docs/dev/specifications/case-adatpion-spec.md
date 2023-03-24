@@ -1,14 +1,12 @@
 # 厂商适配Case的规范
 
-> 文档信息说明：
-
+> 文档信息说明
 > - 文档面向人群：芯片厂商开发人员
-
 > - 文档目的：给出厂商适配标准Case的规范，降低厂商适配成本，提升共建项目的可维护性。
 
 ## 1. 厂商适配Case的代码和配置文件目录结构说明
 
-标准Case实现路径在training/benchmarks/<model>/<framework>/下，厂商可以通过扩展模型实现的接口来适配自己的芯片。代码放在training/<vendor>/下，主要包括以下几部分(以Nvidia, glm, pytorch为例）：
+标准Case实现路径在training/benchmarks/&lt;model&gt;/&lt;framework&gt;/下，厂商可以通过扩展模型实现的接口来适配自己的芯片。代码放在training/&lt;vendor&gt;/下，主要包括以下几部分(以Nvidia, glm, pytorch为例）：
 
 ```Bash
 training/nvidia/ #厂商代码主目录
@@ -19,7 +17,7 @@ training/nvidia/ #厂商代码主目录
 │   │   └── pytorch_install.sh # 根据Dockerfile构建的镜像后会临时拉起镜像，运行pytorch_install.sh后commit保存镜像
 ├── glm-pytorch # Case适配代码和配置，目录名称格式为：<model>-<framework>
 │   ├── config # 配置文件存放目录
-│   │   ├── config_A100x1x2.py # 配置文件，文件名格式为：config_<卡型>x<机器数>x<单机卡数>.py
+│   │   ├── config_A100x1x2.py # 配置文件，文件名格式为：config_<卡型>X_<机器数>X<单机卡数>.py
 │   │   ├── config_A100x2x8.example # 配置文件样例
 │   │   ├── environment_variables.sh # 运行该Case前source该文件以配置环境
 │   │   └── requirements.txt # 运行该Case前会在容器内pip安装requirements
@@ -50,7 +48,7 @@ training/<vendor>/
 │   ├── <framework>
 ```
 
-在training/<vendor>/docker_image/<framework>下编辑Dockerfile文件，示例如下：
+在training/&lt;vendor&gt;/docker_image/&lt;framework&gt;下编辑Dockerfile文件，示例如下：
 
 ```Bash
 FROM nvcr.io/nvidia/pytorch:21.02-py3
@@ -58,7 +56,7 @@ RUN /bin/bash -c "pip config set global.index-url https://pypi.tuna.tsinghua.edu
 RUN /bin/bash -c alias python3=python
 ```
 
-如果依赖包安装不方便直接在写在Dockerfile里，在training/<vendor>/docker_image/<framework>下编写<framework>_install.sh脚本，示例如下：
+如果依赖包安装不方便直接在写在Dockerfile里，在training/&lt;vendor&gt;/docker_image/&lt;framework&gt;下编写&lt;framework&gt;_install.sh脚本，示例如下：
 
 ```Bash
 #!/bin/bash
@@ -66,15 +64,15 @@ apt-get update
 apt install -y numactl
 ```
 
-如果<framework>_install.sh脚本中需要额外下载和安装软件包，建议使用packages目录存放，并在README文档中说明。
+如果&lt;framework&gt;_install.sh脚本中需要额外下载和安装软件包，建议使用packages目录存放，并在README文档中说明。
 
-FlagPerf会根据这里的Dockerfile及脚本自动构建容器镜像，镜像名为：flagperf-<vendor>-<framework>, tag为t_v<version>。出于性能考虑，FlagPerf不会在每次启动测试时构建新镜像，除非测试环境主机上不存在对应名称和tag的容器镜像。
+FlagPerf会根据这里的Dockerfile及脚本自动构建容器镜像，镜像名为：flagperf-&lt;vendor&gt;-&lt;framework&gt;, tag为t_v&lt;version&gt;。出于性能考虑，FlagPerf不会在每次启动测试时构建新镜像，除非测试环境主机上不存在对应名称和tag的容器镜像。
 
 ### 2）硬件监控脚本
 
-- FlagPerf启动Case运行的容器前，会启动系统监控信息的采集程序，在测试结束后，会结束系统监控信息的采集程序。主机CPU和内存的使用情况由FlagPerf自带的training/utils/sys_monitor.py采集。厂商需要提供自身芯片的监控信息采集脚本，放在training/<vendor>/目录下，要求如下：
+- FlagPerf启动Case运行的容器前，会启动系统监控信息的采集程序，在测试结束后，会结束系统监控信息的采集程序。主机CPU和内存的使用情况由FlagPerf自带的training/utils/sys_monitor.py采集。厂商需要提供自身芯片的监控信息采集脚本，放在training/&lt;vendor&gt;/目录下，要求如下：
 
-- - 监控脚本为单一的python脚本，脚本名称<vendor>_monitor.py
+- - 监控脚本为单一的python脚本，脚本名称&lt;vendor&gt;_monitor.py
   - 脚本支持参数：
     -  -o, --operation start|stop|restart|status
     -  -l, --log [log path] , 默认为./logs/ 
@@ -98,7 +96,7 @@ SSH_PORT = "22"
 
 ```Bash
   4 # Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlun.
-  5 # We will run benchmarks in training/<vendor>
+  5 # We will run benchmarks in training/&lt;vendor&gt;
   6 VENDOR = "nvidia"   # 这里改成产商自己的名称
   7 # Accelerator options for docker. TODO FIXME support more accelerators.
   8 ACCE_CONTAINER_OPT = " --gpus all"   # 这里设置为空
@@ -116,7 +114,7 @@ SSH_PORT = "22"
 
 #### a. 代码目录组织
 
-- 代码放在training/<vendor>/<model>-<framework>目录下，分三个目录组织：
+- 代码放在training/&lt;vendor&gt;/&lt;model&gt;-&lt;framework&gt;目录下，分三个目录组织：
 
 - - config目录，存放配置文件及配置文件样例，以及environment_variables.sh和requirements.txt。FlagPerf在启动容器后，运行测试Case前，会先sourche environment_variables，然后使用pip安装requirements.txt中指定的包。
 
@@ -154,7 +152,7 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 - 训练可收敛到标准Case要求的目标精度
 - 有训练过程和benchmark结果日志输出，包括训练中的N个steps的和最终结果输出
 - 支持硬件监控指标采样（必选：时间戳、使用率、显存使用率，可选：功耗、温度等，建议都有）
-- 有可用的配置样例
+- 有可用的配置样例。必填配置：1X8、2X8。强烈建议包含的配置：1X1或1X2(二选一)，1X4
 
 ### 4）文档规范
 
