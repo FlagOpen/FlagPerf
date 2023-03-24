@@ -19,32 +19,6 @@ output_dir: str = ""
 init_checkpoint: str = ""
 
 # =========================================================
-# Model
-# =========================================================
-max_seq_length: int = 512
-num_layers: int = 24
-hidden_size: int = 1024
-num_attention_heads: int = 16
-hidden_dropout: float = 0.1
-attention_dropout: float = 0.1
-max_position_embeddings: int = 512
-mem_length: int = 0
-checkpoint_num_layers: int = 1
-attention_scale: float = 1
-vocab_size: int = 30592
-checkpoint_activations = True
-max_memory_length = 0
-
-# =========================================================
-# loss scale
-# =========================================================
-loss_scale = None
-dynamic_loss_scale: bool = True
-loss_scale_window: int = 1000
-min_scale: int = 1
-hysteresis: int = 2
-
-# =========================================================
 # train && evaluate
 # =========================================================
 train_batch_size: int = 8
@@ -53,16 +27,8 @@ dist_backend: str = 'nccl'
 
 lr: float = 0.1
 weight_decay: float = 1e-4
-adam_beta1: float = 0.9
-adam_beta2: float = 0.999
-adam_eps: float = 1e-08
-lr_decay_iters: int = 4338
 gradient_accumulation_steps: int = 1
-warmup: float = 0.1
-lr_decay_ratio: float = 0.1
 momentum: float = 0.9
-
-clip_grad: float = 1.0
 
 max_steps: int = 600000
 seed: int = 41
