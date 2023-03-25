@@ -8,15 +8,16 @@ def convert_model(model, config):
     if dist_pytorch.get_rank() == 0:
         print("use apex layer norm", flush=True)
     state_dict = model.state_dict()
-    transformer_layer = GPT2Transformer(num_layers=config.num_layers,
-                                                hidden_size=config.hidden_size,
-                                                num_attention_heads=config.num_attention_heads,
-                                                max_sequence_length=config.max_seq_length,
-                                                max_memory_length=config.max_memory_length,
-                                                embedding_dropout_prob=config.hidden_dropout,
-                                                attention_dropout_prob=config.attention_dropout,
-                                                output_dropout_prob=config.hidden_dropout,
-                                                checkpoint_activations=config.checkpoint_activations)
+    transformer_layer = GPT2Transformer(
+        num_layers=config.num_layers,
+        hidden_size=config.hidden_size,
+        num_attention_heads=config.num_attention_heads,
+        max_sequence_length=config.max_seq_length,
+        max_memory_length=config.max_memory_length,
+        embedding_dropout_prob=config.hidden_dropout,
+        attention_dropout_prob=config.attention_dropout,
+        output_dropout_prob=config.hidden_dropout,
+        checkpoint_activations=config.checkpoint_activations)
     model.model.transformer = transformer_layer
     state_dict = remap_attn_parameters(state_dict)
     model.load_state_dict(state_dict, strict=True)
@@ -30,24 +31,24 @@ def remap_attn_parameters(model_dict):
             if 'attention.query_key_value.weight' in k:
                 data = model_dict[k]
                 q_w, k_w, v_w = data.chunk(3, dim=0)
-                new_q_k = k.replace(
-                    'attention.query_key_value.weight', 'attention.layer.q_weight')
-                new_k_k = k.replace(
-                    'attention.query_key_value.weight', 'attention.layer.k_weight')
-                new_v_k = k.replace(
-                    'attention.query_key_value.weight', 'attention.layer.v_weight')
+                new_q_k = k.replace('attention.query_key_value.weight',
+                                    'attention.layer.q_weight')
+                new_k_k = k.replace('attention.query_key_value.weight',
+                                    'attention.layer.k_weight')
+                new_v_k = k.replace('attention.query_key_value.weight',
+                                    'attention.layer.v_weight')
                 res_dict[new_q_k] = q_w
                 res_dict[new_k_k] = k_w
                 res_dict[new_v_k] = v_w
             elif 'attention.query_key_value.bias' in k:
                 data = model_dict[k]
                 q_w, k_w, v_w = data.chunk(3, dim=0)
-                new_q_k = k.replace(
-                    'attention.query_key_value.bias', 'attention.layer.q_bias')
-                new_k_k = k.replace(
-                    'attention.query_key_value.bias', 'attention.layer.k_bias')
-                new_v_k = k.replace(
-                    'attention.query_key_value.bias', 'attention.layer.v_bias')
+                new_q_k = k.replace('attention.query_key_value.bias',
+                                    'attention.layer.q_bias')
+                new_k_k = k.replace('attention.query_key_value.bias',
+                                    'attention.layer.k_bias')
+                new_v_k = k.replace('attention.query_key_value.bias',
+                                    'attention.layer.v_bias')
                 res_dict[new_q_k] = q_w
                 res_dict[new_k_k] = k_w
                 res_dict[new_v_k] = v_w
