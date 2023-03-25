@@ -3,15 +3,19 @@ import torch
 import glm_fast_self_multihead_attn_bias as fast_self_multihead_attn_bias
 # import fast_self_multihead_attn_bias_additive_mask
 
-class FastSelfAttnFunc(torch.autograd.Function) :
+
+class FastSelfAttnFunc(torch.autograd.Function):
+
     @staticmethod
-    def forward(ctx, use_time_mask, is_training, heads, inputs, input_weights, output_weights, input_biases, output_biases, pad_mask, mask_additive, dropout_prob):
-        use_biases_t   = torch.tensor([input_biases is not None])
-        heads_t        = torch.tensor([heads])
+    def forward(ctx, use_time_mask, is_training, heads, inputs, input_weights,
+                output_weights, input_biases, output_biases, pad_mask,
+                mask_additive, dropout_prob):
+        use_biases_t = torch.tensor([input_biases is not None])
+        heads_t = torch.tensor([heads])
         dropout_prob_t = torch.tensor([dropout_prob])
-        null_tensor    = torch.tensor([])
-        use_mask       = (pad_mask is not None)
-        mask_additive_t= torch.tensor([mask_additive])
+        null_tensor = torch.tensor([])
+        use_mask = (pad_mask is not None)
+        mask_additive_t = torch.tensor([mask_additive])
 
         if use_biases_t[0]:
             if not mask_additive:
@@ -81,7 +85,6 @@ class FastSelfAttnFunc(torch.autograd.Function) :
                                       output_weights,                           \
                                       dropout_mask,                             \
                                       dropout_prob_t)
-
 
         else:
             input_lin_results,                                              \
@@ -172,9 +175,9 @@ class FastSelfAttnFunc(torch.autograd.Function) :
                                       output_weights,                           \
                                       dropout_mask,                             \
                                       dropout_prob_t[0])
-                    
+
         else:
-            input_bias_grads = None                                                    
+            input_bias_grads = None
             output_bias_grads = None
             input_grads,                                                    \
             input_weight_grads,                                             \
@@ -191,6 +194,7 @@ class FastSelfAttnFunc(torch.autograd.Function) :
                                   output_weights,                           \
                                   dropout_mask,                             \
                                   dropout_prob_t[0])
-        return None, None, None, input_grads, input_weight_grads, output_weight_grads,input_bias_grads, output_bias_grads, None, None, None
+        return None, None, None, input_grads, input_weight_grads, output_weight_grads, input_bias_grads, output_bias_grads, None, None, None
+
 
 fast_self_attn_func = FastSelfAttnFunc.apply

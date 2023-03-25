@@ -15,7 +15,6 @@ VENDOR = "iluvatar"
 #   nvidia:
 #       " --gpus all"
 
-
 ACCE_CONTAINER_OPT = " -v /lib/modules:/lib/modules "
 
 # XXX_VISIBLE_DEVICE item name in env
@@ -51,14 +50,13 @@ CLEAR_CACHES = True
 # Set the case list you want to run here.
 # CASES is a list of case names.
 CASES = [
-    # 'BERT_PADDLE_DEMO_A100_1X8', 
+    # 'BERT_PADDLE_DEMO_A100_1X8',
     # 'GLM_TORCH_DEMO_A100_1X8',
     # 'CPM_TORCH_DEMO_A100_1X8',
     "CPM_TORCH_DEMO_BI100_1X8",
     "CPM_TORCH_DEMO_BI100_1X4",
     "CPM_TORCH_DEMO_BI100_1X2",
     "CPM_TORCH_DEMO_BI100_1X1",
-    
 ]
 
 # Config each case in a dictionary like this.

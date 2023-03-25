@@ -68,21 +68,25 @@ class GPT2TransformerLayer(torch.nn.Module):
         self.attention = OfficialSelfAttentionApex(hidden_size,
                                                    num_attention_heads,
                                                    attention_dropout_prob,
-                                                   output_dropout_prob
-                                                   )
+                                                   output_dropout_prob)
 
         # Layernorm on the input data.
         self.post_attention_layernorm = LayerNorm(hidden_size,
                                                   eps=layernorm_epsilon)
 
         # MLP
-        self.mlp = GLMMLP(
-            hidden_size,
-            output_dropout_prob,
-            init_method,
-            output_layer_init_method=output_layer_init_method)
+        self.mlp = GLMMLP(hidden_size,
+                          output_dropout_prob,
+                          init_method,
+                          output_layer_init_method=output_layer_init_method)
 
-    def forward(self, hidden_states, ltor_mask, position_embeddings=None, r_w_bias=None, r_r_bias=None, mem=None):
+    def forward(self,
+                hidden_states,
+                ltor_mask,
+                position_embeddings=None,
+                r_w_bias=None,
+                r_r_bias=None,
+                mem=None):
         # hidden_states: [b, s, h]
         # ltor_mask: [1, 1, s, s]
 
@@ -90,8 +94,9 @@ class GPT2TransformerLayer(torch.nn.Module):
         layernorm_output = self.input_layernorm(hidden_states)
         mem = self.input_layernorm(mem) if mem is not None else None
         # Self attention.
-        attention_output = self.attention(
-            layernorm_output, ltor_mask, position_embeddings, r_w_bias, r_r_bias, mem)
+        attention_output = self.attention(layernorm_output, ltor_mask,
+                                          position_embeddings, r_w_bias,
+                                          r_r_bias, mem)
         # Residual connection.
         layernorm_input = hidden_states + attention_output
         # Layer norm post the self attention.
@@ -185,4 +190,3 @@ class GPT2TransformerLayer(torch.nn.Module):
 #         output = layernorm_input + mlp_output
 
 #         return output
-

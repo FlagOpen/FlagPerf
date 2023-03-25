@@ -1,4 +1,3 @@
-
 import torch
 from torch import nn
 from torch.nn import Parameter
@@ -13,7 +12,12 @@ class SelfMultiheadAttn(nn.Module):
     See "Attention Is All You Need" for more details.
     """
 
-    def __init__(self, embed_dim, num_heads, dropout=0., bias=False, impl='fast'):
+    def __init__(self,
+                 embed_dim,
+                 num_heads,
+                 dropout=0.,
+                 bias=False,
+                 impl='fast'):
         super().__init__()
         self.embed_dim = embed_dim
         self.num_heads = num_heads
@@ -66,19 +70,35 @@ class SelfMultiheadAttn(nn.Module):
         batch x src_len, where padding elements are indicated by 1s.
         """
         mask = attn_mask
-        input_weights = torch.cat([self.q_weight.view(self.num_heads, 1, self.head_dim, self.embed_dim), self.k_weight.view(self.num_heads, 1, self.head_dim,
-                                                                                                                            self.embed_dim), self.v_weight.view(self.num_heads, 1, self.head_dim, self.embed_dim)], dim=1).reshape(3*self.embed_dim, self.embed_dim).contiguous()
+        input_weights = torch.cat([
+            self.q_weight.view(self.num_heads, 1, self.head_dim,
+                               self.embed_dim),
+            self.k_weight.view(self.num_heads, 1, self.head_dim,
+                               self.embed_dim),
+            self.v_weight.view(self.num_heads, 1, self.head_dim,
+                               self.embed_dim)
+        ],
+                                  dim=1).reshape(3 * self.embed_dim,
+                                                 self.embed_dim).contiguous()
 
-        input_bias = torch.cat([self.q_bias.view(self.num_heads, 1, self.head_dim), self.k_bias.view(
-            self.num_heads, 1, self.head_dim), self.v_bias.view(self.num_heads, 1, self.head_dim)], dim=1).reshape(3*self.embed_dim).contiguous()
+        input_bias = torch.cat([
+            self.q_bias.view(self.num_heads, 1, self.head_dim),
+            self.k_bias.view(self.num_heads, 1, self.head_dim),
+            self.v_bias.view(self.num_heads, 1, self.head_dim)
+        ],
+                               dim=1).reshape(3 * self.embed_dim).contiguous()
 
         if self.impl == 'fast':
-            outputs = self.attn_func(attn_mask is not None, is_training, self.num_heads, query,
-                                     input_weights, self.out_proj_weight, input_bias, self.out_proj_bias, mask, False, self.dropout)
+            outputs = self.attn_func(attn_mask is not None, is_training,
+                                     self.num_heads, query, input_weights,
+                                     self.out_proj_weight, input_bias,
+                                     self.out_proj_bias, mask, False,
+                                     self.dropout)
         else:
-            outputs = self.attn_func(attn_mask is not None, is_training, self.num_heads, self.scaling, query,
+            outputs = self.attn_func(attn_mask is not None, is_training,
+                                     self.num_heads, self.scaling, query,
                                      input_weights, self.out_proj_weight,
-                                     input_bias, self.out_proj_bias,
-                                     mask, False, self.dropout)
+                                     input_bias, self.out_proj_bias, mask,
+                                     False, self.dropout)
 
         return outputs

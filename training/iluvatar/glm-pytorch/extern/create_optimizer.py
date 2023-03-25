@@ -1,6 +1,7 @@
-from optimizers import FP16_Optimizer,get_optimizer_param_groups
+from optimizers import FP16_Optimizer, get_optimizer_param_groups
 from apex.optimizers import FusedAdam as Adam
 from driver.dist_pytorch import main_proc_print
+
 
 def create_optimizer(model, args):
     param_groups = get_optimizer_param_groups(model)
@@ -18,6 +19,7 @@ def create_optimizer(model, args):
                                    dynamic_loss_args={
                                        'scale_window': args.loss_scale_window,
                                        'min_scale': args.min_scale,
-                                       'delayed_shift': args.hysteresis})
+                                       'delayed_shift': args.hysteresis
+                                   })
 
     return optimizer
