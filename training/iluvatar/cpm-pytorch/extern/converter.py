@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from layers import LayerNorm
+from .layers import LayerNorm
 
 
 def convert_model(model, config):

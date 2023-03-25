@@ -3,8 +3,8 @@ import torch
 from torch import nn
 from torch.nn import Parameter
 
-from layers.self_multihead_attn_func import self_attn_func
-from layers.fast_self_multihead_attn_func import fast_self_attn_func
+from .self_multihead_attn_func import self_attn_func
+from .fast_self_multihead_attn_func import fast_self_attn_func
 
 
 class SelfMultiheadAttn(nn.Module):
