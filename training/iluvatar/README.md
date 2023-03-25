@@ -23,7 +23,7 @@
 ## 环境配置参考
   - 硬件
     - 机器型号： ILUVATAR BI100
-    - 加速卡型号: Iluvatar BI-V100
+    - 加速卡型号: Iluvatar BI-V100 32G
   - 软件
     - OS kernel版本: 
     Linux 4.15.0-156-generic x86_64
