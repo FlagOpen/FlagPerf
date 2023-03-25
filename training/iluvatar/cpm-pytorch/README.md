@@ -7,7 +7,7 @@
 - 模型代码来源
 
 | repo    | commmit_id  | date |
-|  ----  | ----  |----  |
+| ------- | ----------- |----- |
 | [CPM-1-Finetune](https://github.com/TsinghuaAI/CPM-1-Finetune) | c0d892185912b28f8efeaeb55905f3f4fb227e46|2021-10-17 21:53:00|
 
 ### 模型Checkpoint下载
@@ -37,11 +37,11 @@
 
 ### 运行情况
 | 训练资源 | 配置文件            | 运行时长(s) | 目标精度 | 收敛精度 | Steps数 | 性能(samples/s) |
-| -------- | ---------------   | ---------- | ------- | -------  | ------- | --------------- |
-| 单机1卡  | config_BI-V100x1x1 | pending    | 0.8     | pending  | pending |pending          |
-| 单机2卡  | config_BI-V100x1x2 | pending    | 0.8     | pending  | pending |pending          |
-| 单机4卡  | config_BI-V100x1x4 | pending    | 0.8     | pending  | pending |pending          |
-| 单机8卡  | config_BI-V100x1x8 | pending    | 0.92    | pending  | pending |pending          |
+| -------- | ------------------ | ---------- | ------- | -------  | ------- | --------------- |
+| 单机1卡  | config_BI-V100x1x1 | 6200.51    | 0.8     | 0.8047   | 4375    |23.89            |
+| 单机2卡  | config_BI-V100x1x2 | 5291.47    | 0.8     | 0.8015   | 3756    |47.52            |
+| 单机4卡  | config_BI-V100x1x4 | 5035.74    | 0.8     | 0.8013   | 3454    |91.27            |
+| 单机8卡  | config_BI-V100x1x8 | 5154.91    | 0.92    | 0.9203   | 3476    |178.51           |
 | 两机8卡  | config_BI-V100x2x8 | pending    | 0.92    | pending  | pending |pending          |
 
 ### 许可证
