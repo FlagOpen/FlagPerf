@@ -54,7 +54,11 @@ CASES = [
     # 'BERT_PADDLE_DEMO_A100_1X8', 
     # 'GLM_TORCH_DEMO_A100_1X8',
     # 'CPM_TORCH_DEMO_A100_1X8',
-    "CPM_TORCH_DEMO_BI100_1X8"
+    "CPM_TORCH_DEMO_BI100_1X8",
+    "CPM_TORCH_DEMO_BI100_1X4",
+    "CPM_TORCH_DEMO_BI100_1X2",
+    "CPM_TORCH_DEMO_BI100_1X1",
+    
 ]
 
 # Config each case in a dictionary like this.
@@ -178,6 +182,39 @@ GLM_TORCH_DEMO_R300_1X8 = {
     "nproc": 8,
     "data_dir_host": "/home/datasets_ckpt/glm/train/",
     "data_dir_container": "/mnt/data/glm/train/",
+}
+
+CPM_TORCH_DEMO_BI100_1X1 = {
+    "model": "cpm",
+    "framework": "pytorch",
+    "config": "config_BI-V100x1x1",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 1,
+    "data_dir_host": "/data/yanrui/data/cpm/train",
+    "data_dir_container": "/mnt/data/cpm/train/",
+}
+
+CPM_TORCH_DEMO_BI100_1X2 = {
+    "model": "cpm",
+    "framework": "pytorch",
+    "config": "config_BI-V100x1x2",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 2,
+    "data_dir_host": "/data/yanrui/data/cpm/train",
+    "data_dir_container": "/mnt/data/cpm/train/",
+}
+
+CPM_TORCH_DEMO_BI100_1X4 = {
+    "model": "cpm",
+    "framework": "pytorch",
+    "config": "config_BI-V100x1x4",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 4,
+    "data_dir_host": "/data/yanrui/data/cpm/train",
+    "data_dir_container": "/mnt/data/cpm/train/",
 }
 
 CPM_TORCH_DEMO_BI100_1X8 = {
