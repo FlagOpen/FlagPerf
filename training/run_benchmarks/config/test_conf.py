@@ -172,3 +172,25 @@ GLM_TORCH_DEMO_R300_1X8 = {
     "data_dir_host": "/home/datasets_ckpt/glm/train/",
     "data_dir_container": "/mnt/data/glm/train/",
 }
+
+RESNET50_TORCH_DEMO_A100_1X8 = {
+    "model": "resnet50",
+    "framework": "pytorch",
+    "config": "config_A100x1x8",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 8,
+    "data_dir_host": "/raid/dataset/ImageNet/imagenet",
+    "data_dir_container": "/mnt/data/resnet50/train/",
+}
+
+RESNET50_TORCH_DEMO_A100_2X8 = {
+    "model": "resnet50",
+    "framework": "pytorch",
+    "config": "config_A100x2x8",
+    "repeat": 1,
+    "nnodes": 2,
+    "nproc": 8,
+    "data_dir_host": "/raid/dataset/ImageNet/imagenet",
+    "data_dir_container": "/mnt/data/resnet50/train/",
+}
