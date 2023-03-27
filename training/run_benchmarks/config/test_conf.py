@@ -4,8 +4,11 @@
 # Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
+
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
+#   iluvatar:
+#       ' -v /lib/modules:/lib/modules '
 #   kunlunxin:
 #       " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
 #       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \

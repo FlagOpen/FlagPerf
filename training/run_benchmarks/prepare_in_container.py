@@ -87,7 +87,7 @@ def main():
     if ret != 0:
         sys.exit(ret)
     ret = install_extensions(args.vendor, args.model, args.framework)
-    sys.exit(ret)
+    # sys.exit(ret)
 
 
 if __name__ == '__main__':

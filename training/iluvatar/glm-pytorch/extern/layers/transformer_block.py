@@ -96,4 +96,3 @@ class GPT2TransformerLayer(torch.nn.Module):
         output = layernorm_input + mlp_output
 
         return output
-
