@@ -1,7 +1,6 @@
 # from extern.training_even import ApexTrainingEvent
 from config_common import *
 
-fp16 = False
 dist_backend = "nccl"
 
 gradient_accumulation_steps = 1

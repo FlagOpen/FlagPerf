@@ -27,7 +27,7 @@ momentum: float = 0.9
 
 # fp16 config args
 # Run model in fp16 mode
-fp16: bool = True
+fp16: bool = False
 
 # Static loss scaling, positive power of 2 values can improve fp16 convergence. If None, dynamicloss scaling is used.
 loss_scale: float = 4096

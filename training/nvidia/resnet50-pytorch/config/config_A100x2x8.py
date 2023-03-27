@@ -1,7 +1,6 @@
 # from extern.training_even import ApexTrainingEvent
 from config_common import *
 
-fp16 = True
 ddp_type = "apex"
 dist_backend = "nccl"
 
