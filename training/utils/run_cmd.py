@@ -19,7 +19,7 @@ def run_cmd_wait(cmd, timeout, retouts=True):
     except subprocess.TimeoutExpired:
         process.kill()
         output = process.communicate()
-    # print("cmd result: ")
+
     print(f"{cmd} returncode: {process.returncode}")
     print(f"{cmd} stdout: {output[0]}")
     print(f"{cmd} stderr: {output[1]}")
