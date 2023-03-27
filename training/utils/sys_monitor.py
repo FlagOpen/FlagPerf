@@ -4,7 +4,7 @@
 Usage:  python3 sys-monitor.py -o operation -l [log_path]
             -o, --operation     start|stop|restart|status
             -l, --log           log path , ./logs/ default
-            -v, --gpu vendor    nvidia|iluvatar|cambricon|kunlun
+            -v, --gpu vendor    nvidia|iluvatar|cambricon|kunlunxin
 '''
 
 import os

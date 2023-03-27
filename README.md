@@ -1,16 +1,158 @@
 ![FlagAI](logo.png)
 ----------
 ### FlagPerf
+[![Lint Code Base](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml/badge.svg)](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml)
 
 FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望探索开源、开放、灵活、公正、客观的AI芯片评测体系，提供行业价值，促进AI产业生态发展。
 更多模型及框架支持持续开发中，欢迎加入共同建设，助力AI产业生态发展。
 
 ----------
+### 支持模型列表
+<table width="960" border="0" cellpadding="0" cellspacing="0" style='width:960pt;border-collapse:collapse;table-layout:fixed;'>
+   <col width="73.60" style='mso-width-source:userset;mso-width-alt:3588;'/>
+   <col width="70" style='mso-width-source:userset;mso-width-alt:3413;'/>
+   <col width="200.75" style='mso-width-source:userset;mso-width-alt:9788;'/>
+   <col width="195.80" style='mso-width-source:userset;mso-width-alt:9547;'/>
+   <col width="185.40" style='mso-width-source:userset;mso-width-alt:9040;'/>
+   <tr height="16.80" class="xl65" style='height:16.80pt;'>
+    <td class="xl66" height="16.80" width="73.60" style='height:16.80pt;width:73.60pt;' x:str>模型</td>
+    <td class="xl66" width="70" style='width:70.00pt;' x:str>框架</td>
+    <td class="xl67" width="581.95" colspan="3" style='width:581.95pt;border-right:none;border-bottom:none;' x:str>厂商</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td height="16.80" colspan="2" style='height:16.80pt;mso-ignore:colspan;'></td>
+    <td class="xl65" x:str>英伟达</td>
+    <td class="xl65" x:str>昆仑芯</td>
+    <td class="xl65" x:str>天数智芯</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>BERT</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>CPM</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl70" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" target="_parent">GLM</a></td>
+    <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm/pytorch" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="50.40" rowspan="3" style='height:50.40pt;border-right:none;border-bottom:none;' x:str>ResNet50</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>TensorFlow2</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MobileNetV2</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>ViT</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-CLIP</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Seg</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Det</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+  </table>
+
 ### 部署说明
 
 #### 系统环境建议
-
-
 ```
     OS: Ubuntu 20.04
     Kernel: 5.4.0-52-generic
@@ -83,7 +225,7 @@ __Tips：__
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlun.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 # Accelerator options for docker. TODO FIXME support more accelerators.
@@ -248,7 +390,7 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、天数智芯、与百度PaddlePaddle共同建设中。
+本项目目前由北京智源人工智能研究院、昆仑芯、天数智芯、百度PaddlePaddle共同建设中。
 诚邀各框架、芯片团队与个人参与！
 ### 联系我们
 

@@ -60,7 +60,8 @@ def model_to_fp16(model):
 
 def model_to_ddp(model: nn.Module) -> nn.Module:
     i = torch.cuda.current_device()
-    model = TorchDDP(model, device_ids=[i], output_device=i)
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        model = TorchDDP(model, device_ids=[i], output_device=i)
     return model
 
 
