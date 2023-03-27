@@ -18,7 +18,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # If not set, it will be os.path.dirname(run.py)/../../training/
-FLAGPERF_PATH_HOST = "/home/flagperf/training"
+FLAGPERF_PATH_HOST = "/home/zhouyu/workspace/FlagPerf/training"
 
 # Set the mapping directory of flagperf in container.
 FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
@@ -39,8 +39,12 @@ CLEAR_CACHES = True
 # Set the case list you want to run here.
 # CASES is a list of case names.
 CASES = [
-    'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
-    'CPM_TORCH_DEMO_A100_1X8'
+    # 'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
+    # 'CPM_TORCH_DEMO_A100_2X8',
+    # 'CPM_TORCH_DEMO_A100_1X8',
+    'CPM_TORCH_DEMO_A100_1X4',
+    'CPM_TORCH_DEMO_A100_1X2',
+    'CPM_TORCH_DEMO_A100_1X1',
 ]
 
 # Config each case in a dictionary like this.
@@ -78,6 +82,7 @@ GLM_TORCH_DEMO_A100_2X8 = {
     "data_dir_container": "/mnt/data/glm/train/",
 }
 
+
 CPM_TORCH_DEMO_A100_1X1 = {
     "model": "cpm",
     "framework": "pytorch",
@@ -99,6 +104,7 @@ CPM_TORCH_DEMO_A100_1X2 = {
     "data_dir_host": "/home/datasets_ckpt/cpm/train/",
     "data_dir_container": "/mnt/data/cpm/train/",
 }
+
 
 CPM_TORCH_DEMO_A100_1X4 = {
     "model": "cpm",
