@@ -75,10 +75,6 @@ class TrainingState:
 
         state_dict.update(kwargs)
 
-        # for k in state_dict.keys():
-        #     if torch.is_tensor(state_dict[k]):
-        #         state_dict[k] = state_dict[k].item()
-
         for k, value in state_dict.items():
             if torch.is_tensor(value):
                 state_dict[k] = value.item()
