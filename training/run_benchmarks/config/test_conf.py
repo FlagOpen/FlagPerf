@@ -1,17 +1,27 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlun.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 # Accelerator options for docker. TODO FIXME support more accelerators.
+# possible value of ACCE_CONTAINER_OPT are:
+#   kunlunxin:
+#       " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
+#       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
+#       " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+#   nvidia:
+#       " --gpus all"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
-# nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
+# possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
+#   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
+#   MLU_VISIBLE_DEVICES for cambricon
+#   XPU_VISIBLE_DEVICES for kunlunxin
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
+PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # If not set, it will be os.path.dirname(run.py)/../../training/
@@ -47,10 +57,43 @@ BERT_PADDLE_DEMO_A100_1X8 = {  # benchmark case name, one in CASES
     "config":
     "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
     "repeat": 1,  # How many times to run this case
-    "nnodes": 1,  #  How many hosts to run this case
+    "nnodes": 1,  # How many hosts to run this case
     "nproc": 8,  # How many processes will run on each host
     "data_dir_host": "/home/datasets_ckpt/bert/train/",  # Data path on host
     "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
+}
+
+GLM_TORCH_DEMO_A100_1X1 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_A100x1x1",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 1,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
+GLM_TORCH_DEMO_A100_1X2 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_A100x1x2",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 2,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
+GLM_TORCH_DEMO_A100_1X4 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_A100x1x4",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 4,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
 }
 
 GLM_TORCH_DEMO_A100_1X8 = {
@@ -75,6 +118,39 @@ GLM_TORCH_DEMO_A100_2X8 = {
     "data_dir_container": "/mnt/data/glm/train/",
 }
 
+CPM_TORCH_DEMO_A100_1X1 = {
+    "model": "cpm",
+    "framework": "pytorch",
+    "config": "config_A100x1x1",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 1,
+    "data_dir_host": "/home/datasets_ckpt/cpm/train/",
+    "data_dir_container": "/mnt/data/cpm/train/",
+}
+
+CPM_TORCH_DEMO_A100_1X2 = {
+    "model": "cpm",
+    "framework": "pytorch",
+    "config": "config_A100x1x2",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 2,
+    "data_dir_host": "/home/datasets_ckpt/cpm/train/",
+    "data_dir_container": "/mnt/data/cpm/train/",
+}
+
+CPM_TORCH_DEMO_A100_1X4 = {
+    "model": "cpm",
+    "framework": "pytorch",
+    "config": "config_A100x1x4",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 4,
+    "data_dir_host": "/home/datasets_ckpt/cpm/train/",
+    "data_dir_container": "/mnt/data/cpm/train/",
+}
+
 CPM_TORCH_DEMO_A100_1X8 = {
     "model": "cpm",
     "framework": "pytorch",
@@ -84,4 +160,15 @@ CPM_TORCH_DEMO_A100_1X8 = {
     "nproc": 8,
     "data_dir_host": "/home/datasets_ckpt/cpm/train/",
     "data_dir_container": "/mnt/data/cpm/train/",
+}
+
+GLM_TORCH_DEMO_R300_1X8 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_R300x1x8",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 8,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
 }

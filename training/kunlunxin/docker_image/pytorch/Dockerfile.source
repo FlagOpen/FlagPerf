@@ -1,0 +1,52 @@
+# This is the original Dockerfile used to build `pytorch1.12.1-cpu-ubuntu18.04:v0.04`.
+# The Dockerfile only installs minimal dependencies for kunlunxin, i.e. numpy and pytorch1.12.1
+
+FROM ubuntu:18.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bash \
+        build-essential \
+        ca-certificates \
+        wget \
+        git \
+        locales \
+        locales-all \
+        python3.8-dev \
+        lsb-release && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set timezone
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
+
+# Install miniconda
+# Manually invoke bash on miniconda script per https://github.com/conda/conda/issues/10431
+# RUN curl -fsSL -v -o ~/miniconda.sh -O  "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
+RUN wget -O ~/miniconda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
+    chmod +x ~/miniconda.sh && \
+    bash ~/miniconda.sh -b -p /root/miniconda && \
+    rm ~/miniconda.sh && \
+    /root/miniconda/bin/conda config --set show_channel_urls yes && \
+    /root/miniconda/bin/conda create --name python38_torch1121 python=3.8 -y && \
+    /root/miniconda/bin/conda clean -ya
+
+# hyperparamer, typing_extensions, numpy requests
+RUN /root/miniconda/envs/python38_torch1121/bin/pip install \
+    --no-cache-dir \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    hyperparameter \
+    typing_extensions \
+    numpy \
+    requests 
+
+# Install PyTorch 1.12.1.
+# https://github.com/sjtug/mirror-requests/issues/133
+# RUN /root/miniconda/envs/python38_torch1121/bin/pip install torch==1.12.1+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+RUN wget -O ~/torch-1.12.1%2Bcpu-cp38-cp38-linux_x86_64.whl \
+    "https://mirror.sjtu.edu.cn/pytorch-wheels/cpu/torch-1.12.1%2Bcpu-cp38-cp38-linux_x86_64.whl" && \
+    /root/miniconda/envs/python38_torch1121/bin/pip install ~/torch-1.12.1%2Bcpu-cp38-cp38-linux_x86_64.whl && \
+    rm ~/torch-1.12.1%2Bcpu-cp38-cp38-linux_x86_64.whl
+
+ENV PATH /root/miniconda/envs/python38_torch1121/bin:$PATH
+
+WORKDIR /workspace

@@ -23,6 +23,7 @@ from contextlib import contextmanager
 import torch
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 
+
 def generate_seeds(rng, size):
     """
     Generate list of random seeds
@@ -90,17 +91,6 @@ def setup_seeds(master_seed, epochs, device):
     return worker_seeds, shuffling_seeds
 
 
-def barrier():
-    """
-    Works as a temporary distributed barrier, currently pytorch
-    doesn't implement barrier for NCCL backend.
-    Calls all_reduce on dummy tensor and synchronizes with GPU.
-    """
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
-        torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
-        torch.cuda.synchronize()
-
-
 def get_rank(default=0):
     """
     Gets distributed rank or returns zero if distributed is not initialized.
@@ -112,16 +102,21 @@ def get_rank(default=0):
     return rank
 
 
-def get_world_size():
+def get_world_size(vendor="nvidia"):
     """
     Gets total number of distributed workers or returns one if distributed is
     not initialized.
     """
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
-        world_size = torch.distributed.get_world_size()
-    else:
-        world_size = 1
-    return world_size
+    if vendor == "xxx":
+        # TODO
+        pass
+    else:  # kunlunxin, nvidia
+        if torch.distributed.is_available(
+        ) and torch.distributed.is_initialized():
+            world_size = torch.distributed.get_world_size()
+        else:
+            world_size = 1
+        return world_size
 
 
 def main_proc_print(*args, **kwargs):
@@ -145,24 +140,54 @@ def set_device(cuda, local_rank):
     return device
 
 
+def barrier(vendor="nvidia"):
+    """
+    Works as a temporary distributed barrier, currently pytorch
+    doesn't implement barrier for NCCL backend.
+    Calls all_reduce on dummy tensor and synchronizes with GPU.
+    """
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        if vendor == "kunlunxin":
+            torch.distributed.barrier()
+        else:
+            torch.distributed.all_reduce(torch.cuda.FloatTensor(1))
+            torch.cuda.synchronize()
+
+
 def init_dist_training_env(config):
     ''' TODO: Support other accelarators.  '''
-    if config.local_rank == -1:
-        config.device = torch.device("cuda")
-        config.n_device = torch.cuda.device_count()
-    else:
-        torch.cuda.set_device(config.local_rank)
-        config.device = torch.device("cuda", config.local_rank)
-        host_addr_full = 'tcp://' + os.environ[
-            "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
-        rank = int(os.environ["RANK"])
-        world_size = int(os.environ["WORLD_SIZE"])
-        torch.distributed.init_process_group(backend=config.dist_backend,
-                                             init_method=host_addr_full,
-                                             rank=rank,
-                                             world_size=world_size)
-        config.n_device = torch.distributed.get_world_size()
-    return
+    if config.vendor == "kunlunxin":
+        import torch_xmlir.core.xpu_model as xm
+        if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
+            config.device = xm.xpu_device()
+            config.n_device = 1
+        else:
+            config.device = xm.xpu_device(config.local_rank)
+            host_addr_full = 'tcp://' + os.environ[
+                "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+            rank = int(os.environ["RANK"])
+            world_size = int(os.environ["WORLD_SIZE"])
+            torch.distributed.init_process_group(backend=config.dist_backend,
+                                                 init_method=host_addr_full,
+                                                 rank=rank,
+                                                 world_size=world_size)
+            config.n_device = torch.distributed.get_world_size()
+    else:  # nvidia
+        if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
+            config.device = torch.device("cuda")
+            config.n_device = 1
+        else:
+            torch.cuda.set_device(config.local_rank)
+            host_addr_full = 'tcp://' + os.environ[
+                "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+            rank = int(os.environ["RANK"])
+            world_size = int(os.environ["WORLD_SIZE"])
+            torch.distributed.init_process_group(backend=config.dist_backend,
+                                                 init_method=host_addr_full,
+                                                 rank=rank,
+                                                 world_size=world_size)
+            config.device = torch.device("cuda", config.local_rank)
+            config.n_device = torch.distributed.get_world_size()
 
 
 def global_batch_size(config):
@@ -203,6 +228,7 @@ def format_step(step):
 
 
 class PyTorchDistributedDataParallel(DDP):
+
     def named_parameters(self, prefix: str = '', recurse: bool = True):
         return self.module.named_parameters(prefix=prefix, recurse=recurse)
 

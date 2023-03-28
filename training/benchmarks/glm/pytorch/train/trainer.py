@@ -60,7 +60,7 @@ class Trainer:
         checkpoint_name = config.init_checkpoint
         print('checkpoint_name', checkpoint_name)
         print('global rank {} is loading pretrained model {}'.format(
-            torch.distributed.get_rank(), checkpoint_name))
+            dist_pytorch.get_rank(), checkpoint_name))
         # Load the checkpoint.
         sd = torch.load(checkpoint_name, map_location='cpu')
 
@@ -136,8 +136,9 @@ class Trainer:
                     self.config.gradient_accumulation_steps) / step_total_time
                 other_state["seq/s"] = sequences_per_second
 
-            loss_scale = self.optimizer.loss_scaler.loss_scale
-            other_state['loss_scale'] = loss_scale
+            if hasattr(self.optimizer, 'loss_scaler'):
+                loss_scale = self.optimizer.loss_scaler.loss_scale
+                other_state['loss_scale'] = loss_scale
 
             eval_result = None
             if self.can_do_eval(state):
@@ -176,7 +177,9 @@ class Trainer:
         lm_loss, _ = self.forward(data)
         lm_loss /= self.config.gradient_accumulation_steps
         reduced_loss = lm_loss.detach().clone().view(1)
-        torch.distributed.all_reduce(reduced_loss.data)
+        if torch.distributed.is_available(
+        ) and torch.distributed.is_initialized():
+            torch.distributed.all_reduce(reduced_loss.data)
         reduced_loss.data = reduced_loss.data / (dist_pytorch.get_world_size())
 
         state.loss = lm_loss
