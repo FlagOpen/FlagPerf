@@ -341,10 +341,13 @@ def train_and_eval(params: base_configs.ExperimentConfig,
                       steps_per_execution=steps_per_loop)
 
         initial_epoch = 0
+        print("params.model_ckpt_dir:",params.model_ckpt_dir,params.train.resume_checkpoint,type(params.train.resume_checkpoint))
         if params.train.resume_checkpoint:
+            print("11",)
             initial_epoch = resume_from_checkpoint(model=model,
-                                                   model_dir=params.model_dir,
+                                                   model_dir=params.model_ckpt_dir,
                                                    train_steps=train_steps)
+            print("initial_epoch:",initial_epoch)
         callbacks = custom_callbacks.get_callbacks(
             model_checkpoint=params.train.callbacks.
             enable_checkpoint_and_export,
@@ -443,14 +446,9 @@ def main(_):
 
     e2e_time = time.time() - now
     if params.do_train:
-        training_perf = (tf.cast(
-            dist_tensorflow2.global_batch_size(params) *
-            tf.compat.v1.train.get_or_create_global_step(),
-            tf.float32)) / params.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": training_perf.numpy().tolist(
-            ),  #EagerTensor cannot be converted to JSON 
+            "training_sequences_per_second": stats['avg_exp_per_second'],
             "converged": stats["converged"],
             "final_accuracy": stats["accuracy_top_1"],
             "final_loss": stats["eval_loss"],
