@@ -1,6 +1,7 @@
 import torch
 import torch.distributed as dist
 
+
 class Evaluator:
     """Evaluator"""
 
@@ -29,10 +30,15 @@ class Evaluator:
                 self.__update(loss.item(), acc1.item(), acc5.item())
 
         if dist.is_available() and dist.is_initialized():
-            total = torch.tensor([self.total_loss, self.total_acc1, self.total_acc5, self.total_batch], 
-                                            dtype=torch.float32, device=self.args.device)
+            total = torch.tensor([
+                self.total_loss, self.total_acc1, self.total_acc5,
+                self.total_batch
+            ],
+                                 dtype=torch.float32,
+                                 device=self.args.device)
             dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
-            self.total_loss, self.total_acc1, self.total_acc5, self.total_batch = total.tolist()
+            self.total_loss, self.total_acc1, self.total_acc5, self.total_batch = total.tolist(
+            )
 
         loss = self.total_loss / self.total_batch
         acc1 = self.total_acc1 / self.total_batch

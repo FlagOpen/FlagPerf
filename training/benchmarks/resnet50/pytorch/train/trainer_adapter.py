@@ -1,5 +1,4 @@
 import torch
-from typing import Any
 from torch.optim import Optimizer
 import torch.distributed as dist
 import config
@@ -13,7 +12,7 @@ def convert_model(model: nn.Module) -> nn.Module:
     return model
 
 
-def create_optimizer(model, config) -> Any:
+def create_optimizer(model) -> Optimizer:
     """create optimizer"""
     optimizer = torch.optim.SGD(
         model.parameters(),
@@ -24,7 +23,7 @@ def create_optimizer(model, config) -> Any:
     return optimizer
 
 
-def model_to_fp16(model, config):
+def model_to_fp16(model):
     """model_to_fp16"""
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if config.fp16:
@@ -33,7 +32,7 @@ def model_to_fp16(model, config):
     return model
 
 
-def model_to_ddp(model: nn.Module, config) -> nn.Module:
+def model_to_ddp(model: nn.Module) -> nn.Module:
     """model_to_ddp"""
     if dist.is_available() and dist.is_initialized():
         model = DDP(model, device_ids=[config.local_rank])

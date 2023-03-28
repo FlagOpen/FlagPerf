@@ -82,7 +82,7 @@ eval_iter_start_samples: int = 1
 log_freq: int = 1
 
 # target accuracy to converge for training
-target_acc1: float = 20
+target_acc1: float = 50
 
 # dist args
 # Whether to read local rank from ENVVAR

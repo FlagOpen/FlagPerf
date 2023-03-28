@@ -48,7 +48,7 @@ class TrainingState:
             "classmethod object" not in str(value)
         ]
         return all(status)
-    
+
     def set_trainer(self, trainer):
         """set trainer"""
         self._trainer = trainer
@@ -66,8 +66,8 @@ class TrainingState:
             lr = lr[0]
         state_dict["learning_rate"] = lr
         exclude = [
-            "eval_loss", "eval_acc1", "eval_acc5", "skipped_steps", "converged",
-            "init_time", "raw_train_time"
+            "eval_loss", "eval_acc1", "eval_acc5", "skipped_steps",
+            "converged", "init_time", "raw_train_time"
         ]
         for exkey in exclude:
             if exkey in state_dict:
@@ -75,8 +75,12 @@ class TrainingState:
 
         state_dict.update(kwargs)
 
-        for k in state_dict.keys():
-            if torch.is_tensor(state_dict[k]):
-                state_dict[k] = state_dict[k].item()
+        # for k in state_dict.keys():
+        #     if torch.is_tensor(state_dict[k]):
+        #         state_dict[k] = state_dict[k].item()
+
+        for k, value in state_dict.items():
+            if torch.is_tensor(value):
+                state_dict[k] = value.item()
 
         return state_dict

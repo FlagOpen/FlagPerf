@@ -57,7 +57,7 @@ def main() -> Tuple[Any, Any]:
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
 
-    # TODO 得到seed
+    # get seed
     seed = config.seed if config.seed else 1024
     init_helper.set_seed(seed, model_driver.config.vendor)
 
@@ -80,7 +80,7 @@ def main() -> Tuple[Any, Any]:
     model_driver.event(Event.INIT_START)
     init_start_time = logger.previous_log_time
 
-    # TODO 构建dataset, dataloader 【train && validate】
+    # build dataset, dataloader 【train && validate】
     train_dataset = build_train_dataset(config)
     val_dataset = build_eval_dataset(config)
     train_dataloader = build_train_dataloader(config,
@@ -115,13 +115,7 @@ def main() -> Tuple[Any, Any]:
         init_evaluation_start = time.time()
         training_state.eval_accuracy = evaluator.evaluate(trainer)
         init_evaluation_end = time.time()
-        """
-        TODO 收集eval关键信息，用于日志输出
-        例如： init_evaluation_info = dict(
-        eval_loss=training_state.eval_avg_loss,
-        eval_embedding_average=training_state.eval_embedding_average,
-        time=init_evaluation_end - init_evaluation_start)
-        """
+
         init_evaluation_info = dict(
             eval_acc1=training_state.eval_acc1,
             eval_acc5=training_state.eval_acc5,
@@ -146,7 +140,7 @@ def main() -> Tuple[Any, Any]:
            and not training_state.end_training):
         epoch += 1
         training_state.epoch = epoch
-        trainer.train_one_epoch(train_dataloader, epoch)
+        trainer.train_one_epoch(train_dataloader)
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
@@ -172,12 +166,13 @@ if __name__ == "__main__":
         finished_info = {
             "e2e_time": e2e_time,
             "training_images_per_second": training_perf,
-             "converged": state.converged,
+            "converged": state.converged,
             "final_loss": state.eval_loss,
             "final_acc1": state.eval_acc1,
             "final_acc5": state.eval_acc5,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
+            "num_trained_samples": state.num_trained_samples,
         }
     else:
         finished_info = {"e2e_time": e2e_time}
