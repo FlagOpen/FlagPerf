@@ -21,7 +21,7 @@ from typing import Any, Dict, Optional, Text
 from absl import logging
 import tensorflow as tf
 import tensorflow_addons as tfa
-import learning_rate
+from . import learning_rate
 from configs import base_configs
 from modeling import optimization
 

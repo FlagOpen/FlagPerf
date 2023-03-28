@@ -24,7 +24,7 @@ import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from utils.flags import core as flags_core
 from utils.misc import keras_utils
-import callbacks as custom_callbacks
+from core import callbacks as custom_callbacks
 
 FLAGS = flags.FLAGS
 BASE_LEARNING_RATE = 0.1  # This matches Jing's version.

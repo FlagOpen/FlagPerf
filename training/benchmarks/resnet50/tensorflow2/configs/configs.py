@@ -15,7 +15,7 @@
 
 import dataclasses
 
-import dataset_factory
+from core import dataset_factory
 from . import base_configs
 from resnet import resnet_config
 

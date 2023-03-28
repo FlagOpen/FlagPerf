@@ -1,7 +1,7 @@
 from typing import Mapping
 import tensorflow as tf
 
-import optimizer_factory
+from . import optimizer_factory
 from modeling import performance
 from resnet import resnet_model
 from configs import base_configs

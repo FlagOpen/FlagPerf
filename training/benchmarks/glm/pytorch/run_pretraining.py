@@ -40,10 +40,9 @@ def main():
 
     dist_pytorch.init_dist_training_env(config)
 
-    check.check_config(
-        config, "blocklm-large-blank/200000/mp_rank_00_model_states.pt")
+    check.check_config(config)
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     glm_driver.event(Event.INIT_START)
     init_start_time = logger.previous_log_time
 
@@ -70,12 +69,12 @@ def main():
                       config=config)
     training_state._trainer = trainer
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     trainer.init()
 
     eval_dataloader = build_eval_dataloaders(config)
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     init_evaluation_start = time.time()
     evaluator.dataloader = eval_dataloader
     score = trainer.evaluator.evaluate(trainer)
@@ -97,7 +96,7 @@ def main():
     init_end_time = logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
 
     epoch = -1
     # training_event.on_train_begin()

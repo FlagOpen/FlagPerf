@@ -179,6 +179,7 @@ class GLMTransformer(torch.nn.Module):
                                                sep,
                                                memory_length=memory_length)
         else:
+            attention_mask = attention_mask.type_as(hidden_states)
             attention_mask = attention_mask[:, :, :,
                                             -query_length - memory_length:]
 

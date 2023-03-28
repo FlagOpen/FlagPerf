@@ -33,9 +33,8 @@ CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import dist_tensorflow2, Driver, Event
 import argparse
-import callbacks as custom_callbacks
-import dataset_factory
-import optimizer_factory
+from core import callbacks as custom_callbacks
+from core import dataset_factory
 from configs import base_configs
 from configs import configs
 from resnet import common

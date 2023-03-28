@@ -1,4 +1,8 @@
 # Copyright © 2022 BAAI. All rights reserved.
+<<<<<<< HEAD
+=======
+# 
+>>>>>>> 25f57956b65e875b4ef2a1e324ef78a43432e910
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
 # Modified some functions to support FlagPerf.
@@ -32,7 +36,11 @@ def generate_seeds(rng, size):
 
 
 def global_batch_size(config):
+<<<<<<< HEAD
     return config.train_dataset.batch_size * config.runtime.num_gpus  # TODO get_world_size()
+=======
+    return config.train_dataset.batch_size * config.runtime.num_gpus # TODO get_world_size()
+>>>>>>> 25f57956b65e875b4ef2a1e324ef78a43432e910
 
 
 def format_step(step):

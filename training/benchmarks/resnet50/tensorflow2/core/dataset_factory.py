@@ -22,8 +22,8 @@ from typing import Any, List, Mapping, Optional, Tuple, Union
 from absl import logging
 import tensorflow as tf
 import tensorflow_datasets as tfds
-import augment
-import preprocessing
+from . import augment
+from . import preprocessing
 from modeling.hyperparams import base_config
 
 AUGMENTERS = {

@@ -18,7 +18,7 @@ from __future__ import division
 from __future__ import print_function
 from typing import List, Optional, Text, Tuple
 import tensorflow as tf
-import augment
+from . import augment
 
 # Calculated from the ImageNet training set
 MEAN_RGB = (0.485 * 255, 0.456 * 255, 0.406 * 255)
