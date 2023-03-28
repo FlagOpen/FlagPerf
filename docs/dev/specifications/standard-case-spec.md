@@ -14,20 +14,20 @@
 
 ## 2. 标准Case的合作共建方式
 
-### 	2.1 标准Case的选择
+### 2.1 标准Case的选择
 
 - FlagPerf旨在和大家共同探索开源、开放、灵活、公正、客观的AI芯片评测体系，建立评测软件生态，提供行业价值，因此在Case选择上面考虑以下几个方面：
 
 - 需尽是覆盖典型应用场景，且包含典型场景的常用模型
 - 及时跟进新的热门的模型，便于用户测试
 
-###     2.2 合作共建机制
+### 2.2 合作共建机制
 
 考虑到可选模型众多，且共建团队众多 ，为了避免大家开发内容冲突，智源会定期与大家讨论模型列表并确认大家的分工。后续项目更成熟可能考虑在社区发布Issue大家标记认领。
 
 代码提交和合并直接在github上进行，具体可参照后面的代码提交与Review合并流程。
 
-###     2.3 一般性的原则
+### 2.3 一般性的原则
 
 FlagPerf项目还在起步阶段，各种标准和规范还不健全，项目代码也在持续重构和优化中，有任何建议、意见或疑问请随时提出讨论。
 
@@ -88,10 +88,19 @@ FlagPerf项目还在起步阶段，各种标准和规范还不健全，项目代
 yapf -i --style "pep8" --recursive ./FlagPerf
 ```
 
-### 3.2 添加方法
+### 3.2 添加规范
+
+#### 0) 原始代码训练验证
+
+确定待添加的模型来源，使用原始代码的数据集和代码进行模型复现。若原始代码不带数据集，建议使用业内公开知名数据集。
+
+按照原始方式启动模型训练并按照一定epoch(推荐10)为频率保存checkpoint以备后用。
+
+最终提交的模型case期望在【2-5h】内收敛精度达标，因此建议推算使用合适的checkpoint resume训练，同时也验证原始代码精度合理。
+
+验证原始代码没有问题和收集到目标ckpt之后，开始Perf的适配工作。
 
 #### 1) 实现模型训练主体逻辑
-
 
 在training/benchmarks下添加&lt;model&gt;/&lt;framework&gt;子目录，pytroch和paddle的标准case可参考下面的目录结构组织代码：
 
@@ -108,7 +117,19 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 └── train
 ```
 
-其它框架如tensorflow2等的参考目录结构待补充。
+其它框架如tensorflow2, 以resnet50为例:
+
+```Bash
+#以/FlagPerf/training/benchmarks/resnet50/tensorflow2为例：
+├── config      # 【必选】tf2-example下的config相关基类
+├── core        # 训练pipeline的核心工具组件，以trainer_adapter.py为代表
+├── modeling    # 模型pipeline各组成模块参考实现：optimization、activations
+├── resnet.     # resnet 实现代码，该处保持和tf官方一致。
+├── readme.md   # 【必选】case文档，规范参考 https://qgsq1vkxhz.feishu.cn/docx/NMAGdJ3w6oltKJxJB9ccVL43n5c
+├── run_pretraining.py #【必选】执行训练入口脚本，可以使用dev/docs/run_pretaining.py.example作为模版
+└── utils   #公共工具包
+```
+
 
 #### 2) 实现训练入口程序
 
@@ -122,26 +143,25 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 ```Bash
 ├── config_A100x1x2.py      # 单机2卡配置
 ├── config_A100x1x8.py      # 单机8卡配置
-├── config_A100x2x8.example # 2机8卡配置示例
 ├── config_A100x2x8.py      # 2机8卡配置
 ├── environment_variables.sh # 环境变量文件，在容器启动后，运行case之前会source该文件，设置容器中的环境变量。
 └── requirements.txt         # 容器中安装python依赖包。FlagPerf框架在启动容器后，在运行case之前，执行pip install -r requirements.txt，安装依赖库
 ```
 
-#### 4) 测试验证
+#### 4) 训练验证
 
-在training/run_benchmarks/config/中添加测试Case相关配置，并通过training/run_benchmarks/run.py脚本启动测试。验证代码工作正常，并符合测试达标要求即可提交PR。关于配置方法，可参考：https://github.com/FlagOpen/FlagPerf#readme
+在training/run_benchmarks/config/中添加测试Case相关配置，并通过training/run_benchmarks/run.py脚本启动测试。【重要: 需要从run.py脚本启动测试验证】
 
-### 3.3 数据集的选择
+验证
+- 模型收敛达到目标精度;
+- 多机/多卡吞吐量加速比符合预期;
 
- 数据集通常选用：
+关于配置方法，可参考：https://github.com/FlagOpen/FlagPerf#readme
 
-- 论文中的使用的数据集
-- 知名公开实现使用的数据集
 
 ### 3.4 模型Checkpoint的要求
 
-- 如果有该case的框架对应的checkpoint文件，需提供下载链接，最好提供原始checkpoint文件的md5值，以便校验下载后文件的完整性
+- 从确定的起始训练checkpoint验证训练，上传ckpt到XXX, 并在case文档中提供下载链接，最好提供原始checkpoint文件的md5值，以便校验下载后文件的完整性;
 - 如果只有其他框架的checkpoint文件，例如添加的是bert-pytorch的case，只有tf2的checkpoint可供下载。需在README文档里提供tf2的**checkpoint下载地址、转换工具/脚本，**以及**转换的命令。**
 
 ### 3.5 配置文件规范
@@ -177,7 +197,6 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 此外，如果该标准Case在预先构建的nvidia镜像中无法直接运行，需要一定的环境配置和依赖包安装，请添加environment_variables.sh和requirements.txt。具体可以参考：[厂商适配Case的规范](case-adatpion-spec.md) 。
 
 ### 3.6 测试达标要求
-
 - 可使用FlagPerf正常配置并运行训练
 - 训练可收敛到目标精度
 - 有训练过程和benchmark结果日志输出（nv机器上），包括训练中的N个steps的和最终结果输出。finished_info包括不限于：e2e_time、training_sequences_per_second、 converged、final_accuracy、raw_train_time、init_time
@@ -191,8 +210,17 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 
 FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://github.com/FlagOpen/FlagPerf/tree/main) 到个人帐号下，修改代码&验证通过后，提交PR给FlagPerf项目。FlagOpen相关研发人员Review通过后，合并代码。具体操作可参照：https://docs.github.com/en/get-started/quickstart/contributing-to-projects
 
-### 4.1 标准case修改的PR提交规范
-  1. Commit说明为什么要改/改了什么
-  2. 如果修改内容影响Case运行结果，在标准Case的README.md更新新的运行记录，随PR提交；
-  3. 如果修改内容影响Case运行结果，强烈建议在PR的comment里提交FlagPerf在Nvidia GPU上运行日志附件。
-  4. 如果该case已经有厂商已经适配，需要评估该修改对所有已经适配的厂商扩展不造成影响。
+### 4.1 标准case提交内容检查
+  #### 首次添加case
+  1. 只提交添加模型必要代码变动;
+  2. 上传起始训练ckpt到指定地址;
+  3. 提供必需1X8、2X8达标训练性能结果到case文档, 建议包含1X1、1X2、1X4多种场景下训练结果。
+
+  #### 修改标准case
+  1. 如果Perf中已经存在标准实现, 需要改动标准实现且修改内容影响Case运行结果，请在Case的README.md更新新的运行记录，随PR提交;并建议在PR的comment里提交在Nvidia GPU上运行日志附件。
+  2. 如果该case已经有厂商已经适配，需要评估该修改对所有已经适配的厂商扩展是否有影响。
+
+### 4.2 标准case的PR提交规范
+  1. PR提交请说明PR的作用/目的
+  2. 如果修改内容影响Case NV运行结果，请在标准Case的README.md更新的运行记录，随PR提交GPU上运行日志附件。
+  3. 如果修改内容预判可能影响其他厂商适配，请在PR里注明或联系Reviewer。

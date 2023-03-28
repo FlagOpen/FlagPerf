@@ -3,9 +3,10 @@
 > 文档信息说明：
 > - 文档位置：每个Case的REAMDE文档位于training/benchmarks/&lt;model&gt;/&lt;Framework&gt; 目录下
 > - 文档使用的语言：默认为中文README.md，可提供英文版本README.en.md
-> - 文档内容：数据集和模型文件的进一步处理/转换要求、英伟达GPU环境下的运行配置与运行信息参考
+> - 文档内容：厂商平台的硬件配置、软件环境配置、数据集和模型文件路径、进一步处理/转换方式(如有)、运行信息参考
 
 
+# Framework-厂商-模型
 
 ## 1. 模型信息与数据集、模型Checkpoint下载
 
