@@ -146,7 +146,7 @@ class ImageManager():
                      + tmp_container_name + " " + self.repository + ":" \
                      + self.tag
 
-        ret, outs = rcw(commit_cmd, 30)
+        ret, outs = rcw(commit_cmd, 300)
         if ret != 0:
             print("Commit docker image failed.")
             print("Error: " + outs[0])
