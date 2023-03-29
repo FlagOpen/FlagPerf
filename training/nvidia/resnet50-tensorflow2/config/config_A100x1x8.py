@@ -3,11 +3,10 @@
 # Note = This configuration uses a scaled per-replica batch size based on the number of devices.
 # Base params  = base_configs.ExperimentConfig
 do_train = True
-model_dir = 'result_test-1'
-model_ckpt_dir = '/workspace/FlagPerf_tf/training/test'
+model_dir = 'result'
+model_ckpt_dir = ' '
 mode = 'train_and_eval'
-# target_accuracy: float = 0.01
-target_accuracy: float = 1
+target_accuracy: float = 0.75
 # runtime = dict(
 #   distribution_strategy = 'multi_worker_mirrored',
 #   run_eagerly = None,
