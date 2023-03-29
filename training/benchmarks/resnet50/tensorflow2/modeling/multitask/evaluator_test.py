@@ -41,7 +41,6 @@ class MockModel(tf.keras.Model):
         self.dense = tf.keras.layers.Dense(1)
 
     def call(self, inputs):
-        print(inputs, type(inputs))
         if "y" in inputs:
             self.add_loss(tf.zeros((1, ), dtype=tf.float32))
         else:

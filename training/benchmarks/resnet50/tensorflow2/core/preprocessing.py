@@ -270,7 +270,6 @@ def resize_image(image_bytes: tf.Tensor,
     A tensor containing the resized image.
 
   """
-    print(height, width)
     return tf.compat.v1.image.resize(image_bytes,
                                      tf.convert_to_tensor([height, width]),
                                      method=tf.image.ResizeMethod.BILINEAR,

@@ -3,10 +3,11 @@
 # Note = This configuration uses a scaled per-replica batch size based on the number of devices.
 # Base params  = base_configs.ExperimentConfig
 do_train = True
-model_dir = 'result'
+model_dir = 'result_test-1'
+model_ckpt_dir='/workspace/FlagPerf_tf/training/test'
 mode = 'train_and_eval'
-target_accuracy: float = 1.0
-# target_accuracy: float = 0.5
+# target_accuracy: float = 0.01
+target_accuracy: float = 1
 # runtime = dict(
 #   distribution_strategy = 'multi_worker_mirrored',
 #   run_eagerly = None,
@@ -48,10 +49,12 @@ model = dict(name='resnet',
                             decay=0.9,
                             epsilon=0.001),
              loss=dict(label_smoothing=0.1))
-train = dict(resume_checkpoint=False,
+train = dict(resume_checkpoint=True,
              epochs=90,
              time_history=dict(log_steps=100),
-             callbacks=dict(enable_checkpoint_and_export=True))
+             callbacks=dict(
+                enable_checkpoint_and_export=False,
+                enable_backup_and_restore=True))
 evaluation = dict(epochs_between_evals=1)
 
 # local_rank for distributed training on gpus

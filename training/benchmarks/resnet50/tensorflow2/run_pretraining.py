@@ -341,13 +341,10 @@ def train_and_eval(params: base_configs.ExperimentConfig,
                       steps_per_execution=steps_per_loop)
 
         initial_epoch = 0
-        print("params.model_ckpt_dir:",params.model_ckpt_dir,params.train.resume_checkpoint,type(params.train.resume_checkpoint))
         if params.train.resume_checkpoint:
-            print("11",)
             initial_epoch = resume_from_checkpoint(model=model,
                                                    model_dir=params.model_ckpt_dir,
                                                    train_steps=train_steps)
-            print("initial_epoch:",initial_epoch)
         callbacks = custom_callbacks.get_callbacks(
             model_checkpoint=params.train.callbacks.
             enable_checkpoint_and_export,
@@ -386,7 +383,7 @@ def train_and_eval(params: base_configs.ExperimentConfig,
                         callbacks=callbacks,
                         verbose=2,
                         **validation_kwargs)
-
+    
     driver.event(Event.TRAIN_END)
 
     validation_output = None
