@@ -1,6 +1,5 @@
 from config_common import *
 
-
 fp16 = False
 ddp_type = "apex"
 #dist_backend = "nccl"

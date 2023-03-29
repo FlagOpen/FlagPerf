@@ -38,8 +38,8 @@ init_tf_checkpoint: str = None
 # Whether to verify init checkpoint.
 verify_checkpoint: bool = True
 
-# The maximum total input sequence length after WordPiece tokenization. 
-# Sequences longer than this will be truncated, and sequences shorter 
+# The maximum total input sequence length after WordPiece tokenization.
+# Sequences longer than this will be truncated, and sequences shorter
 # than this will be padded.
 max_seq_length: int = 512
 
@@ -78,7 +78,7 @@ warmup_proportion: float = 0.01
 # Typically 1/8th of steps for Phase2
 warmup_steps: int = 0
 
-# Starting step for warmup. 
+# Starting step for warmup.
 start_warmup_step: int = 0
 
 # local_rank for distributed training on gpus

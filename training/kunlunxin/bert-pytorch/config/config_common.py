@@ -1,3 +1,4 @@
+vendor = 'kunlunxin'
 # 'segmented' or 'full_iteration' options for CUDA graph capture.
 # 'segmented' option: Pytorch Autograd orchestrates execution of backward ops every iteration.
 # 'full_iteration' option: CUDA graph orchestrates execution of bwd ops every iteration without Autograd involvement (has composability limitations but could be more performant allowing optimizer                              and collectives capture).
@@ -75,17 +76,3 @@ dwu_e5m2_allgather: bool = False
 
 # the apex optimization level, value: [O1, O2]
 opt_level: str = "O2"
-
-
-
-
-
-
-
-
-
-
-
-
-
-

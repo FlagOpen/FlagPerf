@@ -15,11 +15,9 @@ from .dataset import PretrainingDataset
 
 
 def get_sampler(dataset, sampler_type):
-    return dict(
-        random=RandomSampler,
-        sequential=SequentialSampler,
-        distributed=DistributedSampler
-    )[sampler_type.lower()](dataset)
+    return dict(random=RandomSampler,
+                sequential=SequentialSampler,
+                distributed=DistributedSampler)[sampler_type.lower()](dataset)
 
 
 class WorkerInitializer(object):
@@ -41,13 +39,11 @@ class WorkerInitializer(object):
 
 
 # sampler: Random | Sequential | Distributed
-def create_train_dataloader(
-        dataset,
-        batch_size,
-        worker_init_fn: WorkerInitializer=None,
-        sampler_type='Random',
-        pin_memory=True
-):
+def create_train_dataloader(dataset,
+                            batch_size,
+                            worker_init_fn: WorkerInitializer = None,
+                            sampler_type='Random',
+                            pin_memory=True):
     if worker_init_fn is None:
         worker_init_fn = WorkerInitializer.default()
     sampler = get_sampler(dataset, sampler_type)
@@ -63,12 +59,15 @@ def create_train_dataloader(
     return dataloader
 
 
-def create_eval_dataloader(eval_dir, eval_batch_size, max_predictions_per_seq, num_eval_examples, worker_init_fn):
+def create_eval_dataloader(eval_dir, eval_batch_size, max_predictions_per_seq,
+                           num_eval_examples, worker_init_fn):
     eval_data = []
     for eval_file in sorted(os.listdir(eval_dir)):
         eval_file_path = os.path.join(eval_dir, eval_file)
         if os.path.isfile(eval_file_path) and 'part' in eval_file_path:
-            eval_data.extend(PretrainingDataset(eval_file_path, max_pred_length=max_predictions_per_seq))
+            eval_data.extend(
+                PretrainingDataset(eval_file_path,
+                                   max_pred_length=max_predictions_per_seq))
             if len(eval_data) > num_eval_examples:
                 eval_data = eval_data[:num_eval_examples]
                 break
@@ -79,25 +78,30 @@ def create_eval_dataloader(eval_dir, eval_batch_size, max_predictions_per_seq, n
     else:
         chunk_size = num_eval_examples
         eval_sampler = SequentialSampler(eval_data)
-    eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=eval_batch_size,
-                                 num_workers=0 if min(chunk_size, eval_batch_size) <= 10 else 4,
-                                 worker_init_fn=worker_init_fn, pin_memory=True)
+    eval_dataloader = DataLoader(
+        eval_data,
+        sampler=eval_sampler,
+        batch_size=eval_batch_size,
+        num_workers=0 if min(chunk_size, eval_batch_size) <= 10 else 4,
+        worker_init_fn=worker_init_fn,
+        pin_memory=True)
     return eval_dataloader
 
 
 class PretrainingDataloaders:
 
-    def __init__(self, train_dir: str,
+    def __init__(self,
+                 train_dir: str,
                  max_predictions_per_seq: int,
-                 batch_size: int=2,
-                 shuffle: bool=True,
-                 seed: Union[int, list]=0,
-                 num_replicas: int=None,
-                 rank: int=None,
-                 num_files_per_iter: int=1,
-                 worker_init: WorkerInitializer=None,
-                 pin_memory: bool=True,
-                 pool: ProcessPoolExecutor=None):
+                 batch_size: int = 2,
+                 shuffle: bool = True,
+                 seed: Union[int, list] = 0,
+                 num_replicas: int = None,
+                 rank: int = None,
+                 num_files_per_iter: int = 1,
+                 worker_init: WorkerInitializer = None,
+                 pin_memory: bool = True,
+                 pool: ProcessPoolExecutor = None):
         self.train_dir = train_dir
         self.max_predictions_per_seq = max_predictions_per_seq
         self.batch_size = batch_size
@@ -121,7 +125,8 @@ class PretrainingDataloaders:
             rank = utils.get_rank()
         self.rank = rank
 
-        self.num_files_per_replica = int(math.ceil(self.num_files / self.num_replicas))
+        self.num_files_per_replica = int(
+            math.ceil(self.num_files / self.num_replicas))
         self.total_files = self.num_files_per_replica * self.num_replicas
 
         self.files_per_replica: List[str] = None
@@ -140,8 +145,10 @@ class PretrainingDataloaders:
 
     def get_files(self):
         join = os.path.join
-        files = [join(self.train_dir, f) for f in os.listdir(self.train_dir) if
-                 os.path.isfile(join(self.train_dir, f)) and 'part' in f]
+        files = [
+            join(self.train_dir, f) for f in os.listdir(self.train_dir)
+            if os.path.isfile(join(self.train_dir, f)) and 'part' in f
+        ]
 
         files.sort()
 
@@ -151,10 +158,11 @@ class PretrainingDataloaders:
         if self.shuffle:
             random.Random(self.get_seed(epoch)).shuffle(self.files)
 
-        files_per_replica = self.files[self.rank: self.total_files: self.num_replicas]
+        files_per_replica = self.files[self.rank:self.total_files:self.
+                                       num_replicas]
         padding_size = self.num_files_per_replica - len(files_per_replica)
         if padding_size > 0:
-            files_per_replica = files_per_replica + self.files[: padding_size]
+            files_per_replica = files_per_replica + self.files[:padding_size]
         self.files_per_replica = files_per_replica
 
     @staticmethod
@@ -162,17 +170,19 @@ class PretrainingDataloaders:
                         files_per_replica: List, num_files_per_iter: int,
                         batch_size: int, shuffle: bool,
                         worker_init: WorkerInitializer, pin_memory: bool):
-        files_per_iter = files_per_replica[idx * num_files_per_iter: (idx + 1) * num_files_per_iter]
+        files_per_iter = files_per_replica[idx * num_files_per_iter:(idx + 1) *
+                                           num_files_per_iter]
         datasets = []
         for file in files_per_iter:
             datasets.append(PretrainingDataset(file, max_predictions_per_seq))
 
         datasets = ConcatDataset(datasets)
         sampler_type = "Random" if shuffle else "Sequential"
-        return create_train_dataloader(
-            datasets, batch_size, worker_init,
-            sampler_type=sampler_type, pin_memory=pin_memory
-        )
+        return create_train_dataloader(datasets,
+                                       batch_size,
+                                       worker_init,
+                                       sampler_type=sampler_type,
+                                       pin_memory=pin_memory)
 
     def iter_batchs(self) -> Tuple[int, int, Any]:
         for dataloader_idx, sub_dataloader in enumerate(self):
@@ -181,7 +191,8 @@ class PretrainingDataloaders:
 
     def __iter__(self):
         self._next_index = 0
-        self._num_iters = int(math.ceil(self.num_files_per_replica / self.num_files_per_iter))
+        self._num_iters = int(
+            math.ceil(self.num_files_per_replica / self.num_files_per_iter))
         return self
 
     def __next__(self) -> DataLoader:
@@ -193,14 +204,12 @@ class PretrainingDataloaders:
                 batch_size=self.batch_size,
                 shuffle=self.shuffle,
                 worker_init=self.worker_init,
-                pin_memory=self.pin_memory
-            )
-            self.prefetch_dataloader(self._next_index + 1, **next_dataloader_args)
+                pin_memory=self.pin_memory)
+            self.prefetch_dataloader(self._next_index + 1,
+                                     **next_dataloader_args)
             if self._next_index == 0 or self.pool is None:
-                data = self.next_dataloader(
-                    idx=self._next_index,
-                    **next_dataloader_args
-                )
+                data = self.next_dataloader(idx=self._next_index,
+                                            **next_dataloader_args)
             else:
                 data = self.prefetched_dataloader_future.result()
             self._next_index += 1
@@ -212,7 +221,4 @@ class PretrainingDataloaders:
     def prefetch_dataloader(self, idx, *args, **kwargs):
         if self.pool is not None:
             self.prefetched_dataloader_future = self.pool.submit(
-                self.next_dataloader,
-                idx = idx, *args, **kwargs
-            )
-
+                self.next_dataloader, idx=idx, *args, **kwargs)

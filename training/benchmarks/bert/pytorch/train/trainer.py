@@ -20,15 +20,12 @@ CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import Driver, Event, dist_pytorch
 
+
 class Trainer():
 
-    def __init__(self, 
-                driver: Driver,
-                adapter,
-                evaluator: Evaluator,
-                training_state: TrainingState,
-                grad_scaler: GradScaler,
-                device: Device):
+    def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
+                 training_state: TrainingState, grad_scaler: GradScaler,
+                 device: Device):
         super(Trainer, self).__init__()
         self.driver = driver
         self.adapter = adapter
@@ -47,7 +44,8 @@ class Trainer():
         self.model = self._init_model(self.model, self.device)
         self.model = self.adapter.convert_model(self.model)
         self.optimizer = self.adapter.create_optimizer(self.model)
-        self.model, self.optimizer = self.adapter.model_to_fp16(self.model, self.optimizer)
+        self.model, self.optimizer = self.adapter.model_to_fp16(
+            self.model, self.optimizer)
         self.model = self.adapter.model_to_ddp(self.model)
         self.lr_scheduler = create_scheduler(self.optimizer)
 
@@ -74,8 +72,9 @@ class Trainer():
 
         step_start_time = time.time()
         for dataloader_idx, batch_idx, batch in dataloader.iter_batchs():
-            
-            state.num_trained_samples = state.global_steps * utils.global_batch_size(config)
+
+            state.num_trained_samples = state.global_steps * utils.global_batch_size(
+                config)
 
             state.global_steps += 1
             state.iter_dataloader_idx = dataloader_idx
@@ -87,13 +86,16 @@ class Trainer():
                 step_end_time = time.time()
                 step_total_time = step_end_time - step_start_time
                 step_start_time = step_end_time
-                sequences_per_second = (utils.global_batch_size(config) * config.gradient_accumulation_steps) / step_total_time
+                sequences_per_second = (
+                    utils.global_batch_size(config) *
+                    config.gradient_accumulation_steps) / step_total_time
                 other_state["seq/s"] = sequences_per_second
 
             eval_result = None
             if self.can_do_eval(state):
                 eval_start = time.time()
-                state.eval_loss, state.eval_mlm_accuracy = self.evaluator.evaluate(self)
+                state.eval_loss, state.eval_mlm_accuracy = self.evaluator.evaluate(
+                    self)
                 eval_end = time.time()
                 eval_result = dict(global_steps=state.global_steps,
                                    eval_loss=state.eval_loss,
@@ -103,7 +105,7 @@ class Trainer():
             end_training = self.detect_training_status(state)
 
             step_info = state.to_dict(**other_state)
-            
+
             driver.event(Event.STEP_END,
                          message=step_info,
                          step=state.global_steps,
@@ -119,15 +121,20 @@ class Trainer():
 
     def train_one_step(self, batch_idx, batch):
         if config.exchange_padding == True:
-            batch = [t.to(self.device, non_blocking=True, dtype=torch.int16) for t in batch]
-            batch = exchange_padding_fast(self.device, config.train_batch_size, *batch)
+            batch = [
+                t.to(self.device, non_blocking=True, dtype=torch.int16)
+                for t in batch
+            ]
+            batch = exchange_padding_fast(self.device, config.train_batch_size,
+                                          *batch)
         else:
             batch = [t.to(self.device, non_blocking=True) for t in batch]
 
         state = self.training_state
         self.model.train()
         state.loss, state.mlm_acc, _ = self.forward(batch)
-        self.adapter.backward(state.global_steps, state.loss, self.optimizer, self.grad_scaler)
+        self.adapter.backward(state.global_steps, state.loss, self.optimizer,
+                              self.grad_scaler)
         self.lr_scheduler.step()
 
     def detect_training_status(self, state: TrainingState):
@@ -143,7 +150,9 @@ class Trainer():
         do_eval = all([
             config.eval_dir is not None,
             state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps % math.ceil(config.eval_interval_samples / utils.global_batch_size(config)) == 0,
+            state.global_steps %
+            math.ceil(config.eval_interval_samples /
+                      utils.global_batch_size(config)) == 0,
             config.eval_interval_samples > 0,
             state.global_steps > 1,
         ])
@@ -152,8 +161,9 @@ class Trainer():
 
     def forward(self, batch):
         input_ids, segment_ids, input_mask, masked_lm_labels, next_sentence_labels = batch
-        loss, mlm_acc, num_valid = self.model(input_ids, segment_ids, input_mask,
-                                              masked_lm_labels, next_sentence_labels)
+        loss, mlm_acc, num_valid = self.model(input_ids, segment_ids,
+                                              input_mask, masked_lm_labels,
+                                              next_sentence_labels)
         return loss, mlm_acc, num_valid
 
     def inference(self, batch):

@@ -1,6 +1,5 @@
 import config
 
-
 from .linear_warmup_poly_scheduler import LinearWarmupPolyDecayScheduler
 from .linear_warmup_scheduler import LinearWarmUpScheduler
 
@@ -17,8 +16,11 @@ def create_scheduler(optimizer, scheduler="poly"):
         return LinearWarmUpScheduler(optimizer, warmup_steps, config.max_steps)
 
     if scheduler == "poly":
-        return LinearWarmupPolyDecayScheduler(optimizer, start_warmup_steps=warmup_start,
+        return LinearWarmupPolyDecayScheduler(optimizer,
+                                              start_warmup_steps=warmup_start,
                                               warmup_steps=warmup_steps,
-                                              total_steps=config.max_steps, end_learning_rate=0.0, degree=1.0)
+                                              total_steps=config.max_steps,
+                                              end_learning_rate=0.0,
+                                              degree=1.0)
 
     raise ValueError(f"Not found scheduler {scheduler}.")

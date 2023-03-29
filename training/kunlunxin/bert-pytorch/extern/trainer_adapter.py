@@ -16,18 +16,27 @@ import config
 
 BERT_MODEL = torch.nn.Module
 
+
 def convert_model(model: BERT_MODEL) -> BERT_MODEL:
     return model
+
 
 def create_optimizer(model: BERT_MODEL) -> Optimizer:
     param_optimizer = list(model.named_parameters())
 
     no_decay = ['bias', 'gamma', 'beta', 'LayerNorm']
 
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
-            'weight_decay': config.weight_decay_rate},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}]
+    optimizer_grouped_parameters = [{
+        'params':
+        [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
+        'weight_decay':
+        config.weight_decay_rate
+    }, {
+        'params':
+        [p for n, p in param_optimizer if any(nd in n for nd in no_decay)],
+        'weight_decay':
+        0.0
+    }]
 
     if config.distributed_lamb:
         print("distributed")
@@ -49,13 +58,17 @@ def create_optimizer(model: BERT_MODEL) -> Optimizer:
         #optimizer.set_global_scale(float(os.getenv("INIT_LOSS_SCALE", 2 ** 20)))
     else:
         optimizer = Lamb(optimizer_grouped_parameters,
-                                lr=config.learning_rate,
-                                betas=(config.opt_lamb_beta_1, config.opt_lamb_beta_2))
+                         lr=config.learning_rate,
+                         betas=(config.opt_lamb_beta_1,
+                                config.opt_lamb_beta_2))
 
     return optimizer
 
-def model_to_fp16(model: BERT_MODEL, optimizer: Optimizer) -> Tuple[BERT_MODEL, Optimizer]:
+
+def model_to_fp16(model: BERT_MODEL,
+                  optimizer: Optimizer) -> Tuple[BERT_MODEL, Optimizer]:
     return model, optimizer
+
 
 def model_to_ddp(model: BERT_MODEL) -> BERT_MODEL:
     use_ddp = dist.is_initialized()
@@ -64,7 +77,11 @@ def model_to_ddp(model: BERT_MODEL) -> BERT_MODEL:
         model = DDP(model)
     return model
 
-def backward(step: int, loss: torch.Tensor, optimizer: Optimizer, grad_scaler: GradScaler=None):
+
+def backward(step: int,
+             loss: torch.Tensor,
+             optimizer: Optimizer,
+             grad_scaler: GradScaler = None):
     if config.bypass_amp:
         loss.backward()
     elif config.distributed_lamb:
@@ -72,7 +89,10 @@ def backward(step: int, loss: torch.Tensor, optimizer: Optimizer, grad_scaler: G
         grad_scaler.scale(loss).backward()
         optimizer._lazy_init_stage2()
     else:
-        with amp.scale_loss(loss, optimizer, delay_overflow_check=self.config.allreduce_post_accumulation) as scaled_loss:
+        with amp.scale_loss(loss,
+                            optimizer,
+                            delay_overflow_check=self.config.
+                            allreduce_post_accumulation) as scaled_loss:
             scaled_loss.backward()
 
     update_step = step % config.gradient_accumulation_steps == 0
@@ -81,7 +101,10 @@ def backward(step: int, loss: torch.Tensor, optimizer: Optimizer, grad_scaler: G
     else:
         xm.mark_step()
 
-def update_model_params(loss, optimizer: Optimizer, grad_scaler: GradScaler=None):
+
+def update_model_params(loss,
+                        optimizer: Optimizer,
+                        grad_scaler: GradScaler = None):
     if config.allreduce_post_accumulation and config.use_cuda_graph:
         assert False, "code path not tested with cuda graphs"
     if config.distributed_lamb:
@@ -133,7 +156,8 @@ def update_model_params(loss, optimizer: Optimizer, grad_scaler: GradScaler=None
         else:
             # Overflow detected, print message and clear gradients
             if utils.is_main_process():
-                print("Overflow detected, reduced loss_scaler to %f" % (scaler.loss_scale()))
+                print("Overflow detected, reduced loss_scaler to %f" %
+                      (scaler.loss_scale()))
             if _amp_state.opt_properties.master_weights:
                 for param in optimizer._amp_stash.all_fp32_from_fp16_params:
                     param.grad = None

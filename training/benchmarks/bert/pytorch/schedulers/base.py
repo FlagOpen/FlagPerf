@@ -4,6 +4,7 @@ from torch.optim.lr_scheduler import _LRScheduler
 
 
 class LRScheduler(_LRScheduler):
+
     def __init__(self, optimizer, last_epoch=-1):
         # Check if using mixed precision training
         self.mixed_training = False
@@ -21,7 +22,8 @@ class LRScheduler(_LRScheduler):
         # ('epoch' is used to be consistent with _LRScheduler)
         if self.mixed_training:
             # The assumption is that the step will be constant
-            state_dict = self.optimizer.state[self.optimizer.param_groups[0]['params'][0]]
+            state_dict = self.optimizer.state[self.optimizer.param_groups[0]
+                                              ['params'][0]]
             if 'step' in state_dict:
                 self.last_epoch = state_dict['step'] + 1
             else:

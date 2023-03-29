@@ -25,6 +25,7 @@ from train.training_state import TrainingState
 from train import trainer_adapter
 
 import sys
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 import driver
@@ -40,7 +41,7 @@ def main():
 
     if config.use_env and 'LOCAL_RANK' in os.environ:
         config.local_rank = int(os.environ['LOCAL_RANK'])
-    
+
     bert_driver = Driver(config, config.mutable_params)
     bert_driver.setup_config(argparse.ArgumentParser("Bert"))
     bert_driver.setup_modules(driver, globals(), locals())
@@ -53,7 +54,7 @@ def main():
     dist_pytorch.init_dist_training_env(config)
     utils.check_config(config)
 
-    dist_pytorch.barrier(config)
+    dist_pytorch.barrier(config.vendor)
     if world_size == 1:
         config.local_rank = 0
 
@@ -79,31 +80,29 @@ def main():
         global_batch_size=dist_pytorch.global_batch_size(config),
         max_steps=config.max_steps,
         worker_init=worker_init,
-        use_cache=config.cache_eval_data
-    )
+        use_cache=config.cache_eval_data)
     training_state = TrainingState()
     trainer = Trainer(driver=bert_driver,
-                    adapter=trainer_adapter, 
-                    evaluator=evaluator, 
-                    training_state=training_state, 
-                    grad_scaler=config.grad_scaler, 
-                    device=config.device)
+                      adapter=trainer_adapter,
+                      evaluator=evaluator,
+                      training_state=training_state,
+                      grad_scaler=config.grad_scaler,
+                      device=config.device)
     training_state._trainer = trainer
 
-    dist_pytorch.barrier(config)
+    dist_pytorch.barrier(config.vendor)
     trainer.init()
 
-    dist_pytorch.barrier(config)
+    dist_pytorch.barrier(config.vendor)
     init_evaluation_start = time.time()
     eval_loss, eval_mlm_acc = evaluator.evaluate(trainer)
     training_state.eval_loss = eval_loss
     training_state.eval_mlm_accuracy = eval_mlm_acc
     init_evaluation_end = time.time()
-    init_evaluation_info = dict(
-        eval_loss = eval_loss,
-        eval_mlm_accuracy = eval_mlm_acc,
-        time = init_evaluation_end - init_evaluation_start
-    )
+    init_evaluation_info = dict(eval_loss=eval_loss,
+                                eval_mlm_accuracy=eval_mlm_acc,
+                                time=init_evaluation_end -
+                                init_evaluation_start)
     bert_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
     if not config.do_train:
         return config, training_state
@@ -112,8 +111,10 @@ def main():
         config.train_dir,
         max_predictions_per_seq=config.max_predictions_per_seq,
         batch_size=config.train_batch_size,
-        seed=shuffling_seeds, num_files_per_iter=1,
-        worker_init=worker_init, pool=pool,
+        seed=shuffling_seeds,
+        num_files_per_iter=1,
+        worker_init=worker_init,
+        pool=pool,
     )
 
     bert_driver.event(Event.INIT_END)
@@ -130,7 +131,8 @@ def main():
     bert_driver.event(Event.TRAIN_END)
 
     raw_train_end_time = logger.previous_log_time
-    training_state.raw_train_time = (raw_train_end_time - raw_train_start_time) / 1e+3
+    training_state.raw_train_time = (raw_train_end_time -
+                                     raw_train_start_time) / 1e+3
     return config, training_state
 
 
@@ -143,7 +145,8 @@ if __name__ == "__main__":
 
     gpu_count = config.n_gpu
     e2e_time = time.time() - now
-    training_perf = (dist_pytorch.global_batch_size(config) * state.global_steps) / state.raw_train_time
+    training_perf = (dist_pytorch.global_batch_size(config) *
+                     state.global_steps) / state.raw_train_time
     if config.do_train:
         finished_info = {
             "e2e_time": e2e_time,

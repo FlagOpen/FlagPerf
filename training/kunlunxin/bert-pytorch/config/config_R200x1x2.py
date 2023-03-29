@@ -1,6 +1,5 @@
 from config_common import *
 
-
 fp16 = False
 ddp_type = "apex"
 #dist_backend = "nccl"
@@ -15,7 +14,7 @@ warmup_proportion = 0
 warmup_steps = 1000
 
 distributed_lamb = False
-learning_rate = 3.5e-5
+learning_rate = 1.4e-4
 weight_decay_rate = 0.01
 opt_lamb_beta_1 = 0.9
 opt_lamb_beta_2 = 0.999

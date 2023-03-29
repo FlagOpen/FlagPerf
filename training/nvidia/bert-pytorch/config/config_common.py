@@ -78,5 +78,6 @@ dwu_e5m2_allgather: bool = False
 # the apex optimization level, value: [O1, O2]
 opt_level: str = "O2"
 
+
 def get_gpu_mem():
     return torch.cuda.get_device_properties("cuda:0").total_memory / 1e+9

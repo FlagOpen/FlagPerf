@@ -153,11 +153,15 @@ def init_dist_training_env(config):
             device = xm.xpu_device()
             num_gpus = 1
         else:
-            device =  xm.xpu_device(config.local_rank)
-            host_addr_full = 'tcp://' + os.environ["MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+            device = xm.xpu_device(config.local_rank)
+            host_addr_full = 'tcp://' + os.environ[
+                "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
             rank = int(os.environ["RANK"])
             world_size = int(os.environ["WORLD_SIZE"])
-            torch.distributed.init_process_group(backend=config.dist_backend, init_method=host_addr_full, rank=rank, world_size=world_size)
+            torch.distributed.init_process_group(backend=config.dist_backend,
+                                                 init_method=host_addr_full,
+                                                 rank=rank,
+                                                 world_size=world_size)
             num_gpus = torch.distributed.get_world_size()
     else:
         if config.local_rank == -1:
@@ -167,10 +171,14 @@ def init_dist_training_env(config):
             #torch.cuda.set_device(config.local_rank)
             #device = torch.device("cuda", config.local_rank)
             device = torch.device('cpu', config.local_rank)
-            host_addr_full = 'tcp://' + os.environ["MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+            host_addr_full = 'tcp://' + os.environ[
+                "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
             rank = int(os.environ["RANK"])
             world_size = int(os.environ["WORLD_SIZE"])
-            torch.distributed.init_process_group(backend=config.dist_backend, init_method=host_addr_full, rank=rank, world_size=world_size)
+            torch.distributed.init_process_group(backend=config.dist_backend,
+                                                 init_method=host_addr_full,
+                                                 rank=rank,
+                                                 world_size=world_size)
             num_gpus = torch.distributed.get_world_size()
             num_gpus = 1
 
