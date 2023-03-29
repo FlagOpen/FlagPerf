@@ -28,12 +28,10 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # If not set, it will be os.path.dirname(run.py)/../../training/
-#FLAGPERF_PATH_HOST = "/home/flagperf/training"
-FLAGPERF_PATH_HOST = "/home/wuwenli/FlagPerf_tf/training"
+FLAGPERF_PATH_HOST = "/home/flagperf/training"
 
 # Set the mapping directory of flagperf in container.
-#FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
-FLAGPERF_PATH_CONTAINER = "/workspace/flagperf_wwl/training"
+FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
 
 # Set log path on the host here.
 FLAGPERF_LOG_PATH_HOST = FLAGPERF_PATH_HOST + "/result/"
@@ -50,11 +48,11 @@ CLEAR_CACHES = True
 
 # Set the case list you want to run here.
 # CASES is a list of case names.
-# CASES = [
-#     'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
-#     'CPM_TORCH_DEMO_A100_1X8'
-# ]
-CASES = ['RESNET50_TENSORFLOW2_DEMO_A100_1x8']
+CASES = [
+    'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
+    'CPM_TORCH_DEMO_A100_1X8'
+]
+# CASES = ['RESNET50_TENSORFLOW2_DEMO_A100_1x8']
 
 # Config each case in a dictionary like this.
 BERT_PADDLE_DEMO_A100_1X8 = {  # benchmark case name, one in CASES
