@@ -21,6 +21,7 @@
 |     | Pytorch  |Paddle|TensorFlow2|
 |  ----  | ----  |  ----  | ----  |
 | Nvidia GPU | ✅ |N/A  |N/A|
+| 昆仑芯 XPU | ✅ |N/A  |N/A|
 
 
 
