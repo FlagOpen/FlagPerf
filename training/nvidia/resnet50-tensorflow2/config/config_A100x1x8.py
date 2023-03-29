@@ -4,7 +4,7 @@
 # Base params  = base_configs.ExperimentConfig
 do_train = True
 model_dir = 'result_test-1'
-model_ckpt_dir='/workspace/FlagPerf_tf/training/test'
+model_ckpt_dir = '/workspace/FlagPerf_tf/training/test'
 mode = 'train_and_eval'
 # target_accuracy: float = 0.01
 target_accuracy: float = 1
@@ -52,9 +52,8 @@ model = dict(name='resnet',
 train = dict(resume_checkpoint=True,
              epochs=90,
              time_history=dict(log_steps=100),
-             callbacks=dict(
-                enable_checkpoint_and_export=False,
-                enable_backup_and_restore=True))
+             callbacks=dict(enable_checkpoint_and_export=False,
+                            enable_backup_and_restore=True))
 evaluation = dict(epochs_between_evals=1)
 
 # local_rank for distributed training on gpus

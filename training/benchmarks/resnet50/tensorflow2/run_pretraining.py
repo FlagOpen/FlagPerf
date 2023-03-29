@@ -342,9 +342,10 @@ def train_and_eval(params: base_configs.ExperimentConfig,
 
         initial_epoch = 0
         if params.train.resume_checkpoint:
-            initial_epoch = resume_from_checkpoint(model=model,
-                                                   model_dir=params.model_ckpt_dir,
-                                                   train_steps=train_steps)
+            initial_epoch = resume_from_checkpoint(
+                model=model,
+                model_dir=params.model_ckpt_dir,
+                train_steps=train_steps)
         callbacks = custom_callbacks.get_callbacks(
             model_checkpoint=params.train.callbacks.
             enable_checkpoint_and_export,
@@ -383,7 +384,7 @@ def train_and_eval(params: base_configs.ExperimentConfig,
                         callbacks=callbacks,
                         verbose=2,
                         **validation_kwargs)
-    
+
     driver.event(Event.TRAIN_END)
 
     validation_output = None
