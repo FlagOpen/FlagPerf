@@ -1,5 +1,6 @@
-from typing import ClassVar
-# from train.event.base import BaseTrainingEventInterface
+vendor: str = None
+# model name
+name: str = "CPM"
 
 # random seed
 seed: int = 1234
@@ -75,7 +76,7 @@ use_gradient_as_bucket_view: bool = False
 
 ## load and save args
 # Path to a directory containing a model checkpoint.
-init_checkpoint: str = None
+init_checkpoint = "cpm_model_states_medium.pt"
 
 # Output directory to save checkpoints to.
 save: str = None

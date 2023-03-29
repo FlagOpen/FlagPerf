@@ -6,7 +6,10 @@ from torch import nn, Tensor
 from typing import Tuple
 
 import optimizers
-from apex.optimizers import FusedAdam as Adam
+try:
+    from apex.optimizers import FusedAdam as Adam
+except ImportError:
+    from torch.optim import AdamW as Adam
 from optimizers import FP16_Optimizer, get_optimizer_param_groups
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))

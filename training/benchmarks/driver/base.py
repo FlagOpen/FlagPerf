@@ -71,7 +71,7 @@ class Driver(object):
     def launch(self):
         self.event(Event.LAUNCH_TRAINING)
         config_path: str = self.config.config
-        config_dict = config.get_properties_from_config(self.config)
+        config_dict = self.config.get_properties_from_config(self.config)
         for key, value in config_dict.items():
             if type(value) not in [int, float, str, bool
                                    ] and not isinstance(value, Iterable):
