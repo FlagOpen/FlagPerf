@@ -42,7 +42,7 @@ export LOCAL_RANK=0
 在该路径目录下
 
 ```
-python run_pretraining.py 
+python run_pretraining.py
 --data_dir data_path
 --extern_config_dir config_path
 --extern_config_file config_file.py
@@ -50,10 +50,10 @@ python run_pretraining.py
 
 example：
 ```
-python run_pretraining.py 
---data_dir /ssd2/yangjie40/data_config 
---extern_config_dir /ssd2/yangjie40/flagperf/training/nvidia/bert-pytorch/config 
---extern_config_file config_A100x1x2.py 
+python run_pretraining.py
+--data_dir /ssd2/yangjie40/data_config
+--extern_config_dir /ssd2/yangjie40/flagperf/training/nvidia/bert-pytorch/config
+--extern_config_file config_A100x1x2.py
 ```
 
 
@@ -79,7 +79,6 @@ python run_pretraining.py
 | 单机2卡  | config_A100x1x2 | N/A         | 0.67     | N/A      | N/A     | N/A              |
 | 单机4卡  | config_A100x1x4 | 1715.28     | 0.67     | 0.6809   | 6250    | 180.07           |
 | 单机8卡  | config_A100x1x8 | 1315.42     | 0.67     | 0.6818   | 4689    | 355.63           |
-| 两机8卡  | config_A100x2x8 | N/A         | 0.67     | N/A      | N/A     | N/A              |
 
 ### 许可证
 

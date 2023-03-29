@@ -4,13 +4,13 @@
 BERT stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications.
 BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5% (7.7% point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).
 
-Please refer to this paper for a detailed description of BERT:  
-[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805) 
+Please refer to this paper for a detailed description of BERT:
+[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)
 
 
 ###  模型代码来源
 [Bert MLPerf](https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA/benchmarks/bert/implementations)
- 
+
 
 ### 模型Checkpoint下载
 
@@ -87,7 +87,4 @@ python3 pick_eval_samples.py \
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|
 |  ----  | ----  |  ----  | ----  |
-| Nvidia GPU | N/A |✅  |N/A|
-
-
-
+| Nvidia GPU | N/A |[✅](../../nvidia/bert-paddle/README.md)  |N/A|
