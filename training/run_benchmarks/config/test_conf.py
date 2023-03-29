@@ -4,8 +4,11 @@
 # Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
+
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
+#   iluvatar:
+#       ' -v /lib/modules:/lib/modules '
 #   kunlunxin:
 #       " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
 #       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
@@ -176,7 +179,7 @@ GLM_TORCH_DEMO_R300_1X8 = {
     "data_dir_container": "/mnt/data/glm/train/",
 }
 
-RESNET50_TENSORFLOW2_DEMO_A100_1x8 = {  # benchmark case name, one in CASES
+RESNET50_TENSORFLOW2_DEMO_A100_1x8 = {
     "model": "resnet50",  # model name
     "framework": "tensorflow2",  # AI framework
     "config":
@@ -189,3 +192,4 @@ RESNET50_TENSORFLOW2_DEMO_A100_1x8 = {  # benchmark case name, one in CASES
     "data_dir_container":
     "/mnt/data/ImageNet2012/tf_records",  # Data path in container
 }
+
