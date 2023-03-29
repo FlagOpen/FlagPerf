@@ -12,16 +12,15 @@ from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 
-
 def convert_model(model: nn.Module) -> nn.Module:
     return model
 
 
 def create_optimizer(model, args):
-    optimizer = torch.optim.SGD(model.parameters(), 
-                    lr=args.lr,
-                    momentum=args.momentum,
-                    weight_decay=args.weight_decay)
+    optimizer = torch.optim.SGD(model.parameters(),
+                                lr=args.lr,
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay)
     return optimizer
 
 

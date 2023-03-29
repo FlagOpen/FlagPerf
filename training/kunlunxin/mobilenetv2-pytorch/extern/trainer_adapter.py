@@ -14,13 +14,12 @@ from torch_xmlir.optimizer import SGD
 import torch_xmlir.core.xpu_model as xm
 
 
-
 def convert_model(model: nn.Module) -> nn.Module:
     return model
 
 
 def create_optimizer(model, args):
-    optimizer = SGD(model.parameters(), 
+    optimizer = SGD(model.parameters(),
                     lr=args.lr,
                     momentum=args.momentum,
                     weight_decay=args.weight_decay)

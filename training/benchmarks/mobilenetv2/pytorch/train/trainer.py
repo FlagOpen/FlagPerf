@@ -19,7 +19,7 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
 
 
-def accuracy(output, target, topk=(1,)):
+def accuracy(output, target, topk=(1, )):
     """Computes the accuracy over the k top predictions for the specified values of k"""
     with torch.no_grad():
         maxk = max(topk)
@@ -112,7 +112,8 @@ class Trainer:
             eval_result = None
             if self.can_do_eval(state):
                 eval_start = time.time()
-                state.eval_loss, state.eval_acc1, state.eval_acc5 = self.evaluator.evaluate(self)
+                state.eval_loss, state.eval_acc1, state.eval_acc5 = self.evaluator.evaluate(
+                    self)
                 eval_end = time.time()
                 eval_result = dict(global_steps=state.global_steps,
                                    eval_loss=state.eval_loss,
@@ -147,13 +148,14 @@ class Trainer:
         state.loss, state.acc1, state.acc5 = self.forward(batch)
         self.adapter.backward(state.global_steps, state.loss, self.optimizer)
         if dist.is_available() and dist.is_initialized():
-            total = torch.tensor([state.loss, state.acc1, state.acc5], 
-                                        dtype=torch.float32, device=self.config.device)
+            total = torch.tensor([state.loss, state.acc1, state.acc5],
+                                 dtype=torch.float32,
+                                 device=self.config.device)
             dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
             total = total / dist.get_world_size()
             state.loss, state.acc1, state.acc5 = total.tolist()
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
-                                            self.optimizer, self.grad_scaler)
+                          self.optimizer, self.grad_scaler)
 
     def detect_training_status(self, state):
         config = self.config
@@ -186,12 +188,12 @@ class Trainer:
         loss = criterion(output, target)
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
         return loss, acc1, acc5
-    
+
     def inference(self, batch):
         self.model.eval()
         output = self.forward(batch)
         return output
-    
+
     def process_batch(self, batch, device):
         """Process batch and produce inputs for the model."""
         batch = tuple(t.to(device, non_blocking=True) for t in batch)

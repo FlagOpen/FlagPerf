@@ -5,10 +5,8 @@ import sys
 import time
 from typing import Any, Tuple
 
-
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
-                                             "../../")))  
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper, get_finished_info
 
@@ -25,15 +23,13 @@ logger = None
 def main() -> Tuple[Any, Any]:
     import config
     global logger
-    
 
     init_helper = InitHelper(config)
-    model_driver = init_helper.init_driver(globals(), locals())  
+    model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.INIT_START)
-
 
     logger = model_driver.logger
     init_start_time = logger.previous_log_time
@@ -61,26 +57,27 @@ def main() -> Tuple[Any, Any]:
     trainer.init()
     dist_pytorch.barrier(config.vendor)
 
-    init_evaluation_start = time.time() 
-    training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(trainer)
+    init_evaluation_start = time.time()
+    training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(
+        trainer)
 
-    init_evaluation_end = time.time() 
-    init_evaluation_info = dict(
-        eval_acc1=training_state.eval_acc1,
-        eval_acc5=training_state.eval_acc5,
-        time=init_evaluation_end - init_evaluation_start)
+    init_evaluation_end = time.time()
+    init_evaluation_info = dict(eval_acc1=training_state.eval_acc1,
+                                eval_acc5=training_state.eval_acc5,
+                                time=init_evaluation_end -
+                                init_evaluation_start)
     model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     if not config.do_train:
         return config, training_state
 
     model_driver.event(Event.INIT_END)
-    init_end_time = logger.previous_log_time 
-    training_state.init_time = (init_end_time - init_start_time) / 1e+3 
+    init_end_time = logger.previous_log_time
+    training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time 
+    raw_train_start_time = logger.previous_log_time
 
     epoch = -1
     while training_state.global_steps < config.max_steps and \
@@ -90,7 +87,7 @@ def main() -> Tuple[Any, Any]:
         trainer.train_one_epoch(train_dataloader)
 
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time 
+    raw_train_end_time = logger.previous_log_time
 
     training_state.raw_train_time = (raw_train_end_time -
                                      raw_train_start_time) / 1e+3
