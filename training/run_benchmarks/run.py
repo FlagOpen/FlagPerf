@@ -18,7 +18,7 @@ from utils import cluster_manager
 from utils import flagperf_logger
 from utils import image_manager
 
-VERSION = "v0.2"
+VERSION = "v0.1"
 RUN_LOGGER = flagperf_logger.FlagPerfLogger()
 CLUSTER_MGR = cluster_manager.ClusterManager()
 
@@ -362,7 +362,6 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
         RUN_LOGGER.info("Stop containers in cluster.")
         stop_container_in_cluster(dp_path, container_name, nnodes)
         return False
-    # sys.exit(123)
     RUN_LOGGER.info("c) Prepare running environment......[SUCCESS]")
     RUN_LOGGER.info("d) Start monitors......")
     start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
