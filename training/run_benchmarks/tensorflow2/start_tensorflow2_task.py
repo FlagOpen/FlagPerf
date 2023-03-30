@@ -54,6 +54,13 @@ def parse_args():
                         required=True,
                         help="a list of all hosts of the cluster, which is "
                         "separated by a comma.")
+    parser.add_argument(
+        "--hosts_ports",
+        default="2023",
+        type=str,
+        required=True,
+        help="a list of all hosts's port of the cluster, which is "
+        "separated by a comma.")
 
     parser.add_argument("--vendor",
                         type=str,
@@ -118,6 +125,7 @@ def _set_tf_container_envs(task_args):
     current_env["FLAGPERF_BASE_PORT"] = str(task_args.master_port)
     current_env["FLAGPERF_NODE_RANK"] = str(task_args.node_rank)
     current_env["FLAGPERF_HOSTS"] = task_args.hosts
+    current_env["FLAGPERF_HOSTS_PORTS"] = task_args.hosts_ports
 
     # set GPU/MLU device env, TODO other vendor's device
     if task_args.visible_dev_env is not None:
@@ -135,7 +143,6 @@ def _get_basic_train_script_args(task_args):
         return None
     if task_args.enable_extern_config:
         extern_module_dir = helper.get_extern_module_dir(task_args)
-
     basic_train_script_args = " --data_dir " + task_args.data_dir \
                               + " --extern_config_dir " + config_dir \
                               + " --extern_config_file " + config_file
@@ -151,7 +158,6 @@ def main():
     '''
     task_args = parse_args()
     task_args.framework = "tensorflow2"
-
     task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
     helper.write_pid_file(task_args.log_dir, "start_tensorflow2_task.pid")
 
@@ -171,12 +177,10 @@ def main():
     start_cmd = sys.executable + " -u " + train_script_path + " " \
                 + basic_train_script_args + " 2>&1 | tee " + task_log_dir \
                 + "/noderank" + str(task_args.node_rank) + ".out.log"
-
     START_LOGGER.info("Start task with command: " + start_cmd)
     START_LOGGER.debug("----------- Process envs -----------")
     for environ in current_env.keys():
         START_LOGGER.debug(environ + ":" + current_env[environ])
-
     process = subprocess.Popen(start_cmd, shell=True, env=current_env)
     process.wait()
 

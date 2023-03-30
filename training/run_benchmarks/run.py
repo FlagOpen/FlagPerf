@@ -303,7 +303,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
                      + tc.ACCE_VISIBLE_DEVICE_ENV_NAME
     start_cmd += " \""
     RUN_LOGGER.debug("Run cmd in the cluster to start tasks, cmd=" + start_cmd)
-    CLUSTER_MGR.run_command_some_hosts_torch_ddp(start_cmd, nnodes, 15)
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
     # Wait a moment for starting tasks.
     time.sleep(60)
 
@@ -545,12 +545,12 @@ def main():
                     + " --nnodes " + str(nnodes) \
                     + " --nproc " + str(case_config["nproc"]) \
                     + " --hosts " + ",".join(cc.HOSTS) \
+                    + " --hosts_ports " + ",".join(cc.HOSTS_PORTS) \
                     + " --data_dir " + case_config["data_dir_container"] \
                     + " --log_dir " + log_dir_container \
                     + " --log_level " + tc.FLAGPERF_LOG_LEVEL \
                     + " --extern_config_file " + case_config["config"] \
                     + ".py" + " --enable_extern_config "
-
         RUN_LOGGER.info("=== 2.2 Prepare case config in cluster. ===")
         if not prepare_case_config_cluster(dp_path, case_config, case):
             RUN_LOGGER.warning("Prepare case config in cluster...[FAILED]. " +
