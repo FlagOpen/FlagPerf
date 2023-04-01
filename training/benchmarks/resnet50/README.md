@@ -53,10 +53,10 @@ Please refer to this paper for a detailed description of Deep Residual network:
 > Download website：https://image-net.org/
 
 ImageNet2012
-| Dataset                       | FileName  | Size  | Checksum                              |
-| ----------------------------- |----- | ----- | ------------------------------------- |
-| Training image (Task 1 & 2)   |ILSVRC2012_img_train.tar | 138GB | MD5: ccaf1013018ac1037801578038d370da |
-| Validation images (all tasks) | ILSVRC2012_img_val.tar |6.3GB | MD5: 29b22e2961454d5413ddabcf34fc5622 |
+| Dataset                       | FileName                 | Size  | Checksum                              |
+| ----------------------------- | ------------------------ | ----- | ------------------------------------- |
+| Training image (Task 1 & 2)   | ILSVRC2012_img_train.tar | 138GB | MD5: ccaf1013018ac1037801578038d370da |
+| Validation images (all tasks) | ILSVRC2012_img_val.tar   | 6.3GB | MD5: 29b22e2961454d5413ddabcf34fc5622 |
 ```
 file list:
 ILSVRC2012_img_train.tar
@@ -90,4 +90,4 @@ tree -d -L 1
 
 |            | Pytorch | Paddle | TensorFlow2 |
 | ---------- | ------- | ------ | ----------- |
-| Nvidia GPU | ✅       | N/A    | N/A         |
+| Nvidia GPU | [✅](../../nvidia/resnet50-pytorch/README.md)       | N/A    | doing       |

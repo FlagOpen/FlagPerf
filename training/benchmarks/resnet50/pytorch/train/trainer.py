@@ -1,3 +1,4 @@
+import os
 import math
 import time
 import torch
@@ -63,21 +64,36 @@ class Trainer:
     def init(self):
         """init"""
         self.model = create_model(self.config)
-        self.model = self._init_model(self.model, self.device)
         self.model = self.adapter.convert_model(self.model)
         self.optimizer = self.adapter.create_optimizer(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
         self.model = self.adapter.model_to_ddp(self.model)
         self.lr_scheduler = create_scheduler(self.optimizer)
         self.grad_scaler = self.adapter.create_grad_scaler()
+        self.model = self._init_model(self.model, self.device)
 
     def _init_model(self, model, device):
+        # resume from checkpoint
+        if self.config.init_checkpoint:
+            if os.path.isfile(config.init_checkpoint):
+                loc = "cpu"
+                if torch.cuda.is_available():
+                    # Map model to be loaded to specified single gpu
+                    loc = f"cuda:{config.local_rank}"
+                checkpoint = torch.load(config.init_checkpoint,
+                                        map_location=loc)
+                self.training_state.epoch = checkpoint["epoch"]
+                self.training_state.best_acc1 = checkpoint["best_acc1"]
+                arch = checkpoint["arch"]
 
-        if config.init_checkpoint:
-            checkpoint = torch.load(config.init_checkpoint, map_location="cpu")
-            if "model" in checkpoint:
-                checkpoint = checkpoint["model"]
-                model.load_state_dict(checkpoint, strict=True)
+                model.load_state_dict(checkpoint["state_dict"])
+                self.optimizer.load_state_dict(checkpoint["optimizer"])
+                self.lr_scheduler.load_state_dict(checkpoint["scheduler"])
+                print(
+                    f"=>model({arch}).loaded checkpoint '{config.init_checkpoint}' (epoch {checkpoint['epoch']})"
+                )
+        else:
+            print(f"=> no checkpoint found at '{config.init_checkpoint}'")
 
         model = model.to(device)
         return model
@@ -174,7 +190,7 @@ class Trainer:
     def can_do_eval(self, state):
         """can_do_eval"""
 
-        # config = self.config
+        config = self.config
         do_eval = all([
             state.num_trained_samples >= config.eval_iter_start_samples,
             state.global_steps %
@@ -188,7 +204,7 @@ class Trainer:
 
     def detect_training_status(self, state):
         """detect_training_status"""
-        # config = self.config
+        config = self.config
         if state.eval_acc1 >= config.target_acc1:
             print(
                 f"converged_success. eval_acc1: {state.eval_acc1}, target_acc1: {config.target_acc1}"

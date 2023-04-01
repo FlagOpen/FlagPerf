@@ -17,6 +17,8 @@ class TrainingState:
     acc1: float = 0.0
     acc5: float = 0.0
 
+    best_acc1: float = 0.0
+
     eval_loss: float = 0.0
     eval_acc1: float = 0.0
     eval_acc5: float = 0.0

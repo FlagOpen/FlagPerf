@@ -19,6 +19,7 @@ mutable_params = [
     "distributed",
     "init_checkpoint",
     "vendor",
+    "target_acc1",
 ]
 
 mutable_params += ["local_rank", "do_train", "data_dir", "log_freq"]

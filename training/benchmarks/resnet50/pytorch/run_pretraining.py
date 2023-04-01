@@ -21,14 +21,14 @@ import config
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
 
-# TODO 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
+# 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
 from train import trainer_adapter
 from train.device import Device
 from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
 
-# TODO 这里需要导入dataset, dataloader的相关方法。 这里尽量保证函数的接口一致，实现可以不同。
+# 这里需要导入dataset, dataloader的相关方法。 这里尽量保证函数的接口一致，实现可以不同。
 from dataloaders.dataloader import (
     build_train_dataset,
     build_eval_dataset,
@@ -47,7 +47,8 @@ def main() -> Tuple[Any, Any]:
 
     # init
     init_helper = InitHelper(config)
-    model_driver = init_helper.init_driver()
+    model_driver = init_helper.init_driver(global_module=globals(),
+                                           local_module=locals())
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
@@ -135,12 +136,12 @@ def main() -> Tuple[Any, Any]:
     raw_train_start_time = logger.previous_log_time
 
     # 训练过程
-    epoch = -1
+    epoch = training_state.epoch
     while (training_state.global_steps < config.max_steps
            and not training_state.end_training):
+        trainer.train_one_epoch(train_dataloader)
         epoch += 1
         training_state.epoch = epoch
-        trainer.train_one_epoch(train_dataloader)
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
@@ -165,6 +166,7 @@ if __name__ == "__main__":
 
         finished_info = {
             "e2e_time": e2e_time,
+            "global_steps": state.global_steps,
             "training_images_per_second": training_perf,
             "converged": state.converged,
             "final_loss": state.eval_loss,
