@@ -22,11 +22,6 @@ class Driver(object):
 
     def setup_config(self, parser):
         parser.add_argument(
-            "--data_dir",
-            type=str,
-            required=False,
-            help="The full path to the root of external modules")
-        parser.add_argument(
             "--extern_module_dir",
             type=str,
             required=False,

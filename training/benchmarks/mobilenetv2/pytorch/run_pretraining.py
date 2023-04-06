@@ -10,7 +10,6 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 import config
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
-from driver.utils import parse_args_config
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
@@ -24,8 +23,7 @@ logger = None
 def main() -> Tuple[Any, Any]:
     global logger
     global config
-    args_config = parse_args_config()
-    init_helper = InitHelper(config, args_config)
+    init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
