@@ -4,11 +4,10 @@
 import argparse
 import os
 import random
-import time
 import numpy as np
 import torch
-from driver import perf_logger, Driver, check
 import driver
+from driver import perf_logger, Driver, check
 
 
 class InitHelper:
@@ -16,9 +15,12 @@ class InitHelper:
     定义run_pretrain中的通用逻辑
     """
 
-    def __init__(self, config: object) -> None:
+    def __init__(self, config: object, args_config=None) -> None:
         self.config = config
         self.update_local_rank()
+        for cfg in vars(args_config):
+            if hasattr(self.config, cfg):
+                setattr(self.config, cfg, getattr(args_config, cfg))
         self.config = check.check_config(self.config)
 
     def init_driver(self, global_module, local_module) -> Driver:
