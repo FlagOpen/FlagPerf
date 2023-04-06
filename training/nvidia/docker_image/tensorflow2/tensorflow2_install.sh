@@ -1,2 +1,2 @@
 #!/bin/bash
-# Currently we have nothing to do when building docker image for tensorflow2.
+# Currently we have something to do when building docker image for tensorflow2.
