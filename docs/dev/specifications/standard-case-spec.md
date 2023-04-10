@@ -161,10 +161,9 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 - 配置文件列表如下：（以GLM-Pytorch为例）
 
 ```Bash
-├── config_A100x1x1.py      # 必选, 单机单卡配置
-├── config_A100x1x4.py      # 可选, 单机4卡配置
-├── config_A100x1x8.py      # 必选, 单机8卡配置
-├── config_A100x2x8.py      # 必选, 2机8卡配置
+├── config_A100x1x1.py      # 必选, 单机单卡配置，验证跑通和性能(吞吐量等)，精度不做强制要求
+├── config_A100x1x8.py      # 必选, 单机8卡配置，性能结果和精度验证都需要
+├── config_A100x2x8.py      # 必选, 2机8卡配置，验证跑通和性能(吞吐量等)，精度不做强制要求
 ├── environment_variables.sh # 环境变量文件，在容器启动后，运行case之前会source该文件，设置容器中的环境变量。
 └── requirements.txt         # 容器中安装python依赖包。FlagPerf框架在启动容器后，在运行case之前，执行pip install -r requirements.txt，安装依赖库
 ```
@@ -270,8 +269,7 @@ FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://
   #### 首次添加case
   1. 只提交添加模型必要代码变动;
   2. 上传起始训练ckpt到指定地址;
-  3. 提供必需1X8、2X8达标训练性能结果到case文档, 建议包含1X1、1X2、1X4多种场景下训练结果。
-
+  3. 提供必需1x1,2x8性能结果(吞吐量等,精度结果不做要求), 1X8性能及精度结果(必须)到case文档。
   #### 修改标准case
   1. 如果Perf中已经存在标准实现, 需要改动标准实现且修改内容影响Case运行结果，请在Case的README.md更新新的运行记录，随PR提交;并建议在PR的comment里提交在Nvidia GPU上运行日志附件。
   2. 如果该case已经有厂商已经适配，需要评估该修改对所有已经适配的厂商扩展是否有影响。
