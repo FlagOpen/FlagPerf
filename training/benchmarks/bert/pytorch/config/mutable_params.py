@@ -22,6 +22,7 @@ mutable_params = [
     "fused_dropout_add",
     "dense_seq_output",
     "cache_eval_data",
+    "vendor",
 ]
 
 mutable_params += ["local_rank", "do_train", "data_dir"]
