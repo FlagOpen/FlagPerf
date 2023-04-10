@@ -96,14 +96,14 @@ def main() -> Tuple[Any, Any]:
 
 if __name__ == "__main__":
     start = time.time()
-    config_, state = main()
+    config_update, state = main()
     if not dist_pytorch.is_main_process():
         sys.exit(0)
 
-    global_batch_size = dist_pytorch.global_batch_size(config_)
+    global_batch_size = dist_pytorch.global_batch_size(config_update)
     e2e_time = time.time() - start
     finished_info = {"e2e_time": e2e_time}
-    if config_.do_train:
+    if config_update.do_train:
         training_perf = (global_batch_size *
                          state.global_steps) / state.raw_train_time
         finished_info = {
