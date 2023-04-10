@@ -8,7 +8,6 @@ from typing import Any, Tuple
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Event, dist_pytorch
-# from driver.helper import InitHelper, get_finished_info
 from driver.helper import InitHelper
 
 from train import trainer_adapter

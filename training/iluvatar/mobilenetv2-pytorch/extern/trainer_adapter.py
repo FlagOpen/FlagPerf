@@ -1,9 +1,7 @@
 import os
-# from port_for import is_available
 import torch
 import torch.distributed as dist
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import _LRScheduler
 import config
 
 from torch import nn, Tensor
