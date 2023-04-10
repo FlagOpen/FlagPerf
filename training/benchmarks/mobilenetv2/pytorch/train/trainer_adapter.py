@@ -1,5 +1,3 @@
-import os
-from port_for import is_available
 import torch
 import torch.distributed as dist
 from torch.optim import Optimizer

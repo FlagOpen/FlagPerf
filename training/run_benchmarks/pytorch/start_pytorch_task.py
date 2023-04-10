@@ -127,7 +127,9 @@ def _get_basic_train_script_args(task_args):
     '''Generate basic train script args according to the script options.'''
     config_dir, config_file = helper.get_config_dir_file(task_args)
     if config_dir is None or config_file is None:
-        START_LOGGER.error("Can't find config dir or config file.")
+        START_LOGGER.error(
+            f"Can't find config dir :{config_dir} or config file:{config_file}."
+        )
         return None
     if task_args.enable_extern_config:
         extern_module_dir = helper.get_extern_module_dir(task_args)
@@ -135,10 +137,10 @@ def _get_basic_train_script_args(task_args):
             START_LOGGER.error("Can't find extern module dir.")
             return None
 
-    basic_train_script_args = " --data_dir " + task_args.data_dir \
-                              + " --extern_config_dir " + config_dir \
+    basic_train_script_args = " --extern_config_dir " + config_dir \
                               + " --extern_config_file " + config_file \
-                              + " --vendor " + task_args.vendor
+                              + " --vendor " + task_args.vendor \
+                              + " --data_dir " + task_args.data_dir
     if task_args.enable_extern_config:
         basic_train_script_args += " --enable_extern_config " \
                                    + "--extern_module_dir " + extern_module_dir

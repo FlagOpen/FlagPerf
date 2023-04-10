@@ -144,8 +144,8 @@ def activate(base_config,
 
     parsed_params = parse_from_args_and_config(params, cmd_args, ext_config,
                                                enable_extern_config)
-    # tf2
-    if isinstance(base_config, object):
+    # TODO：后续考虑换一个更优雅的方式
+    if "tensorflow2" in base_config.__path__:
         base_config.override(parsed_params.__dict__, False)
     else:
         _merge_dict_to_config(parsed_params.__dict__, base_config.__dict__)
