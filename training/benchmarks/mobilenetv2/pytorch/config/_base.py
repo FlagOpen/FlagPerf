@@ -12,7 +12,7 @@ fp16 = True
 # =========================================================
 # data
 # =========================================================
-data_dir: str = "/home/data/imagenet"
+data_dir: str = None
 train_data: str = "train"
 eval_data: str = "val"
 output_dir: str = ""

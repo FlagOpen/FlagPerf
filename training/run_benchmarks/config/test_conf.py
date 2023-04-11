@@ -52,6 +52,7 @@ CASES = [
     'BERT_PADDLE_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_1X8',
     'CPM_TORCH_DEMO_A100_1X8'
 ]
+# CASES = ['RESNET50_TENSORFLOW2_DEMO_A100_1x8']
 
 # Config each case in a dictionary like this.
 BERT_PADDLE_DEMO_A100_1X8 = {  # benchmark case name, one in CASES
@@ -174,4 +175,18 @@ GLM_TORCH_DEMO_R300_1X8 = {
     "nproc": 8,
     "data_dir_host": "/home/datasets_ckpt/glm/train/",
     "data_dir_container": "/mnt/data/glm/train/",
+}
+
+RESNET50_TENSORFLOW2_DEMO_A100_1x8 = {  # benchmark case name, one in CASES
+    "model": "resnet50",  # model name
+    "framework": "tensorflow2",  # AI framework
+    "config":
+    "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
+    "repeat": 1,  # How many times to run this case
+    "nnodes": 1,  #  How many hosts to run this case
+    "nproc": 8,  # How many processes will run on each host
+    "data_dir_host":
+    "/raid/dataset/ImageNet2012/tf_records",  # Data path on host
+    "data_dir_container":
+    "/mnt/data/ImageNet2012/tf_records",  # Data path in container
 }

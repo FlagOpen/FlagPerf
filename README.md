@@ -28,8 +28,8 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>BERT</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
@@ -43,7 +43,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>Paddle</td>
@@ -56,7 +56,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm/pytorch" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>Paddle</td>
@@ -67,7 +67,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="50.40" rowspan="3" style='height:50.40pt;border-right:none;border-bottom:none;' x:str>ResNet50</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
@@ -79,15 +79,15 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>TensorFlow2</td>
-    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MobileNetV2</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
@@ -99,7 +99,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>ViT</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/As</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
@@ -390,7 +390,7 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、昆仑芯、天数智芯、百度PaddlePaddle共同建设中。
+本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle与昆仑芯共同建设中。
 诚邀各框架、芯片团队与个人参与！
 ### 联系我们
 
