@@ -10,7 +10,6 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 import config
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
-from driver.utils import parse_args_config
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
@@ -24,8 +23,7 @@ logger = None
 def main() -> Tuple[Any, Any]:
     global logger
     global config
-    args_config = parse_args_config()
-    init_helper = InitHelper(config, args_config)
+    init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
@@ -98,14 +96,14 @@ def main() -> Tuple[Any, Any]:
 
 if __name__ == "__main__":
     start = time.time()
-    config_, state = main()
+    config_update, state = main()
     if not dist_pytorch.is_main_process():
         sys.exit(0)
 
-    global_batch_size = dist_pytorch.global_batch_size(config_)
+    global_batch_size = dist_pytorch.global_batch_size(config_update)
     e2e_time = time.time() - start
     finished_info = {"e2e_time": e2e_time}
-    if config_.do_train:
+    if config_update.do_train:
         training_perf = (global_batch_size *
                          state.global_steps) / state.raw_train_time
         finished_info = {

@@ -48,4 +48,3 @@ def check_config(config):
         raise ValueError(
             "Invalid gradient_accumulation_steps parameter: {}, should be >= 1"
             .format(config.gradient_accumulation_steps))
-    return config
