@@ -172,3 +172,5 @@ n_device: int = 1
 n_gpu: int = 1
 
 eval_interval_samples: int = 0
+
+vendor: str = None
