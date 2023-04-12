@@ -1,5 +1,8 @@
 from typing import ClassVar
 
+# chip vendor: nvidia, kunlunxin, iluvatar, cambricon etc. key vendor is required.
+vendor: str = None
+
 # The train dir. Should contain train_dir, eval_dir, init_checkpoint, bert_config_path for the task.
 data_dir: str = None
 
