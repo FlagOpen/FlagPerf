@@ -414,34 +414,17 @@ def main():
         utils.set_jit_fuser(args.fuser)
     if args.fast_norm:
         set_fast_norm()
-
-    in_chans = 3
-    if args.in_chans is not None:
-        in_chans = args.in_chans
-    elif args.input_size is not None:
-        in_chans = args.input_size[0]
         
-    trainer = Trainer(device=device,
-                      args=args)
+    trainer = Trainer(device=device, args=args)
     trainer.init()
     
-    
-    # todo wzd    
     data_config = resolve_data_config(vars(args), model=trainer.model, verbose=utils.is_primary(args))
 
-
-
-
-
-
-
     # setup automatic mixed-precision (AMP) loss scaling and op casting
-
     amp_autocast = suppress  # do nothing
     loss_scaler = None
     if use_amp == 'apex':
         assert device.type == 'cuda'
-        # todo wzd
         trainer.model, trainer.optimizer = amp.initialize(trainer.model, trainer.optimizer, opt_level='O1')
         loss_scaler = ApexScaler()
         if utils.is_primary(args):
@@ -458,14 +441,14 @@ def main():
 
     # optionally resume from a checkpoint
     resume_epoch = None
-    # if args.resume:
-    #     resume_epoch = resume_checkpoint(
-    #         model,
-    #         args.resume,
-    #         optimizer=None if args.no_resume_opt else optimizer,
-    #         loss_scaler=None if args.no_resume_opt else loss_scaler,
-    #         log_info=utils.is_primary(args),
-    #     )
+    if args.resume:
+        resume_epoch = resume_checkpoint(
+            trianer.model,
+            args.resume,
+            optimizer=None if args.no_resume_opt else trainer.optimizer,
+            loss_scaler=None if args.no_resume_opt else loss_scaler,
+            log_info=utils.is_primary(args),
+        )
 
     # setup exponential moving average of model weights, SWA could be used here too
     model_ema = None
@@ -473,8 +456,8 @@ def main():
         # Important to create EMA model after cuda(), DP wrapper, and AMP but before DDP wrapper
         model_ema = utils.ModelEmaV2(
             trainer.model, decay=args.model_ema_decay, device='cpu' if args.model_ema_force_cpu else None)
-        # if args.resume:
-        #     load_checkpoint(model_ema.module, args.resume, use_ema=True)
+        if args.resume:
+            load_checkpoint(model_ema.module, args.resume, use_ema=True)
 
     # setup distributed training
     if args.distributed:
@@ -514,18 +497,13 @@ def main():
             collate_fn = FastCollateMixup(**mixup_args)
         else:
             mixup_fn = Mixup(**mixup_args)
-    
-
 
     # wrap dataset in AugMix helper
     if trainer.num_aug_splits > 1:
         dataset_train = AugMixDataset(dataset_train, num_splits=trainer.num_aug_splits)
 
-
     loader_train = build_train_dataloader(dataset_train, data_config, trainer.num_aug_splits, collate_fn, device, args)
     loader_eval = build_eval_dataloader(dataset_eval, data_config, device, args)
-
-
 
     # setup checkpoint saver and eval metric tracking
     eval_metric = args.eval_metric
@@ -615,7 +593,7 @@ def main():
                     _logger.info("Distributing BatchNorm running means and vars")
                 utils.distribute_bn(model, args.world_size, args.dist_bn == 'reduce')
 
-            eval_metrics = validate(
+            eval_metrics = trainer.validate(
                 trainer.model,
                 loader_eval,
                 trainer.validate_loss_fn,
@@ -631,7 +609,7 @@ def main():
                 ema_eval_metrics = validate(
                     model_ema.module,
                     loader_eval,
-                    self.validate_loss_fn,
+                    trainer.validate_loss_fn,
                     args,
                     device=device,
                     amp_autocast=amp_autocast,
@@ -665,104 +643,6 @@ def main():
 
     if best_metric is not None:
         _logger.info('*** Best metric: {0} (epoch {1})'.format(best_metric, best_epoch))
-
-
-
-
-
-def validate(
-        model,
-        loader,
-        loss_fn,
-        args,
-        device=torch.device('cuda'),
-        amp_autocast=suppress,
-        log_suffix=''
-):
-    batch_time_m = utils.AverageMeter()
-    losses_m = utils.AverageMeter()
-    top1_m = utils.AverageMeter()
-    top5_m = utils.AverageMeter()
-
-    model.eval()
-
-    end = time.time()
-    last_idx = len(loader) - 1
-    with torch.no_grad():
-        acc_list = []
-        for batch_idx, (input, target) in enumerate(loader):
-
-            if batch_idx >= 10:
-                break
-
-            last_batch = batch_idx == last_idx
-            if not args.prefetcher:
-                input = input.to(device)
-                target = target.to(device)
-            if args.channels_last:
-                input = input.contiguous(memory_format=torch.channels_last)
-
-            with amp_autocast():
-                output = model(input)
-                if isinstance(output, (tuple, list)):
-                    output = output[0]
-
-                # augmentation reduction
-                reduce_factor = args.tta
-                if reduce_factor > 1:
-                    output = output.unfold(0, reduce_factor, reduce_factor).mean(dim=2)
-                    target = target[0:target.size(0):reduce_factor]
-
-                loss = loss_fn(output, target)
-            acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
-
-            if args.distributed:
-                reduced_loss = utils.reduce_tensor(loss.data, args.world_size)
-                acc1 = utils.reduce_tensor(acc1, args.world_size)
-                acc5 = utils.reduce_tensor(acc5, args.world_size)
-            else:
-                reduced_loss = loss.data
-
-            if device.type == 'cuda':
-                torch.cuda.synchronize()
-
-            losses_m.update(reduced_loss.item(), input.size(0))
-            top1_m.update(acc1.item(), output.size(0))
-            top5_m.update(acc5.item(), output.size(0))
-
-            acc_list.append([acc1.item(), acc5.item()])
-
-            batch_time_m.update(time.time() - end)
-            end = time.time()
-            if utils.is_primary(args) and (last_batch or batch_idx % args.log_interval == 0):
-                log_name = 'Test' + log_suffix
-                _logger.info(
-                    '{0}: [{1:>4d}/{2}]  '
-                    'Time: {batch_time.val:.3f} ({batch_time.avg:.3f})  '
-                    'Loss: {loss.val:>7.4f} ({loss.avg:>6.4f})  '
-                    'Acc@1: {top1.val:>7.4f} ({top1.avg:>7.4f})  '
-                    'Acc@5: {top5.val:>7.4f} ({top5.avg:>7.4f})'.format(
-                        log_name, batch_idx, last_idx,
-                        batch_time=batch_time_m,
-                        loss=losses_m,
-                        top1=top1_m,
-                        top5=top5_m)
-                )
-
-
-        # save loss and map for check
-        dname = "check"
-        if not os.path.isdir(dname):
-            os.makedirs(dname)
-        dname = dname +"/" + device.type
-        if not os.path.isdir(dname):
-            os.makedirs(dname)
-        torch.save(torch.tensor(acc_list), dname + "/acc_" + str(0) + ".pt")
-
-    metrics = OrderedDict([('loss', losses_m.avg), ('top1', top1_m.avg), ('top5', top5_m.avg)])
-
-    return metrics
-
 
 if __name__ == '__main__':
     main()

@@ -1,20 +1,18 @@
-from model import create_model
 import time
 import os
-import torch
 from collections import OrderedDict
+from contextlib import suppress
+import torch
 import torch.nn as nn
+from model import create_model
 
 from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm import utils
 from timm.models import safe_model_name, resume_checkpoint, load_checkpoint, model_parameters
 from timm.data import create_dataset, create_loader, resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
-
 from timm.loss import JsdCrossEntropy, SoftTargetCrossEntropy, BinaryCrossEntropy, LabelSmoothingCrossEntropy
 
-
 class Trainer:
-
     def __init__(self, device, args):
         super(Trainer, self).__init__()
         self.device = device
@@ -328,20 +326,98 @@ class Trainer:
 
         return OrderedDict([('loss', losses_m.avg)])
     
-    def train_one_step(self, batch):
-        # todo
-        return
-        
+    def validate(
+        model,
+        loader,
+        loss_fn,
+        args,
+        device=torch.device('cuda'),
+        amp_autocast=suppress,
+        log_suffix=''
+    ):
+        batch_time_m = utils.AverageMeter()
+        losses_m = utils.AverageMeter()
+        top1_m = utils.AverageMeter()
+        top5_m = utils.AverageMeter()
 
-        
-    
-    def forward(self, batch):
-        
-        return 
-    
-    def inference(self, batch):
-        return 
+        model.eval()
 
-    def process_batch(self, batch, device):
-        return 
+        end = time.time()
+        last_idx = len(loader) - 1
+        with torch.no_grad():
+            acc_list = []
+            for batch_idx, (input, target) in enumerate(loader):
+
+                if batch_idx >= 10:
+                    break
+
+                last_batch = batch_idx == last_idx
+                if not args.prefetcher:
+                    input = input.to(device)
+                    target = target.to(device)
+                if args.channels_last:
+                    input = input.contiguous(memory_format=torch.channels_last)
+
+                with amp_autocast():
+                    output = model(input)
+                    if isinstance(output, (tuple, list)):
+                        output = output[0]
+
+                    # augmentation reduction
+                    reduce_factor = args.tta
+                    if reduce_factor > 1:
+                        output = output.unfold(0, reduce_factor, reduce_factor).mean(dim=2)
+                        target = target[0:target.size(0):reduce_factor]
+
+                    loss = loss_fn(output, target)
+                acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
+
+                if args.distributed:
+                    reduced_loss = utils.reduce_tensor(loss.data, args.world_size)
+                    acc1 = utils.reduce_tensor(acc1, args.world_size)
+                    acc5 = utils.reduce_tensor(acc5, args.world_size)
+                else:
+                    reduced_loss = loss.data
+
+                if device.type == 'cuda':
+                    torch.cuda.synchronize()
+
+                losses_m.update(reduced_loss.item(), input.size(0))
+                top1_m.update(acc1.item(), output.size(0))
+                top5_m.update(acc5.item(), output.size(0))
+
+                acc_list.append([acc1.item(), acc5.item()])
+
+                batch_time_m.update(time.time() - end)
+                end = time.time()
+                if utils.is_primary(args) and (last_batch or batch_idx % args.log_interval == 0):
+                    log_name = 'Test' + log_suffix
+                    _logger.info(
+                        '{0}: [{1:>4d}/{2}]  '
+                        'Time: {batch_time.val:.3f} ({batch_time.avg:.3f})  '
+                        'Loss: {loss.val:>7.4f} ({loss.avg:>6.4f})  '
+                        'Acc@1: {top1.val:>7.4f} ({top1.avg:>7.4f})  '
+                        'Acc@5: {top5.val:>7.4f} ({top5.avg:>7.4f})'.format(
+                            log_name, batch_idx, last_idx,
+                            batch_time=batch_time_m,
+                            loss=losses_m,
+                            top1=top1_m,
+                            top5=top5_m)
+                    )
+
+
+            # save loss and map for check
+            dname = "check"
+            if not os.path.isdir(dname):
+                os.makedirs(dname)
+            dname = dname +"/" + device.type
+            if not os.path.isdir(dname):
+                os.makedirs(dname)
+            torch.save(torch.tensor(acc_list), dname + "/acc_" + str(0) + ".pt")
+
+        metrics = OrderedDict([('loss', losses_m.avg), ('top1', top1_m.avg), ('top5', top5_m.avg)])
+
+        return metrics
+
+
             
