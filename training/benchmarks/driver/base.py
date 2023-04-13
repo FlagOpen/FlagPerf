@@ -12,7 +12,7 @@ from .event import Event, EventHandleRecord, EventManager
 
 class Driver(object):
 
-    def __init__(self, config, mutable_params, args_config=None):
+    def __init__(self, config, mutable_params):
         self.config = config
         self.mutable_params = mutable_params
         self.is_distributed = False
