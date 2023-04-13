@@ -196,7 +196,8 @@ class Trainer:
         num_updates = epoch * num_batches_per_epoch
 
         loss_list = []
-        for batch_idx, (input, target) in enumerate(loader):
+        for batch_idx, bbb in enumerate(loader):
+            input, target = bbb
 
             if batch_idx >= 100:
                 break
