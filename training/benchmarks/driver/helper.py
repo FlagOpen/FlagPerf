@@ -15,7 +15,7 @@ class InitHelper:
     定义run_pretrain中的通用逻辑
     """
 
-    def __init__(self, config: object, args_config=None) -> None:
+    def __init__(self, config: object) -> None:
         self.config = config
         self.update_local_rank()
 
