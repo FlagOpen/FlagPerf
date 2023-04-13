@@ -7,9 +7,9 @@ from typing import Any, Tuple
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+import config
 from driver import Event, dist_pytorch
-from driver.helper import InitHelper, get_finished_info
-
+from driver.helper import InitHelper
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
@@ -21,9 +21,8 @@ logger = None
 
 
 def main() -> Tuple[Any, Any]:
-    import config
     global logger
-
+    global config
     init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
@@ -97,14 +96,14 @@ def main() -> Tuple[Any, Any]:
 
 if __name__ == "__main__":
     start = time.time()
-    config, state = main()
+    config_update, state = main()
     if not dist_pytorch.is_main_process():
         sys.exit(0)
 
-    global_batch_size = dist_pytorch.global_batch_size(config)
+    global_batch_size = dist_pytorch.global_batch_size(config_update)
     e2e_time = time.time() - start
     finished_info = {"e2e_time": e2e_time}
-    if config.do_train:
+    if config_update.do_train:
         training_perf = (global_batch_size *
                          state.global_steps) / state.raw_train_time
         finished_info = {
