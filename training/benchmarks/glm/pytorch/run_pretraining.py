@@ -34,7 +34,7 @@ def main():
 
     glm_driver = Driver(config, config.mutable_params)
     glm_driver.setup_config(argparse.ArgumentParser("Glm"))
-    glm_driver.setup_modules(driver, globals(), locals())
+    glm_driver.setup_modules(globals(), locals())
 
     logger = glm_driver.logger
 

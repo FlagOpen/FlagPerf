@@ -6,24 +6,22 @@ from __future__ import print_function
 
 import argparse
 import os
+import random
 import sys
 import time
-import random
 
 import numpy as np
 import torch
 
+from dataloaders.tokenization_gpt2 import GPT2Tokenizer
+from dataloaders.dataloader import load_data
 from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
-from dataloaders.tokenization_gpt2 import GPT2Tokenizer
-from dataloaders.dataloader import load_data
-import train
 from train import trainer_adapter
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-import driver
 from driver import Driver, Event, dist_pytorch, check
 
 logger = None
@@ -39,7 +37,7 @@ def main():
 
     cpm_driver = Driver(config, config.mutable_params)
     cpm_driver.setup_config(argparse.ArgumentParser("CPM"))
-    cpm_driver.setup_modules(driver, globals(), locals())
+    cpm_driver.setup_modules(globals(), locals())
 
     logger = cpm_driver.logger
     dist_pytorch.init_dist_training_env(config)

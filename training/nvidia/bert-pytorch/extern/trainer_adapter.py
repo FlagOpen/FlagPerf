@@ -13,7 +13,6 @@ from apex.optimizers import FusedLAMB
 from apex.parallel import DistributedDataParallel as APEX_DDP
 from apex.parallel.distributed import flat_dist_call
 from torch.cuda.amp import GradScaler
-from torch.cuda.amp import GradScaler
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
 from torch.optim import Optimizer
 
@@ -23,11 +22,6 @@ import config
 from .distributed_fused_lamb import _pipeline_block_reductions_patched, _pipeline_step_patched
 
 BERT_MODEL = torch.nn.Module
-
-
-def convert_model(model: BERT_MODEL) -> BERT_MODEL:
-    #return convert_model(model)
-    return model
 
 
 def create_optimizer(model: BERT_MODEL) -> Optimizer:
@@ -219,5 +213,4 @@ def update_model_params(loss,
                     param.grad = None
     else:
         optimizer.step()
-
     optimizer.zero_grad()
