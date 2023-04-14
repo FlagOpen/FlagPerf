@@ -80,11 +80,12 @@ except ImportError as e:
 
 has_compile = hasattr(torch, 'compile')
 
-
-_logger = logging.getLogger('train')
+logger = None
 
 def main():
     import config
+    global logger
+    
     init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
@@ -96,9 +97,15 @@ def main():
         torch.backends.cudnn.benchmark = True
 
     config.prefetcher = not config.no_prefetcher
+    config.train_batch_size = config.batch_size
 
     # dist_pytorch.init_dist_training_env(config)
     # dist_pytorch.barrier(config.vendor) 
+    model_driver.event(Event.INIT_START)
+    
+    logger = model_driver.logger
+    init_start_time = logger.previous_log_time
+    
     init_helper.set_seed(config.seed, config.vendor)
     
     config.device = utils.init_distributed_device(config)
@@ -144,16 +151,16 @@ def main():
         trainer.model, trainer.optimizer = amp.initialize(trainer.model, trainer.optimizer, opt_level='O1')
         loss_scaler = ApexScaler()
         if utils.is_primary(config):
-            _logger.info('Using NVIDIA APEX AMP. Training in mixed precision.')
+            print('Using NVIDIA APEX AMP. Training in mixed precision.')
     elif use_amp == 'native':
         amp_autocast = partial(torch.autocast, device_type=config.device.type, dtype=amp_dtype)
         if config.device.type == 'cuda':
             loss_scaler = NativeScaler()
         if utils.is_primary(config):
-            _logger.info('Using native Torch AMP. Training in mixed precision.')
+            print('Using native Torch AMP. Training in mixed precision.')
     else:
         if utils.is_primary(config):
-            _logger.info('AMP not enabled. Training in float32.')
+            print('AMP not enabled. Training in float32.')
 
     # optionally resume from a checkpoint
     resume_epoch = None
@@ -180,11 +187,11 @@ def main():
         if has_apex and use_amp == 'apex':
             # Apex DDP preferred unless native amp is activated
             if utils.is_primary(config):
-                _logger.info("Using NVIDIA APEX DistributedDataParallel.")
+                print("Using NVIDIA APEX DistributedDataParallel.")
             trainer.model = ApexDDP(trainer.model, delay_allreduce=True)
         else:
             if utils.is_primary(config):
-                _logger.info("Using native Torch DistributedDataParallel.")
+                print("Using native Torch DistributedDataParallel.")
             trainer.model = NativeDDP(trainer.model, device_ids=[config.device], broadcast_buffers=not config.no_ddp_bb)
         # NOTE: EMA model does not need to be wrapped by DDP
 
@@ -255,7 +262,7 @@ def main():
         if has_wandb:
             wandb.init(project=config.experiment, config=config)
         else:
-            _logger.warning(
+            print(
                 "You've requested to log metrics to wandb but package not found. "
                 "Metrics not being logged to wandb, try `pip install wandb`")
 
@@ -266,6 +273,30 @@ def main():
         updates_per_epoch=updates_per_epoch,
         args=config,
     )
+    
+    # init_evaluation_start = time.time()
+    # training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(
+    #     trainer)
+
+    # init_evaluation_end = time.time()
+    # init_evaluation_info = dict(eval_acc1=training_state.eval_acc1,
+    #                             eval_acc5=training_state.eval_acc5,
+    #                             time=init_evaluation_end -
+    #                             init_evaluation_start)
+    # model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
+    
+    if not config.do_train:
+        return config, training_state
+    
+    model_driver.event(Event.INIT_END)
+    init_end_time = logger.previous_log_time
+    training_state.init_time = (init_end_time - init_start_time) / 1e+3
+    
+    
+    model_driver.event(Event.TRAIN_START)
+    raw_train_start_time = logger.previous_log_time
+    
+    
     start_epoch = 0
     if config.start_epoch is not None:
         # a specified start_epoch will always override the resume epoch
@@ -279,7 +310,7 @@ def main():
             lr_scheduler.step(start_epoch)
 
     if utils.is_primary(config):
-        _logger.info(
+        print(
             f'Scheduled epochs: {num_epochs}. LR stepped per {"epoch" if lr_scheduler.t_in_epochs else "update"}.')
 
     try:
@@ -305,14 +336,25 @@ def main():
 
             if config.distributed and config.dist_bn in ('broadcast', 'reduce'):
                 if utils.is_primary(config):
-                    _logger.info("Distributing BatchNorm running means and vars")
+                    print("Distributing BatchNorm running means and vars")
                 utils.distribute_bn(model, config.world_size, config.dist_bn == 'reduce')
-
-            eval_metrics = trainer.validate(
+                
+            eval_start = time.time()
+            eval_metrics, training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = trainer.validate(
                 trainer.model,
                 loader_eval,
                 amp_autocast=amp_autocast,
-                )
+            )
+            eval_end = time.time()
+            eval_result = dict(global_steps=training_state.global_steps,
+                                eval_loss=training_state.eval_loss,
+                                eval_acc1=training_state.eval_acc1,
+                                eval_acc5=training_state.eval_acc5,
+                                time=eval_end - eval_start)
+            
+
+            if eval_result is not None:
+                driver.event(Event.EVALUATE, eval_result)
 
             if model_ema is not None and not config.model_ema_force_cpu:
                 if config.distributed and config.dist_bn in ('broadcast', 'reduce'):
@@ -338,11 +380,6 @@ def main():
                     log_wandb=config.log_wandb and has_wandb,
                 )
 
-            if saver is not None:
-                # save proper checkpoint with eval metric
-                save_metric = eval_metrics[eval_metric]
-                best_metric, best_epoch = saver.save_checkpoint(epoch, metric=save_metric)
-
             if lr_scheduler is not None:
                 # step LR for next epoch
                 lr_scheduler.step(epoch + 1, eval_metrics[eval_metric])
@@ -350,8 +387,35 @@ def main():
     except KeyboardInterrupt:
         pass
 
+    model_driver.event(Event.TRAIN_END)
+    raw_train_end_time = logger.previous_log_time
+    
+    training_state.raw_train_time = (raw_train_end_time -
+                                    raw_train_start_time) / 1e+3
+    
     if best_metric is not None:
-        _logger.info('*** Best metric: {0} (epoch {1})'.format(best_metric, best_epoch))
+        print('*** Best metric: {0} (epoch {1})'.format(best_metric, best_epoch))
+    return config, training_state
 
 if __name__ == '__main__':
-    main()
+    start = time.time()
+    config, state = main()
+    if not dist_pytorch.is_main_process():
+        sys.exit(0)
+    global_batch_size = dist_pytorch.global_batch_size(config)
+    e2e_time = time.time() - start
+    finished_info = {"e2e_time": e2e_time} 
+    if config.do_train:
+        training_perf = (global_batch_size *
+                         state.global_steps) / state.raw_train_time
+        finished_info = {
+            "e2e_time": e2e_time,
+            "training_images_per_second": training_perf,
+            "converged": state.converged,
+            "final_loss": state.eval_loss,
+            "final_acc1": state.eval_acc1,
+            "final_acc5": state.eval_acc5,
+            "raw_train_time": state.raw_train_time,
+            "init_time": state.init_time,
+        }
+    logger.log(Event.FINISHED, message=finished_info, stacklevel=0)

@@ -11,7 +11,7 @@ name: str = "vit_base_patch16_224"
 # =========================================================
 log_freq: int = 1
 n_device: int = 1
-
+do_train = True
 
 
 

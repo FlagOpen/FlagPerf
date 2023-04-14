@@ -164,8 +164,6 @@ class Trainer:
         self,
         epoch,
         loader,
-        # loss_fn,
-        # args,
         lr_scheduler=None,
         saver=None,
         output_dir=None,
@@ -176,6 +174,8 @@ class Trainer:
     ):
         device = self.device
         args=self.args
+        state = self.training_state
+        
         if args.mixup_off_epoch and epoch >= args.mixup_off_epoch:
             if args.prefetcher and loader.mixup_enabled:
                 loader.mixup_enabled = False
@@ -333,7 +333,6 @@ class Trainer:
         amp_autocast=suppress,
         log_suffix=''
     ):
-        loss_fn = self.validate_loss_fn
         device = self.device
         args = self.args
         batch_time_m = utils.AverageMeter()
@@ -370,7 +369,7 @@ class Trainer:
                         output = output.unfold(0, reduce_factor, reduce_factor).mean(dim=2)
                         target = target[0:target.size(0):reduce_factor]
 
-                    loss = loss_fn(output, target)
+                    loss = self.validate_loss_fn(output, target)
                 acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
 
                 if args.distributed:
@@ -406,19 +405,15 @@ class Trainer:
                             top5=top5_m)
                     )
 
-
             # save loss and map for check
-            dname = "check"
-            if not os.path.isdir(dname):
-                os.makedirs(dname)
-            dname = dname +"/" + device.type
-            if not os.path.isdir(dname):
-                os.makedirs(dname)
-            torch.save(torch.tensor(acc_list), dname + "/acc_" + str(0) + ".pt")
+            # dname = "check"
+            # if not os.path.isdir(dname):
+            #     os.makedirs(dname)
+            # dname = dname +"/" + device.type
+            # if not os.path.isdir(dname):
+            #     os.makedirs(dname)
+            # torch.save(torch.tensor(acc_list), dname + "/acc_" + str(0) + ".pt")
 
         metrics = OrderedDict([('loss', losses_m.avg), ('top1', top1_m.avg), ('top5', top5_m.avg)])
 
-        return metrics
-
-
-            
+        return metrics, losses_m.avg, top1_m.avg, top5_m.avg
