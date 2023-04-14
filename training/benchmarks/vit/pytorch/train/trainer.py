@@ -176,6 +176,11 @@ class Trainer:
         args=self.args
         state = self.training_state
         
+        driver = self.driver
+        driver.event(Event.EPOCH_BEGIN, epoch)
+        
+        step_start_time = time.time()
+        
         if args.mixup_off_epoch and epoch >= args.mixup_off_epoch:
             if args.prefetcher and loader.mixup_enabled:
                 loader.mixup_enabled = False
@@ -195,11 +200,11 @@ class Trainer:
         num_updates = epoch * num_batches_per_epoch
 
         loss_list = []
-        for batch_idx, bbb in enumerate(loader):
-            input, target = bbb
-
+        for batch_idx, (input, target) in enumerate(loader):
             if batch_idx >= 100:
                 break
+            state.global_steps += 1
+            driver.event(Event.STEP_BEGIN, step=state.global_steps)
 
             last_batch = batch_idx == last_idx
             data_time_m.update(time.time() - end)
@@ -306,6 +311,16 @@ class Trainer:
             if lr_scheduler is not None:
                 lr_scheduler.step_update(num_updates=num_updates, metric=losses_m.avg)
 
+            step_info = dict()
+            step_info["time"] = batch_time_m.val
+            step_info["rate"] = input.size(0) * args.world_size / batch_time_m.val
+            step_info["learning_rate"] = lr
+            
+            driver.event(Event.STEP_END,
+                        message=step_info,
+                        step=state.global_steps,
+                        loss=losses_m.val)
+            
             end = time.time()
             # end for
 
@@ -320,6 +335,8 @@ class Trainer:
 
         if hasattr(self.optimizer, 'sync_lookahead'):
             self.optimizer.sync_lookahead()
+
+        driver.event(Event.EPOCH_END, state.epoch)
 
         return OrderedDict([('loss', losses_m.avg)])
     
