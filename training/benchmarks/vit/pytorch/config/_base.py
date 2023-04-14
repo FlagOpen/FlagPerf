@@ -9,6 +9,12 @@ name: str = "vit_base_patch16_224"
 # =========================================================
 # data
 # =========================================================
+log_freq: int = 1
+n_device: int = 1
+
+
+
+
 data_dir: str = "/home/data/imagenet"
 
 
@@ -137,5 +143,7 @@ warmup_epochs  =  5
 warmup_lr  =  1e-05
 warmup_prefix  =  False
 weight_decay  =  2e-05
-worker_seeding  =  all
+worker_seeding  =  "all"
 workers  =  4
+
+distributed = False  # todo wzd
