@@ -12,17 +12,27 @@ from timm.models import safe_model_name, resume_checkpoint, load_checkpoint, mod
 from timm.data import create_dataset, create_loader, resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
 from timm.loss import JsdCrossEntropy, SoftTargetCrossEntropy, BinaryCrossEntropy, LabelSmoothingCrossEntropy
 
+from torch.types import Device
+from driver import Driver, Event, dist_pytorch
+from train.training_state import TrainingState
+
+
 class Trainer:
-    def __init__(self, device, args):
+    def __init__(self,
+                driver: Driver, 
+                adapter, 
+                # evaluator: Evaluator,
+                training_state: TrainingState, 
+                device: Device, 
+                args):
         super(Trainer, self).__init__()
         self.device = device
         self.args = args
-        # self.driver = driver
-        # self.adapter = adapter
-        # self.training_state = training_state
+        self.driver = driver
+        self.adapter = adapter
+        self.training_state = training_state
         # self.grad_scaler = None
 
-        # self.device = device
         self.optimizer = None
         # self.config = config
         self.model = None
@@ -40,24 +50,17 @@ class Trainer:
         self.mixup_active = args.mixup > 0 or args.cutmix > 0. or args.cutmix_minmax is not None
         
     def init(self):
-        self.model = create_model("vit_base_patch16_224")
+        self.model = create_model(self.args)
         self.model = self._init_model(self.model, self.args, self.device)
-        
-        # self.model = self.adapter.convert_model(self.model)
-        # self.model = self.adapter.model_to_fp16(self.myesodel)
+        self.model = self.adapter.convert_model(self.model)
+        self.model = self.adapter.model_to_fp16(self.model)
+        # self.model = self.adapter.model_to_ddp(self.model)
         self.optimizer = self._create_optimizer(
             self.model,
             self.args,
         )
         self.train_loss_fn = self._init_train_loss_fn(self.args)
         self.validate_loss_fn = self._init_validate_loss_fn(self.args)
-        # self.model = self.adapter.model_to_ddp(self.model)
-    #     self.lr_scheduler = create_scheduler(
-    #     self.optimizer,
-    #     updates_per_epoch=updates_per_epoch,
-    #     args=self.args,
-    # )
-        # self.grad_scaler = self.adapter.create_grad_scaler()
         
     def _init_model(self, model, args, device):
         if args.num_classes is None:
@@ -70,10 +73,6 @@ class Trainer:
         if utils.is_primary(args):
             print(
                 f'Model {safe_model_name(args.model)} created, param count:{sum([m.numel() for m in model.parameters()])}')
-
-
-        # setup augmentation batch splits for contrastive loss or split bn
-
 
         # enable split bn (separate bn stats per batch-portion)
         if args.split_bn:
@@ -320,7 +319,7 @@ class Trainer:
         torch.save(torch.tensor(loss_list), dname + "/loss_" + str(0) + ".pt")
 
         import torch_xmlir.debug.metrics as met
-        print(met.metrics_report())
+        # print(met.metrics_report())
 
         if hasattr(self.optimizer, 'sync_lookahead'):
             self.optimizer.sync_lookahead()
@@ -328,14 +327,15 @@ class Trainer:
         return OrderedDict([('loss', losses_m.avg)])
     
     def validate(
+        self,
         model,
         loader,
-        loss_fn,
-        args,
-        device=torch.device('cuda'),
         amp_autocast=suppress,
         log_suffix=''
     ):
+        loss_fn = self.validate_loss_fn
+        device = self.device
+        args = self.args
         batch_time_m = utils.AverageMeter()
         losses_m = utils.AverageMeter()
         top1_m = utils.AverageMeter()
@@ -393,7 +393,7 @@ class Trainer:
                 end = time.time()
                 if utils.is_primary(args) and (last_batch or batch_idx % args.log_interval == 0):
                     log_name = 'Test' + log_suffix
-                    _logger.info(
+                    print(
                         '{0}: [{1:>4d}/{2}]  '
                         'Time: {batch_time.val:.3f} ({batch_time.avg:.3f})  '
                         'Loss: {loss.val:>7.4f} ({loss.avg:>6.4f})  '

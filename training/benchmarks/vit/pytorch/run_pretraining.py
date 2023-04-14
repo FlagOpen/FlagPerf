@@ -35,9 +35,8 @@ import yaml
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
 
 from timm import utils
-from timm.layers import convert_splitbn_model, convert_sync_batchnorm, set_fast_norm
-from timm.models import create_model, safe_model_name, resume_checkpoint, load_checkpoint, model_parameters
-from timm.optim import create_optimizer_v2, optimizer_kwargs
+from timm.layers import set_fast_norm
+from timm.models import safe_model_name, resume_checkpoint, load_checkpoint
 from timm.utils import ApexScaler, NativeScaler
 from timm.data import resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
 
@@ -48,6 +47,9 @@ from dataloaders.dataloader import build_train_dataset, \
 from schedulers import create_scheduler
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
+from train import trainer_adapter
+from train.training_state import TrainingState
+
 
 try:
     from apex import amp
@@ -94,14 +96,12 @@ def main():
         torch.backends.cudnn.benchmark = True
 
     config.prefetcher = not config.no_prefetcher
-    device = utils.init_distributed_device(config)
-    if config.distributed:
-        _logger.info(
-            'Training in distributed mode with multiple processes, 1 device per process.'
-            f'Process {config.rank}, total {config.world_size}, device {config.device}.')
-    else:
-        _logger.info(f'Training with a single process on 1 device ({config.device}).')
-    assert config.rank >= 0
+
+    # dist_pytorch.init_dist_training_env(config)
+    # dist_pytorch.barrier(config.vendor) 
+    init_helper.set_seed(config.seed, config.vendor)
+    
+    config.device = utils.init_distributed_device(config)
 
     # resolve AMP arguments based on PyTorch / Apex availability
     use_amp = None
@@ -118,14 +118,20 @@ def main():
         if config.amp_dtype == 'bfloat16':
             amp_dtype = torch.bfloat16
 
-    utils.random_seed(config.seed, config.rank)
-
     if config.fuser:
         utils.set_jit_fuser(config.fuser)
     if config.fast_norm:
         set_fast_norm()
         
-    trainer = Trainer(device=device, args=config)
+    training_state = TrainingState()
+    trainer = Trainer(driver=model_driver,
+                      adapter=trainer_adapter,
+                    #   evaluator=evaluator,
+                      training_state=training_state,
+                      device=config.device,
+                      args=config)
+    training_state._trainer = trainer
+    
     trainer.init()
     
     data_config = resolve_data_config(vars(config), model=trainer.model, verbose=utils.is_primary(config))
@@ -134,14 +140,14 @@ def main():
     amp_autocast = suppress  # do nothing
     loss_scaler = None
     if use_amp == 'apex':
-        assert device.type == 'cuda'
+        assert config.device.type == 'cuda'
         trainer.model, trainer.optimizer = amp.initialize(trainer.model, trainer.optimizer, opt_level='O1')
         loss_scaler = ApexScaler()
         if utils.is_primary(config):
             _logger.info('Using NVIDIA APEX AMP. Training in mixed precision.')
     elif use_amp == 'native':
-        amp_autocast = partial(torch.autocast, device_type=device.type, dtype=amp_dtype)
-        if device.type == 'cuda':
+        amp_autocast = partial(torch.autocast, device_type=config.device.type, dtype=amp_dtype)
+        if config.device.type == 'cuda':
             loss_scaler = NativeScaler()
         if utils.is_primary(config):
             _logger.info('Using native Torch AMP. Training in mixed precision.')
@@ -179,12 +185,13 @@ def main():
         else:
             if utils.is_primary(config):
                 _logger.info("Using native Torch DistributedDataParallel.")
-            trainer.model = NativeDDP(trainer.model, device_ids=[device], broadcast_buffers=not config.no_ddp_bb)
+            trainer.model = NativeDDP(trainer.model, device_ids=[config.device], broadcast_buffers=not config.no_ddp_bb)
         # NOTE: EMA model does not need to be wrapped by DDP
 
     # create the train and eval datasets
     if config.data and not config.data_dir:
         config.data_dir = config.data
+        
     dataset_train = build_train_dataset(config)
     dataset_eval = build_eval_dataset(config)
 
@@ -212,8 +219,8 @@ def main():
     if trainer.num_aug_splits > 1:
         dataset_train = AugMixDataset(dataset_train, num_splits=trainer.num_aug_splits)
 
-    loader_train = build_train_dataloader(dataset_train, data_config, trainer.num_aug_splits, collate_fn, device, config)
-    loader_eval = build_eval_dataloader(dataset_eval, data_config, device, config)
+    loader_train = build_train_dataloader(dataset_train, data_config, trainer.num_aug_splits, collate_fn, config.device, config)
+    loader_eval = build_eval_dataloader(dataset_eval, data_config, config.device, config)
 
     # setup checkpoint saver and eval metric tracking
     eval_metric = config.eval_metric
@@ -304,22 +311,16 @@ def main():
             eval_metrics = trainer.validate(
                 trainer.model,
                 loader_eval,
-                trainer.validate_loss_fn,
-                config,
-                device=device,
                 amp_autocast=amp_autocast,
-            )
+                )
 
             if model_ema is not None and not config.model_ema_force_cpu:
                 if config.distributed and config.dist_bn in ('broadcast', 'reduce'):
                     utils.distribute_bn(model_ema, config.world_size, config.dist_bn == 'reduce')
 
-                ema_eval_metrics = validate(
+                ema_eval_metrics = trainer.validate(
                     model_ema.module,
                     loader_eval,
-                    trainer.validate_loss_fn,
-                    config,
-                    device=device,
                     amp_autocast=amp_autocast,
                     log_suffix=' (EMA)',
                 )
