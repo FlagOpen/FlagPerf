@@ -354,7 +354,7 @@ def main():
             
 
             if eval_result is not None:
-                driver.event(Event.EVALUATE, eval_result)
+                model_driver.event(Event.EVALUATE, eval_result)
 
             if model_ema is not None and not config.model_ema_force_cpu:
                 if config.distributed and config.dist_bn in ('broadcast', 'reduce'):
