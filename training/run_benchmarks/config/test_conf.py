@@ -166,12 +166,56 @@ CPM_TORCH_DEMO_A100_1X8 = {
     "data_dir_container": "/mnt/data/cpm/train/",
 }
 
+GLM_TORCH_DEMO_R300_1X1 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_R300x1x1",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 1,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
+GLM_TORCH_DEMO_R300_1X2 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_R300x1x2",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 2,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
+GLM_TORCH_DEMO_R300_1X4 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_R300x1x4",
+    "repeat": 1,
+    "nnodes": 1,
+    "nproc": 4,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
 GLM_TORCH_DEMO_R300_1X8 = {
     "model": "glm",
     "framework": "pytorch",
     "config": "config_R300x1x8",
     "repeat": 1,
     "nnodes": 1,
+    "nproc": 8,
+    "data_dir_host": "/home/datasets_ckpt/glm/train/",
+    "data_dir_container": "/mnt/data/glm/train/",
+}
+
+GLM_TORCH_DEMO_R300_2X8 = {
+    "model": "glm",
+    "framework": "pytorch",
+    "config": "config_R300x2x8",
+    "repeat": 1,
+    "nnodes": 2,
     "nproc": 8,
     "data_dir_host": "/home/datasets_ckpt/glm/train/",
     "data_dir_container": "/mnt/data/glm/train/",
