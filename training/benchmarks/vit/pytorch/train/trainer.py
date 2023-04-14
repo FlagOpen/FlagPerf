@@ -253,7 +253,7 @@ class Trainer:
             
             # 
             import torch_xmlir.core.xpu_model as xm
-            # xm.mark_step(None)  # eager模式不需要
+            xm.mark_step(None)  #  todo eager模式不需要
 
             if not args.distributed:
                 losses_m.update(loss.item(), input.size(0))
@@ -272,32 +272,32 @@ class Trainer:
                     reduced_loss = utils.reduce_tensor(loss.data, args.world_size)
                     losses_m.update(reduced_loss.item(), input.size(0))
 
-                if utils.is_primary(args):
-                    print(
-                        'Train: {} [{:>4d}/{} ({:>3.0f}%)]  '
-                        'Loss: {loss.val:#.4g} ({loss.avg:#.3g})  '
-                        'Time: {batch_time.val:.3f}s, {rate:>7.2f}/s  '
-                        '({batch_time.avg:.3f}s, {rate_avg:>7.2f}/s)  '
-                        'LR: {lr:.3e}  '
-                        'Data: {data_time.val:.3f} ({data_time.avg:.3f})'.format(
-                            epoch,
-                            batch_idx, len(loader),
-                            100. * batch_idx / last_idx,
-                            loss=losses_m,
-                            batch_time=batch_time_m,
-                            rate=input.size(0) * args.world_size / batch_time_m.val,
-                            rate_avg=input.size(0) * args.world_size / batch_time_m.avg,
-                            lr=lr,
-                            data_time=data_time_m)
-                    )
+                # if utils.is_primary(args):
+                #     print(
+                #         'Train: {} [{:>4d}/{} ({:>3.0f}%)]  '
+                #         'Loss: {loss.val:#.4g} ({loss.avg:#.3g})  '
+                #         'Time: {batch_time.val:.3f}s, {rate:>7.2f}/s  '
+                #         '({batch_time.avg:.3f}s, {rate_avg:>7.2f}/s)  '
+                #         'LR: {lr:.3e}  '
+                #         'Data: {data_time.val:.3f} ({data_time.avg:.3f})'.format(
+                #             epoch,
+                #             batch_idx, len(loader),
+                #             100. * batch_idx / last_idx,
+                #             loss=losses_m,
+                #             batch_time=batch_time_m,
+                #             rate=input.size(0) * args.world_size / batch_time_m.val,
+                #             rate_avg=input.size(0) * args.world_size / batch_time_m.avg,
+                #             lr=lr,
+                #             data_time=data_time_m)
+                #     )
 
-                    if args.save_images and output_dir:
-                        torchvision.utils.save_image(
-                            input,
-                            os.path.join(output_dir, 'train-batch-%d.jpg' % batch_idx),
-                            padding=0,
-                            normalize=True
-                        )
+                    # if args.save_images and output_dir:
+                    #     torchvision.utils.save_image(
+                    #         input,
+                    #         os.path.join(output_dir, 'train-batch-%d.jpg' % batch_idx),
+                    #         padding=0,
+                    #         normalize=True
+                    #     )
 
             if saver is not None and args.recovery_interval and (
                     last_batch or (batch_idx + 1) % args.recovery_interval == 0):
@@ -317,9 +317,6 @@ class Trainer:
         if not os.path.isdir(dname):
             os.makedirs(dname)
         torch.save(torch.tensor(loss_list), dname + "/loss_" + str(0) + ".pt")
-
-        import torch_xmlir.debug.metrics as met
-        # print(met.metrics_report())
 
         if hasattr(self.optimizer, 'sync_lookahead'):
             self.optimizer.sync_lookahead()
@@ -390,20 +387,20 @@ class Trainer:
 
                 batch_time_m.update(time.time() - end)
                 end = time.time()
-                if utils.is_primary(args) and (last_batch or batch_idx % args.log_interval == 0):
-                    log_name = 'Test' + log_suffix
-                    print(
-                        '{0}: [{1:>4d}/{2}]  '
-                        'Time: {batch_time.val:.3f} ({batch_time.avg:.3f})  '
-                        'Loss: {loss.val:>7.4f} ({loss.avg:>6.4f})  '
-                        'Acc@1: {top1.val:>7.4f} ({top1.avg:>7.4f})  '
-                        'Acc@5: {top5.val:>7.4f} ({top5.avg:>7.4f})'.format(
-                            log_name, batch_idx, last_idx,
-                            batch_time=batch_time_m,
-                            loss=losses_m,
-                            top1=top1_m,
-                            top5=top5_m)
-                    )
+                # if utils.is_primary(args) and (last_batch or batch_idx % args.log_interval == 0):
+                #     log_name = 'Test' + log_suffix
+                #     print(
+                #         '{0}: [{1:>4d}/{2}]  '
+                #         'Time: {batch_time.val:.3f} ({batch_time.avg:.3f})  '
+                #         'Loss: {loss.val:>7.4f} ({loss.avg:>6.4f})  '
+                #         'Acc@1: {top1.val:>7.4f} ({top1.avg:>7.4f})  '
+                #         'Acc@5: {top5.val:>7.4f} ({top5.avg:>7.4f})'.format(
+                #             log_name, batch_idx, last_idx,
+                #             batch_time=batch_time_m,
+                #             loss=losses_m,
+                #             top1=top1_m,
+                #             top5=top5_m)
+                #     )
 
             # save loss and map for check
             # dname = "check"

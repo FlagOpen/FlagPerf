@@ -261,10 +261,6 @@ def main():
     if utils.is_primary(config) and config.log_wandb:
         if has_wandb:
             wandb.init(project=config.experiment, config=config)
-        else:
-            print(
-                "You've requested to log metrics to wandb but package not found. "
-                "Metrics not being logged to wandb, try `pip install wandb`")
 
     # setup learning rate schedule and starting epoch
     updates_per_epoch = len(loader_train)
