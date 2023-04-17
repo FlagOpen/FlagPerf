@@ -421,26 +421,23 @@ def get_config_from_case(case):
 
     case_info = case.split(":")
     '''check if 4+ : in case, we don't care what to put in'''
-    if len(case_info) < 5:
+    if len(case_info) < 6:
         RUN_LOGGER.error(
-            "At least 5 terms split by \":\" should in test_config.CASES")
+            "At least 6 terms split by \":\" should in test_config.CASES")
+        RUN_LOGGER.error("model:framework:hardware_model:nnodes:nproc:repeat")
         return False, None
 
     case_model = case_info[0]
     case_framework = case_info[1]
     case_hardware = case_info[2]
-    case_node_proc = case_info[3]
-    case_repeat = case_info[4]
-    '''check node_proc and '''
-    if "x" not in case_node_proc:
-        RUN_LOGGER.error("It's invalid where case_nnodesxnproc located")
-        return False, None
-    case_nnodes = case_node_proc.split("x")[0]
-    case_nproc = case_node_proc.split("x")[0]
+    case_nnodes = case_info[3]
+    case_nproc = case_info[4]
+    case_repeat = case_info[5]
 
     case_config = {"model": case_model}
     case_config["framework"] = case_framework
-    case_config["config"] = "config_" + case_hardware + "x" + case_node_proc
+    case_config[
+        "config"] = "config_" + case_hardware + "x" + case_nnodes + "x" + case_nproc
     case_config["repeat"] = int(case_repeat)
     case_config["nnodes"] = int(case_nnodes)
     case_config["nproc"] = int(case_nproc)
