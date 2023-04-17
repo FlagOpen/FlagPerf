@@ -20,6 +20,8 @@ init_checkpoint: str = ""
 # =========================================================
 # train && evaluate
 # =========================================================
+gradient_accumulation_steps: int = 1
+
 aa: str  =  None
 amp  =  False
 amp_dtype: str =  "float16"
