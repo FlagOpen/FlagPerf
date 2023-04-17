@@ -53,7 +53,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl70" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" target="_parent">GLM</a></td>
-    <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm/pytorch" target="_parent">PyTorch</a></td>
+    <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
@@ -214,7 +214,7 @@ SSH_PORT = "22"
 ```
 
 2）修改测试配置文件
-测试配置文件在FlagPerf/training/run_benchmarks/config/test_conf.py，主要包括FlagPerf的部署路径、数据和模型checkpoint的路径、要跑的测试benchmark case列表和每个benchmark case的配置信息等。
+测试配置文件在FlagPerf/training/run_benchmarks/config/test_conf.py，主要包括FlagPerf的部署路径、数据和模型checkpoint的路径、要跑的测试benchmark case列表等。
 
 __Tips：__
 
@@ -400,4 +400,3 @@ flagperf@baai.ac.cn
 本项目基于Apache 2.0 license。
 本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。
 关于各模型测试Case的情况，请参考各模型测试Case目录。
-
