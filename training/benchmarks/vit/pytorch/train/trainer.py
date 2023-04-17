@@ -258,7 +258,7 @@ class Trainer:
             
             # 
             import torch_xmlir.core.xpu_model as xm
-            xm.mark_step(None)  #  todo eager模式不需要
+            # xm.mark_step(None)  #  todo eager模式不需要
 
             if not args.distributed:
                 losses_m.update(loss.item(), input.size(0))
