@@ -159,10 +159,10 @@ def init_dist_training_env(config):
     if config.vendor == "kunlunxin":
         import torch_xmlir.core.xpu_model as xm
         if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
-            config.device = xm.xpu_device()
+            config.device = xm.xpu_device(eager=True)
             config.n_device = 1
         else:
-            config.device = xm.xpu_device(config.local_rank)
+            config.device = xm.xpu_device(config.local_rank, eager=True)
             host_addr_full = 'tcp://' + os.environ[
                 "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
             rank = int(os.environ["RANK"])
