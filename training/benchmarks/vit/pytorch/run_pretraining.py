@@ -86,6 +86,10 @@ def main():
     import config
     global logger
     
+    config.prefetcher = not config.no_prefetcher
+    if not config.train_batch_size:
+        config.train_batch_size = config.batch_size
+    
     init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
@@ -96,11 +100,6 @@ def main():
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.benchmark = True
 
-    config.prefetcher = not config.no_prefetcher
-    config.train_batch_size = config.batch_size
-
-    # dist_pytorch.init_dist_training_env(config)
-    # dist_pytorch.barrier(config.vendor) 
     model_driver.event(Event.INIT_START)
     
     logger = model_driver.logger
@@ -133,7 +132,6 @@ def main():
     training_state = TrainingState()
     trainer = Trainer(driver=model_driver,
                       adapter=trainer_adapter,
-                    #   evaluator=evaluator,
                       training_state=training_state,
                       device=config.device,
                       args=config)
@@ -270,17 +268,6 @@ def main():
         args=config,
     )
     
-    # init_evaluation_start = time.time()
-    # training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(
-    #     trainer)
-
-    # init_evaluation_end = time.time()
-    # init_evaluation_info = dict(eval_acc1=training_state.eval_acc1,
-    #                             eval_acc5=training_state.eval_acc5,
-    #                             time=init_evaluation_end -
-    #                             init_evaluation_start)
-    # model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
-    
     if not config.do_train:
         return config, training_state
     
@@ -288,10 +275,8 @@ def main():
     init_end_time = logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
     
-    
     model_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time
-    
     
     start_epoch = 0
     if config.start_epoch is not None:
@@ -319,8 +304,6 @@ def main():
             train_metrics = trainer.train_one_epoch(
                 epoch,
                 loader_train,
-                # train_loss_fn,
-                # args,
                 lr_scheduler=lr_scheduler,
                 saver=saver,
                 output_dir=output_dir,
@@ -347,7 +330,6 @@ def main():
                                 eval_acc1=training_state.eval_acc1,
                                 eval_acc5=training_state.eval_acc5,
                                 time=eval_end - eval_start)
-            
 
             if eval_result is not None:
                 model_driver.event(Event.EVALUATE, eval_result)

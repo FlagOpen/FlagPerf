@@ -21,7 +21,6 @@ class Trainer:
     def __init__(self,
                 driver: Driver, 
                 adapter, 
-                # evaluator: Evaluator,
                 training_state: TrainingState, 
                 device: Device, 
                 args):
@@ -31,15 +30,10 @@ class Trainer:
         self.driver = driver
         self.adapter = adapter
         self.training_state = training_state
-        # self.grad_scaler = None
 
         self.optimizer = None
-        # self.config = config
         self.model = None
-        # self.evaluator = evaluator
         self.lr_scheduler = None
-        # self.global_batch_size = None
-        # self.overflow_buf = None
         self.train_loss_fn = None
         self.validate_loss_fn = None
         num_aug_splits = 0
@@ -54,7 +48,6 @@ class Trainer:
         self.model = self._init_model(self.model, self.args, self.device)
         self.model = self.adapter.convert_model(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
-        # self.model = self.adapter.model_to_ddp(self.model)
         self.optimizer = self._create_optimizer(
             self.model,
             self.args,
@@ -204,10 +197,13 @@ class Trainer:
             if batch_idx >= 100:
                 break
             state.global_steps += 1
-            driver.event(Event.STEP_BEGIN, step=state.global_steps)
-
+            
             last_batch = batch_idx == last_idx
             data_time_m.update(time.time() - end)
+            
+            if last_batch or batch_idx % args.log_freq == 0:
+                driver.event(Event.STEP_BEGIN, step=state.global_steps)
+
             if not args.prefetcher:
                 input, target = input.to(device), target.to(device)
                 if mixup_fn is not None:
@@ -256,20 +252,14 @@ class Trainer:
                         file_name = dname + "/" + "p_grad_" + str(pi)
                         torch.save(p.grad.cpu(), file_name)
             
-            # 
-            import torch_xmlir.core.xpu_model as xm
-            # xm.mark_step(None)  #  todo eager模式不需要
-
             if not args.distributed:
                 losses_m.update(loss.item(), input.size(0))
             
             loss_list.append(loss.item())  # scalar tensor
 
-            # torch.cuda.synchronize()
-
             num_updates += 1
             batch_time_m.update(time.time() - end)
-            if last_batch or batch_idx % args.log_interval == 0:
+            if last_batch or batch_idx % args.log_freq == 0:
                 lrl = [param_group['lr'] for param_group in self.optimizer.param_groups]
                 lr = sum(lrl) / len(lrl)
 
@@ -277,32 +267,14 @@ class Trainer:
                     reduced_loss = utils.reduce_tensor(loss.data, args.world_size)
                     losses_m.update(reduced_loss.item(), input.size(0))
 
-                # if utils.is_primary(args):
-                #     print(
-                #         'Train: {} [{:>4d}/{} ({:>3.0f}%)]  '
-                #         'Loss: {loss.val:#.4g} ({loss.avg:#.3g})  '
-                #         'Time: {batch_time.val:.3f}s, {rate:>7.2f}/s  '
-                #         '({batch_time.avg:.3f}s, {rate_avg:>7.2f}/s)  '
-                #         'LR: {lr:.3e}  '
-                #         'Data: {data_time.val:.3f} ({data_time.avg:.3f})'.format(
-                #             epoch,
-                #             batch_idx, len(loader),
-                #             100. * batch_idx / last_idx,
-                #             loss=losses_m,
-                #             batch_time=batch_time_m,
-                #             rate=input.size(0) * args.world_size / batch_time_m.val,
-                #             rate_avg=input.size(0) * args.world_size / batch_time_m.avg,
-                #             lr=lr,
-                #             data_time=data_time_m)
-                #     )
-
-                    # if args.save_images and output_dir:
-                    #     torchvision.utils.save_image(
-                    #         input,
-                    #         os.path.join(output_dir, 'train-batch-%d.jpg' % batch_idx),
-                    #         padding=0,
-                    #         normalize=True
-                    #     )
+                step_info = dict()
+                step_info["time"] = batch_time_m.val
+                step_info["rate"] = input.size(0) * args.world_size / batch_time_m.val
+                step_info["learning_rate"] = lr
+                driver.event(Event.STEP_END,
+                            message=step_info,
+                            step=state.global_steps,
+                            loss=losses_m.val)
 
             if saver is not None and args.recovery_interval and (
                     last_batch or (batch_idx + 1) % args.recovery_interval == 0):
@@ -310,16 +282,6 @@ class Trainer:
 
             if lr_scheduler is not None:
                 lr_scheduler.step_update(num_updates=num_updates, metric=losses_m.avg)
-
-            step_info = dict()
-            step_info["time"] = batch_time_m.val
-            step_info["rate"] = input.size(0) * args.world_size / batch_time_m.val
-            step_info["learning_rate"] = lr
-            
-            driver.event(Event.STEP_END,
-                        message=step_info,
-                        step=state.global_steps,
-                        loss=losses_m.val)
             
             end = time.time()
             # end for
@@ -404,29 +366,6 @@ class Trainer:
 
                 batch_time_m.update(time.time() - end)
                 end = time.time()
-                # if utils.is_primary(args) and (last_batch or batch_idx % args.log_interval == 0):
-                #     log_name = 'Test' + log_suffix
-                #     print(
-                #         '{0}: [{1:>4d}/{2}]  '
-                #         'Time: {batch_time.val:.3f} ({batch_time.avg:.3f})  '
-                #         'Loss: {loss.val:>7.4f} ({loss.avg:>6.4f})  '
-                #         'Acc@1: {top1.val:>7.4f} ({top1.avg:>7.4f})  '
-                #         'Acc@5: {top5.val:>7.4f} ({top5.avg:>7.4f})'.format(
-                #             log_name, batch_idx, last_idx,
-                #             batch_time=batch_time_m,
-                #             loss=losses_m,
-                #             top1=top1_m,
-                #             top5=top5_m)
-                #     )
-
-            # save loss and map for check
-            # dname = "check"
-            # if not os.path.isdir(dname):
-            #     os.makedirs(dname)
-            # dname = dname +"/" + device.type
-            # if not os.path.isdir(dname):
-            #     os.makedirs(dname)
-            # torch.save(torch.tensor(acc_list), dname + "/acc_" + str(0) + ".pt")
 
         metrics = OrderedDict([('loss', losses_m.avg), ('top1', top1_m.avg), ('top5', top5_m.avg)])
 

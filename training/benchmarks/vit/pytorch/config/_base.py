@@ -6,22 +6,20 @@ from typing import ClassVar
 vendor: str = None
 # model name
 name: str = "vit_base_patch16_224"
+do_train = True
+fp16 = False
 # =========================================================
 # data
 # =========================================================
 log_freq: int = 1
 n_device: int = 1
-do_train = True
-
-
 
 data_dir: str = "/home/data/imagenet"
-
-
 init_checkpoint: str = ""
 
-# ======================= todo 这些参数要不要
-
+# =========================================================
+# train && evaluate
+# =========================================================
 aa: str  =  None
 amp  =  False
 amp_dtype: str =  "float16"
@@ -74,7 +72,6 @@ interpolation  =  ""
 jsd_loss  =  False
 layer_decay  =  None
 local_rank  =  0
-log_interval  =  1
 log_wandb  =  False
 lr  =  0.4
 lr_base  =  0.1
@@ -134,6 +131,7 @@ torchcompile  =  None
 torchscript  =  False
 train_interpolation  =  "random"
 train_split  =  "train"
+train_batch_size = None
 tta  =  0
 use_multi_epochs_loader  =  False
 val_split  =  "val"
