@@ -53,7 +53,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl70" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" target="_parent">GLM</a></td>
-    <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch" target="_parent">PyTorch</a></td>
+    <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm/pytorch" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
@@ -220,6 +220,7 @@ __Tips：__
 
  * 请根据自己所在地区，选用合适的pip源来配置PIP_SOURCE
  * 每次运行可配置多个benchmark case，每个benchmark case可以通过repeat来配置运行次数
+ * FlagPerf使用CASES变量中的键（key）来索引相应模型（model，如bert），框架（framework，如pytorch），硬件类型（hardware_model，如A100）,主机数量（nnodes，如1），计算卡数量（nproc，如8），和重复测试次数（repeat，如1），按照“model:framework:hardware_model:nnodesxnproc:repeat”的格式以字符串存储。键对应的值为运行这一样例对应数据/模型权重所在目录，推荐为数据集与模型权重的最小公共父目录
 
 ```
 '''Test Configs, including'''
@@ -228,26 +229,35 @@ __Tips：__
 # Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
+
 # Accelerator options for docker. TODO FIXME support more accelerators.
+# possible value of ACCE_CONTAINER_OPT are:
+#   iluvatar:
+#       ' -v /lib/modules:/lib/modules '
+#   kunlunxin:
+#       " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
+#       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
+#       " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+#   nvidia:
+#       " --gpus all"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
-# nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
+# possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
+#   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
+#   MLU_VISIBLE_DEVICES for cambricon
+#   XPU_VISIBLE_DEVICES for kunlunxin
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
+PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
-# If not set, it will be os.path.dirname(run.py)/../../training/
-FLAGPERF_PATH_HOST = "/home/FlagPerf/training"
-
-# Set the mapping directory of flagperf in container.
-FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
-
+# Users must set FLAGPERF_PATH to where flagperf deploy
+# You can assume the preset "/home/flagperf/training" points to Null
+FLAGPERF_PATH = "/home/flagperf/training"
 # Set log path on the host here.
-FLAGPERF_LOG_PATH_HOST = FLAGPERF_PATH_HOST + "/result/"
-# Set log path in container here.
-FLAGPERF_LOG_PATH_CONTAINER = FLAGPERF_PATH_CONTAINER + "/result/"
+FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
+
 # Set log level. It should be 'debug', 'info', 'warning', or 'error'.
 FLAGPERF_LOG_LEVEL = 'debug'
 
@@ -257,22 +267,12 @@ SHM_SIZE = "32G"
 # Clear cache config. Clean system cache before running testcase.
 CLEAR_CACHES = True
 
-# Set the case list you want to run here.
-# CASES is a list of case names.
-CASES = ['BERT_PADDLE_DEMO_A100_1X8',
-         'GLM_TORCH_DEMO_A100_1X8',
-         'CPM_TORCH_DEMO_A100_1X8']
-
-# Config each case in a dictionary like this.
-BERT_PADDLE_DEMO_A100_1X8 = { # benchmark case name, one in CASES
-    "model": "bert",  # model name
-    "framework": "paddle",  # AI framework
-    "config": "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
-    "repeat": 1,  # How many times to run this case
-    "nnodes": 1,  #  How many hosts to run this case
-    "nproc": 8,  # How many processes will run on each host
-    "data_dir_host": "/home/datasets_ckpt/bert/train/",  # Data path on host
-    "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
+# Set the case dict you want to run here.
+# CASES is a dict of case names-case data/ckpt path.
+# Users must use {model:framework:hardware_model:nnodesxnproc:repeat}
+CASES = {
+    "bert:pytorch:A100:1x8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch:A100:1x8:1": "/home/datasets_ckpt/glm/train/",
 }
 ```
 
