@@ -28,8 +28,8 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
-# You can assume the preset "/home/flagperf/training" points to Null
-FLAGPERF_PATH = "/home/flagperf/training"
+# You can assume the preset "/home/FlagPerf/training" points to Null
+FLAGPERF_PATH = "/home/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
