@@ -5,4 +5,4 @@ eval_batch_size = 128
 
 lr = 0.4
 gradient_accumulation_steps = 1
-log_freq = 2
+log_freq = 1
