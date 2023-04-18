@@ -63,7 +63,7 @@ class Trainer:
         if args.grad_checkpointing:
             model.set_grad_checkpointing(enable=True)
 
-        if utils.is_primary(args):
+        if dist_pytorch.is_main_process():
             print(
                 f'Model {safe_model_name(args.model)} created, param count:{sum([m.numel() for m in model.parameters()])}')
 
@@ -87,7 +87,7 @@ class Trainer:
                 model = convert_syncbn_model(model)
             else:
                 model = convert_sync_batchnorm(model)
-            if utils.is_primary(args):
+            if dist_pytorch.is_main_process():
                 print(
                     'Converted model to use Synchronized BatchNorm. WARNING: You may have issues if using '
                     'zero initialized BN layers (enabled by default for ResNets) while sync-bn enabled.')
@@ -117,7 +117,7 @@ class Trainer:
             if args.lr_base_scale == 'sqrt':
                 batch_ratio = batch_ratio ** 0.5
             args.lr = args.lr_base * batch_ratio
-            if utils.is_primary(args):
+            if dist_pytorch.is_main_process():
                 print(
                     f'Learning rate ({args.lr}) calculated from base learning rate ({args.lr_base}) '
                     f'and global batch size ({global_batch_size}) with {args.lr_base_scale} scaling.')
@@ -269,7 +269,8 @@ class Trainer:
 
                 step_info = dict()
                 step_info["time"] = batch_time_m.val
-                step_info["rate"] = input.size(0) * args.world_size / batch_time_m.val
+
+                step_info["rate"] = input.size(0) * dist_pytorch.get_world_size() / batch_time_m.val
                 step_info["learning_rate"] = lr
                 driver.event(Event.STEP_END,
                             message=step_info,

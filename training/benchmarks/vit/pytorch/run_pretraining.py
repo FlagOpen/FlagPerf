@@ -100,14 +100,14 @@ def main():
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.benchmark = True
 
+    dist_pytorch.init_dist_training_env(config)
+    
     model_driver.event(Event.INIT_START)
     
     logger = model_driver.logger
     init_start_time = logger.previous_log_time
     
     init_helper.set_seed(config.seed, config.vendor)
-    
-    config.device = utils.init_distributed_device(config)
 
     # resolve AMP arguments based on PyTorch / Apex availability
     use_amp = None
@@ -139,7 +139,7 @@ def main():
     
     trainer.init()
     
-    data_config = resolve_data_config(vars(config), model=trainer.model, verbose=utils.is_primary(config))
+    data_config = resolve_data_config(vars(config), model=trainer.model, verbose=dist_pytorch.is_main_process())
 
     # setup automatic mixed-precision (AMP) loss scaling and op casting
     amp_autocast = suppress  # do nothing
@@ -148,16 +148,16 @@ def main():
         assert config.device.type == 'cuda'
         trainer.model, trainer.optimizer = amp.initialize(trainer.model, trainer.optimizer, opt_level='O1')
         loss_scaler = ApexScaler()
-        if utils.is_primary(config):
+        if dist_pytorch.is_main_process():
             print('Using NVIDIA APEX AMP. Training in mixed precision.')
     elif use_amp == 'native':
         amp_autocast = partial(torch.autocast, device_type=config.device.type, dtype=amp_dtype)
         if config.device.type == 'cuda':
             loss_scaler = NativeScaler()
-        if utils.is_primary(config):
+        if dist_pytorch.is_main_process():
             print('Using native Torch AMP. Training in mixed precision.')
     else:
-        if utils.is_primary(config):
+        if dist_pytorch.is_main_process():
             print('AMP not enabled. Training in float32.')
 
     # optionally resume from a checkpoint
@@ -168,7 +168,7 @@ def main():
             config.resume,
             optimizer=None if config.no_resume_opt else trainer.optimizer,
             loss_scaler=None if config.no_resume_opt else loss_scaler,
-            log_info=utils.is_primary(config),
+            log_info=dist_pytorch.is_main_process(),
         )
 
     # setup exponential moving average of model weights, SWA could be used here too
@@ -184,11 +184,11 @@ def main():
     if config.distributed:
         if has_apex and use_amp == 'apex':
             # Apex DDP preferred unless native amp is activated
-            if utils.is_primary(config):
+            if dist_pytorch.is_main_process():
                 print("Using NVIDIA APEX DistributedDataParallel.")
             trainer.model = ApexDDP(trainer.model, delay_allreduce=True)
         else:
-            if utils.is_primary(config):
+            if dist_pytorch.is_main_process():
                 print("Using native Torch DistributedDataParallel.")
             trainer.model = NativeDDP(trainer.model, device_ids=[config.device], broadcast_buffers=not config.no_ddp_bb)
         # NOTE: EMA model does not need to be wrapped by DDP
@@ -233,7 +233,7 @@ def main():
     best_epoch = None
     saver = None
     output_dir = None
-    if utils.is_primary(config):
+    if dist_pytorch.is_main_process():
         if config.experiment:
             exp_name = config.experiment
         else:
@@ -256,7 +256,7 @@ def main():
             max_history=config.checkpoint_hist
         )
 
-    if utils.is_primary(config) and config.log_wandb:
+    if dist_pytorch.is_main_process() and config.log_wandb:
         if has_wandb:
             wandb.init(project=config.experiment, config=config)
 
@@ -290,7 +290,7 @@ def main():
         else:
             lr_scheduler.step(start_epoch)
 
-    if utils.is_primary(config):
+    if dist_pytorch.is_main_process():
         print(
             f'Scheduled epochs: {num_epochs}. LR stepped per {"epoch" if lr_scheduler.t_in_epochs else "update"}.')
 
@@ -314,7 +314,7 @@ def main():
             )
 
             if config.distributed and config.dist_bn in ('broadcast', 'reduce'):
-                if utils.is_primary(config):
+                if dist_pytorch.is_main_process():
                     print("Distributing BatchNorm running means and vars")
                 utils.distribute_bn(model, config.world_size, config.dist_bn == 'reduce')
                 
