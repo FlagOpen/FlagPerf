@@ -68,7 +68,7 @@ def remap_modules(ns: dict, mod_dict: dict = None):
     for name, mod in mod_dict.items():
         value = ns.get(name)
         if value and inspect.ismodule(value):
-            replaced_item = replace_function(value, mod)
+            replaced_item = replace_attr(value, mod)
             print(f"Remapped {value}.{replaced_item} to {mod}.{replaced_item}")
 
 
@@ -78,7 +78,7 @@ def find_derived_classes(base: type, module):
         yield cls
 
 
-def replace_function(src_module, new_module):
+def replace_attr(src_module, new_module):
     replaced_item = []
     items = [e for e in dir(src_module) if not e.startswith('__')]
     for item in items:
