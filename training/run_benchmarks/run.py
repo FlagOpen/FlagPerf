@@ -83,7 +83,55 @@ def check_testconf():
     RUN_LOGGER.info("Check test config: VENDOR......[SUCCESS]")
 
 
-def check_case_config(case, case_config, vendor):
+def check_mutable(config_path, curr_log_path):
+    '''We do not check std case'''
+    if tc.VENDOR == "nvidia":
+        return
+    '''get config for the same std case'''
+    last_dir = config_path.rfind("/")
+    dir_path = config_path[:last_dir].replace(tc.VENDOR, "nvidia")
+    files = os.listdir(dir_path)
+    '''We only check 1x1, 1x8, 2x8 now'''
+    valid_config_std = []
+    queries = ["x1x1", "x1x8", "x2x8"]
+    for filename in files:
+        for query in queries:
+            if query in filename:
+                valid_config_std.append(filename)
+                break
+    '''get the union of std config'''
+    mutable = {}
+    for filename in valid_config_std:
+        filepath = dir_path + "/" + filename
+        info = open(filepath, "r").readlines()
+        for line in info:
+            if "=" in line and line[0] != "#":
+                mutable[line.split("=")[0].replace(" ", "")] = 0
+    '''get modified hyperparameters'''
+    modified = []
+    info = open(config_path, "r").readlines()
+    for line in info:
+        if "=" in line and line[0] != "#":
+            hp = line.split("=")[0].replace(" ", "")
+            if hp not in mutable.keys():
+                modified.append(hp)
+    '''cheat mode'''
+    if len(modified) != 0:
+        RUN_LOGGER.warning(
+            "Case change configs that all stdcase do not change: ")
+        RUN_LOGGER.warning("File path: ")
+        RUN_LOGGER.warning(config_path)
+        RUN_LOGGER.warning("Modified configs: ")
+        RUN_LOGGER.warning(modified)
+        RUN_LOGGER.warning("See detailed modified info at " + curr_log_path)
+        import json
+        json.dump(
+            {config_path[last_dir:-3]: modified},
+            open(curr_log_path + config_path[last_dir:-3] + "modified.json",
+                 "w"))
+
+
+def check_case_config(case, case_config, vendor, curr_log_path):
     '''Check config of the testcase. Make sure its path exists, framework is
        right and config file exists.
     '''
@@ -115,6 +163,7 @@ def check_case_config(case, case_config, vendor):
         RUN_LOGGER.warning("Case " + case + ": config file doesn't exist: " +
                            config_path)
         return False
+    check_mutable(config_path, curr_log_path)
     nnodes = case_config["nnodes"]
     cluster_host_counts = CLUSTER_MGR.get_hosts_count()
     # TODO Check nprocs < 8?
@@ -413,7 +462,7 @@ def collect_and_merge_logs(curr_log_path, cases):
                            curr_log_path)
 
 
-def get_valid_cases():
+def get_valid_cases(curr_log_path):
     '''Cehck case config in test_conf, return valid cases list.'''
     RUN_LOGGER.debug("Check configs of all test cases: " + ",".join(tc.CASES))
     valid_cases = []
@@ -424,7 +473,7 @@ def get_valid_cases():
             cases_config_not_found.append(case)
             continue
         case_config = tc.__dict__[case]
-        if not check_case_config(case, case_config, tc.VENDOR):
+        if not check_case_config(case, case_config, tc.VENDOR, curr_log_path):
             cases_config_error.append(case)
             continue
         valid_cases.append(case)
@@ -510,7 +559,7 @@ def main():
     dp_path = _get_deploy_path()
     check_cluster_deploy_path(dp_path)
     check_testconf()
-    cases = get_valid_cases()
+    cases = get_valid_cases(curr_log_path)
     log_test_configs(cases, curr_log_path, dp_path)
 
     RUN_LOGGER.info("========= Step 2: Prepare and Run test cases. =========")
