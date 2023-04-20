@@ -1,5 +1,5 @@
 from config_common import *
 
-batch_size = 16
+batch_size = 128
 
 gradient_accumulation_steps = 1

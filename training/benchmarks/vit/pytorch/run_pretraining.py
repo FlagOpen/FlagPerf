@@ -164,7 +164,7 @@ def main():
     resume_epoch = None
     if config.resume:
         resume_epoch = resume_checkpoint(
-            trianer.model,
+            trainer.model,
             config.resume,
             optimizer=None if config.no_resume_opt else trainer.optimizer,
             loss_scaler=None if config.no_resume_opt else loss_scaler,
@@ -357,6 +357,12 @@ def main():
                     write_header=best_metric is None,
                     log_wandb=config.log_wandb and has_wandb,
                 )
+                
+
+            if saver is not None:
+                # save proper checkpoint with eval metric
+                save_metric = eval_metrics[eval_metric]
+                best_metric, best_epoch = saver.save_checkpoint(epoch, metric=save_metric)  
 
             if lr_scheduler is not None:
                 # step LR for next epoch

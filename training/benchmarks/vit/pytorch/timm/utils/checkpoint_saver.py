@@ -100,13 +100,13 @@ class CheckpointSaver:
         save_state = {
             'epoch': epoch,
             'arch': type(self.model).__name__.lower(),
-            'state_dict': get_state_dict(self.model.cpu(), self.unwrap_fn),
-            'optimizer': self.optimizer.state_dict(),
+            'state_dict': self.model.cpu().state_dict(),
+            # 'optimizer': self.optimizer.state_dict(),
             'version': 2,  # version < 2 increments epoch before save
         }
         if self.args is not None:
             save_state['arch'] = self.args.model
-            save_state['args'] = self.args
+            # save_state['args'] = self.args
         if self.amp_scaler is not None:
             save_state[self.amp_scaler.state_dict_key] = self.amp_scaler.state_dict()
         if self.model_ema is not None:
