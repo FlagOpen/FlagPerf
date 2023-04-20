@@ -5,15 +5,14 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
-from copy import copy
 import os
 import random
+import sys
 import time
 from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
 import torch
-from torch.cuda.amp import GradScaler
 
 import utils
 
@@ -23,8 +22,6 @@ from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
 from train import trainer_adapter
-
-import sys
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
