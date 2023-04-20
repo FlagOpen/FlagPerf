@@ -214,12 +214,14 @@ SSH_PORT = "22"
 ```
 
 2）修改测试配置文件
-测试配置文件在FlagPerf/training/run_benchmarks/config/test_conf.py，主要包括FlagPerf的部署路径、数据和模型checkpoint的路径、要跑的测试benchmark case列表和每个benchmark case的配置信息等。
+测试配置文件在FlagPerf/training/run_benchmarks/config/test_conf.py，主要包括FlagPerf的部署路径、数据和模型checkpoint的路径、要跑的测试benchmark case列表等。
 
 __Tips：__
 
  * 请根据自己所在地区，选用合适的pip源来配置PIP_SOURCE
  * 每次运行可配置多个benchmark case，每个benchmark case可以通过repeat来配置运行次数
+ * FlagPerf使用CASES变量中的键（key）来索引相应模型（model，如bert），框架（framework，如pytorch），硬件类型（hardware_model，如A100）,主机数量（nnodes，如1），计算卡数量（nproc，如8），和重复测试次数（repeat，如1），以冒号:为分隔符，按照“model:framework:hardware_model:nnodes:nproc:repeat”的格式以字符串存储。键对应的值为运行这一样例对应数据/模型权重所在目录
+ * 例如，用户在目录/abc/def/data/存放了模型bert在框架pytorch下面运行的数据集与预训练权重，希望在2机8卡A100（共16卡）的环境上测试这一任务，重复3次取平均值，则需要在CASES中增加"bert:pytorch:A100:2:8:3":"/abc/def/data/"这一键值对。key中的bert为模型，pytorch为框架，A100为硬件类型，2为主机数量，8为每个主机上面的计算卡数量，3为重复次数，"abc/def/data/"为数据和权重的存放路径
 
 ```
 '''Test Configs, including'''
@@ -228,26 +230,35 @@ __Tips：__
 # Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
+
 # Accelerator options for docker. TODO FIXME support more accelerators.
+# possible value of ACCE_CONTAINER_OPT are:
+#   iluvatar:
+#       ' -v /lib/modules:/lib/modules '
+#   kunlunxin:
+#       " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
+#       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
+#       " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+#   nvidia:
+#       " --gpus all"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
-# nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
+# possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
+#   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
+#   MLU_VISIBLE_DEVICES for cambricon
+#   XPU_VISIBLE_DEVICES for kunlunxin
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
+PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
-# If not set, it will be os.path.dirname(run.py)/../../training/
-FLAGPERF_PATH_HOST = "/home/FlagPerf/training"
-
-# Set the mapping directory of flagperf in container.
-FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
-
+# Users must set FLAGPERF_PATH to where flagperf deploy
+# You can assume the preset "/home/flagperf/training" points to Null
+FLAGPERF_PATH = "/home/flagperf/training"
 # Set log path on the host here.
-FLAGPERF_LOG_PATH_HOST = FLAGPERF_PATH_HOST + "/result/"
-# Set log path in container here.
-FLAGPERF_LOG_PATH_CONTAINER = FLAGPERF_PATH_CONTAINER + "/result/"
+FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
+
 # Set log level. It should be 'debug', 'info', 'warning', or 'error'.
 FLAGPERF_LOG_LEVEL = 'debug'
 
@@ -257,22 +268,12 @@ SHM_SIZE = "32G"
 # Clear cache config. Clean system cache before running testcase.
 CLEAR_CACHES = True
 
-# Set the case list you want to run here.
-# CASES is a list of case names.
-CASES = ['BERT_PADDLE_DEMO_A100_1X8',
-         'GLM_TORCH_DEMO_A100_1X8',
-         'CPM_TORCH_DEMO_A100_1X8']
-
-# Config each case in a dictionary like this.
-BERT_PADDLE_DEMO_A100_1X8 = { # benchmark case name, one in CASES
-    "model": "bert",  # model name
-    "framework": "paddle",  # AI framework
-    "config": "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
-    "repeat": 1,  # How many times to run this case
-    "nnodes": 1,  #  How many hosts to run this case
-    "nproc": 8,  # How many processes will run on each host
-    "data_dir_host": "/home/datasets_ckpt/bert/train/",  # Data path on host
-    "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
+# Set the case dict you want to run here.
+# CASES is a dict of case names-case data/ckpt path.
+# Users must use {model:framework:hardware_model:nnodesxnproc:repeat}
+CASES = {
+    "bert:pytorch:A100:1x8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch:A100:1x8:1": "/home/datasets_ckpt/glm/train/",
 }
 ```
 
@@ -400,4 +401,3 @@ flagperf@baai.ac.cn
 本项目基于Apache 2.0 license。
 本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。
 关于各模型测试Case的情况，请参考各模型测试Case目录。
-
