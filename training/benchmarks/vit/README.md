@@ -14,7 +14,7 @@ ViT的结构:
 
 - 数据集下载地址
 
-> `https://bd.bcebos.com/klx-pytorch-ipipe-bd/xacc_dependencies/migrated_from_important/xmlir/vit/datasets/xmlir/train.tar.gz`
+<https://bd.bcebos.com/klx-pytorch-ipipe-bd/xacc_dependencies/migrated_from_important/xmlir/vit/datasets/xmlir/train.tar.gz>
 
 - 预处理
   
@@ -22,7 +22,7 @@ ViT的结构:
 
 ## 模型checkpoint
 
-
+<https://github.com/huggingface/pytorch-image-models>
 
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|
