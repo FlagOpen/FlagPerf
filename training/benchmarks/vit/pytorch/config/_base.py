@@ -14,7 +14,7 @@ fp16 = False
 log_freq: int = 1
 n_device: int = 1
 
-data_dir: str = "/home/data"
+data_dir: str = "/home/data/train"
 init_checkpoint: str = ""
 
 # =========================================================
