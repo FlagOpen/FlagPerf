@@ -20,6 +20,7 @@ init_checkpoint: str = ""
 # =========================================================
 # train && evaluate
 # =========================================================
+target_acc1: float = 0.999
 gradient_accumulation_steps: int = 1
 
 aa: str  =  None
@@ -45,7 +46,6 @@ crop_pct: float =  None
 cutmix  =  0.0
 cutmix_minmax: float =  None
 data: str =  None
-# data_dir  =  "/home/data/train"
 dataset  =  ""
 dataset_download  =  False
 decay_epochs: float =  90

@@ -33,6 +33,7 @@ import torch.nn as nn
 import torchvision.utils
 import yaml
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
+import torch.distributed as dist
 
 from timm import utils
 from timm.layers import set_fast_norm
@@ -181,7 +182,8 @@ def main():
             load_checkpoint(model_ema.module, config.resume, use_ema=True)
 
     # setup distributed training
-    if config.distributed:
+    if dist.is_available() and dist.is_initialized():
+    # if config.distributed:
         if has_apex and use_amp == 'apex':
             # Apex DDP preferred unless native amp is activated
             if dist_pytorch.is_main_process():
@@ -189,8 +191,10 @@ def main():
             trainer.model = ApexDDP(trainer.model, delay_allreduce=True)
         else:
             if dist_pytorch.is_main_process():
+                
                 print("Using native Torch DistributedDataParallel.")
-            trainer.model = NativeDDP(trainer.model, device_ids=[config.device], broadcast_buffers=not config.no_ddp_bb)
+            print("****++++++++++++++++++++++++++++++++++++++=***", config.local_rank, config.device, next(trainer.model.parameters()).device)
+            trainer.model = NativeDDP(trainer.model, device_ids=[config.local_rank], broadcast_buffers=not config.no_ddp_bb)
         # NOTE: EMA model does not need to be wrapped by DDP
 
     # create the train and eval datasets
@@ -298,7 +302,7 @@ def main():
         for epoch in range(start_epoch, num_epochs):
             if hasattr(dataset_train, 'set_epoch'):
                 dataset_train.set_epoch(epoch)
-            elif config.distributed and hasattr(loader_train.sampler, 'set_epoch'):
+            elif dist.is_available() and dist.is_initialized() and hasattr(loader_train.sampler, 'set_epoch'):
                 loader_train.sampler.set_epoch(epoch)
 
             train_metrics = trainer.train_one_epoch(
@@ -313,7 +317,7 @@ def main():
                 mixup_fn=mixup_fn,
             )
 
-            if config.distributed and config.dist_bn in ('broadcast', 'reduce'):
+            if dist.is_available() and dist.is_initialized() and config.dist_bn in ('broadcast', 'reduce'):
                 if dist_pytorch.is_main_process():
                     print("Distributing BatchNorm running means and vars")
                 utils.distribute_bn(model, config.world_size, config.dist_bn == 'reduce')
@@ -335,7 +339,7 @@ def main():
                 model_driver.event(Event.EVALUATE, eval_result)
 
             if model_ema is not None and not config.model_ema_force_cpu:
-                if config.distributed and config.dist_bn in ('broadcast', 'reduce'):
+                if dist.is_available() and dist.is_initialized() and config.dist_bn in ('broadcast', 'reduce'):
                     utils.distribute_bn(model_ema, config.world_size, config.dist_bn == 'reduce')
 
                 ema_eval_metrics = trainer.validate(
@@ -367,6 +371,10 @@ def main():
             if lr_scheduler is not None:
                 # step LR for next epoch
                 lr_scheduler.step(epoch + 1, eval_metrics[eval_metric])
+                
+            if training_state.eval_acc1 > config.target_acc1:
+                print('End training after epoch {0}, acc1 {1}'.format(epoch, training_state.eval_acc1))
+                break
 
     except KeyboardInterrupt:
         pass
