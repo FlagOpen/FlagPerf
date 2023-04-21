@@ -45,7 +45,7 @@ FlagPerf的benchmark采用Docker容器作为执行环境，并且要求在评测
 
 因此，在初次适配时，需要提供构建容器镜像的Dockerfile和脚本，以及硬件监控脚本。
 
-◊### 1）构建容器镜像
+### 1）构建容器镜像
 
 在training/下创建如下目录结构，每个AI框架一个子目录，以Nvidia+pytorch为例，需要创建training/nvidia/docker_image/pytorch/目录。
 
