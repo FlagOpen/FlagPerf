@@ -6,6 +6,11 @@
 
 ## 1. 厂商适配Case的代码和配置文件目录结构说明
 
+厂商基于标准case做硬件上的适配，适配原则：
+1. 优先默认使用标准case实现，不做上层接口变动，理想情况下，只有底层算子的区别，对用户不感知；
+2. 接受对模型做合理优化以此来提升模型的性能表现，如bs调整等，建议底层优化，暂不接受torch接口层优化, 具体可case by case讨论。
+3. 对于标准case中厂商不支持的算子，可有合理替代方案，具体可讨论。
+
 标准Case实现路径在training/benchmarks/&lt;model&gt;/&lt;framework&gt;/下，厂商可以通过扩展模型实现的接口来适配自己的芯片。代码放在training/&lt;vendor&gt;/下，主要包括以下几部分(以Nvidia, glm, pytorch为例）：
 
 ```Bash
@@ -36,9 +41,11 @@ training/nvidia/ #厂商代码主目录
 
 ## 2. 初次适配需提供环境构建和监控程序
 
-FlagPerf的benchmark采用Docker容器作为执行环境，并且要求在评测过程中对硬件使用率等信息进行采集。因此，在初次适配时，需要提供构建容器镜像的Dockerfile和脚本，以及硬件监控脚本。
+FlagPerf的benchmark采用Docker容器作为执行环境，并且要求在评测过程中对硬件使用率等信息进行采集。
 
-### 1）构建容器镜像
+因此，在初次适配时，需要提供构建容器镜像的Dockerfile和脚本，以及硬件监控脚本。
+
+◊### 1）构建容器镜像
 
 在training/下创建如下目录结构，每个AI框架一个子目录，以Nvidia+pytorch为例，需要创建training/nvidia/docker_image/pytorch/目录。
 
@@ -95,65 +102,55 @@ SSH_PORT = "22"
 - case配置：training/run_benchmarks/config/test_conf.py
 
 ```Bash
-  4 # Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlun.
-  5 # We will run benchmarks in training/&lt;vendor&gt;
-  6 VENDOR = "nvidia"   # 这里改成产商自己的名称
-  7 # Accelerator options for docker. TODO FIXME support more accelerators.
-  8 ACCE_CONTAINER_OPT = " --gpus all"   # 这里设置为空
-  9 # XXX_VISIBLE_DEVICE item name in env
- 10 # nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
- # CUDA_VISIBLE_DEVICES for nvidia，天数
- # MLU_VISIBLE_DEVICES for 寒武纪
- # XPU_VISIBLE_DEVICES for 昆仑芯
- 11 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
+# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlun.
+# We will run benchmarks in training/&lt;vendor&gt;
+VENDOR = "nvidia"   # 这里改成产商自己的名称，提交代码需复原
+
+# Accelerator options for docker. TODO FIXME support more accelerators.
+ACCE_CONTAINER_OPT = " --gpus all"   # 这里设置为空
+  
+# XXX_VISIBLE_DEVICE item name in env
+# nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
+# CUDA_VISIBLE_DEVICES for nvidia，天数
+# MLU_VISIBLE_DEVICES for 寒武纪
+# XPU_VISIBLE_DEVICES for 昆仑芯
+ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 ```
 
 ## 4. 适配FlagPerf的测试Case的要求
 
-### 1） 代码规范
-
-#### a. 代码目录组织
+### 1） 组织结构
 
 - 代码放在training/&lt;vendor&gt;/&lt;model&gt;-&lt;framework&gt;目录下，分三个目录组织：
 
-- - config目录，存放配置文件及配置文件样例，以及environment_variables.sh和requirements.txt。FlagPerf在启动容器后，运行测试Case前，会先sourche environment_variables，然后使用pip安装requirements.txt中指定的包。
-
-- ​      强烈建议厂商在这里做性能调优。 厂商配置文件的参数值，填写在厂商机器上获得最佳性能的参数值。 
-
+- - config目录，存放厂商配置文件，模型在厂商机器上获得最佳性能的参数值。environment_variables.sh和requirements.txt文件用于FlagPerf在启动容器后构建环境。运行测试Case前，会先sourche environment_variables，然后使用pip安装requirements.txt中指定的包。
 - - csrc目录，放算子源码和编译安装脚本setup.py。FlagPerf会在启动容器后，运行测试Case前，调用setup.py进行算子的编译和安装。
-  - extern目录，模型适配的代码
-
-#### b. 单元测试
-
-暂不做要求。
-
-#### c. 代码风格
-
-1. Python代码使用python pep8风格，可以使用yapf进行格式化，例如：
-
-```Bash
-yapf -i --style "pep8" --recursive ./FlagPerf
-```
+  - extern目录，模型适配的代码，标准case不支持/底层调优的相关代码放置于此。【该处会重点review】
 
 ### 2） 适配方式
 
 模型适配代码主要通过扩展标准测试Case的接口来实现，**如遇无法通过扩展接口来支持的情况，请与FlagPerf研发团队联系。**
 
 - 目前可扩展接口没有做严格限制，但原则上**为了保持训练workload基本一致**，要求适配过程中**不能改变**：
-
-- - 模型结构和大小
-  - 优化器类型
-  - 数据集
-  - 模型的初始Checkpoint
+    - 模型结构和大小
+    - 优化器类型
+    - 数据集
+    - 模型的初始Checkpoint
 
 ### 3）测试达标要求
-
-- 可使用FlagPerf正常配置并运行训练
-- 训练可收敛到标准Case要求的目标精度
-- 有训练过程和benchmark结果日志输出，包括训练中的N个steps的和最终结果输出
+- 以Perf方式训练1*1、1X8、2X8模型收敛达到目标精度(标准case中的target acc)
+- 单个case的收敛时间在2-5h内
+- 多机/多卡吞吐量加速比符合预期
 - 支持硬件监控指标采样（必选：时间戳、使用率、显存使用率，可选：功耗、温度等，建议都有）
-- 有可用的配置样例。必填配置：1X8、2X8。强烈建议包含的配置：1X1或1X2(二选一)，1X4
 
 ### 4）文档规范
 
 按要求提供厂商的README和每个Case的README文档。文档描述需与代码实现相符合。
+
+
+## 5 PR 提交规范
+FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://github.com/FlagOpen/FlagPerf/tree/main) 到个人帐号下，修改代码&验证通过后，提交PR给FlagPerf项目，并指给相关reviewers。FlagOpen相关研发人员Review通过后，合并代码。具体操作可参照：https://docs.github.com/en/get-started/quickstart/contributing-to-projects
+
+  - 只提交添加模型必要代码变动，代码格式执行"yapf -i --style "pep8" --recursive ./FlagPerf "
+  - 文档齐全，case文档包括1x1, 1x8, 2x8 性能精度结果、厂商文档(如需)
+

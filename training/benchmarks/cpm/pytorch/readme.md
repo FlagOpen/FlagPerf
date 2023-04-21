@@ -1,7 +1,10 @@
+### 模型来源
+https://github.com/TsinghuaAI/CPM-1-Finetune
+
 ### 模型Checkpoint下载
 
 `https://wudaoai.cn/model/download?resourceId=1420992356135514112&filename=CPM-1-2.6B-zh.tar.gz`
-### 测试数据集下载
+### 数据集下载
 
 `https://drive.google.com/drive/folders/1gL01xbFBcrgP0TmgOhJ_uplkeG-BCwvM `
 
