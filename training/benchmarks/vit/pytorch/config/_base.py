@@ -14,7 +14,7 @@ fp16 = False
 log_freq: int = 1
 n_device: int = 1
 
-data_dir: str = "/home/data/train"
+data_dir: str = "/home/data/vit"
 init_checkpoint: str = ""
 
 # =========================================================
@@ -146,4 +146,4 @@ weight_decay  =  2e-05
 worker_seeding  =  "all"
 workers  =  4
 
-distributed = False  # todo wzd
+distributed = False

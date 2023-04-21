@@ -194,7 +194,7 @@ class Trainer:
 
         loss_list = []
         for batch_idx, (input, target) in enumerate(loader):
-            if batch_idx >= 100:
+            if batch_idx*args.world_size >= 100:
                 break
             state.global_steps += 1
             
@@ -273,8 +273,8 @@ class Trainer:
                 step_info["rate"] = input.size(0) * dist_pytorch.get_world_size() / batch_time_m.val
                 step_info["learning_rate"] = lr
                 driver.event(Event.STEP_END,
-                            message=step_info,
                             step=state.global_steps,
+                            message=step_info,
                             loss=losses_m.val)
 
             if saver is not None and args.recovery_interval and (

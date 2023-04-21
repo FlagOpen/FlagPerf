@@ -103,6 +103,10 @@ def main():
 
     dist_pytorch.init_dist_training_env(config)
     
+    if dist.is_available() and dist.is_initialized():
+        config.distributed = True
+        config.world_size = dist_pytorch.get_world_size()
+        
     model_driver.event(Event.INIT_START)
     
     logger = model_driver.logger
@@ -183,7 +187,6 @@ def main():
 
     # setup distributed training
     if dist.is_available() and dist.is_initialized():
-    # if config.distributed:
         if has_apex and use_amp == 'apex':
             # Apex DDP preferred unless native amp is activated
             if dist_pytorch.is_main_process():
@@ -191,10 +194,8 @@ def main():
             trainer.model = ApexDDP(trainer.model, delay_allreduce=True)
         else:
             if dist_pytorch.is_main_process():
-                
                 print("Using native Torch DistributedDataParallel.")
-            print("****++++++++++++++++++++++++++++++++++++++=***", config.local_rank, config.device, next(trainer.model.parameters()).device)
-            trainer.model = NativeDDP(trainer.model, device_ids=[config.local_rank], broadcast_buffers=not config.no_ddp_bb)
+            trainer.model = NativeDDP(trainer.model)
         # NOTE: EMA model does not need to be wrapped by DDP
 
     # create the train and eval datasets
@@ -320,7 +321,7 @@ def main():
             if dist.is_available() and dist.is_initialized() and config.dist_bn in ('broadcast', 'reduce'):
                 if dist_pytorch.is_main_process():
                     print("Distributing BatchNorm running means and vars")
-                utils.distribute_bn(model, config.world_size, config.dist_bn == 'reduce')
+                utils.distribute_bn(trainer.model, config.world_size, config.dist_bn == 'reduce')
                 
             eval_start = time.time()
             eval_metrics, training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = trainer.validate(
