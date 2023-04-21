@@ -32,7 +32,6 @@ import torch
 import torch.nn as nn
 import torchvision.utils
 import yaml
-from torch.nn.parallel import DistributedDataParallel as NativeDDP
 import torch.distributed as dist
 
 from timm import utils
@@ -50,11 +49,11 @@ from driver import Event, dist_pytorch
 from driver.helper import InitHelper
 from train import trainer_adapter
 from train.training_state import TrainingState
+from driver.dist_pytorch import main_proc_print
 
 
 try:
     from apex import amp
-    from apex.parallel import DistributedDataParallel as ApexDDP
     from apex.parallel import convert_syncbn_model
     has_apex = True
 except ImportError:
@@ -153,17 +152,14 @@ def main():
         assert config.device.type == 'cuda'
         trainer.model, trainer.optimizer = amp.initialize(trainer.model, trainer.optimizer, opt_level='O1')
         loss_scaler = ApexScaler()
-        if dist_pytorch.is_main_process():
-            print('Using NVIDIA APEX AMP. Training in mixed precision.')
+        main_proc_print('Using NVIDIA APEX AMP. Training in mixed precision.')
     elif use_amp == 'native':
         amp_autocast = partial(torch.autocast, device_type=config.device.type, dtype=amp_dtype)
         if config.device.type == 'cuda':
             loss_scaler = NativeScaler()
-        if dist_pytorch.is_main_process():
-            print('Using native Torch AMP. Training in mixed precision.')
+        main_proc_print('Using native Torch AMP. Training in mixed precision.')
     else:
-        if dist_pytorch.is_main_process():
-            print('AMP not enabled. Training in float32.')
+        main_proc_print('AMP not enabled. Training in float32.')
 
     # optionally resume from a checkpoint
     resume_epoch = None
@@ -186,17 +182,7 @@ def main():
             load_checkpoint(model_ema.module, config.resume, use_ema=True)
 
     # setup distributed training
-    if dist.is_available() and dist.is_initialized():
-        if has_apex and use_amp == 'apex':
-            # Apex DDP preferred unless native amp is activated
-            if dist_pytorch.is_main_process():
-                print("Using NVIDIA APEX DistributedDataParallel.")
-            trainer.model = ApexDDP(trainer.model, delay_allreduce=True)
-        else:
-            if dist_pytorch.is_main_process():
-                print("Using native Torch DistributedDataParallel.")
-            trainer.model = NativeDDP(trainer.model)
-        # NOTE: EMA model does not need to be wrapped by DDP
+    trainer.model = trainer.adapter.model_to_ddp(trainer.model, use_amp)
 
     # create the train and eval datasets
     if config.data and not config.data_dir:
@@ -319,8 +305,7 @@ def main():
             )
 
             if dist.is_available() and dist.is_initialized() and config.dist_bn in ('broadcast', 'reduce'):
-                if dist_pytorch.is_main_process():
-                    print("Distributing BatchNorm running means and vars")
+                main_proc_print("Distributing BatchNorm running means and vars")
                 utils.distribute_bn(trainer.model, config.world_size, config.dist_bn == 'reduce')
                 
             eval_start = time.time()
