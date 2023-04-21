@@ -194,7 +194,7 @@ class Trainer:
 
         loss_list = []
         for batch_idx, (input, target) in enumerate(loader):
-            if batch_idx*args.world_size >= 100:
+            if batch_idx >= 20:
                 break
             state.global_steps += 1
             

@@ -6,23 +6,17 @@
 Vision Transformer (ViT) 是一种将Transformer应用在图像分类的模型。
 [AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE](https://arxiv.org/pdf/2010.11929.pdf) (ICLR 2021)
 
-ViT的结构:
+ViT的结构是基于标准Transformer，将图片划分为patch作为Transformer的输入。
 
-基于标准Transformer，将图片划分为patch作为Transformer的输入。
+- 模型代码来源
+
+<https://github.com/huggingface/pytorch-image-models>
 
 ## 数据集
 
 - 数据集下载地址
 
-<https://bd.bcebos.com/klx-pytorch-ipipe-bd/xacc_dependencies/migrated_from_important/xmlir/vit/datasets/xmlir/train.tar.gz>
-
-- 预处理
-  
-> 无需预处理
-
-## 模型checkpoint
-
-<https://github.com/huggingface/pytorch-image-models>
+<https://www.microsoft.com/en-us/download/details.aspx?id=54765>
 
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|
