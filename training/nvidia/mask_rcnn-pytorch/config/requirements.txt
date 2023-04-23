@@ -1,0 +1,7 @@
+torchvision
+pycocotools
+lxml
+matplotlib
+numpy
+tqdm
+Pillow
