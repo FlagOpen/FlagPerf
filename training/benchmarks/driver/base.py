@@ -49,8 +49,14 @@ class Driver(object):
                                             self.extern_modules)
         self.logger = perf_logger.PerfLogger.get_default_logger(
             rank=self.config.local_rank)
-        event_manager = log_event.LogEventManager(
-            self.config.local_rank, self.logger, log_freq=self.config.log_freq)
+        # consider different config format between framework，e.g. pytorch & tensorflow
+        try:
+            log_freq = self.config.log_freq
+        except AttributeError:
+            log_freq = self.config.train.time_history.log_steps
+        event_manager = log_event.LogEventManager(self.config.local_rank,
+                                                  self.logger,
+                                                  log_freq=log_freq)
         event_manager.register_event_handlers(self)
         for _, mod in self.extern_modules.items():
             for cls in mod_util.find_derived_classes(EventManager, mod):
@@ -65,13 +71,15 @@ class Driver(object):
             elif isinstance(arg, dict):
                 print(str(arg) + " remap by " + str(self.extern_modules))
                 mod_util.remap_modules(arg, self.extern_modules)
+            elif isinstance(arg, object):  # TODO
+                pass
             else:
                 raise TypeError('Can either be a module or a dict')
 
     def launch(self):
         self.event(Event.LAUNCH_TRAINING)
         config_path: str = self.config.config
-        config_dict = config.get_properties_from_config(self.config)
+        config_dict = self.config.get_properties_from_config(self.config)
         for key, value in config_dict.items():
             if type(value) not in [int, float, str, bool
                                    ] and not isinstance(value, Iterable):

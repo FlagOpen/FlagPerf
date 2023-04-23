@@ -2,7 +2,7 @@ from typing import ClassVar
 #from train.event.base import BaseTrainingEventInterface
 
 # case info
-# chip vendor: nvidia, kunlun,  iluvatar, cambricon etc. key vendor is required.
+# chip vendor: nvidia, kunlunxin, iluvatar, cambricon etc. key vendor is required.
 vendor: str = None
 # model name
 name: str = "GLM"

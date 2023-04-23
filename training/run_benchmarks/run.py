@@ -49,11 +49,11 @@ def check_cluster_health():
 
 def _get_deploy_path():
     '''Return deploy path according to FLAGPERF_LOG_PATH_HOST in test_conf.'''
-    if 'FLAGPERF_PATH_HOST' not in tc.__dict__.keys() \
-       or tc.FLAGPERF_PATH_HOST is None:
+    if 'FLAGPERF_PATH' not in tc.__dict__.keys() \
+       or tc.FLAGPERF_PATH is None:
         dp_path = os.path.abspath(os.path.join(CURR_PATH, "../../training/"))
     else:
-        dp_path = os.path.abspath(tc.FLAGPERF_PATH_HOST)
+        dp_path = os.path.abspath(tc.FLAGPERF_PATH)
     return dp_path
 
 
@@ -162,7 +162,7 @@ def prepare_running_env(dp_path, container_name, case_config):
     prepare_cmd = "cd " + dp_path + " && " + sys.executable \
                   + " utils/container_manager.py -o runcmdin -c " \
                   + container_name + " -t 1800 -r \"python3 " \
-                  + tc.FLAGPERF_PATH_CONTAINER + "/" \
+                  + tc.FLAGPERF_PATH + "/" \
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
                   + tc.VENDOR + " --pipsource " + tc.PIP_SOURCE + "\""
@@ -289,13 +289,13 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
     framework = case_config["framework"]
     nnodes = case_config["nnodes"]
     env_file = os.path.join(
-        tc.FLAGPERF_PATH_CONTAINER, tc.VENDOR,
+        tc.FLAGPERF_PATH, tc.VENDOR,
         case_config["model"] + "-" + case_config["framework"],
         "config/environment_variables.sh")
     start_cmd = "cd " + dp_path + " && " + sys.executable \
                 + " utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -d -r \"source " + env_file + "; " \
-                + "python3 " + tc.FLAGPERF_PATH_CONTAINER + "/run_benchmarks/" \
+                + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
                 + framework + "/start_" + framework + "_task.py " \
                 + base_args + " --round " + str(count)
     if tc.ACCE_VISIBLE_DEVICE_ENV_NAME is not None:
@@ -303,7 +303,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
                      + tc.ACCE_VISIBLE_DEVICE_ENV_NAME
     start_cmd += " \""
     RUN_LOGGER.debug("Run cmd in the cluster to start tasks, cmd=" + start_cmd)
-    CLUSTER_MGR.run_command_some_hosts_torch_ddp(start_cmd, nnodes, 15)
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
     # Wait a moment for starting tasks.
     time.sleep(60)
 
@@ -336,10 +336,10 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
                            + " --ipc=host --security-opt=seccomp=unconfined" \
                            + " --privileged=true --ulimit=stack=67108864" \
                            + " --ulimit=memlock=-1" \
-                           + " -w " + tc.FLAGPERF_PATH_CONTAINER \
+                           + " -w " + tc.FLAGPERF_PATH \
                            + " --shm-size=" + tc.SHM_SIZE \
                            + " -v " + dp_path + ":" \
-                           + tc.FLAGPERF_PATH_CONTAINER \
+                           + tc.FLAGPERF_PATH \
                            + " -v " + case_config["data_dir_host"] + ":" \
                            + case_config["data_dir_container"]
     if tc.ACCE_CONTAINER_OPT is not None:
@@ -385,7 +385,7 @@ def collect_and_merge_logs(curr_log_path, cases):
     get_all = True
     RUN_LOGGER.info("Collect logs in cluster.")
     for case in cases:
-        case_config = tc.__dict__[case]
+        rets, case_config = get_config_from_case(case)
         repeat = case_config["repeat"]
         for i in range(1, repeat + 1):
             case_log_dir = os.path.join(curr_log_path, case, "round" + str(i))
@@ -413,18 +413,52 @@ def collect_and_merge_logs(curr_log_path, cases):
                            curr_log_path)
 
 
+def get_config_from_case(case):
+    '''check case is string'''
+    if not isinstance(case, str):
+        RUN_LOGGER.error("Key in test_config.CASES must be str")
+        return False, None
+
+    case_info = case.split(":")
+    '''check if 4+ : in case, we don't care what to put in'''
+    if len(case_info) < 6:
+        RUN_LOGGER.error(
+            "At least 6 terms split by \":\" should in test_config.CASES")
+        RUN_LOGGER.error("model:framework:hardware_model:nnodes:nproc:repeat")
+        return False, None
+
+    case_model = case_info[0]
+    case_framework = case_info[1]
+    case_hardware = case_info[2]
+    case_nnodes = case_info[3]
+    case_nproc = case_info[4]
+    case_repeat = case_info[5]
+
+    case_config = {"model": case_model}
+    case_config["framework"] = case_framework
+    case_config[
+        "config"] = "config_" + case_hardware + "x" + case_nnodes + "x" + case_nproc
+    case_config["repeat"] = int(case_repeat)
+    case_config["nnodes"] = int(case_nnodes)
+    case_config["nproc"] = int(case_nproc)
+    case_config["data_dir_host"] = tc.CASES[case]
+    case_config["data_dir_container"] = tc.CASES[case]
+    return True, case_config
+
+
 def get_valid_cases():
     '''Cehck case config in test_conf, return valid cases list.'''
+    if not isinstance(tc.CASES, dict):
+        RUN_LOGGER.error(
+            "No valid cases found in test_conf because test_config.CASES is not a dict...[EXIT]"
+        )
+        sys.exit(4)
     RUN_LOGGER.debug("Check configs of all test cases: " + ",".join(tc.CASES))
     valid_cases = []
-    cases_config_not_found = []
     cases_config_error = []
     for case in tc.CASES:
-        if case not in tc.__dict__.keys():
-            cases_config_not_found.append(case)
-            continue
-        case_config = tc.__dict__[case]
-        if not check_case_config(case, case_config, tc.VENDOR):
+        rets, case_config = get_config_from_case(case)
+        if (not rets) or (not check_case_config(case, case_config, tc.VENDOR)):
             cases_config_error.append(case)
             continue
         valid_cases.append(case)
@@ -432,8 +466,6 @@ def get_valid_cases():
         RUN_LOGGER.error("No valid cases found in test_conf...[EXIT]")
         sys.exit(4)
     RUN_LOGGER.debug("Valid cases: " + ",".join(valid_cases))
-    RUN_LOGGER.debug("Invalid cases that can't find config: " +
-                     ",".join(cases_config_not_found))
     RUN_LOGGER.debug("Invalid cases that config is error: " +
                      ",".join(cases_config_error))
     RUN_LOGGER.info("Get valid cases list......[SUCCESS]")
@@ -490,7 +522,7 @@ def main():
 
     # Set logger first
     timestamp_log_dir = "run" + time.strftime("%Y%m%d%H%M%S", time.localtime())
-    curr_log_path = os.path.join(tc.FLAGPERF_LOG_PATH_HOST, timestamp_log_dir)
+    curr_log_path = os.path.join(tc.FLAGPERF_LOG_PATH, timestamp_log_dir)
     RUN_LOGGER.init(curr_log_path,
                     "flagperf_run.log",
                     tc.FLAGPERF_LOG_LEVEL,
@@ -517,7 +549,7 @@ def main():
 
     for case in cases:
         RUN_LOGGER.info("======= Testcase: " + case + " =======")
-        case_config = tc.__dict__[case]
+        rets, case_config = get_config_from_case(case)
 
         # Prepare docker image.
         image_mgr = image_manager.ImageManager(
@@ -537,7 +569,7 @@ def main():
                                               + "-container"
 
         # Set command to start train script in container in the cluster
-        log_dir_container = os.path.join(tc.FLAGPERF_LOG_PATH_CONTAINER,
+        log_dir_container = os.path.join(tc.FLAGPERF_LOG_PATH,
                                          timestamp_log_dir)
         base_args = " --vendor " + tc.VENDOR + " --case_name " + case \
                     + " --model_name " + case_config["model"] \
@@ -545,12 +577,12 @@ def main():
                     + " --nnodes " + str(nnodes) \
                     + " --nproc " + str(case_config["nproc"]) \
                     + " --hosts " + ",".join(cc.HOSTS) \
+                    + " --hosts_ports " + ",".join(cc.HOSTS_PORTS) \
                     + " --data_dir " + case_config["data_dir_container"] \
                     + " --log_dir " + log_dir_container \
                     + " --log_level " + tc.FLAGPERF_LOG_LEVEL \
                     + " --extern_config_file " + case_config["config"] \
                     + ".py" + " --enable_extern_config "
-
         RUN_LOGGER.info("=== 2.2 Prepare case config in cluster. ===")
         if not prepare_case_config_cluster(dp_path, case_config, case):
             RUN_LOGGER.warning("Prepare case config in cluster...[FAILED]. " +
@@ -573,6 +605,7 @@ def main():
             RUN_LOGGER.info("2) Start tasks in the cluster...")
             start_tasks_in_cluster(dp_path, container_name, case_config,
                                    base_args, count)
+
             # Wait until start_xxx_task.py finished.
             RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
             pid_file_path = os.path.join(

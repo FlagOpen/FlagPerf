@@ -8,17 +8,147 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
 
 ----------
 ### 支持模型列表
-| 模型 | AI框架          |  状态 |已适配的厂商|
-| ---- | --------------- | -------- | ---- |
-| [BERT](training/benchmarks/bert/paddle/readme.md) | [paddle](training/benchmarks/bert/paddle/readme.md) |  已支持 | |
-| [CPM](training/benchmarks/cpm/pytorch/readme.md)  | [pytorch](training/benchmarks/cpm/pytorch/readme.md) | 已支持 | |
-| [GLM](training/benchmarks/glm/README.md)  | [pytorch](training/benchmarks/glm/pytorch/readme.md) |  已支持 ||
-| ResNet50  | pytorch |  DOING | |
-| MobileNetV2  | pytorch  | DOING ||
-| ViT  | pytorch |  DOING ||
-| EVA-CLIP  |pytorch  |  DOING ||
-| EVA-Seg  | pytorch |   DOING ||
-| EVA-Det  | pytorch |  DOING ||
+<table width="960" border="0" cellpadding="0" cellspacing="0" style='width:960pt;border-collapse:collapse;table-layout:fixed;'>
+   <col width="73.60" style='mso-width-source:userset;mso-width-alt:3588;'/>
+   <col width="70" style='mso-width-source:userset;mso-width-alt:3413;'/>
+   <col width="200.75" style='mso-width-source:userset;mso-width-alt:9788;'/>
+   <col width="195.80" style='mso-width-source:userset;mso-width-alt:9547;'/>
+   <col width="185.40" style='mso-width-source:userset;mso-width-alt:9040;'/>
+   <tr height="16.80" class="xl65" style='height:16.80pt;'>
+    <td class="xl66" height="16.80" width="73.60" style='height:16.80pt;width:73.60pt;' x:str>模型</td>
+    <td class="xl66" width="70" style='width:70.00pt;' x:str>框架</td>
+    <td class="xl67" width="581.95" colspan="3" style='width:581.95pt;border-right:none;border-bottom:none;' x:str>厂商</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td height="16.80" colspan="2" style='height:16.80pt;mso-ignore:colspan;'></td>
+    <td class="xl65" x:str>英伟达</td>
+    <td class="xl65" x:str>昆仑芯</td>
+    <td class="xl65" x:str>天数智芯</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>BERT</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>CPM</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl70" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" target="_parent">GLM</a></td>
+    <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="50.40" rowspan="3" style='height:50.40pt;border-right:none;border-bottom:none;' x:str>ResNet50</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>TensorFlow2</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MobileNetV2</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>ViT</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>N/As</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-CLIP</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Seg</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Det</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+  </table>
 
 ### 部署说明
 
@@ -84,40 +214,51 @@ SSH_PORT = "22"
 ```
 
 2）修改测试配置文件
-测试配置文件在FlagPerf/training/run_benchmarks/config/test_conf.py，主要包括FlagPerf的部署路径、数据和模型checkpoint的路径、要跑的测试benchmark case列表和每个benchmark case的配置信息等。
+测试配置文件在FlagPerf/training/run_benchmarks/config/test_conf.py，主要包括FlagPerf的部署路径、数据和模型checkpoint的路径、要跑的测试benchmark case列表等。
 
 __Tips：__
 
  * 请根据自己所在地区，选用合适的pip源来配置PIP_SOURCE
  * 每次运行可配置多个benchmark case，每个benchmark case可以通过repeat来配置运行次数
+ * FlagPerf使用CASES变量中的键（key）来索引相应模型（model，如bert），框架（framework，如pytorch），硬件类型（hardware_model，如A100）,主机数量（nnodes，如1），计算卡数量（nproc，如8），和重复测试次数（repeat，如1），以冒号:为分隔符，按照“model:framework:hardware_model:nnodes:nproc:repeat”的格式以字符串存储。键对应的值为运行这一样例对应数据/模型权重所在目录
+ * 例如，用户在目录/abc/def/data/存放了模型bert在框架pytorch下面运行的数据集与预训练权重，希望在2机8卡A100（共16卡）的环境上测试这一任务，重复3次取平均值，则需要在CASES中增加"bert:pytorch:A100:2:8:3":"/abc/def/data/"这一键值对。key中的bert为模型，pytorch为框架，A100为硬件类型，2为主机数量，8为每个主机上面的计算卡数量，3为重复次数，"abc/def/data/"为数据和权重的存放路径
 
 ```
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlun.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
+
 # Accelerator options for docker. TODO FIXME support more accelerators.
+# possible value of ACCE_CONTAINER_OPT are:
+#   iluvatar:
+#       ' -v /lib/modules:/lib/modules '
+#   kunlunxin:
+#       " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
+#       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
+#       " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+#   nvidia:
+#       " --gpus all"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
-# nvidia use CUDA_VISIBLE_DEVICE and cambricon MLU_VISIBLE_DEVICES
+# possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
+#   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
+#   MLU_VISIBLE_DEVICES for cambricon
+#   XPU_VISIBLE_DEVICES for kunlunxin
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirrors.aliyun.com/pypi/simple"
+PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
-# If not set, it will be os.path.dirname(run.py)/../../training/
-FLAGPERF_PATH_HOST = "/home/FlagPerf/training"
-
-# Set the mapping directory of flagperf in container.
-FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
-
+# Users must set FLAGPERF_PATH to where flagperf deploy
+# You can assume the preset "/home/flagperf/training" points to Null
+FLAGPERF_PATH = "/home/flagperf/training"
 # Set log path on the host here.
-FLAGPERF_LOG_PATH_HOST = FLAGPERF_PATH_HOST + "/result/"
-# Set log path in container here.
-FLAGPERF_LOG_PATH_CONTAINER = FLAGPERF_PATH_CONTAINER + "/result/"
+FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
+
 # Set log level. It should be 'debug', 'info', 'warning', or 'error'.
 FLAGPERF_LOG_LEVEL = 'debug'
 
@@ -127,22 +268,12 @@ SHM_SIZE = "32G"
 # Clear cache config. Clean system cache before running testcase.
 CLEAR_CACHES = True
 
-# Set the case list you want to run here.
-# CASES is a list of case names.
-CASES = ['BERT_PADDLE_DEMO_A100_1X8',
-         'GLM_TORCH_DEMO_A100_1X8',
-         'CPM_TORCH_DEMO_A100_1X8']
-
-# Config each case in a dictionary like this.
-BERT_PADDLE_DEMO_A100_1X8 = { # benchmark case name, one in CASES
-    "model": "bert",  # model name
-    "framework": "paddle",  # AI framework
-    "config": "config_A100x1x8",  # config module in <vendor>/<model>-<framework>/<config>
-    "repeat": 1,  # How many times to run this case
-    "nnodes": 1,  #  How many hosts to run this case
-    "nproc": 8,  # How many processes will run on each host
-    "data_dir_host": "/home/datasets_ckpt/bert/train/",  # Data path on host
-    "data_dir_container": "/mnt/data/bert/train/",  # Data path in container
+# Set the case dict you want to run here.
+# CASES is a dict of case names-case data/ckpt path.
+# Users must use {model:framework:hardware_model:nnodesxnproc:repeat}
+CASES = {
+    "bert:pytorch:A100:1x8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch:A100:1x8:1": "/home/datasets_ckpt/glm/train/",
 }
 ```
 
@@ -260,7 +391,7 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯共同建设中。
+本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle与昆仑芯共同建设中。
 诚邀各框架、芯片团队与个人参与！
 ### 联系我们
 
@@ -270,4 +401,3 @@ flagperf@baai.ac.cn
 本项目基于Apache 2.0 license。
 本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。
 关于各模型测试Case的情况，请参考各模型测试Case目录。
-

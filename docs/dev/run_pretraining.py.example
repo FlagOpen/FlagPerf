@@ -18,7 +18,7 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
 # 本地库
 import config
 from driver import Event, dist_pytorch
-from driver.helper import InitHelper, get_finished_info
+from driver.helper import InitHelper
 
 # TODO 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
 from train import trainer_adapter
@@ -139,11 +139,26 @@ def main() -> Tuple[Any, Any]:
 
 if __name__ == "__main__":
     start = time.time()
-    config, state = main()
+    config_update, state = main()
     if not dist_pytorch.is_main_process():
         sys.exit(0)
+    
     # 训练信息写日志
-    global_batch_size = dist_pytorch.global_batch_size(config)
-    finished_info = get_finished_info(start, state, config.do_train,
-                                      global_batch_size)
+    e2e_time = time.time() - now
+    if config_update.do_train:
+
+        # TODO 构建训练所需的统计信息，包括不限于：e2e_time、training_sequences_per_second、
+        # converged、final_accuracy、raw_train_time、init_time              
+        training_perf = (dist_pytorch.global_batch_size(config_update) *
+                         state.global_steps) / state.raw_train_time
+        finished_info = {
+            "e2e_time": e2e_time,
+            "training_sequences_per_second": training_perf,
+            "converged": state.converged,
+            "final_accuracy": state.eval_accuracy,
+            "raw_train_time": state.raw_train_time,
+            "init_time": state.init_time,
+        }
+    else:
+        finished_info = {"e2e_time": e2e_time}
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
