@@ -4,10 +4,4 @@
 .vscode/
 __pycache__/
 .pytest_cache
-<<<<<<< HEAD
-
-
-training/result/
-=======
 training/result/*
->>>>>>> main
