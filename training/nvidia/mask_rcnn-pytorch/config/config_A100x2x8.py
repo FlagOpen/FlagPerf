@@ -1,5 +1,4 @@
 vendor:str = "nvidia"
-data_dir: str = "/mnt/data/maskrcnn/train/"
 train_batch_size = 16
 eval_batch_size = 16
 
