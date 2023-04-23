@@ -47,4 +47,5 @@ CLEAR_CACHES = True
 CASES = {
     "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
     "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+    "resnet50:pytorch:A100:1:8:1": "/home/datasets_ckpt/resnet50/train/",
 }
