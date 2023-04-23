@@ -27,16 +27,12 @@ ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
-# If not set, it will be os.path.dirname(run.py)/../../training/
-FLAGPERF_PATH_HOST = "/home/flagperf/training"
-
-# Set the mapping directory of flagperf in container.
-FLAGPERF_PATH_CONTAINER = "/workspace/flagperf/training"
-
+# Users must set FLAGPERF_PATH to where flagperf deploy
+# You can assume the preset "/home/FlagPerf/training" points to Null
+FLAGPERF_PATH = "/home/FlagPerf/training"
 # Set log path on the host here.
-FLAGPERF_LOG_PATH_HOST = FLAGPERF_PATH_HOST + "/result/"
-# Set log path in container here.
-FLAGPERF_LOG_PATH_CONTAINER = FLAGPERF_PATH_CONTAINER + "/result/"
+FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
+
 # Set log level. It should be 'debug', 'info', 'warning', or 'error'.
 FLAGPERF_LOG_LEVEL = 'debug'
 
@@ -46,6 +42,7 @@ SHM_SIZE = "32G"
 # Clear cache config. Clean system cache before running testcase.
 CLEAR_CACHES = True
 
+<<<<<<< HEAD
 # Set the case list you want to run here.
 # CASES is a list of case names.
 CASES = [
@@ -210,4 +207,11 @@ RESNET50_TENSORFLOW2_DEMO_A100_1x8 = {  # benchmark case name, one in CASES
     "/raid/dataset/ImageNet2012/tf_records",  # Data path on host
     "data_dir_container":
     "/mnt/data/ImageNet2012/tf_records",  # Data path in container
+=======
+# Set the case dict you want to run here.
+# Users must use {model:framework:hardwareID:nnodes:nproc:repeat}
+CASES = {
+    "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+>>>>>>> main
 }

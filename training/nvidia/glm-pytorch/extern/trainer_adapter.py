@@ -1,13 +1,10 @@
-import os
 import torch
 import config
 
-from torch import nn, Tensor
+from torch import nn
 
 from .converter import convert_model as _convert_model
-from optimizers import FP16_Optimizer, get_optimizer_param_groups
 from driver.dist_pytorch import main_proc_print
-from apex.optimizers import FusedAdam as Adam
 from typing import Tuple
 from model.models.modeling import FP16_Module
 from driver.dist_pytorch import PyTorchDistributedDataParallel as TorchDDP
@@ -19,28 +16,6 @@ clip_grad_norm = torch.nn.utils.clip_grad_norm_
 
 def convert_model(model: torch.nn.Module) -> torch.nn.Module:
     return _convert_model(model, config)
-
-
-def create_optimizer(model, args):
-    param_groups = get_optimizer_param_groups(model)
-    optimizer = Adam(param_groups,
-                     lr=args.lr,
-                     weight_decay=args.weight_decay,
-                     betas=(args.adam_beta1, args.adam_beta2),
-                     eps=args.adam_eps)
-    main_proc_print(f'Optimizer = {optimizer.__class__.__name__}')
-    # Wrap into fp16 optimizer.
-    if args.fp16:
-        optimizer = FP16_Optimizer(optimizer,
-                                   static_loss_scale=args.loss_scale,
-                                   dynamic_loss_scale=args.dynamic_loss_scale,
-                                   dynamic_loss_args={
-                                       'scale_window': args.loss_scale_window,
-                                       'min_scale': args.min_scale,
-                                       'delayed_shift': args.hysteresis
-                                   })
-
-    return optimizer
 
 
 def model_to_fp16(model):
@@ -63,10 +38,6 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
     if torch.distributed.is_available() and torch.distributed.is_initialized():
         model = TorchDDP(model, device_ids=[i], output_device=i)
     return model
-
-
-def create_grad_scaler():
-    return None
 
 
 def backward(step, lm_loss, reduced_loss, optimizer, lr_scheduler, model):
