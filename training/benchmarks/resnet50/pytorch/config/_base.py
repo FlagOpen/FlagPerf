@@ -46,7 +46,7 @@ init_checkpoint: str = None
 
 # data args
 # Training data dir
-data_dir: str = "/mnt/data/resnet50/train/"
+data_dir: str = None
 
 # Number of workers to use for dataloading
 num_workers: int = 2

@@ -21,4 +21,4 @@ seed = 23333
 training_event = None
 max_samples_termination = 43912600
 
-init_checkpoint = "/mnt/data/resnet50/train/checkpoint.70.pth.tar"
+init_checkpoint = "checkpoint.70.pth.tar"
