@@ -85,6 +85,9 @@ class Trainer:
                 self.training_state.epoch = checkpoint["epoch"]
                 self.training_state.best_acc1 = checkpoint["best_acc1"]
                 arch = checkpoint["arch"]
+                # correctly resume training from checkpoint for single-card training
+                if not self.config.distributed:
+                    model = torch.nn.DataParallel(model)
 
                 model.load_state_dict(checkpoint["state_dict"])
                 self.optimizer.load_state_dict(checkpoint["optimizer"])
