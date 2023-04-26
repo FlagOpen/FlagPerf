@@ -19,4 +19,8 @@ eps: float = 1e-08
 
 seed = 23333
 training_event = None
+<<<<<<< HEAD
 init_checkpoint = "/mnt/data/resnet50/train/checkpoint.70.pth.tar"
+=======
+init_checkpoint = "checkpoint.70.pth.tar"
+>>>>>>> df5f4ca5eb7af110dfd30d077396b39ae0f0ff65
