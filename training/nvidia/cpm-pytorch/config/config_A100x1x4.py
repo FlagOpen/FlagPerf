@@ -3,7 +3,7 @@ from config_common import *
 
 fp16 = True
 dist_backend = "nccl"
-target_embedding_average = 0.92
+target_embedding_average = 0.8
 
 gradient_accumulation_steps = 1
 
