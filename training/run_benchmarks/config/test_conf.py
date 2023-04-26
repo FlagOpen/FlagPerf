@@ -49,14 +49,3 @@ CASES = {
     "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
     "cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
 }
-
-CPM_TORCH_DEMO_A100_2X8 = {
-    "model": "cpm",
-    "framework": "pytorch",
-    "config": "config_A100x2x8",
-    "repeat": 1,
-    "nnodes": 2,
-    "nproc": 8,
-    "data_dir_host": "/home/datasets_ckpt/cpm/train/",
-    "data_dir_container": "/mnt/data/cpm/train/",
-}
