@@ -45,7 +45,7 @@ CLEAR_CACHES = True
 # Set the case dict you want to run here.
 '''
 # Users must use {
-    "model:framework:hardwareID:nnodes:nproc:repe": "dataset path"}
+    "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
     "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",

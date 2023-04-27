@@ -138,7 +138,7 @@ ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
     - 模型的初始Checkpoint
 
 ### 3）测试达标要求
-- 以Perf方式训练1*1、1X8、2X8模型收敛达到目标精度(标准case中的target acc)
+- 以Perf方式训练1x1、1X8、2X8模型收敛达到目标精度(标准case中的target acc)
 - 单个case的收敛时间在2-5h内
 - 多机/多卡吞吐量加速比符合预期
 - 支持硬件监控指标采样（必选：时间戳、使用率、显存使用率，可选：功耗、温度等，建议都有）

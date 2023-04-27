@@ -179,7 +179,7 @@
 # Set the case dict you want to run here.
 '''
 # Users must use {
-    "model:framework:hardwareID:nnodes:nproc:repe": "dataset path"}
+    "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
     "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
@@ -260,7 +260,7 @@ FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://
   1. 只提交添加模型必要代码变动，代码格式执行"yapf -i --style "pep8" --recursive ./FlagPerf "
   2. 文档齐全，包括模型、case(包括1x1, 1x8, 2x8 性能精度结果)、厂商(如需)三个
   3. 提交ckpt到智源方(由智源方上传公开网站供下载)
-  4. 提供到1x1，1x8，2*8精度log给智源方用于存档
+  4. 提供到1x1，1x8，2x8精度log给智源方用于存档
 
   #### 修改标准case
   1. 如果Perf中已经存在标准实现, 需要改动标准实现且修改内容影响Case运行结果，请在Case的README.md更新新的运行记录，随PR提交;并建议在PR的comment里提交在Nvidia GPU上运行日志附件。
