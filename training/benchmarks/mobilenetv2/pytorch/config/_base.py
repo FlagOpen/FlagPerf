@@ -33,20 +33,20 @@ weight_decay: float = 0.00004
 gradient_accumulation_steps: int = 1
 momentum: float = 0.9
 
-max_steps: int = 600000
+max_steps: int = 5005 * 300 # 300 epoch
 seed: int = 41
 
 # Stop training after reaching this accuracy
-target_acc1: float = 50.0
+target_acc1: float = 70.973
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
 
 # If set to -1, disable eval, else evaluate every eval_iter_samples during training
-eval_interval_samples: int = 100 * 256 * 1
+eval_interval_samples: int = 5005 * 256 * 1 # 1 epoch
 
 # Total number of training samples to run.
-max_samples_termination: float = 1388270 * 4 * 30
+max_samples_termination: float = 5005 * 256 * 300 # 300 epoch
 
 # number workers for dataloader
 num_workers: int = 16
