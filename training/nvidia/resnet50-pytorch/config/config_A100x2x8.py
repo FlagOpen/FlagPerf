@@ -1,7 +1,5 @@
 from config_common import *
 
-ddp_type = "apex"
-dist_backend = "nccl"
 
 target_acc1 = 76.4
 

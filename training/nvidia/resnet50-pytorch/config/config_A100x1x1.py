@@ -1,6 +1,5 @@
 from config_common import *
 
-dist_backend = "nccl"
 
 train_batch_size = 256
 
