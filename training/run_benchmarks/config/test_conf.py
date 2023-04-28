@@ -43,9 +43,13 @@ SHM_SIZE = "32G"
 CLEAR_CACHES = True
 
 # Set the case dict you want to run here.
-# Users must use {model:framework:hardwareID:nnodes:nproc:repeat}
+'''
+# Users must use {
+    "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
+'''
 CASES = {
     "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
     "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+    "cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
     "mask_rcnn:pytorch:A100:1:8:1": "/home/datasets_ckpt/mask_rcnn/train/",
 }
