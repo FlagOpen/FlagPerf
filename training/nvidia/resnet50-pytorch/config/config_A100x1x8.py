@@ -10,7 +10,6 @@ eval_batch_size = train_batch_size
 max_steps = 10000000
 max_samples_termination = 4391260000
 
-warmup = 0.2
 learning_rate = 0.001
 
 beta_1: float = 0.9
@@ -21,4 +20,3 @@ seed = 23333
 training_event = None
 max_samples_termination = 43912600
 
-init_checkpoint = "checkpoint.70.pth.tar"

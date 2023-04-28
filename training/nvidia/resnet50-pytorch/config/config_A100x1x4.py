@@ -1,4 +1,3 @@
-# from extern.training_even import ApexTrainingEvent
 from config_common import *
 
 dist_backend = "nccl"
@@ -10,7 +9,6 @@ eval_batch_size = train_batch_size
 max_steps = 10000000
 max_samples_termination = 4391260000
 
-warmup = 0.2
 learning_rate = 0.001
 
 beta_1: float = 0.9
