@@ -5,8 +5,6 @@ dist_backend = "nccl"
 
 target_acc1 = 76.4
 
-gradient_accumulation_steps = 1
-
 train_batch_size = 256
 eval_batch_size = train_batch_size
 max_steps = 1000000

@@ -2,8 +2,6 @@ from config_common import *
 
 dist_backend = "nccl"
 
-gradient_accumulation_steps = 1
-
 train_batch_size = 256
 eval_batch_size = train_batch_size
 max_steps = 10000000
