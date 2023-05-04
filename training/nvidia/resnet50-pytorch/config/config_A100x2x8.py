@@ -14,4 +14,4 @@ beta_2: float = 0.99
 eps: float = 1e-08
 
 seed = 23333
-max_samples_termination = 43912600
+max_samples_termination = 4391260000
