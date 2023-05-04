@@ -14,11 +14,6 @@ learning_rate: float = 0.01
 # learning rate decay function
 lr_decay_style: str = "linear"
 
-# percentage of data to warmup on (.01 = 1% of all training iters). Default 0.01
-warmup: float = 0.01
-
-warmup_steps: int = 0
-
 # optimizer args
 # weight decay coefficient for L2 regularization
 weight_decay_rate: float = 1e-4
@@ -26,7 +21,6 @@ weight_decay_rate: float = 1e-4
 momentum: float = 0.9
 
 # fp16 config args
-# Run model in fp16 mode
 fp16: bool = False
 
 # Static loss scaling, positive power of 2 values can improve fp16 convergence. If None, dynamicloss scaling is used.

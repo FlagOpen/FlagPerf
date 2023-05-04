@@ -7,8 +7,6 @@ mutable_params = [
     "eval_batch_size",
     "max_steps",
     "max_samples_termination",
-    "warmup",
-    "warmup_steps",
     "learning_rate",
     "weight_decay_rate",
     "seed",
