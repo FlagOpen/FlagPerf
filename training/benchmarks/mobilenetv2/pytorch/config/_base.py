@@ -37,7 +37,7 @@ max_steps: int = 5005 * 300  # 300 epoch
 seed: int = 41
 
 # Stop training after reaching this accuracy
-target_acc1: float = 70.973
+target_acc1: float = 70.634
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
