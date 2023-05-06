@@ -68,7 +68,7 @@ class Trainer:
         self.optimizer = self.adapter.create_optimizer(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
         self.model = self.adapter.model_to_ddp(self.model)
-        self.lr_scheduler = create_scheduler(self.optimizer)
+        self.lr_scheduler = create_scheduler(self.optimizer, self.config)
         self.grad_scaler = self.adapter.create_grad_scaler()
         self.model = self._init_model(self.model, self.device)
 

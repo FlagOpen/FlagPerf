@@ -9,7 +9,9 @@ name: str = "resnet50"
 
 # lr_scheduler args
 # initial learning rate
-learning_rate: float = 0.01
+learning_rate: float = 0.1
+lr_step_size: int = 30
+lr_gamma: float = 0.1
 
 # learning rate decay function
 lr_decay_style: str = "linear"
