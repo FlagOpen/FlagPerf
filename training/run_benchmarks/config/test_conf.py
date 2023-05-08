@@ -48,7 +48,8 @@ CLEAR_CACHES = True
     "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
-    # "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
-    # "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
-    "resnet50:pytorch:A100:1:2:1": "/home/datasets_ckpt/resnet50/train/",
+    "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+    "cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
+    "resnet50:pytorch:A100:1:8:1": "/home/datasets_ckpt/resnet50/train/",
 }
