@@ -28,9 +28,9 @@
 import torch
 import torch.utils.data
 
-import tacotron2_common.layers as layers
-from tacotron2_common.utils import load_wav_to_torch, load_filepaths_and_text, to_gpu
-from tacotron2.text import text_to_sequence
+import model.layers.layers as layers
+from model.common.utils import load_wav_to_torch, load_filepaths_and_text, to_gpu
+from model.utils.text import text_to_sequence
 
 class TextMelLoader(torch.utils.data.Dataset):
     """

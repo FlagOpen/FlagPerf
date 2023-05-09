@@ -8,7 +8,7 @@ mutable_params = [
     "max_steps",
     "max_samples_termination",
     "learning_rate",
-    "weight_decay_rate",
+    "weight_decay",
     "seed",
     "loss_scale",
     "loss_scale_window",

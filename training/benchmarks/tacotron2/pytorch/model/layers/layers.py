@@ -26,9 +26,16 @@
 # *****************************************************************************
 
 import torch
+import os
+import sys
+
 from librosa.filters import mel as librosa_mel_fn
-from tacotron2_common.audio_processing import dynamic_range_compression, dynamic_range_decompression
-from tacotron2_common.stft import STFT
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "..")))  
+
+from model.common.audio_processing import dynamic_range_compression, dynamic_range_decompression
+from model.common.stft import STFT
 
 
 class LinearNorm(torch.nn.Module):

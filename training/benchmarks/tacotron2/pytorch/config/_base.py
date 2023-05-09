@@ -74,7 +74,6 @@ eval_interval_samples: int = 20000
 # Total number of training samples to run.
 max_samples_termination: float = 1388270 * 4
 
-
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 1
 
@@ -101,7 +100,6 @@ ddp_type: str = "native"
 device: str = None
 n_device: int = 1
 
-
 distributed: bool = False
 pretrained: bool = False
 
@@ -111,7 +109,10 @@ print_freq: int = 10
 # mix precision
 amp: bool = True
 
+disable_uniform_initialize_bn_weight: bool = False
 cudnn_enabled: bool = True
+cudnn_benchmark: bool = False
+
 load_mel_from_disk: bool = True
 
 training_files: str = None

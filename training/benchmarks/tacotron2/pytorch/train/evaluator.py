@@ -1,6 +1,5 @@
 import os
 import sys
-import imp
 import torch
 import time
 
@@ -39,7 +38,7 @@ class Evaluator:
     def evaluate(self, trainer):
         model = trainer.model
         criterion = trainer.criterion
-        valset = trainer.validate_dataset
+        validate_dataset = trainer.validate_dataset
         batch_iter,
         world_size, collate_fn, perf_bench,
         batch_to_gpu
@@ -52,8 +51,8 @@ class Evaluator:
         """Handles all the validation scoring and printing"""
         with evaluating(model), torch.no_grad():
             val_sampler = DistributedSampler(
-                valset) if distributed_run else None
-            val_loader = DataLoader(valset,
+                validate_dataset) if distributed_run else None
+            val_loader = DataLoader(validate_dataset,
                                     num_workers=1,
                                     shuffle=False,
                                     sampler=val_sampler,
