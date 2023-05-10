@@ -102,15 +102,13 @@ pretrained: bool = False
 
 gpu: int = None
 print_freq: int = 10
-
-# precision parameters
+"""Precision parameters"""
 amp: bool = True
 
 disable_uniform_initialize_bn_weight: bool = False
 cudnn_enabled: bool = True
 cudnn_benchmark: bool = False
-
-# dataset parameters
+"""Dataset parameters"""
 # Loads mel spectrograms from disk instead of computing them on the fly
 load_mel_from_disk: bool = True
 # Path to training filelist
@@ -119,8 +117,7 @@ training_files: str = "filelists/ljs_mel_text_train_subset_2500_filelist.txt"
 validation_files: str = "filelists/ljs_mel_text_val_filelist.txt"
 # Type of text cleaners for input text
 text_cleaners: list = ['english_cleaners']
-
-# audio parameters
+"""Audio parameters"""
 # Maximum audiowave value
 max_wav_value: float = 32768.0
 # Sampling rate
@@ -135,6 +132,8 @@ win_length: int = 1024
 mel_fmin: float = 0.0
 # Maximum mel frequency
 mel_fmax: float = 8000
-
-# Misc parameters
-n_mel_channels : int = 80
+"""Misc parameters"""
+# Number of bins in mel-spectrograms
+n_mel_channels: int = 80
+# Use mask padding
+mask_padding: bool = False
