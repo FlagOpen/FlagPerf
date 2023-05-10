@@ -83,20 +83,17 @@ log_freq: int = 1
 # target val_loss to converge for training
 target_val_loss: float = 0.35
 
-# dist args
+# distributed args
 # Whether to read local rank from ENVVAR
 use_env: bool = True
-
 # local_rank for distributed training on gpus or other accelerators
 local_rank: int = -1
-
 # Communication backend for distributed training on gpus
 dist_backend: str = "nccl"
-
 # Distributed Data Parallel type
 ddp_type: str = "native"
 
-# device
+# device parameters
 device: str = None
 n_device: int = 1
 
@@ -106,14 +103,38 @@ pretrained: bool = False
 gpu: int = None
 print_freq: int = 10
 
-# mix precision
+# precision parameters
 amp: bool = True
 
 disable_uniform_initialize_bn_weight: bool = False
 cudnn_enabled: bool = True
 cudnn_benchmark: bool = False
 
+# dataset parameters
+# Loads mel spectrograms from disk instead of computing them on the fly
 load_mel_from_disk: bool = True
+# Path to training filelist
+training_files: str = "filelists/ljs_mel_text_train_subset_2500_filelist.txt"
+# Path to validation filelist
+validation_files: str = "filelists/ljs_mel_text_val_filelist.txt"
+# Type of text cleaners for input text
+text_cleaners: list = ['english_cleaners']
 
-training_files: str = None
-validation_files: str = None
+# audio parameters
+# Maximum audiowave value
+max_wav_value: float = 32768.0
+# Sampling rate
+sampling_rate: int = 22050
+# Filter length
+filter_length: int = 1024
+# Hop (stride) length
+hop_length: int = 256
+# Window length
+win_length: int = 1024
+# Minimum mel frequency
+mel_fmin: float = 0.0
+# Maximum mel frequency
+mel_fmax: float = 8000
+
+# Misc parameters
+n_mel_channels : int = 80
