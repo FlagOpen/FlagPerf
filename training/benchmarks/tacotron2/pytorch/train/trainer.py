@@ -7,6 +7,7 @@ import math
 
 from model import create_model
 from schedulers import create_scheduler
+from model.loss.loss_function import get_loss_function
 
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
@@ -16,13 +17,6 @@ import config
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
-
-
-def process_batch(batch, device):
-    """Process batch and produce inputs for the model."""
-    batch = {t: batch[t].to(device) for t in batch if t != 'answer_idx'}
-
-    return batch
 
 
 class Trainer:
@@ -42,24 +36,25 @@ class Trainer:
         self.evaluator = evaluator
         self.lr_scheduler = None
         self.global_batch_size = None
+        self.criterion = None
 
     def init(self):
         self.model = create_model(config)
-        self.model = self._init_model(self.model, self.config, self.device)
-        self.model = self.adapter.convert_model(self.model)
-        self.model = self.adapter.model_to_fp16(self.model)
+        self.criterion = get_loss_function()
+        print(self.criterion)
+        print("============ init ==========")
+        print(self.model)
+        print("============ init ==========")
+        # self.model = self.adapter.model_to_fp16(self.model, self.optimizer)
         self.optimizer = self.adapter.create_optimizer(self.model, self.config)
         self.model = self.adapter.model_to_ddp(self.model)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
+
         if self.config.fp16 and self.optimizer is not None:
             self.optimizer._model_params_to_master_params()
+
         self.grad_scaler = self.adapter.create_grad_scaler()
-
-    def _init_model(self, model, args, device):
-        # TODO
-
-        model = model.to(device)
-        return model
+        
 
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
@@ -77,7 +72,6 @@ class Trainer:
                 dist_pytorch.global_batch_size(self.config)
 
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
-            self.train_one_step(batch)
 
             other_state = dict()
             if state.global_steps % self.config.gradient_accumulation_steps == 0:
@@ -105,7 +99,6 @@ class Trainer:
             end_training = self.detect_training_status(state)
             step_info = state.to_dict(**other_state)
 
-            
             driver.event(Event.STEP_END,
                          message=step_info,
                          step=state.global_steps,
@@ -123,24 +116,7 @@ class Trainer:
         driver.event(Event.EPOCH_END, state.epoch)
 
     def train_one_step(self, batch):
-        data = process_batch(batch, self.config.device)
-        state = self.training_state
-
-        self.model.train()
-
-        lm_loss, _ = self.forward(data)
-        lm_loss /= self.config.gradient_accumulation_steps
-        reduced_loss = lm_loss.detach().clone().view(1)
-        if torch.distributed.is_available(
-        ) and torch.distributed.is_initialized():
-            torch.distributed.all_reduce(reduced_loss.data)
-        reduced_loss.data = reduced_loss.data / (dist_pytorch.get_world_size())
-
-        state.loss = lm_loss
-        self.adapter.backward(state.global_steps, lm_loss, reduced_loss,
-                              self.optimizer, self.lr_scheduler, self.model)
-        self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
-                          self.optimizer, self.grad_scaler)
+        pass
 
     def detect_training_status(self, state):
         config = self.config

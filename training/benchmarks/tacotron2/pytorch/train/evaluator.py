@@ -36,22 +36,29 @@ class Evaluator:
         self.eval_dataloader = dataloader
 
     def evaluate(self, trainer):
+        """Handles all the validation scoring and printing"""
         model = trainer.model
         criterion = trainer.criterion
         validate_dataset = trainer.validate_dataset
-        batch_iter,
-        world_size, collate_fn, perf_bench,
-        batch_to_gpu
+
+        # TODO
+
+        batch_iter = None
+        world_size = None
+        collate_fn = None
+        batch_to_gpu = None
         amp_run = trainer.config.amp
 
-        distributed_run = trainer.distributed_run
+        distributed_run = trainer.config.distributed
         epoch = trainer.epoch
         batch_size = trainer.eval_batch_size
 
-        """Handles all the validation scoring and printing"""
         with evaluating(model), torch.no_grad():
-            val_sampler = DistributedSampler(
-                validate_dataset) if distributed_run else None
+            val_sampler = None
+            if distributed_run:
+                val_sampler = DistributedSampler(validate_dataset)
+                
+
             val_loader = DataLoader(validate_dataset,
                                     num_workers=1,
                                     shuffle=False,
@@ -76,7 +83,8 @@ class Evaluator:
                     loss = criterion(y_pred, y)
 
                 if distributed_run:
-                    reduced_val_loss = reduce_tensor(loss.data, world_size).item()
+                    reduced_val_loss = reduce_tensor(loss.data,
+                                                     world_size).item()
                     reduced_num_items = reduce_tensor(num_items.data, 1).item()
                 else:  #
                     reduced_val_loss = loss.item()

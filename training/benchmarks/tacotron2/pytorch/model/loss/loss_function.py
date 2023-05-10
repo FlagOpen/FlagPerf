@@ -44,3 +44,9 @@ class Tacotron2Loss(nn.Module):
             nn.MSELoss()(mel_out_postnet, mel_target)
         gate_loss = nn.BCEWithLogitsLoss()(gate_out, gate_target)
         return mel_loss + gate_loss
+
+
+def get_loss_function():
+    loss = Tacotron2Loss()
+    loss.cuda()
+    return loss
