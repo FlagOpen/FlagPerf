@@ -61,12 +61,18 @@ def load_wav_to_torch(full_path):
 
 
 def load_filepaths_and_text(dataset_path, filename, split="|"):
-    with open(filename, encoding='utf-8') as f:
+
+    print(f"dataset_path: {dataset_path}")
+    print(f"filename: {filename}")
+
+
+    full_filepath = os.path.join(dataset_path, filename)
+    with open(full_filepath, encoding='utf-8') as f:
         def split_line(root, line):
             parts = line.strip().split(split)
             if len(parts) > 2:
                 raise Exception(
-                    "incorrect line format for file: {}".format(filename))
+                    "incorrect line format for file: {}".format(full_filepath))
             path = os.path.join(root, parts[0])
             text = parts[1]
             return path,text
