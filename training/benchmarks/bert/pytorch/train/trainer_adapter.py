@@ -1,16 +1,10 @@
-import os
-from typing import Tuple
-
-import torch
-import torch.distributed as dist
-
 from torch.cuda.amp import GradScaler
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
 from torch.optim import Optimizer
 from torch.optim import Adam
-
-import utils
+import torch
 import config
+from typing import Tuple
 
 BERT_MODEL = torch.nn.Module
 

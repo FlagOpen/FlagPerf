@@ -20,7 +20,6 @@ from model.fp16 import FP16_Optimizer
 
 def convert_model(config, model: nn.Module) -> nn.Module:
     state_dict = model.state_dict()
-    state_dict = remap_attn_parameters(state_dict)
 
     for i in range(config.num_layers):
         model.transformer.layers[i].input_layernorm = LayerNorm(
@@ -32,10 +31,6 @@ def convert_model(config, model: nn.Module) -> nn.Module:
 
     model.load_state_dict(state_dict, strict=True)
     return model
-
-
-def remap_attn_parameters(model_dict):
-    return model_dict
 
 
 def create_optimizer(config, model: nn.Module) -> Optimizer:
