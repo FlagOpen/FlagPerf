@@ -90,4 +90,4 @@ tree -d -L 1
 
 |            | Pytorch | Paddle | TensorFlow2 |
 | ---------- | ------- | ------ | ----------- |
-| Nvidia GPU | [✅](../../nvidia/resnet50-pytorch/README.md)       | N/A    | doing       |
+| Nvidia GPU | [✅](../../nvidia/resnet50-pytorch/README.md)       | N/A    | [✅](./tensorflow2/README.md)       |
