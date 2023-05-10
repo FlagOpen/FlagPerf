@@ -82,6 +82,16 @@ tree -d -L 1
 ├── train
 └── val
 ```
+dataset samples size
+
+```bash
+find ./train -name "*JPEG" | wc -l
+1281167
+```
+```bash
+find ./val -name "*JPEG" | wc -l
+50000
+```
 
 ## Checkpoint
 > None
