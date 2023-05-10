@@ -5,7 +5,6 @@ from torch.optim import Optimizer
 from torch import nn, Tensor
 from typing import Tuple
 
-import optimizers
 try:
     from apex.optimizers import FusedAdam as Adam
 except ImportError:
@@ -24,7 +23,7 @@ def convert_model(model: nn.Module) -> nn.Module:
 def create_optimizer(model, args):
     param_groups = get_optimizer_param_groups(model)
     optimizer = Adam(param_groups,
-                     lr=args.lr,
+                     lr=args.learning_rate,
                      weight_decay=args.weight_decay,
                      betas=(args.adam_beta1, args.adam_beta2),
                      eps=args.adam_eps)
