@@ -45,7 +45,6 @@ def main() -> Tuple[Any, Any]:
     logger = model_driver.logger
     init_start_time = logger.previous_log_time # init起始时间，单位ms
 
-    # TODO 得到seed
     """
     这里获取seed的可行方式：
     1. 配置文件中的seed
@@ -55,12 +54,13 @@ def main() -> Tuple[Any, Any]:
 
     init_helper.set_seed(config.seed, model_driver.config.vendor)
 
-    # TODO  构建dataset, dataloader 【train && validate】
-    train_dataset = build_train_dataset()
-    eval_dataset = build_eval_dataset()
+    # 构建dataset, dataloader 【train && validate】
+    train_dataset = build_train_dataset(config)
+    eval_dataset = build_eval_dataset(config)
     train_dataloader = build_train_dataloader(config, train_dataset)
     eval_dataloader = build_eval_dataloader()
 
+    print(f"构建dataset, dataloader 【train && validate】 done...")
     # 根据 eval_dataloader 构建evaluator
     evaluator = Evaluator(config, eval_dataloader)
 
