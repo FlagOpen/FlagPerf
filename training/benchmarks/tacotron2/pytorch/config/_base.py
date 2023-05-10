@@ -177,3 +177,8 @@ postnet_n_convolutions: int = 5
 attention_rnn_dim: int = 1024
 # Dimension of attention hidden representation
 attention_dim: int = 128
+"""Attetion location parameters"""
+# Number of filters for location-sensitive attention
+attention_location_n_filters: int = 32
+# Kernel size for location-sensitive attention
+attention_location_kernel_size: int = 31
