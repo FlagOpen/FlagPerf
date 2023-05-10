@@ -6,8 +6,10 @@ seed: int = 1234
 
 # model args
 name: str = "tacotron2"
-
-# lr_scheduler args
+"""Training parameters"""
+# disable uniform initialization of batchnorm layer weight
+disable_uniform_initialize_bn_weight: bool = False
+""" lr_scheduler parameters"""
 # initial learning rate
 learning_rate: float = 0.1
 lr_anneal_steps: list = [500, 1000, 1500]
@@ -21,8 +23,7 @@ lr_decay_style: str = "linear"
 weight_decay: float = 1e-6
 # momentum for SGD optimizer
 momentum: float = 0.9
-
-# fp16 config args
+"""fp16 paramters """
 fp16: bool = False
 
 # Static loss scaling, positive power of 2 values can improve fp16 convergence. If None, dynamicloss scaling is used.
@@ -33,14 +34,11 @@ loss_scale_window: float = 1000
 
 # Minimum loss scale for dynamic loss scale
 min_scale: float = 1
-
-# distributed args
-
+"""distributed parameters"""
 # load and save args
 # Path to a directory containing a model checkpoint.
 init_checkpoint: str = None
-
-# data args
+"""data parameters"""
 # Training data dir
 data_dir: str = None
 
@@ -139,6 +137,7 @@ n_mel_channels: int = 80
 mask_padding: bool = False
 """Symbols parameters"""
 # Number of symbols in dictionary
+# TODO
 n_symbols: int = 0
 # Input embedding dimension
 symbols_embedding_dim: int = 512
@@ -157,20 +156,24 @@ decoder_rnn_dim: int = 1024
 # Number of ReLU units in prenet layers
 prenet_dim: int = 256
 # Maximum number of output mel spectrograms
-max_decoder_steps : int = 2000
+max_decoder_steps: int = 2000
 # Probability threshold for stop token
-gate_threshold:float = 0.5
+gate_threshold: float = 0.5
 # Dropout probability for attention LSTM
 p_attention_dropout: float = 0.1
 # Dropout probability for decoder LSTM
-p_decoder_dropout:float = 0.1
+p_decoder_dropout: float = 0.1
 # Stop decoding once all samples are finished
-decoder_no_early_stopping:bool = False
-
+decoder_no_early_stopping: bool = False
 """Mel-post processing network parameters"""
 # Postnet embedding dimension
-postnet_embedding_dim:int = 512
+postnet_embedding_dim: int = 512
 # Postnet kernel size
-postnet_kernel_size : int = 5
+postnet_kernel_size: int = 5
 # Number of postnet convolutions
-postnet_n_convolutions:int = 5
+postnet_n_convolutions: int = 5
+"""Attention parameters"""
+# Number of units in attention LSTM
+attention_rnn_dim: int = 1024
+# Dimension of attention hidden representation
+attention_dim: int = 128

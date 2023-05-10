@@ -35,7 +35,7 @@ def main() -> Tuple[Any, Any]:
     
     # init
     init_helper = InitHelper(config)
-    model_driver = init_helper.init_driver(globals(), locals())  # _base.py增加模型名称name
+    model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
@@ -60,7 +60,7 @@ def main() -> Tuple[Any, Any]:
     train_dataloader = build_train_dataloader(config, train_dataset)
     eval_dataloader = build_eval_dataloader()
 
-    print(f"构建dataset, dataloader 【train && validate】 done...")
+    print(f"构建dataset, dataloader 【train && validate】 done...{config.local_rank}")
     # 根据 eval_dataloader 构建evaluator
     evaluator = Evaluator(config, eval_dataloader)
 
