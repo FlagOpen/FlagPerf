@@ -4,8 +4,10 @@ vendor: str = None
 # random seed
 seed: int = 1234
 
-# model args
+"""model args"""
 name: str = "tacotron2"
+
+
 """Training parameters"""
 # disable uniform initialization of batchnorm layer weight
 disable_uniform_initialize_bn_weight: bool = False
@@ -18,14 +20,14 @@ lr_anneal_factor: float = 0.3
 # learning rate decay function
 lr_decay_style: str = "linear"
 
-# optimizer args
+"""optimizer args"""
 # weight decay coefficient for L2 regularization
 weight_decay: float = 1e-6
 # momentum for SGD optimizer
 momentum: float = 0.9
-"""fp16 paramters """
+"""Precision parameters"""
+amp: bool = True
 fp16: bool = False
-
 # Static loss scaling, positive power of 2 values can improve fp16 convergence. If None, dynamicloss scaling is used.
 loss_scale: float = 4096
 
@@ -41,19 +43,14 @@ init_checkpoint: str = None
 """data parameters"""
 # Training data dir
 data_dir: str = None
-
 # Number of workers to use for dataloading
 num_workers: int = 2
-
 # Total batch size for training.
 train_batch_size: int = 128
-
 # Total batch size for validating.
 eval_batch_size: int = 128
-
 # Maximum sequence length to process
 seq_length: int = 200
-
 # trainer args
 do_train: bool = True
 
@@ -81,7 +78,8 @@ log_freq: int = 1
 # target val_loss to converge for training
 target_val_loss: float = 0.35
 
-# distributed args
+"""Distributed parameters"""
+distributed: bool = False
 # Whether to read local rank from ENVVAR
 use_env: bool = True
 # local_rank for distributed training on gpus or other accelerators
@@ -91,17 +89,15 @@ dist_backend: str = "nccl"
 # Distributed Data Parallel type
 ddp_type: str = "native"
 
-# device parameters
+"""device parameters"""
 device: str = None
 n_device: int = 1
 
-distributed: bool = False
+
 pretrained: bool = False
 
 gpu: int = None
 print_freq: int = 10
-"""Precision parameters"""
-amp: bool = True
 
 disable_uniform_initialize_bn_weight: bool = False
 cudnn_enabled: bool = True
