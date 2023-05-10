@@ -60,7 +60,6 @@ class InitHelper:
             torch.backends.cudnn.deterministic = True
         elif lower_vendor == "kunlunxin":
             torch.manual_seed(seed)
-        
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
