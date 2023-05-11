@@ -550,7 +550,7 @@ def prepare_case_config_cluster(dp_path, case_config, case):
 def log_test_configs(cases, curr_log_path, dp_path):
     '''Put test configs to log '''
     RUN_LOGGER.info("--------------------------------------------------")
-    RUN_LOGGER.info("Prepare to run flagperf benchmakrs with configs: ")
+    RUN_LOGGER.info("Prepare to run flagperf benchmarks with configs: ")
     RUN_LOGGER.info("Deploy path on host:\t" + dp_path)
     RUN_LOGGER.info("Vendor:\t\t" + tc.VENDOR)
     RUN_LOGGER.info("Testcases:\t\t[" + ','.join(cases) + "]")
