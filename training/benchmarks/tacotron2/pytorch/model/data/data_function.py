@@ -51,9 +51,6 @@ class TextMelLoader(torch.utils.data.Dataset):
 
     def get_mel_text_pair(self, audiopath_and_text):
         # separate filename and text
-
-        print(f"audiopath_and_text:{audiopath_and_text}")
-
         audiopath, text = audiopath_and_text[0], audiopath_and_text[1]
         len_text = len(text)
         text = self.get_text(text)
@@ -61,9 +58,6 @@ class TextMelLoader(torch.utils.data.Dataset):
         return (text, mel, len_text)
 
     def get_mel(self, filename):
-
-        print(f"get_mel filename: {filename}")
-
 
         if not self.load_mel_from_disk:
             audio, sampling_rate = load_wav_to_torch(filename)

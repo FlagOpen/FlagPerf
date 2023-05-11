@@ -50,7 +50,6 @@ class Trainer:
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
 
         self.grad_scaler = self.adapter.create_grad_scaler(self.config)
-        
 
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
@@ -61,75 +60,15 @@ class Trainer:
         epoch_start_num_sample = state.num_trained_samples
 
         for batch_idx, batch in enumerate(train_dataloader):
-
             print(f"batch_idx: {batch_idx}")
 
-            # state.global_steps += 1
-            # # TODO: Maybe we should update num_trained_samples after all epochs.
-            # state.num_trained_samples = state.global_steps * \
-            #     dist_pytorch.global_batch_size(self.config)
+            if batch_idx > 10:
+                state.converged_success()
 
-            # driver.event(Event.STEP_BEGIN, step=state.global_steps)
-
-            # other_state = dict()
-            # if state.global_steps % self.config.gradient_accumulation_steps == 0:
-            #     step_end_time = time.time()
-            #     step_total_time = step_end_time - step_start_time
-            #     step_start_time = step_end_time
-            #     sequences_per_second = (
-            #         dist_pytorch.global_batch_size(self.config) *
-            #         self.config.gradient_accumulation_steps) / step_total_time
-            #     other_state["seq/s"] = sequences_per_second
-
-            # if hasattr(self.optimizer, 'loss_scaler'):
-            #     loss_scale = self.optimizer.loss_scaler.loss_scale
-            #     other_state['loss_scale'] = loss_scale
-
-            # eval_result = None
-            # if self.can_do_eval(state):
-            #     eval_start = time.time()
-            #     state.eval_accuracy = self.evaluator.evaluate(self)
-            #     eval_end = time.time()
-            #     eval_result = dict(global_steps=state.global_steps,
-            #                        eval_accuracy=state.eval_accuracy,
-            #                        time=eval_end - eval_start)
-
-            # end_training = self.detect_training_status(state)
-            # step_info = state.to_dict(**other_state)
-
-            # driver.event(Event.STEP_END,
-            #              message=step_info,
-            #              step=state.global_steps,
-            #              loss=state.loss)
-
-            # if eval_result is not None:
-            #     driver.event(Event.EVALUATE, eval_result)
-
-            # if end_training:
-            #     break
+            if state.end_training:
+                break
 
         epoch_start_num_sample += len(train_dataloader.dataset)
         state.num_trained_samples = epoch_start_num_sample
 
         driver.event(Event.EPOCH_END, state.epoch)
-
-    def train_one_step(self, batch):
-        pass
-
-  
-    def can_do_eval(self, state):
-        config = self.config
-        do_eval = all([
-            config.eval_data is not None,
-            state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps %
-            math.ceil(config.eval_interval_samples /
-                      dist_pytorch.global_batch_size(config)) == 0,
-            config.eval_interval_samples > 0,
-            state.global_steps > 1,
-        ])
-
-        return do_eval or state.num_trained_samples >= config.max_samples_termination
-
-    def forward(self, batch):
-        pass
