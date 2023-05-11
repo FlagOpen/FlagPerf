@@ -142,7 +142,6 @@ class Bmm1StridedFunction(torch.autograd.Function):
         return output[:ntokens2 * heads], mixed
 
     @staticmethod
-    #def backward(ctx, grad_output):
     def backward(ctx, grad_output, grad_mixed):
 
         mixed, seqlen = ctx.saved_tensors
@@ -151,8 +150,6 @@ class Bmm1StridedFunction(torch.autograd.Function):
         heads = ctx.heads
         embed = ctx.embed
         ntokens = ctx.ntokens
-
-        #grad_mixed = torch.empty([ntokens,heads*3*embed], device="cuda", dtype=torch.float16)
 
         if ctx.timers: ctx.timers['start_dgrad'].record()
         ext_ops.FastBmm1Dgrad2(mixed, grad_output, grad_mixed, batch, seqlen,
@@ -164,7 +161,7 @@ class Bmm1StridedFunction(torch.autograd.Function):
                                heads, embed, ctx.scale, True, ctx.stream,
                                ctx.sync)
         if ctx.timers: ctx.timers['stop_wgrad'].record()
-        #return grad_mixed[:ntokens], None, None, None, None, None, None, None, None, None
+        
         return grad_mixed[:
                           ntokens], grad_mixed, None, None, None, None, None, None, None, None, None
 

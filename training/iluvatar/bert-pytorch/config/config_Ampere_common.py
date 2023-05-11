@@ -9,7 +9,6 @@ fp16 = True
 ddp_type = "apex"
 dist_backend = "nccl"
 
-#train_batch_size = 56 if get_gpu_mem() > 75 else 27
 train_batch_size = 12
 max_steps = 1000000
 

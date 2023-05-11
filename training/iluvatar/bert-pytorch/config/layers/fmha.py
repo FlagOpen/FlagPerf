@@ -55,15 +55,6 @@ class FMHAFun(torch.autograd.Function):
         return dqkv, None, None, None, None
 
 
-class TestParam(torch.nn.Parameter):
-
-    def __init__(self, data, requires_grad=True):
-        super(TestParam, self).__init__()
-        self.data = data
-        self.requires_grad = requires_grad
-        self.tag = 'qkv'
-        self.counter = 0
-
 
 class NoopCat(torch.autograd.Function):
 
