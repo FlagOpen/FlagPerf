@@ -51,6 +51,9 @@ class TextMelLoader(torch.utils.data.Dataset):
 
     def get_mel_text_pair(self, audiopath_and_text):
         # separate filename and text
+
+        print(f"audiopath_and_text:{audiopath_and_text}")
+
         audiopath, text = audiopath_and_text[0], audiopath_and_text[1]
         len_text = len(text)
         text = self.get_text(text)
@@ -58,6 +61,10 @@ class TextMelLoader(torch.utils.data.Dataset):
         return (text, mel, len_text)
 
     def get_mel(self, filename):
+
+        print(f"get_mel filename: {filename}")
+
+
         if not self.load_mel_from_disk:
             audio, sampling_rate = load_wav_to_torch(filename)
             if sampling_rate != self.stft.sampling_rate:
@@ -88,8 +95,7 @@ class TextMelLoader(torch.utils.data.Dataset):
 
 
 class TextMelCollate():
-    """ Zero-pads model inputs and targets based on number of frames per setep
-    """
+    """ Zero-pads model inputs and targets based on number of frames per step """
     def __init__(self, n_frames_per_step):
         self.n_frames_per_step = n_frames_per_step
 

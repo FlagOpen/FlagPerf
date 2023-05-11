@@ -11,7 +11,6 @@ import torch.distributed as dist
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
-from driver import dist_pytorch
 
 # adapted from: https://discuss.pytorch.org/t/opinion-eval-should-be-a-context-manager/18998/3
 # Following snippet is licensed under MIT license
@@ -57,7 +56,6 @@ class Evaluator:
             val_sampler = None
             if distributed_run:
                 val_sampler = DistributedSampler(validate_dataset)
-                
 
             val_loader = DataLoader(validate_dataset,
                                     num_workers=1,

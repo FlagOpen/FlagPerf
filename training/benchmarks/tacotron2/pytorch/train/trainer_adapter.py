@@ -31,8 +31,8 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
     return model
 
 
-def create_grad_scaler():
-    return None
+def create_grad_scaler(args):
+    return torch.cuda.amp.GradScaler(enabled=args.amp)
 
 
 def backward(step: int, loss: Tensor, optimizer, **kwarg):

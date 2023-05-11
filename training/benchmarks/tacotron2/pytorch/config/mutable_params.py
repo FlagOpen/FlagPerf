@@ -1,6 +1,6 @@
 """mutable_params defines parameters that can be replaced by vendor"""
 mutable_params = [
-    "fp16",
+    "amp",
     "dist_backend",
     "gradient_accumulation_steps",
     "train_batch_size",

@@ -27,7 +27,6 @@ weight_decay: float = 1e-6
 momentum: float = 0.9
 """Precision parameters"""
 amp: bool = True
-fp16: bool = False
 # Static loss scaling, positive power of 2 values can improve fp16 convergence. If None, dynamicloss scaling is used.
 loss_scale: float = 4096
 
@@ -173,7 +172,7 @@ postnet_n_convolutions: int = 5
 attention_rnn_dim: int = 1024
 # Dimension of attention hidden representation
 attention_dim: int = 128
-"""Attetion location parameters"""
+"""Attention location parameters"""
 # Number of filters for location-sensitive attention
 attention_location_n_filters: int = 32
 # Kernel size for location-sensitive attention
