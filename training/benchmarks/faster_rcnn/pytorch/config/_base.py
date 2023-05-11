@@ -38,7 +38,7 @@ lr_gamma: float = 0.1
 train_batch_size: int = 16
 eval_batch_size: int = 16
 
-target_mAP: float = 1.0
+target_mAP: float = 0.35
 max_epoch: int = 26
 
 do_train = True
