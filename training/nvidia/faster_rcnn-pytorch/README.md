@@ -1,7 +1,7 @@
 ### 模型backbone权重下载
 [模型backbone权重下载](https://download.pytorch.org/models/resnet50-19c8e357.pth)
 ### 测试数据集下载
-[测试数据集下载](../../benchmarks/mask_rcnn/README.md#数据集下载地址)
+[测试数据集下载](.https://cocodataset.org/)
 
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
