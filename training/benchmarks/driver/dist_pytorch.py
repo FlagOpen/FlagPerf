@@ -157,21 +157,27 @@ def barrier(vendor="nvidia"):
 def init_dist_training_env(config):
     ''' TODO: Support other accelarators.  '''
     if config.vendor == "kunlunxin":
+        import torch_xmlir
         import torch_xmlir.core.xpu_model as xm
-        if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
-            config.device = xm.xpu_device(eager=True)
-            config.n_device = 1
-        else:
-            config.device = xm.xpu_device(config.local_rank, eager=True)
-            host_addr_full = 'tcp://' + os.environ[
-                "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
-            rank = int(os.environ["RANK"])
-            world_size = int(os.environ["WORLD_SIZE"])
-            torch.distributed.init_process_group(backend=config.dist_backend,
-                                                 init_method=host_addr_full,
-                                                 rank=rank,
-                                                 world_size=world_size)
-            config.n_device = torch.distributed.get_world_size()
+        from hyperparameter import param_scope
+        with param_scope() as ps:
+            ps.xacc.eager = "true"
+            if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
+                #config.device = xm.xpu_device(eager=True)
+                config.device = torch_xmlir.device("xpu:0")
+                config.n_device = 1
+            else:
+                #config.device = xm.xpu_device(config.local_rank)
+                config.device = torch_xmlir.device(f"xpu:{config.local_rank}")
+                host_addr_full = 'tcp://' + os.environ[
+                    "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
+                rank = int(os.environ["RANK"])
+                world_size = int(os.environ["WORLD_SIZE"])
+                torch.distributed.init_process_group(backend=config.dist_backend,
+                                                     init_method=host_addr_full,
+                                                     rank=rank,
+                                                     world_size=world_size)
+                config.n_device = torch.distributed.get_world_size()
     else:  # nvidia
         if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
             config.device = torch.device("cuda")
@@ -188,6 +194,8 @@ def init_dist_training_env(config):
                                                  world_size=world_size)
             config.device = torch.device("cuda", config.local_rank)
             config.n_device = torch.distributed.get_world_size()
+
+
 
 
 def global_batch_size(config):
