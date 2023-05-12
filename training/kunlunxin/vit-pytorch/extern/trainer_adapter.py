@@ -2,7 +2,6 @@ import config
 from torch import nn
 import torch.distributed as dist
 from driver.dist_pytorch import main_proc_print
-from torch.nn.parallel import DistributedDataParallel as NativeDDP
 
 try:
     from apex import amp
@@ -31,6 +30,8 @@ def model_to_ddp(model: nn.Module, use_amp) -> nn.Module:
             model = ApexDDP(model, delay_allreduce=True)
         else:
             main_proc_print("Using native Torch DistributedDataParallel.")
-            model = NativeDDP(model)
+            from torch_xmlir.distributed import DistributedDataParallel as DDP
+            model = DDP(model) 
+            # model = NativeDDP(model)
         # NOTE: EMA model does not need to be wrapped by DDP
     return model

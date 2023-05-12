@@ -194,8 +194,6 @@ class Trainer:
 
         loss_list = []
         for batch_idx, (input, target) in enumerate(loader):
-            if batch_idx >= 20:
-                break
             state.global_steps += 1
             
             last_batch = batch_idx == last_idx
@@ -212,6 +210,7 @@ class Trainer:
                 input = input.contiguous(memory_format=torch.channels_last)
 
             with amp_autocast():
+                self.model = self.model.to(device) # todo 
                 output = self.model(input)
                 loss = self.train_loss_fn(output, target)
 
@@ -318,6 +317,7 @@ class Trainer:
         top5_m = utils.AverageMeter()
 
         model.eval()
+        model = model.to(device)
 
         end = time.time()
         last_idx = len(loader) - 1

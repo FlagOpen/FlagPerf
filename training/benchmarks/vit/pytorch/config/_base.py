@@ -8,6 +8,11 @@ vendor: str = None
 name: str = "vit_base_patch16_224"
 do_train = True
 fp16 = False
+
+pretrained  =  False
+epochs  =  1
+recovery_interval  =  1
+
 # =========================================================
 # data
 # =========================================================
@@ -58,7 +63,6 @@ drop_block: float =  None
 drop_connect: float =  None
 drop_path: float =  None
 epoch_repeats  =  0.0
-epochs  =  1
 eval_metric  =  "top1"
 experiment  =  ""
 fast_norm  =  False
@@ -111,10 +115,8 @@ opt_kwargs  =  {}
 output  =  ""
 patience_epochs  =  10
 pin_mem  =  False
-pretrained  =  False
 ratio  =  [0.75, 1.3333333333333333]
 recount  =  1
-recovery_interval  =  0
 remode  =  "pixel"
 reprob  =  0.0
 resplit  =  False
