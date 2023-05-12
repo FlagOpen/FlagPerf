@@ -17,18 +17,6 @@ def convert_model(model: nn.Module) -> nn.Module:
     """convert_model"""
     return model
 
-
-def create_optimizer(model: nn.Module) -> Optimizer:
-    """create_optimizer"""
-    params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.SGD(params,
-                                lr=config.lr,
-                                momentum=config.momentum,
-                                weight_decay=config.weight_decay)
-    main_proc_print(f'Optimizer = {optimizer.__class__.__name__}')
-    return optimizer
-
-
 def model_to_fp16(model: nn.Module) -> nn.Module:
     """model_to_fp16"""
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision

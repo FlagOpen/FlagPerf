@@ -7,6 +7,7 @@ import sys
 
 from model.modeling import create_model
 from schedulers import create_scheduler
+from optimizers import create_optimizer
 
 import utils.train.train_eval_utils as utils
 from train.evaluator import Evaluator
@@ -55,7 +56,7 @@ class Trainer:
         # RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! when resuming training
         self.model.to(self.device)
 
-        self.optimizer = self.adapter.create_optimizer(self.model)
+        self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
         self.grad_scaler = self.adapter.create_grad_scaler()
 
