@@ -253,7 +253,7 @@ def main():
 
     # setup learning rate schedule and starting epoch
     updates_per_epoch = len(loader_train)
-    main_proc_print("================ updates_per_epoch: ", updates_per_epoch)
+    main_proc_print("================ updates_per_epoch: ", updates_per_epoch, "batch_size", config.batch_size)
     lr_scheduler, num_epochs = create_scheduler(
         trainer.optimizer,
         updates_per_epoch=updates_per_epoch,
