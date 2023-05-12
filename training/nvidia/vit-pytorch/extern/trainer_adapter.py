@@ -31,6 +31,6 @@ def model_to_ddp(model: nn.Module, use_amp) -> nn.Module:
             model = ApexDDP(model, delay_allreduce=True)
         else:
             main_proc_print("Using native Torch DistributedDataParallel.")
-            model = NativeDDP(model)
+            model = NativeDDP(model, device_ids=[config.local_rank])
         # NOTE: EMA model does not need to be wrapped by DDP
     return model
