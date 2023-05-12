@@ -10,8 +10,8 @@ do_train = True
 fp16 = False
 
 pretrained  =  False
-epochs  =  1
-recovery_interval  =  1
+epochs  =  300
+recovery_interval  =  1000
 
 # =========================================================
 # data
@@ -19,7 +19,7 @@ recovery_interval  =  1
 log_freq: int = 1
 n_device: int = 1
 
-data_dir: str = "/home/data/vit"
+data_dir: str = "/home/data/imagenet"
 init_checkpoint: str = ""
 
 # =========================================================
