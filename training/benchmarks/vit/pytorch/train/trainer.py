@@ -275,7 +275,7 @@ class Trainer:
                             step=state.global_steps,
                             message=step_info,
                             loss=losses_m.val)
-
+            # todo distributed training hangs at model checkpoint
             if saver is not None and args.recovery_interval and (
                     last_batch or (batch_idx + 1) % args.recovery_interval == 0):
                 saver.save_recovery(epoch, batch_idx=batch_idx)
@@ -289,10 +289,10 @@ class Trainer:
         # save loss and map for check
         dname = "check"
         if not os.path.isdir(dname):
-            os.makedirs(dname)
+            os.makedirs(dname, exist_ok=True)
         dname = dname +"/" + device.type
         if not os.path.isdir(dname):
-            os.makedirs(dname)
+            os.makedirs(dname, exist_ok=True)
         torch.save(torch.tensor(loss_list), dname + "/loss_" + str(0) + ".pt")
 
         if hasattr(self.optimizer, 'sync_lookahead'):

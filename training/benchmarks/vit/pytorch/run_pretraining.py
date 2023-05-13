@@ -350,18 +350,21 @@ def main():
                 )
                 
 
-            if saver is not None:
-                # save proper checkpoint with eval metric
-                save_metric = eval_metrics[eval_metric]
-                best_metric, best_epoch = saver.save_checkpoint(epoch, metric=save_metric)  
+            # if saver is not None:
+            #     # save proper checkpoint with eval metric
+            #     save_metric = eval_metrics[eval_metric]
+            #     best_metric, best_epoch = saver.save_checkpoint(epoch, metric=save_metric)
 
             if lr_scheduler is not None:
                 # step LR for next epoch
                 lr_scheduler.step(epoch + 1, eval_metrics[eval_metric])
-                
-            if training_state.eval_acc1 > config.target_acc1:
-                print('End training after epoch {0}, acc1 {1}'.format(epoch, training_state.eval_acc1))
-                break
+
+        if saver is not None:
+            # save proper checkpoint with eval metric
+            save_metric = eval_metrics[eval_metric]
+            best_metric, best_epoch = saver.save_checkpoint(epoch, metric=save_metric)
+
+
 
     except KeyboardInterrupt:
         pass
