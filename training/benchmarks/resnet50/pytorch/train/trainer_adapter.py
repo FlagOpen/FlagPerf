@@ -38,12 +38,6 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
         model = DDP(model, device_ids=[config.local_rank])
     return model
 
-
-def create_grad_scaler():
-    """create_grad_scaler"""
-    return None
-
-
 def backward(step: int, loss: Tensor, optimizer: Optimizer):
     """backward"""
     # compute gradient and do SGD step
