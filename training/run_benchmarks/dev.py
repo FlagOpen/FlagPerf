@@ -153,7 +153,7 @@ def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes):
     return True
 
 
-def prepare_running_env(dp_path, container_name, case_config):
+def prepare_running_env(dp_path, container_name, case_config, stdout, nullout):
     '''Install extensions and setup env before start task in container.
     '''
     nnodes = case_config["nnodes"]
@@ -166,12 +166,25 @@ def prepare_running_env(dp_path, container_name, case_config):
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
                   + tc.VENDOR + " --pipsource " + tc.PIP_SOURCE + "\""
+    pre_env_cmd = "sudo docker exec -i " + container_name + " bash -c \"" + "python3 " \
+                  + tc.FLAGPERF_PATH + "/" \
+                  + "/run_benchmarks/prepare_in_container.py --framework " \
+                  + framework + " --model " + model + " --vendor " \
+                  + tc.VENDOR + " --pipsource " + tc.PIP_SOURCE + "\""
+    sys.stdout = stdout
+    print("Command 2, run at host")
+    print("    " + pre_env_cmd)
+    print("Command 3: run at host")
+    print("[INFO] Command 3 let you go into docker(container)")
+    print("    sudo docker exec -it " + container_name + " /bin/bash")
+    sys.stdout = nullout
     timeout = 1800
     RUN_LOGGER.debug(
         "Run cmd in the cluster to prepare running environment: " +
         prepare_cmd + " timeout=" + str(timeout))
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(prepare_cmd, nnodes,
                                                    timeout)
+
     if len(bad_hosts) != 0:
         RUN_LOGGER.error("Hosts that can't prepare running environment " +
                          "properly: " + ",".join(bad_hosts.keys()))
@@ -180,12 +193,20 @@ def prepare_running_env(dp_path, container_name, case_config):
 
 
 def start_container_in_cluster(dp_path, run_args, container_name, image_name,
-                               nnodes):
+                               nnodes, stdout, nullout):
     '''Call CLUSTER_MGR tool to start containers.'''
     start_cmd = "cd " + dp_path + " && " + sys.executable \
                 + " utils/container_manager.py -o runnew " \
                 + " -c " + container_name + " -i " + image_name + " -a \"" \
                 + run_args + "\""
+    start_container_cmd = "sudo docker run " + run_args + \
+                      " --name=" + container_name + " \"" + image_name + "\" " + \
+                      "sleep infinity"
+    sys.stdout = stdout
+    print("You should run these 4 commands to start the task manually:")
+    print("Command 1: run at host")
+    print("    " + start_container_cmd)
+    sys.stdout = nullout
     RUN_LOGGER.debug("Run cmd in the cluster to start container: " + start_cmd)
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(start_cmd, nnodes, 600)
     if len(bad_hosts) != 0:
@@ -284,7 +305,7 @@ def stop_monitors_in_cluster(dp_path, nnodes):
 
 
 def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
-                           count):
+                           count, stdout, nullout):
     '''Start tasks in cluster, and NOT wait.'''
     framework = case_config["framework"]
     nnodes = case_config["nnodes"]
@@ -302,6 +323,27 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
         start_cmd += " --visible_dev_env " \
                      + tc.ACCE_VISIBLE_DEVICE_ENV_NAME
     start_cmd += " \""
+    start_task_cmd = "source " + env_file + "; " \
+                + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
+                + framework + "/start_" + framework + "_task.py " \
+                + base_args + " --round " + str(count)
+    if tc.ACCE_VISIBLE_DEVICE_ENV_NAME is not None:
+        start_task_cmd += " --visible_dev_env " \
+                     + tc.ACCE_VISIBLE_DEVICE_ENV_NAME
+    sys.stdout = stdout
+    print("Command 4, run at docker(container)")
+    print(
+        "[INFO] If you set nnodes != 1, you should run command 1-3 on each hosts, then run the corresponding command 4 respectively"
+    )
+    hosts = cc.HOSTS
+    command_master_ip = start_task_cmd + '  --master_addr ' + hosts[0]
+    for i in range(0, nnodes):
+        host = hosts[i]
+        command = command_master_ip + ' --node_rank ' + str(i) \
+                                    + ' --host_addr ' + host
+        print("    Command 4 at host " + host + ":")
+        print("        " + command)
+    sys.stdout = nullout
     RUN_LOGGER.debug("Run cmd in the cluster to start tasks, cmd=" + start_cmd)
     CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
     # Wait a moment for starting tasks.
@@ -328,7 +370,7 @@ def wait_for_finish(dp_path, container_name, pid_file_path, nnodes):
 
 
 def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
-                                   image_name, case_config):
+                                   image_name, case_config, stdout, nullout):
     '''Prepare containers environments in the cluster. It will start
        containers, setup environments, start monitors, and clear caches.'''
     nnodes = case_config["nnodes"]
@@ -349,23 +391,25 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
     stop_container_in_cluster(dp_path, container_name, nnodes)
     RUN_LOGGER.info("b) Start container(s) in the cluster.")
     if not start_container_in_cluster(dp_path, container_start_args,
-                                      container_name, image_name, nnodes):
+                                      container_name, image_name, nnodes,
+                                      stdout, nullout):
         RUN_LOGGER.error("b) Start container in the cluster......"
                          "[FAILED]. Ignore this round.")
         return False
     RUN_LOGGER.info("b) Start container(s) in the cluster.......[SUCCESS]")
 
     RUN_LOGGER.info("c) Prepare running environment.")
-    if not prepare_running_env(dp_path, container_name, case_config):
+    if not prepare_running_env(dp_path, container_name, case_config, stdout,
+                               nullout):
         RUN_LOGGER.error("c) Prepare running environment......"
                          "[FAILED]. Ignore this round.")
         RUN_LOGGER.info("Stop containers in cluster.")
         stop_container_in_cluster(dp_path, container_name, nnodes)
         return False
-    RUN_LOGGER.info("d) Prepare running environment......[SUCCESS]")
-    RUN_LOGGER.info("e) Start monitors......")
+    RUN_LOGGER.info("c) Prepare running environment......[SUCCESS]")
+    RUN_LOGGER.info("d) Start monitors......")
     start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
-    RUN_LOGGER.info("f) Clear system caches if it set......")
+    RUN_LOGGER.info("e) Clear system caches if it set......")
     clear_caches_cluster(tc.CLEAR_CACHES, nnodes)
     return True
 
@@ -506,7 +550,7 @@ def prepare_case_config_cluster(dp_path, case_config, case):
 def log_test_configs(cases, curr_log_path, dp_path):
     '''Put test configs to log '''
     RUN_LOGGER.info("--------------------------------------------------")
-    RUN_LOGGER.info("Prepare to run flagperf benchmakrs with configs: ")
+    RUN_LOGGER.info("Prepare to run flagperf benchmarks with configs: ")
     RUN_LOGGER.info("Deploy path on host:\t" + dp_path)
     RUN_LOGGER.info("Vendor:\t\t" + tc.VENDOR)
     RUN_LOGGER.info("Testcases:\t\t[" + ','.join(cases) + "]")
@@ -515,7 +559,7 @@ def log_test_configs(cases, curr_log_path, dp_path):
     RUN_LOGGER.info("--------------------------------------------------")
 
 
-def main():
+def main(stdout, nullout):
     '''Main process to run all the testcases'''
 
     print_welcome_msg()
@@ -526,7 +570,7 @@ def main():
     RUN_LOGGER.init(curr_log_path,
                     "flagperf_run.log",
                     tc.FLAGPERF_LOG_LEVEL,
-                    "both",
+                    "file",
                     log_caller=True)
 
     RUN_LOGGER.info("======== Step 1: Check environment and configs. ========")
@@ -595,16 +639,16 @@ def main():
             RUN_LOGGER.info("1) Prepare container environments in cluster...")
             case_log_dir = os.path.join(curr_log_path, case,
                                         "round" + str(count))
-            if not prepare_containers_env_cluster(dp_path, case_log_dir,
-                                                  container_name, image_name,
-                                                  case_config):
+            if not prepare_containers_env_cluster(
+                    dp_path, case_log_dir, container_name, image_name,
+                    case_config, stdout, nullout):
                 RUN_LOGGER.error("1) Prepare container environments in cluster"
                                  "...[FAILED]. Ignore case " + case +
                                  " round " + str(count))
                 continue
             RUN_LOGGER.info("2) Start tasks in the cluster...")
             start_tasks_in_cluster(dp_path, container_name, case_config,
-                                   base_args, count)
+                                   base_args, count, stdout, nullout)
 
             # Wait until start_xxx_task.py finished.
             RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
@@ -624,7 +668,11 @@ def main():
 
 
 if __name__ == '__main__':
+    stdout = sys.stdout
+    nullout = open("/dev/null", "w")
+    sys.stdout = nullout
     if len(sys.argv) > 1:
         usage()
-    main()
+    main(stdout, nullout)
+    sys.stdout = stdout
     RUN_LOGGER.stop()
