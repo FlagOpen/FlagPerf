@@ -27,8 +27,10 @@
 | 单机8卡  | config_A100x1x8 | 16730.435    | 0.35     | 0.3520        | 182.24            |
 | 两机8卡  | config_A100x2x8 |      |      |        |            |
 
+训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.fasterrcnn_resnet50_fpn)
 
 ### 许可证
+
 本项目基于Apache 2.0 license。
 
 本项目部分代码基于torchvision https://github.com/pytorch/vision/tree/release/0.9/references/detection 实现。
