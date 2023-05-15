@@ -257,6 +257,22 @@ def main():
         args=config,
     )
 
+    eval_start = time.time()
+    eval_metrics, training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = trainer.validate(
+        trainer.model,
+        loader_eval,
+        amp_autocast=amp_autocast,
+    )
+    eval_end = time.time()
+    eval_result = dict(global_steps=training_state.global_steps,
+                       eval_loss=training_state.eval_loss,
+                       eval_acc1=training_state.eval_acc1,
+                       eval_acc5=training_state.eval_acc5,
+                       time=eval_end - eval_start)
+
+    if eval_result is not None:
+        model_driver.event(Event.INIT_EVALUATION, eval_result)
+
     if not config.do_train:
         return config, training_state
 

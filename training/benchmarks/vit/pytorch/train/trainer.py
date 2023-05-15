@@ -261,8 +261,6 @@ class Trainer:
                 lr_scheduler.step_update(num_updates=num_updates,
                                          metric=losses_m.avg)
 
-            break
-
             end = time.time()
             # end for
 
@@ -298,10 +296,6 @@ class Trainer:
         with torch.no_grad():
             acc_list = []
             for batch_idx, (input, target) in enumerate(loader):
-
-                if batch_idx >= 10:
-                    break
-
                 last_batch = batch_idx == last_idx
                 if not args.prefetcher:
                     input = input.to(device)
