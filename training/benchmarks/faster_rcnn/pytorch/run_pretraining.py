@@ -30,8 +30,7 @@ def main() -> Tuple[Any, Any]:
 
     # init
     init_helper = InitHelper(config)
-    model_driver = init_helper.init_driver(globals(),
-                                           locals()) 
+    model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
@@ -65,7 +64,9 @@ def main() -> Tuple[Any, Any]:
     # evaluation统计
     print(config.device)
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
-    trainer.evaluate(trainer.model, trainer.data_loader_test, device=trainer.device)
+    trainer.evaluate(trainer.model,
+                     trainer.data_loader_test,
+                     device=trainer.device)
 
     init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
     # time单位为秒
