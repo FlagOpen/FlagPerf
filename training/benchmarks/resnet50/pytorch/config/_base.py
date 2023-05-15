@@ -7,6 +7,9 @@ seed: int = 1234
 # model args
 name: str = "resnet50"
 
+# refer to torchvision official site for recommended configs
+# https://github.com/pytorch/vision/tree/main/references/classification
+
 # lr_scheduler args
 # initial learning rate
 learning_rate: float = 0.1

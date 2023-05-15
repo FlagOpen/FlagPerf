@@ -82,6 +82,16 @@ tree -d -L 1
 ├── train
 └── val
 ```
+dataset samples size
+
+```bash
+find ./train -name "*JPEG" | wc -l
+1281167
+```
+```bash
+find ./val -name "*JPEG" | wc -l
+50000
+```
 
 ## Checkpoint
 > None
@@ -90,4 +100,4 @@ tree -d -L 1
 
 |            | Pytorch | Paddle | TensorFlow2 |
 | ---------- | ------- | ------ | ----------- |
-| Nvidia GPU | [✅](../../nvidia/resnet50-pytorch/README.md)       | N/A    | doing       |
+| Nvidia GPU | [✅](../../nvidia/resnet50-pytorch/README.md)       | N/A    | [✅](./tensorflow2/README.md)       |

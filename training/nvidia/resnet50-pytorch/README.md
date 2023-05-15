@@ -1,14 +1,7 @@
 ### 1. 数据集准备
 [下载ImageNet2012](../../benchmarks/resnet50) 
 
-### 2. 模型Checkpoint下载
-在xxx链接下载第70个checkpoint, 并在FlagPerf/training/benchmarks/resnet50/pytorch/config/_base.py 中init_checkpoint 指定路径, 即可从第70个epoch开始继续训练。
-
-如果想要从头开始训练，以config_A100x1x8.py为例，设置配置文件中 init_checkpoint = None 即可。
-
-
-
-### 3. Nvidia GPU配置与运行信息参考
+### 2. Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
     - 机器、加速卡型号: NVIDIA_A100-SXM4-40GB
