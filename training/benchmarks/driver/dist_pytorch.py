@@ -173,10 +173,11 @@ def init_dist_training_env(config):
                     "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
                 rank = int(os.environ["RANK"])
                 world_size = int(os.environ["WORLD_SIZE"])
-                torch.distributed.init_process_group(backend=config.dist_backend,
-                                                     init_method=host_addr_full,
-                                                     rank=rank,
-                                                     world_size=world_size)
+                torch.distributed.init_process_group(
+                    backend=config.dist_backend,
+                    init_method=host_addr_full,
+                    rank=rank,
+                    world_size=world_size)
                 config.n_device = torch.distributed.get_world_size()
     else:  # nvidia
         if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
@@ -194,8 +195,6 @@ def init_dist_training_env(config):
                                                  world_size=world_size)
             config.device = torch.device("cuda", config.local_rank)
             config.n_device = torch.distributed.get_world_size()
-
-
 
 
 def global_batch_size(config):

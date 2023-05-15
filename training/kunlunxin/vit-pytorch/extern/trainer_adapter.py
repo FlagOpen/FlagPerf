@@ -16,12 +16,14 @@ except ImportError:
 def convert_model(model: nn.Module) -> nn.Module:
     return model
 
+
 def model_to_fp16(model):
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if config.fp16:
         main_proc_print(" > use fp16...")
         model.half()
     return model
+
 
 def model_to_ddp(model: nn.Module, use_amp) -> nn.Module:
     if dist.is_available() and dist.is_initialized():
@@ -31,7 +33,7 @@ def model_to_ddp(model: nn.Module, use_amp) -> nn.Module:
             model = ApexDDP(model, delay_allreduce=True)
         else:
             main_proc_print("Using native Torch DistributedDataParallel.")
-            model = DDP(model) 
+            model = DDP(model)
             # model = NativeDDP(model)
         # NOTE: EMA model does not need to be wrapped by DDP
     return model

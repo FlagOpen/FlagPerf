@@ -1,5 +1,6 @@
 import timm
 
+
 def create_model(args):
     model = timm.models.create_model(
         args.model,
@@ -15,6 +16,6 @@ def create_model(args):
         scriptable=args.torchscript,
         checkpoint_path=args.initial_checkpoint,
         **args.model_kwargs,
-    )    
- 
+    )
+
     return model

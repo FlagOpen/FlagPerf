@@ -1,5 +1,5 @@
-
 from timm.data import create_dataset, create_loader, resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
+
 
 def build_train_dataset(args):
     dataset_train = create_dataset(
@@ -15,6 +15,7 @@ def build_train_dataset(args):
     )
     return dataset_train
 
+
 def build_eval_dataset(args):
     dataset_eval = create_dataset(
         args.dataset,
@@ -28,12 +29,13 @@ def build_eval_dataset(args):
     return dataset_eval
 
 
-def build_train_dataloader(dataset_train, data_config, num_aug_splits, collate_fn, device, args):
+def build_train_dataloader(dataset_train, data_config, num_aug_splits,
+                           collate_fn, device, args):
     # create data loaders w/ augmentation pipeiine
     train_interpolation = args.train_interpolation
     if args.no_aug or not train_interpolation:
         train_interpolation = data_config['interpolation']
-        
+
     loader_train = create_loader(
         dataset_train,
         input_size=data_config['input_size'],
@@ -66,12 +68,13 @@ def build_train_dataloader(dataset_train, data_config, num_aug_splits, collate_f
     )
     return loader_train
 
+
 def build_eval_dataloader(dataset_eval, data_config, device, args):
     eval_workers = args.workers
     if args.distributed and ('tfds' in args.dataset or 'wds' in args.dataset):
         # FIXME reduces validation padding issues when using TFDS, WDS w/ workers and distributed training
         eval_workers = min(2, args.workers)
-        
+
     loader_eval = create_loader(
         dataset_eval,
         input_size=data_config['input_size'],
@@ -88,4 +91,3 @@ def build_eval_dataloader(dataset_eval, data_config, device, args):
         device=device,
     )
     return loader_eval
-

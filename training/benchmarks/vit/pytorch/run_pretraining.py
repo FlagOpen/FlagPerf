@@ -66,8 +66,6 @@ has_compile = hasattr(torch, 'compile')
 
 logger = None
 
-
-
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
 from driver.dist_pytorch import main_proc_print
@@ -76,15 +74,15 @@ from driver.dist_pytorch import main_proc_print
 def main():
     import config
     global logger
-    
+
     config.prefetcher = not config.no_prefetcher
     if not config.train_batch_size:
         config.train_batch_size = config.batch_size
-    
+
     init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
-    
+
     utils.setup_default_logging()
 
     if torch.cuda.is_available():
@@ -92,16 +90,16 @@ def main():
         torch.backends.cudnn.benchmark = True
 
     dist_pytorch.init_dist_training_env(config)
-    
+
     if dist.is_available() and dist.is_initialized():
         config.distributed = True
         config.world_size = dist_pytorch.get_world_size()
-        
+
     model_driver.event(Event.INIT_START)
-    
+
     logger = model_driver.logger
     init_start_time = logger.previous_log_time
-    
+
     init_helper.set_seed(config.seed, config.vendor)
 
     # resolve AMP arguments based on PyTorch / Apex availability
@@ -123,7 +121,7 @@ def main():
         utils.set_jit_fuser(config.fuser)
     if config.fast_norm:
         set_fast_norm()
-        
+
     training_state = TrainingState()
     trainer = Trainer(driver=model_driver,
                       adapter=trainer_adapter,
@@ -131,21 +129,27 @@ def main():
                       device=config.device,
                       args=config)
     training_state._trainer = trainer
-    
+
     trainer.init()
-    
-    data_config = resolve_data_config(vars(config), model=trainer.model, verbose=dist_pytorch.is_main_process())
+
+    data_config = resolve_data_config(vars(config),
+                                      model=trainer.model,
+                                      verbose=dist_pytorch.is_main_process())
 
     # setup automatic mixed-precision (AMP) loss scaling and op casting
     amp_autocast = suppress  # do nothing
     loss_scaler = None
     if use_amp == 'apex':
         assert config.device.type == 'cuda'
-        trainer.model, trainer.optimizer = amp.initialize(trainer.model, trainer.optimizer, opt_level='O1')
+        trainer.model, trainer.optimizer = amp.initialize(trainer.model,
+                                                          trainer.optimizer,
+                                                          opt_level='O1')
         loss_scaler = ApexScaler()
         main_proc_print('Using NVIDIA APEX AMP. Training in mixed precision.')
     elif use_amp == 'native':
-        amp_autocast = partial(torch.autocast, device_type=config.device.type, dtype=amp_dtype)
+        amp_autocast = partial(torch.autocast,
+                               device_type=config.device.type,
+                               dtype=amp_dtype)
         if config.device.type == 'cuda':
             loss_scaler = NativeScaler()
         main_proc_print('Using native Torch AMP. Training in mixed precision.')
@@ -168,7 +172,9 @@ def main():
     if config.model_ema:
         # Important to create EMA model after cuda(), DP wrapper, and AMP but before DDP wrapper
         model_ema = utils.ModelEmaV2(
-            trainer.model, decay=config.model_ema_decay, device='cpu' if config.model_ema_force_cpu else None)
+            trainer.model,
+            decay=config.model_ema_decay,
+            device='cpu' if config.model_ema_force_cpu else None)
         if config.resume:
             load_checkpoint(model_ema.module, config.resume, use_ema=True)
 
@@ -178,7 +184,7 @@ def main():
     # create the train and eval datasets
     if config.data and not config.data_dir:
         config.data_dir = config.data
-        
+
     dataset_train = build_train_dataset(config)
     dataset_eval = build_eval_dataset(config)
 
@@ -186,16 +192,14 @@ def main():
     collate_fn = None
     mixup_fn = None
     if trainer.mixup_active:
-        mixup_args = dict(
-            mixup_alpha=config.mixup,
-            cutmix_alpha=config.cutmix,
-            cutmix_minmax=config.cutmix_minmax,
-            prob=config.mixup_prob,
-            switch_prob=config.mixup_switch_prob,
-            mode=config.mixup_mode,
-            label_smoothing=config.smoothing,
-            num_classes=config.num_classes
-        )
+        mixup_args = dict(mixup_alpha=config.mixup,
+                          cutmix_alpha=config.cutmix,
+                          cutmix_minmax=config.cutmix_minmax,
+                          prob=config.mixup_prob,
+                          switch_prob=config.mixup_switch_prob,
+                          mode=config.mixup_mode,
+                          label_smoothing=config.smoothing,
+                          num_classes=config.num_classes)
         if config.prefetcher:
             assert not trainer.num_aug_splits  # collate conflict (need to support deinterleaving in collate mixup)
             collate_fn = FastCollateMixup(**mixup_args)
@@ -204,10 +208,14 @@ def main():
 
     # wrap dataset in AugMix helper
     if trainer.num_aug_splits > 1:
-        dataset_train = AugMixDataset(dataset_train, num_splits=trainer.num_aug_splits)
+        dataset_train = AugMixDataset(dataset_train,
+                                      num_splits=trainer.num_aug_splits)
 
-    loader_train = build_train_dataloader(dataset_train, data_config, trainer.num_aug_splits, collate_fn, config.device, config)
-    loader_eval = build_eval_dataloader(dataset_eval, data_config, config.device, config)
+    loader_train = build_train_dataloader(dataset_train, data_config,
+                                          trainer.num_aug_splits, collate_fn,
+                                          config.device, config)
+    loader_eval = build_eval_dataloader(dataset_eval, data_config,
+                                        config.device, config)
 
     # setup checkpoint saver and eval metric tracking
     eval_metric = config.eval_metric
@@ -224,19 +232,18 @@ def main():
                 safe_model_name(config.model),
                 str(data_config['input_size'][-1])
             ])
-        output_dir = utils.get_outdir(config.output if config.output else './output/train', exp_name)
+        output_dir = utils.get_outdir(
+            config.output if config.output else './output/train', exp_name)
         decreasing = True if eval_metric == 'loss' else False
-        saver = utils.CheckpointSaver(
-            model=trainer.model,
-            optimizer=trainer.optimizer,
-            args=config,
-            model_ema=model_ema,
-            amp_scaler=loss_scaler,
-            checkpoint_dir=output_dir,
-            recovery_dir=output_dir,
-            decreasing=decreasing,
-            max_history=config.checkpoint_hist
-        )
+        saver = utils.CheckpointSaver(model=trainer.model,
+                                      optimizer=trainer.optimizer,
+                                      args=config,
+                                      model_ema=model_ema,
+                                      amp_scaler=loss_scaler,
+                                      checkpoint_dir=output_dir,
+                                      recovery_dir=output_dir,
+                                      decreasing=decreasing,
+                                      max_history=config.checkpoint_hist)
 
     if dist_pytorch.is_main_process() and config.log_wandb:
         if has_wandb:
@@ -249,17 +256,17 @@ def main():
         updates_per_epoch=updates_per_epoch,
         args=config,
     )
-    
+
     if not config.do_train:
         return config, training_state
-    
+
     model_driver.event(Event.INIT_END)
     init_end_time = logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
-    
+
     model_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time
-    
+
     start_epoch = 0
     if config.start_epoch is not None:
         # a specified start_epoch will always override the resume epoch
@@ -273,14 +280,18 @@ def main():
             lr_scheduler.step(start_epoch)
 
     main_proc_print(
-            f'Scheduled epochs: {num_epochs}. LR stepped per {"epoch" if lr_scheduler.t_in_epochs else "update"}.')
-    main_proc_print("updates_per_epoch: ", updates_per_epoch, "batch_size", config.batch_size)
+        f'Scheduled epochs: {num_epochs}. LR stepped per {"epoch" if lr_scheduler.t_in_epochs else "update"}.'
+    )
+    main_proc_print(
+        f'updates_per_epoch: {updates_per_epoch}, batch_size: {config.batch_size}.'
+    )
 
     try:
         for epoch in range(start_epoch, num_epochs):
             if hasattr(dataset_train, 'set_epoch'):
                 dataset_train.set_epoch(epoch)
-            elif dist.is_available() and dist.is_initialized() and hasattr(loader_train.sampler, 'set_epoch'):
+            elif dist.is_available() and dist.is_initialized() and hasattr(
+                    loader_train.sampler, 'set_epoch'):
                 loader_train.sampler.set_epoch(epoch)
 
             train_metrics = trainer.train_one_epoch(
@@ -294,10 +305,13 @@ def main():
                 mixup_fn=mixup_fn,
             )
 
-            if dist.is_available() and dist.is_initialized() and config.dist_bn in ('broadcast', 'reduce'):
-                main_proc_print("Distributing BatchNorm running means and vars")
-                utils.distribute_bn(trainer.model, config.world_size, config.dist_bn == 'reduce')
-                
+            if dist.is_available() and dist.is_initialized(
+            ) and config.dist_bn in ('broadcast', 'reduce'):
+                main_proc_print(
+                    "Distributing BatchNorm running means and vars")
+                utils.distribute_bn(trainer.model, config.world_size,
+                                    config.dist_bn == 'reduce')
+
             eval_start = time.time()
             eval_metrics, training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = trainer.validate(
                 trainer.model,
@@ -306,17 +320,19 @@ def main():
             )
             eval_end = time.time()
             eval_result = dict(global_steps=training_state.global_steps,
-                                eval_loss=training_state.eval_loss,
-                                eval_acc1=training_state.eval_acc1,
-                                eval_acc5=training_state.eval_acc5,
-                                time=eval_end - eval_start)
+                               eval_loss=training_state.eval_loss,
+                               eval_acc1=training_state.eval_acc1,
+                               eval_acc5=training_state.eval_acc5,
+                               time=eval_end - eval_start)
 
             if eval_result is not None:
                 model_driver.event(Event.EVALUATE, eval_result)
 
             if model_ema is not None and not config.model_ema_force_cpu:
-                if dist.is_available() and dist.is_initialized() and config.dist_bn in ('broadcast', 'reduce'):
-                    utils.distribute_bn(model_ema, config.world_size, config.dist_bn == 'reduce')
+                if dist.is_available() and dist.is_initialized(
+                ) and config.dist_bn in ('broadcast', 'reduce'):
+                    utils.distribute_bn(model_ema, config.world_size,
+                                        config.dist_bn == 'reduce')
 
                 ema_eval_metrics = trainer.validate(
                     model_ema.module,
@@ -327,7 +343,10 @@ def main():
                 eval_metrics = ema_eval_metrics
 
             if output_dir is not None:
-                lrs = [param_group['lr'] for param_group in trainer.optimizer.param_groups]
+                lrs = [
+                    param_group['lr']
+                    for param_group in trainer.optimizer.param_groups
+                ]
                 utils.update_summary(
                     epoch,
                     train_metrics,
@@ -345,22 +364,22 @@ def main():
         if saver is not None:
             # save proper checkpoint with eval metric
             save_metric = eval_metrics[eval_metric]
-            best_metric, best_epoch = saver.save_checkpoint(epoch, metric=save_metric)
-
-
+            best_metric, best_epoch = saver.save_checkpoint(epoch,
+                                                            metric=save_metric)
 
     except KeyboardInterrupt:
         pass
 
     model_driver.event(Event.TRAIN_END)
     raw_train_end_time = logger.previous_log_time
-    
+
     training_state.raw_train_time = (raw_train_end_time -
-                                    raw_train_start_time) / 1e+3
-    
+                                     raw_train_start_time) / 1e+3
+
     if best_metric is not None:
         print(f'*** Best metric: {best_metric} (epoch {best_epoch})')
     return config, training_state
+
 
 if __name__ == '__main__':
     start = time.time()
@@ -369,7 +388,7 @@ if __name__ == '__main__':
         sys.exit(0)
     global_batch_size = dist_pytorch.global_batch_size(config)
     e2e_time = time.time() - start
-    finished_info = {"e2e_time": e2e_time} 
+    finished_info = {"e2e_time": e2e_time}
     if config.do_train:
         training_perf = (global_batch_size *
                          state.global_steps) / state.raw_train_time
