@@ -137,8 +137,7 @@ def main() -> Tuple[Any, Any]:
 
     # 训练过程
     epoch = training_state.epoch
-    while (training_state.global_steps < config.max_steps
-           and not training_state.end_training):
+    while not training_state.end_training:
         trainer.train_one_epoch(train_dataloader)
         epoch += 1
         training_state.epoch = epoch

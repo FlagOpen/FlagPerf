@@ -65,11 +65,8 @@ do_train: bool = True
 # Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: int = 1
 
-# Total number of training steps to perform.
-max_steps: int = 50000000
-
 # Total number of training samples to run.
-max_samples_termination: float = 43912600
+max_samples_termination: int = 0
 
 # number of training samples to run a evaluation once
 eval_interval_samples: int = 20000
