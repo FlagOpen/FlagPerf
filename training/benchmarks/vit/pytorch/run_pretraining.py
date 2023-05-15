@@ -14,25 +14,17 @@ NVIDIA CUDA specific speedups adopted from NVIDIA Apex examples
 
 Hacked together by / Copyright 2020 Ross Wightman (https://github.com/rwightman)
 """
-import argparse
-import logging
 import os
 import sys
-
 import time
-from collections import OrderedDict
+
+import torch
+import torch.distributed as dist
+import torchvision.utils
+
 from contextlib import suppress
 from datetime import datetime
 from functools import partial
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-
-import torch
-import torch.nn as nn
-import torchvision.utils
-import yaml
-import torch.distributed as dist
 
 from timm import utils
 from timm.layers import set_fast_norm
@@ -40,21 +32,19 @@ from timm.models import safe_model_name, resume_checkpoint, load_checkpoint
 from timm.utils import ApexScaler, NativeScaler
 from timm.data import resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
 
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 
+from train import trainer_adapter
 from train.trainer import Trainer
 from dataloaders.dataloader import build_train_dataset, \
     build_eval_dataset, build_train_dataloader, build_eval_dataloader
 from schedulers import create_scheduler
-from driver import Event, dist_pytorch
-from driver.helper import InitHelper
-from train import trainer_adapter
-from train.training_state import TrainingState
-from driver.dist_pytorch import main_proc_print
 
+from train.training_state import TrainingState
 
 try:
     from apex import amp
-    from apex.parallel import convert_syncbn_model
     has_apex = True
 except ImportError:
     has_apex = False
@@ -72,15 +62,16 @@ try:
 except ImportError:
     has_wandb = False
 
-try:
-    from functorch.compile import memory_efficient_fusion
-    has_functorch = True
-except ImportError as e:
-    has_functorch = False
-
 has_compile = hasattr(torch, 'compile')
 
 logger = None
+
+
+
+from driver import Event, dist_pytorch
+from driver.helper import InitHelper
+from driver.dist_pytorch import main_proc_print
+
 
 def main():
     import config
@@ -297,7 +288,6 @@ def main():
                 loader_train,
                 lr_scheduler=lr_scheduler,
                 saver=saver,
-                output_dir=output_dir,
                 amp_autocast=amp_autocast,
                 loss_scaler=loss_scaler,
                 model_ema=model_ema,
@@ -369,7 +359,7 @@ def main():
                                     raw_train_start_time) / 1e+3
     
     if best_metric is not None:
-        print('*** Best metric: {0} (epoch {1})'.format(best_metric, best_epoch))
+        print(f'*** Best metric: {best_metric} (epoch {best_epoch})')
     return config, training_state
 
 if __name__ == '__main__':

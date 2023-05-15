@@ -5,9 +5,7 @@ from driver.dist_pytorch import main_proc_print
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
 
 try:
-    from apex import amp
     from apex.parallel import DistributedDataParallel as ApexDDP
-    from apex.parallel import convert_syncbn_model
     has_apex = True
 except ImportError:
     has_apex = False

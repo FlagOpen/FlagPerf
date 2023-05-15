@@ -1,5 +1,6 @@
 import time
 import os
+import sys
 from collections import OrderedDict
 from contextlib import suppress
 import torch
@@ -8,21 +9,22 @@ from model import create_model
 
 from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm import utils
-from timm.models import safe_model_name, resume_checkpoint, load_checkpoint, model_parameters
-from timm.data import create_dataset, create_loader, resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
-from timm.loss import JsdCrossEntropy, SoftTargetCrossEntropy, BinaryCrossEntropy, LabelSmoothingCrossEntropy
+from timm.models import safe_model_name, model_parameters
+from timm.loss import JsdCrossEntropy, SoftTargetCrossEntropy,  \
+    BinaryCrossEntropy, LabelSmoothingCrossEntropy
 
 from torch.types import Device
-from driver import Driver, Event, dist_pytorch
 from train.training_state import TrainingState
+
+from driver import Driver, Event, dist_pytorch
 
 
 class Trainer:
     def __init__(self,
-                driver: Driver, 
-                adapter, 
-                training_state: TrainingState, 
-                device: Device, 
+                driver: Driver,
+                adapter,
+                training_state: TrainingState,
+                device: Device,
                 args):
         super(Trainer, self).__init__()
         self.device = device
@@ -54,7 +56,7 @@ class Trainer:
         )
         self.train_loss_fn = self._init_train_loss_fn(self.args)
         self.validate_loss_fn = self._init_validate_loss_fn(self.args)
-        
+       
     def _init_model(self, model, args, device):
         if args.num_classes is None:
             assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'
@@ -67,44 +69,10 @@ class Trainer:
             print(
                 f'Model {safe_model_name(args.model)} created, param count:{sum([m.numel() for m in model.parameters()])}')
 
-        # enable split bn (separate bn stats per batch-portion)
-        if args.split_bn:
-            assert self.num_aug_splits > 1 or args.resplit
-            model = convert_splitbn_model(model, max(self.um_aug_splits, 2))
-
         # move model to GPU, enable channels last layout if set
         model.to(device=device)
         if args.channels_last:
             model.to(memory_format=torch.channels_last)
-
-        # setup synchronized BatchNorm for distributed training
-        if args.distributed and args.sync_bn:
-            args.dist_bn = ''  # disable dist_bn when sync BN active
-            assert not args.split_bn
-            if has_apex and use_amp == 'apex':
-                # Apex SyncBN used with Apex AMP
-                # WARNING this won't currently work with models using BatchNormAct2d
-                model = convert_syncbn_model(model)
-            else:
-                model = convert_sync_batchnorm(model)
-            if dist_pytorch.is_main_process():
-                print(
-                    'Converted model to use Synchronized BatchNorm. WARNING: You may have issues if using '
-                    'zero initialized BN layers (enabled by default for ResNets) while sync-bn enabled.')
-
-        if args.torchscript:
-            assert not use_amp == 'apex', 'Cannot use APEX AMP with torchscripted model'
-            assert not args.sync_bn, 'Cannot use SyncBatchNorm with torchscripted model'
-            model = torch.jit.script(model)
-        elif args.torchcompile:
-            # FIXME dynamo might need move below DDP wrapping? TBD
-            assert has_compile, 'A version of torch w/ torch.compile() is required for --compile, possibly a nightly.'
-            torch._dynamo.reset()
-            model = torch.compile(model, backend=args.torchcompile)
-        elif args.aot_autograd:
-            assert has_functorch, "functorch is needed for --aot-autograd"
-            model = memory_efficient_fusion(model)
-               
         return model
     
     def _create_optimizer(self, model, args):
@@ -159,7 +127,6 @@ class Trainer:
         loader,
         lr_scheduler=None,
         saver=None,
-        output_dir=None,
         amp_autocast=None,
         loss_scaler=None,
         model_ema=None,
@@ -171,8 +138,6 @@ class Trainer:
         
         driver = self.driver
         driver.event(Event.EPOCH_BEGIN, epoch)
-        
-        step_start_time = time.time()
         
         if args.mixup_off_epoch and epoch >= args.mixup_off_epoch:
             if args.prefetcher and loader.mixup_enabled:
@@ -281,6 +246,8 @@ class Trainer:
 
             if lr_scheduler is not None:
                 lr_scheduler.step_update(num_updates=num_updates, metric=losses_m.avg)
+                
+            break
             
             end = time.time()
             # end for
