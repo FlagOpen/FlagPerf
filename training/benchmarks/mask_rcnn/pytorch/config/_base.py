@@ -38,7 +38,12 @@ max_steps: int = 900000
 seed: int = 41
 
 # Stop training after reaching this accuracy
-target_mAP: float = 0.58
+# target_mAP: float = 0.3558
+# target_segMAP: float = 0.3234
+
+
+target_mAP: float = 1
+target_segMAP: float = 1
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
@@ -48,6 +53,8 @@ eval_interval_samples: int = 100 * 256 * 1
 
 # Total number of training samples to run.
 max_samples_termination: float = 1388270 * 4 * 30
+
+max_epochs: int = 26
 
 # number workers for dataloader
 num_workers: int = 4
