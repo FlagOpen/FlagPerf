@@ -16,7 +16,9 @@ ViT的结构是基于标准Transformer，将图片划分为patch作为Transforme
 
 - 数据集下载地址
 
-<https://www.microsoft.com/en-us/download/details.aspx?id=54765>
+ImageNet-1k
+Source: <http://image-net.org/challenges/LSVRC/2012/index>
+Paper: "ImageNet Large Scale Visual Recognition Challenge" - <https://arxiv.org/abs/1409.0575>
 
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|
