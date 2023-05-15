@@ -13,7 +13,10 @@ class TrainingState:
     iter_dataloader_idx = 0
 
     loss: float = 0.0
+    # bbox mAP
     eval_mAP :float = 0.0
+    # segmentation mAP
+    eval_segMAP :float = 0.0
 
     epoch: int = 1
     num_trained_samples = 0

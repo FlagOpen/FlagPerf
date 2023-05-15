@@ -50,12 +50,12 @@ class Trainer:
             load_pretrain_weights=True,
             pretrain_path=pretrain_path,
             coco_weights_path=coco_weights_pretrained_path)
+        self.model.to(self.device)
         self.model = self.adapter.convert_model(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
+        self.model = self.adapter.model_to_ddp(self.model)
         # Attention: remember to move model to device before create_optimizer, otherwise, you will get a RuntimeError:
         # RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! when resuming training
-        self.model.to(self.device)
-
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
         self.grad_scaler = self.adapter.create_grad_scaler()
@@ -81,6 +81,8 @@ class Trainer:
         config = self.config
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
+        state.epoch += 1
+        dist_pytorch.main_proc_print(f"state.epoch: {state.epoch}")
         mean_loss, lr = utils.train_one_epoch(model,
                                               optimizer,
                                               dataloader,
@@ -99,14 +101,18 @@ class Trainer:
         det_info, seg_info = utils.evaluate(model, eval_dataloader, device)
 
         if det_info is not None:
-            state.eval_mAP = det_info[1]
+            state.eval_mAP = det_info[0]
             print(f"training_state.eval_mAP:{state.eval_mAP}")
+
+        if seg_info is not None:
+            state.eval_segMAP = seg_info[0]
+            print(f"training_state.eval_segMAP:{state.eval_segMAP}")
 
         # 只在主进程上进行写操作
         if config.local_rank in [-1, 0]:
             train_loss.append(mean_loss.item())
             learning_rate.append(lr)
-            val_map.append(det_info[1])  # pascal mAP
+            val_map.append(state.eval_mAP)  # pascal mAP
 
             # 写det结果
             with open(det_results_file, "a") as f:
@@ -156,13 +162,13 @@ class Trainer:
     def detect_training_status(self):
         state = self.training_state
         config = self.config
-        if state.eval_mAP >= config.target_mAP:
+        if state.eval_mAP >= config.target_mAP and state.eval_segMAP >= config.target_segMAP:
             dist_pytorch.main_proc_print(
                 f"converged_success. eval_mAP: {state.eval_mAP}, target_mAP: {config.target_mAP}"
             )
             state.converged_success()
 
-        if state.num_trained_samples > config.max_samples_termination:
+        if state.epoch > config.max_epochs:
             state.end_training = True
 
         return state.end_training
