@@ -192,8 +192,6 @@ def create_common_coco_eval(coco_eval, img_ids, eval_imgs):
 
 
 def createIndex(self):
-    # create index
-    # print('creating index...')
     anns, cats, imgs = {}, {}, {}
     imgToAnns, catToImgs = defaultdict(list), defaultdict(list)
     if 'annotations' in self.dataset:
@@ -213,9 +211,6 @@ def createIndex(self):
         for ann in self.dataset['annotations']:
             catToImgs[ann['category_id']].append(ann['image_id'])
 
-    # print('index created!')
-
-    # create class members
     self.anns = anns
     self.imgToAnns = imgToAnns
     self.catToImgs = catToImgs
@@ -238,8 +233,6 @@ def loadRes(self, resFile):
     res = COCO()
     res.dataset['images'] = [img for img in self.dataset['images']]
 
-    # print('Loading and preparing results...')
-    # tic = time.time()
     if isinstance(resFile, torch._six.string_classes):
         anns = json.load(open(resFile))
     elif type(resFile) == np.ndarray:
@@ -287,7 +280,6 @@ def loadRes(self, resFile):
             ann['area'] = (x2 - x1) * (y2 - y1)
             ann['id'] = id + 1
             ann['bbox'] = [x1, y1, x2 - x1, y2 - y1]
-    # print('DONE (t={:0.2f}s)'.format(time.time()- tic))
 
     res.dataset['annotations'] = anns
     createIndex(res)
@@ -299,15 +291,13 @@ def evaluate(self):
     Run per image evaluation on given images and store results (a list of dict) in self.evalImgs
     :return: None
     '''
-    # tic = time.time()
-    # print('Running per image evaluation...')
+
     p = self.params
     # add backward compatibility if useSegm is specified in params
     if p.useSegm is not None:
         p.iouType = 'segm' if p.useSegm == 1 else 'bbox'
         print('useSegm (deprecated) is not None. Running {} evaluation'.format(
             p.iouType))
-    # print('Evaluate annotation type *{}*'.format(p.iouType))
     p.imgIds = list(np.unique(p.imgIds))
     if p.useCats:
         p.catIds = list(np.unique(p.catIds))
@@ -335,8 +325,6 @@ def evaluate(self):
     evalImgs = np.asarray(evalImgs).reshape(len(catIds), len(p.areaRng),
                                             len(p.imgIds))
     self._paramsEval = copy.deepcopy(self.params)
-    # toc = time.time()
-    # print('DONE (t={:0.2f}s).'.format(toc-tic))
     return p.imgIds, evalImgs
 
 
