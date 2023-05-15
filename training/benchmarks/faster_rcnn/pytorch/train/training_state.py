@@ -24,7 +24,6 @@ class TrainingState:
     init_time = 0
     raw_train_time = 0
 
-    # ÑµÁ·ÆðÊ¼Ê±¼ä´Á£¬ÓÃÓÚresumeÊ±£¬ÀÛ¼ÆÑµÁ·Ê±³¤
     train_start_timestamp = 0
 
     def status(self):
