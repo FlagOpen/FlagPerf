@@ -119,7 +119,7 @@ if __name__ == "__main__":
         training_perf = 117266 * state.epoch / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": training_perf,
+            "training_samples_per_second": training_perf,
             "converged": state.converged,
             "final_mAP": state.eval_mAP,
             "raw_train_time": state.raw_train_time,
