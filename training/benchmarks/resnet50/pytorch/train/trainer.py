@@ -7,6 +7,7 @@ import torch.distributed as dist
 from torch.types import Device
 from model import create_model
 from schedulers import create_scheduler
+from optimizer import create_optimizer
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
 import config
@@ -65,7 +66,7 @@ class Trainer:
         """init"""
         self.model = create_model(self.config)
         self.model = self.adapter.convert_model(self.model)
-        self.optimizer = self.adapter.create_optimizer(self.model)
+        self.optimizer = create_optimizer(self.model, self.config)
         self.model = self.adapter.model_to_fp16(self.model)
         self.model = self.adapter.model_to_ddp(self.model)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
