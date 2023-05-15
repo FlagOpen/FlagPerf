@@ -9,4 +9,3 @@ warmup = 0.1
 lr = 0.01
 log_freq = 1
 seed = 10483
-max_samples_termination = 5553080
