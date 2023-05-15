@@ -62,7 +62,6 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.barrier(config.vendor)
 
     # evaluation统计
-    print(config.device)
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
     trainer.evaluate(trainer.model,
                      trainer.data_loader_test,
