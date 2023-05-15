@@ -152,9 +152,7 @@ class Trainer:
                 print(loss_dict_reduced)
                 sys.exit(1)
 
-            optimizer.zero_grad()
-            losses.backward()
-            optimizer.step()
+            self.adapter.backward(losses, optimizer)
 
             if lr_scheduler is not None:
                 lr_scheduler.step()

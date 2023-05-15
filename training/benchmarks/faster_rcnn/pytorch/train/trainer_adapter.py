@@ -42,6 +42,6 @@ def create_grad_scaler():
 
 def backward(loss: Tensor, optimizer: Optimizer):
     """backward pass"""
+    optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-    optimizer.zero_grad()
