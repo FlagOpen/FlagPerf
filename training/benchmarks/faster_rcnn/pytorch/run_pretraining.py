@@ -116,7 +116,7 @@ if __name__ == "__main__":
     e2e_time = time.time() - state.train_start_timestamp
     if config_update.do_train:
 
-        training_perf = 117266 * state.epoch / state.raw_train_time
+        training_perf = state.num_trained_samples / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
             "training_samples_per_second": training_perf,

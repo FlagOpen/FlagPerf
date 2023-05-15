@@ -177,6 +177,7 @@ class Trainer:
 
         if epoch >= config.max_epoch:
             state.end_training = True
+        state.num_trained_samples += len(data_loader.dataset)
 
         return state.end_training
 
