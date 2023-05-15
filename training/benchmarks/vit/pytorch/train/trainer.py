@@ -210,7 +210,7 @@ class Trainer:
                 input = input.contiguous(memory_format=torch.channels_last)
 
             with amp_autocast():
-                self.model = self.model.to(device) # todo 
+                self.model = self.model.to(device)
                 output = self.model(input)
                 loss = self.train_loss_fn(output, target)
 
@@ -275,7 +275,6 @@ class Trainer:
                             step=state.global_steps,
                             message=step_info,
                             loss=losses_m.val)
-            # todo distributed training hangs at model checkpoint
             if saver is not None and args.recovery_interval and (
                     last_batch or (batch_idx + 1) % args.recovery_interval == 0):
                 saver.save_recovery(epoch, batch_idx=batch_idx)

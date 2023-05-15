@@ -253,7 +253,6 @@ def main():
 
     # setup learning rate schedule and starting epoch
     updates_per_epoch = len(loader_train)
-    main_proc_print("================ updates_per_epoch: ", updates_per_epoch, "batch_size", config.batch_size)
     lr_scheduler, num_epochs = create_scheduler(
         trainer.optimizer,
         updates_per_epoch=updates_per_epoch,
@@ -282,9 +281,9 @@ def main():
         else:
             lr_scheduler.step(start_epoch)
 
-    if dist_pytorch.is_main_process():
-        print(
+    main_proc_print(
             f'Scheduled epochs: {num_epochs}. LR stepped per {"epoch" if lr_scheduler.t_in_epochs else "update"}.')
+    main_proc_print("updates_per_epoch: ", updates_per_epoch, "batch_size", config.batch_size)
 
     try:
         for epoch in range(start_epoch, num_epochs):
@@ -348,12 +347,6 @@ def main():
                     write_header=best_metric is None,
                     log_wandb=config.log_wandb and has_wandb,
                 )
-                
-
-            # if saver is not None:
-            #     # save proper checkpoint with eval metric
-            #     save_metric = eval_metrics[eval_metric]
-            #     best_metric, best_epoch = saver.save_checkpoint(epoch, metric=save_metric)
 
             if lr_scheduler is not None:
                 # step LR for next epoch

@@ -10,7 +10,7 @@ fp16 = False
 
 pretrained = False
 epochs = 300
-recovery_interval = 0  # todo
+recovery_interval = 0  # how many batches to wait before writing recovery checkpoint
 
 # =========================================================
 # data

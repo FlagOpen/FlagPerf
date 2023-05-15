@@ -20,7 +20,7 @@ def unwrap_model(model):
 
 
 def get_state_dict(model, unwrap_fn=unwrap_model):
-    return unwrap_fn(model).state_dict()  #todo
+    return unwrap_fn(model).state_dict()
 
 
 def avg_sq_ch_mean(model, input, output):
