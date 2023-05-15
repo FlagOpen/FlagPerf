@@ -37,7 +37,7 @@ class Evaluator(object):
 
         for iou_type in self.iou_types:
             results = self.prepare(predictions, iou_type)
-            coco_dt = loadRes(self.coco_gt, results) if results else COCO()
+            coco_dt = loadResult(self.coco_gt, results) if results else COCO()
             coco_eval = self.coco_eval[iou_type]
 
             coco_eval.cocoDt = coco_dt
@@ -221,7 +221,7 @@ def createIndex(self):
 maskUtils = mask_util
 
 
-def loadRes(self, resFile):
+def loadResult(self, resFile):
     """
     Load result file and return a result api object.
     Args:
