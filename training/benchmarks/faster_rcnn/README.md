@@ -39,15 +39,15 @@
 
 
 #### Resnet50预训练权重 
- https://download.pytorch.org/models/resnet50-19c8e357.pth
+ https://download.pytorch.org/models/resnet50-0676ba61.pth
 
 
 
 ### 框架与芯片支持情况
-|            | Pytorch | Paddle | TensorFlow2 |
-| ---------- | ------- | ------ | ----------- |
-| Nvidia GPU | ✅       | N/A    | N/A         |
-| 昆仑芯 XPU | N/A     | N/A    | N/A         |
-| 天数智芯   | N/A     | N/A    | N/A         |
+|            | Pytorch |
+| ---------- | ------- |
+| Nvidia GPU | ✅       |
+| 昆仑芯 XPU | N/A     |
+| 天数智芯   | N/A     |
 
 
