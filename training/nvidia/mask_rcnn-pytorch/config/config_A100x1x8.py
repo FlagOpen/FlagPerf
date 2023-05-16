@@ -6,6 +6,6 @@ eval_batch_size = 16
 
 gradient_accumulation_steps = 1
 warmup = 0.1
-lr = 0.01
+lr = 0.02
 log_freq = 1
 seed = 10483
