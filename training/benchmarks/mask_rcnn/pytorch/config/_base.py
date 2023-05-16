@@ -34,14 +34,13 @@ lr_steps: list = [16, 22]
 # decrease lr by a factor of lr-gamma
 lr_gamma: float = 0.1
 
-max_steps: int = 900000
 seed: int = 41
 
 # Stop training after reaching this accuracy
+
+# TODO replace target mAP here!
 # target_mAP: float = 0.3558
 # target_segMAP: float = 0.3234
-
-
 target_mAP: float = 1
 target_segMAP: float = 1
 
@@ -107,3 +106,6 @@ coco_weights_pretrained_path: str = "checkpoint/maskrcnn_resnet50_fpn_coco.pth"
 resume: str = None
 # start epoch
 start_epoch: int = 0
+
+# use coco pretrained weights
+use_pretrained = True

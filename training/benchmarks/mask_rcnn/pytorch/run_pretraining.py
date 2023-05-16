@@ -44,7 +44,6 @@ def main(start_ts) -> Tuple[Any, Any]:
     config = model_driver.config
     device = Device.get_device(config)
 
-    
     # mkdir if necessary
     if config.output_dir:
         for sub_dir in ["checkpoint", "result", "plot"]:
@@ -57,10 +56,8 @@ def main(start_ts) -> Tuple[Any, Any]:
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
 
-
     world_size = dist_pytorch.get_world_size()
     config.distributed = world_size > 1 or False
-
 
     # 用来保存coco_info的文件
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -69,8 +66,6 @@ def main(start_ts) -> Tuple[Any, Any]:
     seg_results_file = os.path.join(config.output_dir, "result",
                                     f"seg_results_{world_size}_{now}.txt")
 
-
-    
     # 得到seed
     """
     这里获取seed的可行方式：
@@ -171,7 +166,7 @@ def main(start_ts) -> Tuple[Any, Any]:
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time # 单位ms
+    raw_train_start_time = logger.previous_log_time  # 单位ms
 
     # 训练指标
     train_loss = []
@@ -180,9 +175,7 @@ def main(start_ts) -> Tuple[Any, Any]:
 
     # 训练过程
     epoch = config.start_epoch
-    while training_state.global_steps < config.max_steps and \
-            not training_state.end_training:
-
+    while not training_state.end_training:
         if config.distributed:
             train_sampler.set_epoch(epoch)
 
@@ -214,8 +207,8 @@ def main(start_ts) -> Tuple[Any, Any]:
     return config, training_state
 
 
-def plot_train_result(config, world_size, train_loss: list, learning_rate: list,
-                      val_map: list):
+def plot_train_result(config, world_size, train_loss: list,
+                      learning_rate: list, val_map: list):
     # 绘图
     if config.local_rank in [-1, 0]:
         # plot loss and lr curve

@@ -29,7 +29,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/FlagPerf/training"
+FLAGPERF_PATH = "/home/zhouyu/workspace/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -45,11 +45,12 @@ CLEAR_CACHES = True
 # Set the case dict you want to run here.
 '''
 # Users must use {
-    "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
+    "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path
+    
 '''
 CASES = {
-    "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
-    "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
-    "cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
+    # "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
+    # "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+    # "cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
     "mask_rcnn:pytorch:A100:1:8:1": "/home/datasets_ckpt/mask_rcnn/train/",
 }

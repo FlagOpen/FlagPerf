@@ -5,7 +5,10 @@ from torch.types import Device
 import os
 import sys
 
-from model.modeling import create_model
+#from model.modeling import create_model
+from model import create_model
+
+
 from schedulers import create_scheduler
 from optimizers import create_optimizer
 
@@ -45,11 +48,12 @@ class Trainer:
         dist_pytorch.main_proc_print(
             f"pretrain_path:{pretrain_path}, coco_weights_pretrained_path:{coco_weights_pretrained_path}"
         )
-        self.model = create_model(
-            num_classes=config.num_classes + 1,
-            load_pretrain_weights=True,
-            pretrain_path=pretrain_path,
-            coco_weights_path=coco_weights_pretrained_path)
+        # self.model = create_model(
+        #     num_classes=config.num_classes + 1,
+        #     # load_pretrain_weights=True,
+        #     pretrain_path=pretrain_path,
+        #     coco_weights_path=coco_weights_pretrained_path)
+        self.model = create_model(self.config)
         self.model.to(self.device)
         self.model = self.adapter.convert_model(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
