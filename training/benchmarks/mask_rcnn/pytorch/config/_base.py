@@ -108,4 +108,4 @@ resume: str = None
 start_epoch: int = 0
 
 # use coco pretrained weights
-use_pretrained = True
+use_pretrained = False
