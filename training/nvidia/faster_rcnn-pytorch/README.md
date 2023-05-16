@@ -1,5 +1,5 @@
 ### 模型backbone权重下载
-[模型backbone权重下载](https://download.pytorch.org/models/resnet50-19c8e357.pth)
+[模型backbone权重下载](https://download.pytorch.org/models/resnet50-0676ba61.pth)
 ### 测试数据集下载
 [测试数据集下载](https://cocodataset.org/)
 

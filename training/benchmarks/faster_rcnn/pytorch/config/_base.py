@@ -14,7 +14,7 @@ train_data: str = "train"
 eval_data: str = "val"
 output_dir: str = "output"
 
-# use torch/hub/checkpoints/resnet50-19c8e357 as backbone weights
+# use torch/hub/checkpoints/resnet50-0676ba61 as backbone weights
 # no init weights for other parts of faster-rcnn
 
 # =========================================================
