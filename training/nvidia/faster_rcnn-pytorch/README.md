@@ -1,6 +1,16 @@
 ### 模型backbone权重下载
 [模型backbone权重下载](https://download.pytorch.org/models/resnet50-0676ba61.pth)
+
+这一部分路径在FlagPerf/training/benchmarks/faster_rcnn/pytorch/model/\_\_init__.py中提供：
+
+```python
+torchvision.models.resnet.__dict__['model_urls'][
+    'resnet50'] = 'https://download.pytorch.org/models/resnet50-0676ba61.pth'
+```
+本case中默认配置为，从官网同路径（0676ba61）自动下载backbone权重。用户如需手动指定，可自行下载至被挂载到容器内的路径下，并于此处修改路径为"file://"+download_path
+
 ### 测试数据集下载
+
 [测试数据集下载](https://cocodataset.org/)
 
 ### Nvidia GPU配置与运行信息参考
