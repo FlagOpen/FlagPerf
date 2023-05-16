@@ -47,7 +47,7 @@ class Trainer:
         )
         self.model = create_model(
             num_classes=config.num_classes + 1,
-            load_pretrain_weights=True,
+            load_pretrain_weights=False,
             pretrain_path=pretrain_path,
             coco_weights_path=coco_weights_pretrained_path)
         self.model.to(self.device)
