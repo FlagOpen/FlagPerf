@@ -50,7 +50,7 @@ eval_iter_start_samples: int = 100
 # If set to -1, disable eval, else evaluate every eval_iter_samples during training
 eval_interval_samples: int = 100 * 256 * 1
 
-max_epochs: int = 26
+max_epochs: int = 30
 
 # number workers for dataloader
 num_workers: int = 4
