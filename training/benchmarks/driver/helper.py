@@ -6,7 +6,6 @@ import os
 import random
 import numpy as np
 import torch
-import driver
 from driver import perf_logger, Driver, check
 
 
@@ -38,8 +37,7 @@ class InitHelper:
 
     def update_local_rank(self) -> int:
         """set local rank"""
-        if 'LOCAL_RANK' in os.environ:
-            self.config.local_rank = int(os.environ['LOCAL_RANK'])
+        self.config.local_rank = int(os.getenv("LOCAL_RANK", 0))
 
     def set_seed(self, seed: int, vendor: str):
         """set seed"""
