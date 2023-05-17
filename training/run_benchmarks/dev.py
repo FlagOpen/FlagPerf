@@ -305,7 +305,7 @@ def stop_monitors_in_cluster(dp_path, nnodes):
 
 
 def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
-                           count, stdout, nullout):
+                           count, stdout, nullout, curr_log_path):
     '''Start tasks in cluster, and NOT wait.'''
     framework = case_config["framework"]
     nnodes = case_config["nnodes"]
@@ -313,9 +313,19 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
         tc.FLAGPERF_PATH, tc.VENDOR,
         case_config["model"] + "-" + case_config["framework"],
         "config/environment_variables.sh")
-    start_cmd = "cd " + dp_path + " && " + sys.executable \
+    if (os.path.isfile(env_file)):
+        start_cmd = "cd " + dp_path + " && " + sys.executable \
                 + " utils/container_manager.py -o runcmdin -c " \
-                + container_name + " -d -r \"source " + env_file + "; " \
+                + container_name + " -d -r \"source " + env_file \
+                + " > " + curr_log_path + "/source_env.log.txt " \
+                + "2>&1 && " \
+                + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
+                + framework + "/start_" + framework + "_task.py " \
+                + base_args + " --round " + str(count)
+    else:
+        start_cmd = "cd " + dp_path + " && " + sys.executable \
+                + " utils/container_manager.py -o runcmdin -c " \
+                + container_name + " -d -r \"" \
                 + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
                 + framework + "/start_" + framework + "_task.py " \
                 + base_args + " --round " + str(count)
@@ -626,7 +636,8 @@ def main(stdout, nullout):
                     + " --log_dir " + log_dir_container \
                     + " --log_level " + tc.FLAGPERF_LOG_LEVEL \
                     + " --extern_config_file " + case_config["config"] \
-                    + ".py" + " --enable_extern_config "
+                    + ".py" + " --enable_extern_config " \
+                    + " --master_port " + cc.MASTER_PORT
         RUN_LOGGER.info("=== 2.2 Prepare case config in cluster. ===")
         if not prepare_case_config_cluster(dp_path, case_config, case):
             RUN_LOGGER.warning("Prepare case config in cluster...[FAILED]. " +
@@ -648,7 +659,8 @@ def main(stdout, nullout):
                 continue
             RUN_LOGGER.info("2) Start tasks in the cluster...")
             start_tasks_in_cluster(dp_path, container_name, case_config,
-                                   base_args, count, stdout, nullout)
+                                   base_args, count, stdout, nullout,
+                                   curr_log_path)
 
             # Wait until start_xxx_task.py finished.
             RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
