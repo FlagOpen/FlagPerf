@@ -20,15 +20,15 @@
 
 
 ### 运行情况
-| 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(mAP) | 性能（samples/s） |
-| -------- | --------------- | ----------- | -------- | ------------- | ----------------- |
-| 单机1卡  | config_A100x1x1 | 75337.16    | 0.58     | 0.5830        | 28.02             |
-| 单机4卡  | config_A100x1x4 | 24084.01    | 0.58     | 0.5803        | 97.52             |
-| 单机8卡  | config_A100x1x8 | 12154.89    | 0.58     | 0.5803        | 174.20            |
-| 两机8卡  | config_A100x2x8 | pending     | 0.58     | pending        | pending            |
+| 训练资源 | 配置文件        | 运行时长(s) | 目标mAP精度(bbox && segm) |        | 收敛mAP精度(bbox && segm) | 性能(samples/s) |
+| -------- | --------------- | ----------- | ------------------------- | ------ | ------------------------- |
+| 单机1卡  | config_A100x1x1 |             |                           |        |                           |
+| 单机4卡  | config_A100x1x4 |             | 0.58                      |        |                           |
+| 单机8卡  | config_A100x1x8 | 24424.97    | 0.3563 && 0.3185          | 0.3563 && 0.3185 | 149.04                    |
+| 两机8卡  | config_A100x2x8 |             | 0.58                      |        |                           |
 
 
 ### 许可证
 本项目基于Apache 2.0 license。
 
-本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。
+本项目部分代码基于torchvision https://github.com/pytorch/vision/tree/release/0.9/references/detection 实现。
