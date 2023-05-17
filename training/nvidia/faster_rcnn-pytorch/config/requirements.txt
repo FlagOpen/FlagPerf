@@ -1,0 +1,4 @@
+torchvision
+pycocotools
+numpy
+tqdm
