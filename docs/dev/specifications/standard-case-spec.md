@@ -63,15 +63,14 @@
 ### 3.2 添加规范
 * 总结流程如下
   1. 下载数据集和checkpoint(如有)
-  2. 从头开始训练，保存ckpt,验证原始模型有效
-  3. 验证精度达标
-  4. 从原始仓库分离模型、config
-  5. 整理trainer、trainer_adapter、run_pretraining、config
-  7. 撰写nvidia-1x8 config
-  8. 测试1x8全流程（结果应与1、2相同）
-  9. 测试1x1,2x8
-  10. 补充case文档，模型文档
-  11. 对照PR提交规范，提交PR
+  2. 从头开始训练，保存ckpt(可选), 验证原始仓库精度达标
+  3. 从原始仓库分离模型、config
+  4. 整理trainer、trainer_adapter、run_pretraining、config
+  5. 撰写nvidia-1x8 config
+  6. 测试1x8全流程（结果应与1、2相同）
+  7. 测试1x1,2x8
+  8. 补充case文档，模型文档
+  9. 对照PR提交规范，提交PR
 
 以下为详细解释。
 #### 0) 准备工作
@@ -145,7 +144,7 @@
 
 该config模块为benchmark case 1*8训练配置，且是和硬件厂商无关的配置，凡和硬件厂商有关的配置，放置于厂商config目录下。
 
-提交的最终版本代码，需要由ckpt开始训练，保证2-5内在NV上训练达标【重要】。
+提交的最终版本代码，期望训练时间在一周能过NV上精度达标【重要】。
 
 #### 3) 添加NVIDIA的配置
 
