@@ -14,7 +14,7 @@ eval_batch_size = train_batch_size
 max_steps = 10000
 
 warmup = 0.2
-learning_rate = 0.000125
+learning_rate = 0.0005
 
 beta_1: float = 0.9
 beta_2: float = 0.99
