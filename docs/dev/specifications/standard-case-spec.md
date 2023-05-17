@@ -76,7 +76,8 @@
 #### 0) 准备工作
 
 * 环境准备
-  优先使用Perf已有的镜像版本，缺包可基于已有镜像新增安装包。
+  * 优先使用Perf已有的镜像版本，缺包可基于已有镜像新增安装包。
+  * 配置集群各服务器间root帐号的ssh信任关系和sudo免密
 
 * 原始代码训练验证
 
@@ -142,7 +143,7 @@
 
 这部分链接到文件模块trainer、trainer_adapter、run_pretraining、config, 都属于benchmark 必须项。
 
-该config模块为benchmark case 1*8训练配置，且是和硬件厂商无关的配置，凡和硬件厂商有关的配置，放置于厂商config目录下。
+一般我们推荐优先支持的是1x8的实验配置, _base.py作为config模块的基石，存放和硬件厂商无关的基本配置，如模型结构，基础训练超参设置，凡和硬件厂商有关的配置，放置于厂商config目录下，不同层级的配置优先级为：test_conf.py > config_A100x1x8.py > _base.py，三者都存在的情况下，覆盖式生成最终版本。
 
 提交的最终版本代码，期望训练时间在一周能过NV上精度达标【重要】。
 
@@ -195,7 +196,7 @@ python3 ./run_benchmarks/run.py
 
 注：调试运行时可在容器中进行，最终提交前需run.py 完整测试，验证代码工作正常。关于配置方法，可参考：https://github.com/FlagOpen/FlagPerf#readme
 
-#### 4) 验证达标要求
+#### 5) 验证达标要求
 
 - 以Perf方式训练模型收敛达到目标精度(NV上原始代码单机8卡精度值)
 - 单个case的收敛时间在一周内

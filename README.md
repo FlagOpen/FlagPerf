@@ -152,7 +152,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
 
 ### 部署说明
 
-#### 系统环境建议
+#### 软件环境
 ```
     OS: Ubuntu 20.04
     Kernel: 5.4.0-52-generic
@@ -182,7 +182,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
 # cd FlagPerf/training/
 # pip3 install -r requirements.txt
 ```
-2）配置集群各服务器间root帐号的ssh信任关系
+2）配置集群各服务器间root帐号的ssh信任关系和sudo免密
 
 ----------
 ### 快速启动
