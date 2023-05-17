@@ -7,7 +7,6 @@ import sys
 
 from model import create_model
 
-
 from schedulers import create_scheduler
 from optimizers import create_optimizer
 
@@ -99,18 +98,16 @@ class Trainer:
         det_info, seg_info = utils.evaluate(model, eval_dataloader, device)
 
         if det_info is not None:
-            state.eval_mAP = det_info[0]
-            print(f"training_state.eval_mAP:{state.eval_mAP}")
+            state.eval_map_bbox = det_info[0]
 
         if seg_info is not None:
-            state.eval_segMAP = seg_info[0]
-            print(f"training_state.eval_segMAP:{state.eval_segMAP}")
+            state.eval_map_segm = seg_info[0]
 
         # 只在主进程上进行写操作
         if config.local_rank in [-1, 0]:
             train_loss.append(mean_loss.item())
             learning_rate.append(lr)
-            val_map.append(state.eval_mAP)  # pascal mAP
+            val_map.append(state.eval_map_bbox)
 
             # 写det结果
             with open(det_results_file, "a") as f:
@@ -160,13 +157,14 @@ class Trainer:
     def detect_training_status(self):
         state = self.training_state
         config = self.config
-        if state.eval_mAP >= config.target_mAP and state.eval_segMAP >= config.target_segMAP:
+        if state.eval_map_bbox >= config.target_map_bbox and state.eval_map_segm >= config.target_map_segm:
             dist_pytorch.main_proc_print(
-                f"converged_success. eval_mAP: {state.eval_mAP}, target_mAP: {config.target_mAP}"
-            )
+                f"converged_success. eval_map_bbox: {state.eval_map_bbox}, eval_map_segm:{state.eval_map_segm} \
+                    target_map_bbox: {config.target_map_bbox}. target_map_segm:{config.target_map_segm}")
             state.converged_success()
 
-        if state.epoch > config.max_epochs:
+        # notice: epoch starts from 0
+        if state.epoch >= config.max_epochs:
             state.end_training = True
 
         return state.end_training

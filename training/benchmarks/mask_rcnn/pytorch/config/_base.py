@@ -38,11 +38,10 @@ seed: int = 41
 
 # Stop training after reaching this accuracy
 
-# TODO replace target mAP here!
-# target_mAP: float = 0.3558
-# target_segMAP: float = 0.3234
-target_mAP: float = 1
-target_segMAP: float = 1
+# target_map_bbox: float = 0.3558
+# target_map_segm: float = 0.3185
+target_map_bbox: float = 1
+target_map_segm: float = 1
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
@@ -50,7 +49,7 @@ eval_iter_start_samples: int = 100
 # If set to -1, disable eval, else evaluate every eval_iter_samples during training
 eval_interval_samples: int = 100 * 256 * 1
 
-max_epochs: int = 30
+max_epochs: int = 26
 
 # number workers for dataloader
 num_workers: int = 4
