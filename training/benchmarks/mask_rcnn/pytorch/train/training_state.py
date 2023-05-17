@@ -14,8 +14,7 @@ class TrainingState:
 
     loss: float = 0.0
     eval_map_bbox :float = 0.0
-    # segmentation mAP
-    eval_segMAP :float = 0.0
+    eval_map_segm :float = 0.0
 
     epoch: int = 1
     num_trained_samples = 0
