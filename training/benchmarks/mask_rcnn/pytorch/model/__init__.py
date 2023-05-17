@@ -1,5 +1,3 @@
-# from .modeling import create_model
-
 import os
 import torchvision
 from torchvision.models.detection import maskrcnn_resnet50_fpn
