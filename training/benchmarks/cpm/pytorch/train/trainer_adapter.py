@@ -6,21 +6,14 @@ from torch import nn, Tensor
 from typing import Tuple
 
 from model.models import gpt2_get_params_for_weight_decay_optimization
-from apex.optimizers import FusedAdam as Adam
-
-from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
-
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
-
-from apex.parallel import DistributedDataParallel as APEX_DDP
-
 from model.fp16 import FP16_Module
 from model.fp16 import FP16_Optimizer
 
 
 def convert_model(config, model: nn.Module) -> nn.Module:
     state_dict = model.state_dict()
-
+    from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
     for i in range(config.num_layers):
         model.transformer.layers[i].input_layernorm = LayerNorm(
             config.hidden_size, config.layernorm_epsilon)
@@ -35,6 +28,7 @@ def convert_model(config, model: nn.Module) -> nn.Module:
 
 def create_optimizer(config, model: nn.Module) -> Optimizer:
     param_groups = gpt2_get_params_for_weight_decay_optimization(model)
+    from apex.optimizers import FusedAdam as Adam
     optimizer = Adam(param_groups,
                      lr=config.learning_rate,
                      weight_decay=config.weight_decay_rate)
@@ -69,6 +63,7 @@ def model_to_ddp(config, model: nn.Module) -> nn.Module:
                 bucket_cap_mb=100,
                 gradient_as_bucket_view=config.use_gradient_as_bucket_view)
         elif config.ddp_type == 'apex':
+            from apex.parallel import DistributedDataParallel as APEX_DDP
             model = APEX_DDP(
                 model,
                 message_size=250000000,
