@@ -29,7 +29,7 @@ class ContainerManager():
         run_new_cmd = "docker run " + container_run_args + \
                       " --name=" + self.name + " \"" + docker_image + "\" " + \
                       "sleep infinity"
-        print(run_new_cmd)
+        print("run_new_cmd:", run_new_cmd)
         ret, outs = run_cmd.run_cmd_wait(run_new_cmd, 10)
         return ret, outs
 

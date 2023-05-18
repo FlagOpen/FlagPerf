@@ -100,8 +100,9 @@ def check_case_config(case, case_config, vendor):
                            ",".join(must_configs))
         return False
 
+    framework = case_config["framework"].split("_")[0]
     model_path = CURR_PATH + "/../benchmarks/" + case_config["model"] + \
-                 "/" + case_config["framework"]
+                 "/" + framework
     model_path = os.path.abspath(model_path)
     if not os.path.exists(model_path):
         RUN_LOGGER.warning("Case " + case + ": deploy path doesn't exist: " +
@@ -109,7 +110,7 @@ def check_case_config(case, case_config, vendor):
         return False
 
     config_path = CURR_PATH + "/../" + vendor + "/" + case_config["model"] + \
-        "-" + case_config["framework"] + "/config/" + \
+        "-" + framework + "/config/" + \
         case_config["config"] + ".py"
     if not os.path.isfile(config_path):
         RUN_LOGGER.warning("Case " + case + ": config file doesn't exist: " +
@@ -136,7 +137,7 @@ def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes):
         CURR_PATH, "../" + vendor + "/docker_image/" + framework)
     image_name = image_mgr.repository + ":" + image_mgr.tag
     RUN_LOGGER.debug("Prepare docker image in cluster. image_name=" +
-                     image_name + "image_vendor_dir=" + image_vendor_dir)
+                     image_name + " image_vendor_dir=" + image_vendor_dir)
     prepare_image_cmd = "cd " + dp_path + " && " + sys.executable \
                         + " utils/image_manager.py -o build -i " \
                         + image_mgr.repository + " -t " + image_mgr.tag \
@@ -286,12 +287,12 @@ def stop_monitors_in_cluster(dp_path, nnodes):
 def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
                            count):
     '''Start tasks in cluster, and NOT wait.'''
-    framework = case_config["framework"]
     nnodes = case_config["nnodes"]
     env_file = os.path.join(
         tc.FLAGPERF_PATH, tc.VENDOR,
         case_config["model"] + "-" + case_config["framework"],
         "config/environment_variables.sh")
+    framework = case_config["framework"].split("_")[0]
     start_cmd = "cd " + dp_path + " && " + sys.executable \
                 + " utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -d -r \"source " + env_file + "; " \
@@ -488,7 +489,7 @@ def prepare_case_config_cluster(dp_path, case_config, case):
         RUN_LOGGER.info(config_item + ":\t" + str(case_config[config_item]))
     RUN_LOGGER.info("--------------------------------------------------")
     model = case_config["model"]
-    framework = case_config["framework"]
+    framework = case_config["framework"].split("_")[0]
     config_file = case_config["config"] + ".py"
     nnodes = case_config["nnodes"]
     case_config_dir = os.path.join(dp_path, tc.VENDOR, model + "-" + framework,
@@ -610,7 +611,7 @@ def main():
             RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
             pid_file_path = os.path.join(
                 log_dir_container,
-                "start_" + case_config["framework"] + "_task.pid")
+                "start_" + case_config["framework"].split("_")[0] + "_task.pid")
             wait_for_finish(dp_path, container_name, pid_file_path, nnodes)
             RUN_LOGGER.info("3) Training tasks end in the cluster...")
             RUN_LOGGER.info("4) Clean container environments in cluster...")

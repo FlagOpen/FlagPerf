@@ -95,16 +95,17 @@ def merge_args_to_extern_config(mutable_params: dict, args,
     # TODO: A better config method, yaml or .ini?
     path =  os.path.join(args.extern_config_dir,args.extern_config_file)
     config_mod = import_config(path)
-    for name, value in get_properties_from_config(config_mod).items():
+    ret = get_properties_from_config(config_mod)
+    for name, value in ret.items():
         if name not in mutable_params:
             if not args.enable_extern_config:
                 continue
             print(f"SET [Unknown or immutable] CONFIG {name} = {value}")
         else:
             print(f"SET CONFIG {name} = {value}")
-        if vars(args).__dict__.get(name) is None:
-            setattr(vars(args), name, value)
-    return vars(args)
+        if vars(args).get(name) is not None:
+            ret.update({name:vars(args).get(name)})
+    return ret
 
 
 def activate(base_config,
@@ -132,13 +133,11 @@ def activate(base_config,
 
     ext_config = os.path.join(os.path.abspath(path), config_file)
     parsed_params = merge_args_to_extern_config(mutable_params_dict, args)
-
     # TODO：后续考虑换一个更优雅的方式
     if "tensorflow2" in base_config.__path__:
         base_config.override(parsed_params.__dict__, False)
     else:
         _merge_dict_to_config(parsed_params, base_config.__dict__)
-
     if ext_config:
         config_path = ext_config
     else:
