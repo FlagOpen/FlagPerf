@@ -95,12 +95,8 @@ load_pretained: bool = True
 # number of classes, background class NOT included
 num_classes: int = 90
 
-# pretrained path
+# backbone pretrained path
 pretrained_path: str = "checkpoint/resnet50.pth"
-# coco weights pretrained_path
-coco_weights_pretrained_path: str = "checkpoint/maskrcnn_resnet50_fpn_coco.pth"
-# use coco pretrained weights
-use_coco_pretrained = False
 
 # resume configs
 # resume start checkpoint

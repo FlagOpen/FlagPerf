@@ -40,12 +40,8 @@ class Trainer:
         config = self.config
 
         pretrain_path = os.path.join(config.data_dir, config.pretrained_path)
-        coco_weights_pretrained_path = os.path.join(
-            config.data_dir, config.coco_weights_pretrained_path)
+        dist_pytorch.main_proc_print( f"backbone pretrain_path:{pretrain_path}" )
 
-        dist_pytorch.main_proc_print(
-            f"pretrain_path:{pretrain_path}, coco_weights_pretrained_path:{coco_weights_pretrained_path}"
-        )
         self.model = create_model(self.config)
         self.model.to(self.device)
         self.model = self.adapter.convert_model(self.model)

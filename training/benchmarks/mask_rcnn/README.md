@@ -43,16 +43,11 @@ Mask R-CNN is simple to train and adds only a small overhead to Faster R-CNN, ru
 
 
 ### 模型checkpoint 
-预训练权重下载地址（下载后放入当前文件夹中）
+预训练权重下载地址（下载后放入data_dir文件夹中）
 
 #### Resnet50预训练权重 
  https://download.pytorch.org/models/resnet50-0676ba61.pth 
  (注意，下载预训练权重后要重命名， 比如在train.py中读取的是resnet50.pth文件，不是resnet50-0676ba61.pth)
-
-#### Mask R-CNN(Resnet50+FPN)预训练权重 
- https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth
- (注意，载预训练权重后要重命名，比如在train.py中读取的是maskrcnn_resnet50_fpn_coco.pth文件，不是maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth)
-
 
 ### 框架与芯片支持情况
 |            | Pytorch | Paddle | TensorFlow2 |
