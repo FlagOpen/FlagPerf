@@ -25,7 +25,6 @@ from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
 from utils.train import mkdir
-from utils.train.device import Device
 # 这里需要导入dataset, dataloader的相关方法。 这里尽量保证函数的接口一致，实现可以不同。
 from dataloaders.dataloader import build_train_dataset, \
     build_eval_dataset, build_train_dataloader, build_eval_dataloader
@@ -42,7 +41,6 @@ def main(start_ts) -> Tuple[Any, Any]:
     model_driver = init_helper.init_driver(globals(), locals())
 
     config = model_driver.config
-    device = Device.get_device(config)
 
     # mkdir if necessary
     if config.output_dir:

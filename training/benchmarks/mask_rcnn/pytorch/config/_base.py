@@ -25,29 +25,22 @@ train_batch_size: int = 8
 eval_batch_size: int = 8
 dist_backend: str = 'nccl'
 
+gradient_accumulation_steps: int = 1
+
 lr: float = 0.08
 weight_decay: float = 1e-4
-gradient_accumulation_steps: int = 1
 momentum: float = 0.9
 # steps for LR decay
 lr_steps: list = [16, 22]
 # decrease lr by a factor of lr-gamma
 lr_gamma: float = 0.1
 
-seed: int = 41
+seed: int = 1234
 
 # Stop training after reaching this accuracy
 
-# target_map_bbox: float = 0.3558
-# target_map_segm: float = 0.3185
-target_map_bbox: float = 1
-target_map_segm: float = 1
-
-# Sample to begin performing eval.
-eval_iter_start_samples: int = 100
-
-# If set to -1, disable eval, else evaluate every eval_iter_samples during training
-eval_interval_samples: int = 100 * 256 * 1
+target_map_bbox: float = 0.3558
+target_map_segm: float = 0.3185
 
 max_epochs: int = 26
 
@@ -58,9 +51,6 @@ num_workers: int = 4
 local_rank: int = -1
 # Whether to read local rank from ENVVAR
 use_env: bool = True
-
-# Number of epochs to plan seeds for. Same set across all workers.
-num_epochs_to_generate_seeds_for: int = 2
 
 # frequency of logging loss. If not positive, no logging is provided for training loss
 log_freq: int = 10
