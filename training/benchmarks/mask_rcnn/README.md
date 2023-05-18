@@ -11,7 +11,7 @@ Mask R-CNN is simple to train and adds only a small overhead to Faster R-CNN, ru
 
 - 模型代码来源
   <br>
-  https://github.com/WZMIAOMIAO/deep-learning-for-image-processing/tree/master/pytorch_object_detection/mask_rcnn
+  https://github.com/pytorch/vision/tree/release/0.9/torchvision/models/detection
 
 ### 数据集
 #### 数据集下载地址
