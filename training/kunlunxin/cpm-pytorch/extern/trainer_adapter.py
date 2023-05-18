@@ -19,6 +19,7 @@ def create_optimizer(config, model):
 
     return optimizer
 
+
 def model_to_fp16(config, model: nn.Module,
                   optimizer: Optimizer) -> Tuple[nn.Module, Optimizer]:
     return model, optimizer

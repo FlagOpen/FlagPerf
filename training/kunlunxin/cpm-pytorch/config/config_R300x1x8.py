@@ -1,11 +1,9 @@
 from config_common import *
 
-
 dist_backend = "xccl"
 
 use_env = True
 target_embedding_average = 0.92
-
 
 gradient_accumulation_steps = 1
 

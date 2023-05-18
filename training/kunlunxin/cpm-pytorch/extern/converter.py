@@ -1,4 +1,3 @@
-
 def convert_model(model, config):
     return model
 

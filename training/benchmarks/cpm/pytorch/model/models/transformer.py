@@ -441,6 +441,7 @@ class GPT2ParallelTransformer(torch.nn.Module):
                 return x_
 
             return custom_forward
+
         if self.checkpoint_activations:
             l = 0
             num_layers = len(self.layers)
@@ -449,12 +450,12 @@ class GPT2ParallelTransformer(torch.nn.Module):
             attention_mask_bk = copy.deepcopy(attention_mask)
             while l < num_layers:
                 attention_mask = copy.deepcopy(attention_mask_bk)
-                
+
                 import config
                 if config.vendor == 'kunlunxin':
-                    from torch_xmlir.nn.checkpoint import checkpoint      
+                    from torch_xmlir.nn.checkpoint import checkpoint
                 else:
-                    from .checkpoint import checkpoint    
+                    from .checkpoint import checkpoint
                 hidden_states = checkpoint(custom(l, l + chunk_length),
                                            hidden_states, attention_mask)
                 l += chunk_length
