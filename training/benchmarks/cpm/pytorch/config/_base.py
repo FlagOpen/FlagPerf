@@ -149,7 +149,7 @@ log_freq: int = 1
 use_env: bool = True
 
 # local_rank for distributed training on gpus or other accelerators
-local_rank: int = 0
+local_rank: int = -1
 
 # Communication backend for distributed training on gpus
 dist_backend: str = "nccl"
