@@ -13,7 +13,7 @@
 2. 接受对模型做合理优化以此来提升模型的性能表现，如bs调整等，建议底层优化，暂不接受torch接口层优化, 具体可case by case讨论。
 3. 对于标准case中厂商不支持的算子，可有合理替代方案，具体可讨论。
 
-标准Case实现路径在training/benchmarks/&lt;model&gt;/&lt;framework&gt;/下，厂商可以通过扩展模型实现的接口来适配自己的芯片。厂商修改的代码放在training/<vendor>/glm-pytorch下，主要包括以下几部分(以kunlunxin, glm, pytorch为例）：
+标准Case实现路径在training/benchmarks/&lt;model&gt;/&lt;framework&gt;/下，厂商可以通过扩展模型实现的接口来适配自己的芯片。厂商修改的代码放在training/\<vendor\>/glm-pytorch下，主要包括以下几部分(以kunlunxin, glm, pytorch为例）：
 
 ```Bash
 .training/
