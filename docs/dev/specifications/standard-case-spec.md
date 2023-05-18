@@ -4,7 +4,7 @@
 >- 文档面向人群：标准Case的开发人员
 >- 文档目的：给出实现标准Case的规范，降低标准case开发成本，提升共建项目的可维护性。
 
-## 1. 什么是标准Case
+## 1.标准Case定义
 
 标准case是模型-训练框架-英伟达的一个组合，以下简称**case。** 标准case以nvidia GPU作为运行参照，代码实现上面依赖cuda，**原则上**不依赖其它特定芯片厂商的软件包，如NVIDIA/apex相关实现，则不该出现在标准case中。
 
@@ -12,9 +12,7 @@
 
 对于不同类型的芯片，芯片厂商需要扩展标准Case的模块和接口，完成适配。
 
-## 2. 标准Case的合作共建方式
-
-### 2.1 标准Case的模型选择
+## 2.标准Case的模型选择
 
 - FlagPerf旨在和大家共同探索开源、开放、灵活、公正、客观的AI芯片评测体系，建立评测软件生态，提供行业价值，因此在模型选择上面考虑以下几个方面：
 
@@ -22,22 +20,9 @@
 - 及时跟进新的热门的模型，便于用户及时评测
 - 模型代码标准实现源自github公开高认可的仓库
 
-### 2.2 合作共建机制
-
-考虑到可选模型众多，且共建团队众多 ，为了避免大家开发内容冲突，智源会定期与大家讨论模型列表并确认大家的分工。后续项目更成熟可能考虑在社区发布Issue大家标记认领。
-
-代码提交和合并直接在github上进行，具体可参照后面的代码提交与Review合并流程。
-
-### 2.3 一般性的原则
-
-FlagPerf项目还在起步阶段，各种标准和规范还不健全，项目代码也在持续重构和优化中，有任何建议、意见或疑问请随时提出讨论。
-
 ## 3. 标准Case实现规范
 
-### 3.1 代码规范
-
-#### 1) 代码和配置文件目录结构
-
+### 3.1 代码结构
 标准Case实现路径在training/benchmarks/&lt;model&gt;/&lt;framework&gt;/下，仅为NVIDIA上基础版本实现，厂商可以通过扩展模型实现的接口来适配自己的芯片，具体参见[厂商适配Case的规范（试行讨论版）](https://qgsq1vkxhz.feishu.cn/docx/TEYddkMWko2qQExZVgsc09QGnSd) 
 
 标准Case代码以run_pretraining.py脚本为入口，该脚本由start_&lt;framework&gt;_task.py脚本在容器内调用执行。整个代码建议遵循常见的训练pipeline，以glm-pytorch case为例，包括以下几部分：
@@ -75,46 +60,53 @@ FlagPerf项目还在起步阶段，各种标准和规范还不健全，项目代
 
 所有标准Case需要在Nvidia GPU环境验证通过，如实现Nvidia相关的扩展，如apex等NVIDIA额外支持的包，则可参考 [厂商适配Case的规范（试行讨论版）](https://qgsq1vkxhz.feishu.cn/docx/TEYddkMWko2qQExZVgsc09QGnSd)。
 
-#### 2) 单元测试
-
-暂不做要求。
-
-#### 3) 代码风格
-
-1. Python代码使用python pep8风格，可以使用yapf进行格式化，例如：
-
-```Bash
-yapf -i --style "pep8" --recursive ./FlagPerf
-```
-
 ### 3.2 添加规范
+* 总结流程如下
+  1. 下载数据集和checkpoint(如有)
+  2. 从零(或checkpoint)开始训练，保存ckpt
+  3. 验证精度达标
+  4. 从原始仓库分离模型、config
+  5. 整理trainer、trainer_adapter、run_pretraining、config
+  7. 撰写nvidia-1x8 config
+  8. 测试1x8全流程（结果应与1、2相同）
+  9. 测试1x1,2x8
+  10. 补充case文档，模型文档
+  11. 对照PR提交规范，提交PR
 
-#### 0) 原始代码训练验证和checkpoint保存
+以下为详细解释。
+#### 0) 准备工作
 
-确定待添加的模型代码链接，使用**原始代码**的数据集和代码进行**单机8卡**模型复现。
+* 环境准备
+  优先使用Perf已有的镜像版本，缺包可基于已有镜像新增安装包。
 
-使用原始代码的原因有三个：
-* 确保源代码没有质量问题避免无用功 
-* 确定目标精度，若NV的精度在合理值，则该值作为其他厂商对标精度，且作为配置文件中target_acc的值
-* 每**10**个保存一次训练ckeckpoint用于Perf的finetune
 
-若原始代码不带数据集，建议使用业内公开知名数据集。
+* 原始代码训练验证
 
-最终提交的模型case期望在不同厂商芯片上都可以在【2-5h】内收敛精度达标，因此建议推算使用合适的checkpoint resume训练。
+  确定待添加的模型代码链接，使用**原始代码**的数据集和代码配置进行**单机8卡**模型复现。
+  
+  使用原始代码的原因：
+  * 确保源代码没有质量问题避免无用功 
+  * 确定目标精度，若NV的精度在合理值，则该值作为其他厂商对标精度，且作为配置文件中target_acc的值
+
+* 数据集记录
+
+  * 将数据集下载路径写入文档，便于复现结果。若原始代码不带数据集，使用业内公开知名数据集。
+
+* 【重要】checkpoint保存
+    
+  * 每**10**个保存一次训练ckeckpoint用于Perf的finetune,提交代码时候将选定ckpt 交给智源方Reviewers.
+  * 最终提交的模型case期望在不同厂商芯片上都可以在【2-5h】内收敛精度达标，因此建议推算使用合适的checkpoint resume训练。
 
 **验证原始代码没有问题和收集到目标ckpt之后，开始Perf的适配工作。**
 
-
 注: 
 - checkpoint文件在PR提交时候交给智源方上传到公开地址供用户下载，ckpt文件命名方式：模型-框架-md5值.pth
-- 如果只有其他框架的checkpoint文件，例如添加的是bert-pytorch的case，只有tf2的checkpoint可供下载。需在README文档里提供tf2的**checkpoint下载地址、转换工具/脚本，**以及**转换的命令。**
 
 
 #### 1) 实现模型训练主体逻辑
 
 
 在training/benchmarks下添加&lt;model&gt;/&lt;framework&gt;子目录，pytroch和paddle的标准case可参考下面的目录结构组织代码：
-
 
 ```Bash
 .
@@ -149,15 +141,22 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 ```
 
 
-#### 2) 实现训练入口程序
+#### 2) 实现关键代码逻辑
 
 复制training/benchmarks/&lt;model&gt;/&lt;framework&gt;/run_pretraining.py.example 为training/benchmarks/&lt;model&gt;/&lt;framework&gt;/run_pretraining.py脚本.
 
 根据该脚本中的标记TODO的位置进行修改，串接整个训练pipeline，保证关键接口不变的情况下，自定义内部实现。
 
+这部分链接到文件模块trainer、trainer_adapter、run_pretraining、config, 都属于benchmark 必须项。
+
+该config模块为benchmark case 1*8训练配置，且是和硬件厂商无关的配置，凡和硬件厂商有关的配置，放置于厂商config目录下。
+
+提交的最终版本代码，需要由ckpt开始训练，保证2-5内在NV上训练达标【重要】。
+
 #### 3) 添加NVIDIA的配置
 
 - 文件路径：training/nvidia/&lt;model&gt;-&lt;framework&gt;/config
+- 文件内容：不同配置下的模型超参数及硬件依赖参数
 - 配置文件列表如下：（以GLM-Pytorch为例）
 
 ```Bash
@@ -168,30 +167,24 @@ yapf -i --style "pep8" --recursive ./FlagPerf
 └── requirements.txt         # 容器中安装python依赖包。FlagPerf框架在启动容器后，在运行case之前，执行pip install -r requirements.txt，安装依赖库
 ```
 
+以上工作完成，满足进入容器中启动训练任务的目标，下面的工作保证在容器外能以统一方式批量启动测例。
+
 #### 4) 添加测例入口配置
 
-1. 在training/run_benchmarks/config/test_conf.py中添加标准case的配置, 以GLM为例,
+1. 在training/run_benchmarks/config/test_conf.py中添加新标准case的key-value, 验证以run.py 方式启动有效性。
 
-```Python
-GLM_TORCH_DEMO_A100_1X8 = {
-    "model": "glm",
-    "framework": "pytorch",
-    "config": "config_A100x1x8",
-    "repeat": 1,
-    "nnodes": 1,
-    "nproc": 8,
-    "data_dir_host": "/home/datasets_ckpt/glm/train/",  # 数据在用户机器上实际存放的路径
-    "data_dir_container": "/mnt/data/glm/train/",       # 启动容器映射的数据路径
+以GLM和Bert为例,
+
+```Bash
+# Set the case dict you want to run here.
+'''
+# Users must use {
+    "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
+'''
+CASES = {
+    "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
 }
-```
-
-test_conf.py中`CASES`变量用于放置本次代码执行要运行的所有模型列表：
-
-```Python
-CASES = [
-    'GLM_TORCH_DEMO_A100_1X1', 'GLM_TORCH_DEMO_A100_1X8', 'GLM_TORCH_DEMO_A100_2X8',
-    'CPM_TORCH_DEMO_A100_1X8'
-]
 ```
 
 2. 在training/run_benchmarks/config/cluster_conf.py中添加标准case运行机器
@@ -201,7 +194,6 @@ CASES = [
 HOSTS = ["10.209.20.12","10.209.20.13"]
 ```
 
-
 3. 【必需】在run.py 脚本启动完整测试
 
 ```Bash
@@ -210,15 +202,13 @@ python3 ./run_benchmarks/run.py
 
 注：调试运行时可在容器中进行，最终提交前需run.py 完整测试，验证代码工作正常。关于配置方法，可参考：https://github.com/FlagOpen/FlagPerf#readme
 
+#### 4) 验证达标要求
 
-4. 验证达标要求
-
-- 模型收敛达到目标精度(NV上原始代码单机8卡精度值)
+- 以Perf方式训练模型收敛达到目标精度(NV上原始代码单机8卡精度值)
 - 单个case的收敛时间在2-5h内
 - 多机/多卡吞吐量加速比符合预期
 - 有训练过程和benchmark结果日志输出（nv机器上），包括训练中的N个steps的和最终结果输出。finished_info包括不限于：e2e_time、training_sequences_per_second、 converged、final_accuracy、raw_train_time、init_time
 - 有可用的NVidia GPU适用的配置样例
-
 
 ### 3.3 配置文件规范
 
@@ -263,13 +253,15 @@ python3 ./run_benchmarks/run.py
 
 ## 4. 代码提交与Review合并
 
-FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://github.com/FlagOpen/FlagPerf/tree/main) 到个人帐号下，修改代码&验证通过后，提交PR给FlagPerf项目。FlagOpen相关研发人员Review通过后，合并代码。具体操作可参照：https://docs.github.com/en/get-started/quickstart/contributing-to-projects
+FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://github.com/FlagOpen/FlagPerf/tree/main) 到个人帐号下，修改代码&验证通过后，提交PR给FlagPerf项目指给reviewers。FlagOpen相关研发人员Review通过后，合并代码。具体操作可参照：https://docs.github.com/en/get-started/quickstart/contributing-to-projects
 
 ### 4.1 标准case提交内容检查
   #### 首次添加case
-  1. 只提交添加模型必要代码变动;
-  2. 上传起始训练ckpt到指定地址;
-  3. 提供必需1x1, 1x8, 2x8 性能及精度结果(必须)到case文档。
+  1. 只提交添加模型必要代码变动，代码格式执行"yapf -i --style "pep8" --recursive ./FlagPerf "
+  2. 文档齐全，包括模型、case(包括1x1, 1x8, 2x8 性能精度结果)、厂商(如需)三个
+  3. 提交ckpt到智源方(由智源方上传公开网站供下载)
+  4. 提供到1x1，1x8，2x8精度log给智源方用于存档
+
   #### 修改标准case
   1. 如果Perf中已经存在标准实现, 需要改动标准实现且修改内容影响Case运行结果，请在Case的README.md更新新的运行记录，随PR提交;并建议在PR的comment里提交在Nvidia GPU上运行日志附件。
   2. 如果该case已经有厂商已经适配，需要评估该修改对所有已经适配的厂商扩展是否有影响。
