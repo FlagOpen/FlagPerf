@@ -1,10 +1,9 @@
 from .layers import LayerNorm
 
 
-def convert_model(model, config):
+def convert_model(config, model):
     state_dict = model.state_dict()
     state_dict = remap_attn_parameters(state_dict)
-
     for i in range(config.num_layers):
         model.transformer.layers[i].input_layernorm = LayerNorm(
             config.hidden_size, config.layernorm_epsilon)

@@ -4,6 +4,8 @@
 
 export BKCL_PCIE_RING=1
 export BKCL_TIMEOUT=1800
+# when using tree allreduce, the number of nodes must be a multiple of 2
+export BKCL_SOCKET_FORCE_TREE=1
 
 export ALLREDUCE_ASYNC=false
 export ALLREDUCE_FUSION=0

@@ -52,6 +52,12 @@ class InitHelper:
             torch.cuda.manual_seed_all(seed)
             torch.backends.cudnn.benchmark = False
             torch.backends.cudnn.deterministic = True
+        elif lower_vendor == "iluvatar":
+            torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = False
+            torch.backends.cudnn.deterministic = True
         elif lower_vendor == "kunlunxin":
             torch.manual_seed(seed)
         else:
