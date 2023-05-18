@@ -299,7 +299,7 @@ def main():
         f'Scheduled epochs: {num_epochs}. LR stepped per {"epoch" if lr_scheduler.t_in_epochs else "update"}.'
     )
     main_proc_print(
-        f'updates_per_epoch: {updates_per_epoch}, batch_size: {config.batch_size}.'
+        f'updates_per_epoch: {updates_per_epoch}, batch_size: {config.batch_size}, epoch: {config.epochs}.'
     )
 
     try:
@@ -376,6 +376,10 @@ def main():
             if lr_scheduler is not None:
                 # step LR for next epoch
                 lr_scheduler.step(epoch + 1, eval_metrics[eval_metric])
+                
+            if training_state.eval_acc1 > config.target_acc1:
+                main_proc_print(f'eval acc1 {training_state.eval_acc1} > target acc1 {config.target_acc1}, stop training at epoch {epoch}' )
+                break
 
         if saver is not None:
             # save proper checkpoint with eval metric
