@@ -63,7 +63,7 @@
 ### 3.2 添加规范
 * 总结流程如下
   1. 下载数据集和checkpoint(如有)
-  2. 从头开始训练，保存ckpt(可选), 验证原始仓库精度达标
+  2. 从头开始训练，保存ckpt(可选), 验证原始仓库精度达标，对于具有backbone的模型，仅需从头开始训练非backbone的部分
   3. 从原始仓库分离模型、config
   4. 整理trainer、trainer_adapter、run_pretraining、config
   5. 撰写nvidia-1x8 config
@@ -145,7 +145,7 @@
 
 一般我们推荐优先支持的是1x8的实验配置, _base.py作为config模块的基石，存放和硬件厂商无关的基本配置，如模型结构，基础训练超参设置，凡和硬件厂商有关的配置，放置于厂商config目录下，不同层级的配置优先级为：test_conf.py > config_A100x1x8.py > _base.py，三者都存在的情况下，覆盖式生成最终版本。
 
-提交的最终版本代码，期望训练时间在一周能过NV上精度达标【重要】。
+提交的最终版本代码，期望训练时间在一周能够NV上精度达标【重要】。
 
 #### 3) 添加NVIDIA的配置
 
@@ -251,7 +251,7 @@ FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://
   #### 首次添加case
   1. 只提交添加模型必要代码变动，代码格式执行"yapf -i --style "pep8" --recursive ./FlagPerf "
   2. 文档齐全，包括模型、case(包括1x1, 1x8, 2x8 性能精度结果)、厂商(如需)三个
-  3. 提供到1x1，1x8，2x8精度log给智源方用于存档
+  3. 提供1x1，1x8，2x8精度log给智源方用于存档
 
   #### 修改标准case
   1. 如果Perf中已经存在标准实现, 需要改动标准实现且修改内容影响Case运行结果，请在Case的README.md更新新的运行记录，随PR提交;并建议在PR的comment里提交在Nvidia GPU上运行日志附件。
