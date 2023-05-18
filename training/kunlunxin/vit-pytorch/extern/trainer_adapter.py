@@ -34,6 +34,5 @@ def model_to_ddp(model: nn.Module, use_amp) -> nn.Module:
         else:
             main_proc_print("Using native Torch DistributedDataParallel.")
             model = DDP(model)
-            # model = NativeDDP(model)
         # NOTE: EMA model does not need to be wrapped by DDP
     return model
