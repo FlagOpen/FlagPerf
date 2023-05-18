@@ -54,7 +54,6 @@ def train_one_epoch(model,
 
         # reduce losses over all GPUs for logging purpose
         loss_dict_reduced = utils.reduce_dict(loss_dict)
-        # loss_dict_reduced = loss_dict
         losses_reduced = sum(loss for loss in loss_dict.values())
 
         loss_value = losses_reduced.item()

@@ -78,8 +78,6 @@ class Trainer:
         config = self.config
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
-        state.epoch += 1
-        dist_pytorch.main_proc_print(f"state.epoch: {state.epoch}")
         mean_loss, lr = utils.train_one_epoch(model,
                                               optimizer,
                                               dataloader,
@@ -90,6 +88,9 @@ class Trainer:
                                               print_freq=print_freq,
                                               warmup=warmup,
                                               scaler=scaler)
+        
+        state.epoch += 1
+        dist_pytorch.main_proc_print(f"state.epoch: {state.epoch}")
 
         # update learning rate
         self.lr_scheduler.step()
