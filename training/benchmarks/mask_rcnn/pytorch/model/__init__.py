@@ -13,6 +13,6 @@ def create_model(args):
 
     torchvision.models.resnet.__dict__['model_urls']['resnet50'] = url_resnet50_backbone
     torchvision.models.detection.mask_rcnn.__dict__['model_urls'][ 'maskrcnn_resnet50_fpn_coco'] = url_coco_pretrained
-    model = maskrcnn_resnet50_fpn(pretrained=args.use_pretrained)
+    model = maskrcnn_resnet50_fpn(pretrained=args.use_coco_pretrained)
 
     return model

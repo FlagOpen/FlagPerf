@@ -99,12 +99,11 @@ num_classes: int = 90
 pretrained_path: str = "checkpoint/resnet50.pth"
 # coco weights pretrained_path
 coco_weights_pretrained_path: str = "checkpoint/maskrcnn_resnet50_fpn_coco.pth"
+# use coco pretrained weights
+use_coco_pretrained = False
 
 # resume configs
 # resume start checkpoint
 resume: str = None
 # start epoch
 start_epoch: int = 0
-
-# use coco pretrained weights
-use_pretrained = False
