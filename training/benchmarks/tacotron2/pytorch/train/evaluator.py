@@ -12,6 +12,9 @@ import torch.distributed as dist
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 
+
+from dataloaders.data_functions import get_collate_function
+
 # adapted from: https://discuss.pytorch.org/t/opinion-eval-should-be-a-context-manager/18998/3
 # Following snippet is licensed under MIT license
 
@@ -41,11 +44,12 @@ class Evaluator:
         validate_dataset = trainer.validate_dataset
 
         # TODO
-
         batch_iter = None
-        world_size = None
-        collate_fn = None
+        world_size = trainer.world_size
+        collate_fn = get_collate_function()
         batch_to_gpu = None
+
+        
         amp_run = trainer.config.amp
 
         distributed_run = trainer.config.distributed
@@ -70,7 +74,7 @@ class Evaluator:
             num_iters = 0
             val_items_per_sec = 0.0
 
-            for i, batch in enumerate(val_loader):
+            for _, batch in enumerate(val_loader):
                 torch.cuda.synchronize()
                 iter_start_time = time.perf_counter()
 

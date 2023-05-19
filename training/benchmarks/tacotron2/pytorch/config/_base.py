@@ -3,11 +3,8 @@ vendor: str = None
 
 # random seed
 seed: int = 1234
-
 """model args"""
 name: str = "tacotron2"
-
-
 """Training parameters"""
 # disable uniform initialization of batchnorm layer weight
 disable_uniform_initialize_bn_weight: bool = False
@@ -19,7 +16,6 @@ lr_anneal_factor: float = 0.3
 
 # learning rate decay function
 lr_decay_style: str = "linear"
-
 """optimizer args"""
 # weight decay coefficient for L2 regularization
 weight_decay: float = 1e-6
@@ -76,7 +72,6 @@ log_freq: int = 1
 
 # target val_loss to converge for training
 target_val_loss: float = 0.35
-
 """Distributed parameters"""
 distributed: bool = False
 # Whether to read local rank from ENVVAR
@@ -87,11 +82,9 @@ local_rank: int = -1
 dist_backend: str = "nccl"
 # Distributed Data Parallel type
 ddp_type: str = "native"
-
 """device parameters"""
 device: str = None
 n_device: int = 1
-
 
 pretrained: bool = False
 
@@ -177,3 +170,10 @@ attention_dim: int = 128
 attention_location_n_filters: int = 32
 # Kernel size for location-sensitive attention
 attention_location_kernel_size: int = 31
+"""benchmark parameters"""
+bench_class: str = ""
+"""checkpoint parameters"""
+resume_from_last: bool = False
+checkpoint_path: str = ""
+epochs_per_checkpoint: int = 50
+max_epochs : int = 1501

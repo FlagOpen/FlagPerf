@@ -9,3 +9,8 @@ def create_model(args):
         cpu_run=False,
         uniform_initialize_bn_weight=uniform_initialize_bn_weight)
     return model
+
+
+def create_model_config(args):
+    model_config = get_model_config(args)
+    return model_config
