@@ -12,7 +12,7 @@ class TrainingState:
     skipped_steps = 0
     iter_dataloader_idx = 0
 
-    loss: float = 0.0
+    train_loss: float = 0.0
     eval_accuracy: float = 0.0
 
     epoch: int = 1

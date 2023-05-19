@@ -10,6 +10,7 @@ from model import create_model, create_model_config
 from schedulers import create_scheduler
 from model.loss.loss_function import get_loss_function
 from model.data.data_function import batch_to_gpu
+from .utills import reduce_tensor
 
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
@@ -58,28 +59,28 @@ class Trainer:
     def _init_model(self, model):
         # resume from checkpoint
         pass
-    
+
         return model
 
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
         driver = self.driver
         driver.event(Event.EPOCH_BEGIN, state.epoch)
-        torch.cuda.synchronize()
 
-        adjust_learning_rate(self.training_state.global_steps,
-                             self.training_state.epoch, self.optimizer,
-                             self.config.learning_rate,
-                             self.config.lr_anneal_steps,
-                             self.config.lr_anneal_factor,
-                             self.config.local_rank)
+        torch.cuda.synchronize()
+        epoch_start_time = time.perf_counter()
+        # used to calculate avg items/sec over epoch
+        reduced_num_items_epoch = 0
+
+        train_epoch_items_per_sec = 0.0
+
+        num_iters = 0
+        reduced_loss = 0
 
         epoch_start_num_sample = state.num_trained_samples
 
-        for batch_idx, batch in enumerate(train_dataloader):
-            print(f"batch_idx: {batch_idx}")
+        for _, batch in enumerate(train_dataloader):
             self.train_one_step(batch)
-
             if state.end_training:
                 break
 
@@ -108,6 +109,8 @@ class Trainer:
         driver.event(Event.EPOCH_END, state.epoch)
 
     def train_one_step(self, batch):
+        driver = self.driver
+        state = self.training_state
         self.training_state.global_steps += 1
 
         dist_pytorch.main_proc_print(
@@ -167,16 +170,19 @@ class Trainer:
         iter_time = iter_stop_time - iter_start_time
         items_per_sec = reduced_num_items / iter_time
         train_epoch_items_per_sec += items_per_sec
-
-        # DLLogger.log(step=(epoch, i), data={'train_items_per_sec': items_per_sec})
-        # DLLogger.log(step=(epoch, i), data={'train_iter_time': iter_time})
-        iteration += 1
+        step_info = dict(step=state.global_steps, train_loss=reduced_loss)
+        driver.event(Event.EPOCH_END, message=step_info)
 
 
 # TODO 改成AnnealScheduler
 def adjust_learning_rate(iteration, epoch, optimizer, learning_rate,
                          anneal_steps, anneal_factor, rank):
     p = 0
+
+    print(
+        f"adjust_learning_rate: anneal_steps:{anneal_steps} anneal_factor:{anneal_factor} learning_rate:{learning_rate} epoch:{epoch}"
+    )
+
     if anneal_steps is not None:
         for i, a_step in enumerate(anneal_steps):
             if epoch >= int(a_step):
@@ -186,13 +192,6 @@ def adjust_learning_rate(iteration, epoch, optimizer, learning_rate,
         lr = learning_rate * ((0.1**(p // 2)) * (1.0 if p % 2 == 0 else 0.3))
     else:
         lr = learning_rate * (anneal_factor**p)
-
-    # if optimizer.param_groups[0]['lr'] != lr:
-    #     logger.log(step=(epoch, iteration),
-    #                data={
-    #                    'learning_rate changed':
-    #                    str(optimizer.param_groups[0]['lr']) + " -> " + str(lr)
-    #                })
 
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
@@ -256,13 +255,3 @@ def get_last_checkpoint_filename(output_dir, model_name):
     else:
         print("No last checkpoint available - starting from epoch 0 ")
         return ""
-
-
-def reduce_tensor(tensor, num_gpus):
-    rt = tensor.clone()
-    dist.all_reduce(rt, op=dist.ReduceOp.SUM)
-    if rt.is_floating_point():
-        rt = rt / num_gpus
-    else:
-        rt = torch.div(rt, num_gpus, rounding_mode='floor')
-    return rt

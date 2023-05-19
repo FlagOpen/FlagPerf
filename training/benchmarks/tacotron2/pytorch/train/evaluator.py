@@ -9,11 +9,12 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
 import torch.distributed as dist
 
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 
-
 from dataloaders.data_functions import get_collate_function
+from .utills import reduce_tensor
 
 # adapted from: https://discuss.pytorch.org/t/opinion-eval-should-be-a-context-manager/18998/3
 # Following snippet is licensed under MIT license
@@ -49,7 +50,6 @@ class Evaluator:
         collate_fn = get_collate_function()
         batch_to_gpu = None
 
-        
         amp_run = trainer.config.amp
 
         distributed_run = trainer.config.distributed
@@ -105,13 +105,3 @@ class Evaluator:
             val_items_per_sec = val_items_per_sec / num_iters
 
             return val_loss, val_items_per_sec
-
-
-def reduce_tensor(tensor, num_gpus):
-    rt = tensor.clone()
-    dist.all_reduce(rt, op=dist.ReduceOp.SUM)
-    if rt.is_floating_point():
-        rt = rt / num_gpus
-    else:
-        rt = torch.div(rt, num_gpus, rounding_mode='floor')
-    return rt
