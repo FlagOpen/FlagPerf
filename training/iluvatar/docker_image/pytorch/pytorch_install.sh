@@ -1,7 +1,9 @@
 #!/bin/bash
 
-SDK_DIR="/workspace/docker_image/sdk_installers"
-PKG_DIR="/workspace/docker_image/packages"
+SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
+
+SDK_DIR="${SCRIPT_DIR}/sdk_installers"
+PKG_DIR="${SCRIPT_DIR}/packages"
 
 
 search_cuda_results=`find ${SDK_DIR} -name "*cuda*10.2*.run"`

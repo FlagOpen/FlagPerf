@@ -1,7 +1,7 @@
 '''Cluster configs'''
 
 # Hosts to run the benchmark. Each item is an IP address or a hostname.
-HOSTS = ["10.209.20.12"]
+HOSTS = ["127.0.0.1"]
 
 # Hosts port to run the tensorflow distribution_strategy = 'multi_worker_mirrored'
 HOSTS_PORTS = ["2222"]
