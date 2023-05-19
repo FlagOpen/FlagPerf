@@ -13,13 +13,24 @@ class TrainingState:
     iter_dataloader_idx = 0
 
     loss: float = 0.0
-    acc1: float = 0.0
-    acc5: float = 0.0
-
+    # from yolov5's loss_items
+    # box loss
+    lbox: float = 0.0
+    # class loss
+    lcls: float = 0.0
+    # object loss
+    lobj: float = 0.0
+    
     eval_loss: float = 0.0
-    eval_acc1: float = 0.0
-    eval_acc5: float = 0.0
-
+    # Precision
+    eval_P: float = 0.0
+    # Recall
+    eval_R: float = 0.0
+    # mAP@0.5 mean Average Precision（IoU=0.5）,将IoU设为0.5时,计算每一个类别下所有图片的平均AP
+    eval_mAP_0_5: float = 0.0
+    # mAP@.5:.95（mAP@[.5:.95]）：表示在不同IoU阈值（0.5～0.95，步长0.05）（0.5、0.55、0.6、0.65、0.7、0.75、0.8、0.85、0.9、0.95）上的平均mAP
+    eval_mAP_5_95: float = 0.0
+    
     epoch: int = 1
     num_trained_samples = 0
     end_training: bool = False
@@ -52,13 +63,14 @@ class TrainingState:
         for var_name, value in self.__dict__.items():
             if not var_name.startswith("_") and self._is_property(value):
                 state_dict[var_name] = value
-
+        # todo  if get_last_lr() exist 
         lr = self._trainer.lr_scheduler.get_last_lr()
         if isinstance(lr, (tuple, list)):
             lr = lr[0]
         state_dict["learning_rate"] = lr
+        # yolov5 
         exclude = [
-            "eval_loss", "eval_acc1", "eval_acc5", "skipped_steps",
+            "eval_loss", "eval_P", "eval_R", "eval_mAP_0_5", "eval_mAP_5_95", "skipped_steps",
             "converged", "init_time", "raw_train_time"
         ]
         for exkey in exclude:

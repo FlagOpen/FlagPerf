@@ -1,13 +1,8 @@
 from torch.optim.lr_scheduler import StepLR
 from torch.optim import lr_scheduler 
 from utils.general import (one_cycle)
-import yaml
 
-hyp = "path/to/hpy.yaml"
-if isinstance(hyp, str):
-    with open(hyp, errors='ignore') as f:
-        hyp = yaml.safe_load(f)  # load hyps dict
-
+from dataloaders import hyp
 def create_scheduler(optimizer, args):
     """Build the learning rate scheduler."""
     epochs = args.epochs

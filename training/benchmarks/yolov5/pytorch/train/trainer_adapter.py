@@ -3,6 +3,7 @@ import torch.distributed as dist
 from torch.optim import Optimizer
 import config
 import os
+import yaml
 
 from torch import nn, Tensor
 from driver.dist_pytorch import main_proc_print
@@ -21,6 +22,7 @@ WORLD_SIZE = int(os.getenv('WORLD_SIZE', 1))
 def convert_model(model: nn.Module) -> nn.Module:
     return model
 
+# todo wait to adjust
 def create_optimizer(model, args):
 
     amp = check_amp(model)
@@ -37,7 +39,11 @@ def create_optimizer(model, args):
     nbs = 64  # nominal batch size
     accumulate = max(round(nbs / batch_size), 1)  # accumulate loss before optimizing
     
-    from schedulers import hyp
+    # Hyperparameters
+    # from utils.hyp_param import hpy
+    if isinstance(config.hyp, str):
+        with open(config.hyp, errors='ignore') as f:
+            hyp = yaml.safe_load(f)  # load hyps dict
     
     hyp['weight_decay'] *= batch_size * accumulate / nbs  # scale weight_decay
     optimizer = smart_optimizer(model, args.optimizer, hyp['lr0'], hyp['momentum'], hyp['weight_decay'])
@@ -52,6 +58,7 @@ def model_to_fp16(model):
     return model
 
 
+# smart ddp
 def model_to_ddp(model: nn.Module) -> nn.Module:
     if dist.is_available() and dist.is_initialized():
         model = DDP(model, device_ids=[config.local_rank])

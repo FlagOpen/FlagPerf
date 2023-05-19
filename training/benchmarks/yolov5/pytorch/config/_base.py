@@ -5,16 +5,17 @@ from typing import ClassVar
 # chip vendor: nvidia, kunlunxin,  iluvatar, cambricon etc. key vendor is required.
 vendor: str = None
 # model name
-name: str = "MobileNetV2"
+# name: str = "MobileNetV2"
+name: str = "yolov5"
 
 do_train = True
 fp16 = True
 # =========================================================
 # data
 # =========================================================
-data_dir: str = None
-train_data: str = "train"
-eval_data: str = "val"
+# data_dir: str = None
+# train_data: str = "train"
+# eval_data: str = "val"
 output_dir: str = ""
 init_checkpoint: str = ""
 
@@ -73,6 +74,8 @@ device: str = None
 n_device: int = 1
 
 
+
+
 cfg: str = "/data/sen.li/workspace/code/FlagPerf/training/benchmarks/yolov5/pytorch/model/yolov5s.yaml"
 # hpy = "path/to/hpy.yaml"
 hyp: str = "/data/sen.li/workspace/code/FlagPerf/training/benchmarks/yolov5/pytorch/dataloaders/hyp.scratch-low.yaml"
@@ -86,3 +89,25 @@ weight: str = "yolov5s.pt"
 
 epoch: int = 300
 
+data_dir = "/data/sen.li/workspace/datasets/yolov5/coco/images"
+train_data = "train2017"
+eval_data = "val2017"
+imgsz = 640
+batch_size = 64
+
+data: str = "/data/coco.yaml"
+gs = 32 # grid size (max stride)
+single_cls = True
+pad = 0.5
+# hyp is path/to/hyp.yaml or hyp dictionary
+hyp = "/data/sen.li/workspace/code/yolov5/data/coco.yaml"
+augment = True
+cache = False
+rect = True
+
+rank = -1
+workers = 4
+image_weights = True
+quad = False
+prefix = ''
+shuffle = True

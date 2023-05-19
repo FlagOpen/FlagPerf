@@ -52,71 +52,71 @@ def torch_distributed_zero_first(local_rank: int):
     if local_rank == 0:
         dist.barrier(device_ids=[0])    
 
-def build_train_dataloader(args):
-    traindir = os.path.join(args.data_dir, args.train_data) 
-    with torch_distributed_zero_first(args.rank):  # init dataset *.cache only once if DDP
+def build_train_dataloader(config):
+    traindir = os.path.join(config.data_dir, config.train_data) 
+    with torch_distributed_zero_first(config.rank):  # init dataset *.cache only once if DDP
         train_dataset = LoadImagesAndLabels(
             traindir,
-            args.imgsz,
-            args.batch_size,
-            augment=args.augment,  # augmentation
-            hyp=args.hyp,  # hyperparameters
-            rect=args.rect,  # rectangular batches
-            cache_images=args.cache,
-            single_cls=args.single_cls,
-            stride=int(args.gs),
-            pad=args.pad,
-            image_weights=args.image_weights,
-            prefix=args.prefix)
-    print(len(train_dataset))
-    batch_size = min(args.batch_size, len(train_dataset))
+            config.imgsz,
+            config.batch_size,
+            augment=config.augment,  # augmentation
+            hyp=config.hyp,  # hyperparameters
+            rect=config.rect,  # rectangular batches
+            cache_images=config.cache,
+            single_cls=config.single_cls,
+            stride=int(config.gs),
+            pad=config.pad,
+            image_weights=config.image_weights,
+            prefix=config.prefix)
+    # print(len(train_dataset))
+    batch_size = min(config.batch_size, len(train_dataset))
     nd = torch.cuda.device_count()  # number of CUDA devices
-    nw = min([os.cpu_count() // max(nd, 1), batch_size if batch_size > 1 else 0, args.workers])  # number of workers
-    sampler = None if args.rank == -1 else distributed.DistributedSampler(train_dataset, shuffle=args.shuffle)
-    loader = DataLoader if args.image_weights else InfiniteDataLoader  # only DataLoader allows for attribute updates
+    nw = min([os.cpu_count() // max(nd, 1), batch_size if batch_size > 1 else 0, config.workers])  # number of workers
+    sampler = None if config.rank == -1 else distributed.DistributedSampler(train_dataset, shuffle=config.shuffle)
+    loader = DataLoader if config.image_weights else InfiniteDataLoader  # only DataLoader allows for attribute updates
     generator = torch.Generator()
     generator.manual_seed(0)
     train_dataloader = loader(train_dataset,
                   batch_size=batch_size,
-                  shuffle=args.shuffle and sampler is None,
+                  shuffle=config.shuffle and sampler is None,
                   num_workers=nw,
                   sampler=sampler,
                   pin_memory=True,
-                  collate_fn=LoadImagesAndLabels.collate_fn4 if args.quad else LoadImagesAndLabels.collate_fn,
+                  collate_fn=LoadImagesAndLabels.collate_fn4 if config.quad else LoadImagesAndLabels.collate_fn,
                   worker_init_fn=seed_worker,
                   generator=generator)
     
     return train_dataloader, train_dataset
 
-def build_eval_dataloader(args):
-    evaldir = os.path.join(args.data_dir, args.eval_data) 
-    with torch_distributed_zero_first(args.rank):  # init dataset *.cache only once if DDP
+def build_eval_dataloader(config):
+    evaldir = os.path.join(config.data_dir, config.eval_data) 
+    with torch_distributed_zero_first(config.rank):  # init dataset *.cache only once if DDP
         eval_dataset = LoadImagesAndLabels(
             evaldir,
-            args.imgsz,
-            args.batch_size,
-            stride=args.gs,
-            augment=args.augment,  # augmentation
-            hyp=args.hyp,  # hyperparameters
-            rect=args.rect,  # rectangular batches
-            cache_images=args.cache,
-            single_cls=args.single_cls,
+            config.imgsz,
+            config.batch_size,
+            stride=config.gs,
+            augment=config.augment,  # augmentation
+            hyp=config.hyp,  # hyperparameters
+            rect=config.rect,  # rectangular batches
+            cache_images=config.cache,
+            single_cls=config.single_cls,
             pad=0.5,
-            prefix=args.prefix)
-    batch_size = min(args.batch_size, len(eval_dataset))
+            prefix=config.prefix)
+    batch_size = min(config.batch_size, len(eval_dataset))
     nd = torch.cuda.device_count()  # number of CUDA devices
-    nw = min([os.cpu_count() // max(nd, 1), batch_size if batch_size > 1 else 0, args.workers])  # number of workers
-    sampler = None if args.rank == -1 else distributed.DistributedSampler(eval_dataset, shuffle=args.shuffle)
-    loader = DataLoader if args.image_weights else InfiniteDataLoader  # only DataLoader allows for attribute updates
+    nw = min([os.cpu_count() // max(nd, 1), batch_size if batch_size > 1 else 0, config.workers])  # number of workers
+    sampler = None if config.rank == -1 else distributed.DistributedSampler(eval_dataset, shuffle=config.shuffle)
+    loader = DataLoader if config.image_weights else InfiniteDataLoader  # only DataLoader allows for attribute updates
     generator = torch.Generator()
     generator.manual_seed(0)
     eval_dataloader = loader(eval_dataset,
                   batch_size=batch_size,
-                  shuffle=args.shuffle and sampler is None,
+                  shuffle=config.shuffle and sampler is None,
                   num_workers=nw,
                   sampler=sampler,
                   pin_memory=True,
-                  collate_fn=LoadImagesAndLabels.collate_fn4 if args.quad else LoadImagesAndLabels.collate_fn,
+                  collate_fn=LoadImagesAndLabels.collate_fn4 if config.quad else LoadImagesAndLabels.collate_fn,
                   worker_init_fn=seed_worker,
                   generator=generator)
     
@@ -260,7 +260,7 @@ class LoadImagesAndLabels(Dataset):
             # Sort by aspect ratio
             s = self.shapes  # wh
             ar = s[:, 1] / s[:, 0]  # aspect ratio
-            irect = ar.argsort()
+            irect = ar.configort()
             self.im_files = [self.im_files[i] for i in irect]
             self.label_files = [self.label_files[i] for i in irect]
             self.labels = [self.labels[i] for i in irect]
@@ -699,10 +699,5 @@ if __name__ == "__main__":
     print(type(test_train_dataloader))
     print(type(test_val_dataloader))
     
-    labels = np.concatenate(train_dataset.labels, 0)
-    mlc = int(labels[:, 0].max())  # max label class
-    print("class: ",mlc)
-    # assert mlc < nc, f'Label class {mlc} exceeds nc={nc} in {data}. Possible class labels are 0-{nc - 1}'
-    # for i,item in enumerate(test_train_dataloader):
-    #     print(i,item)
+
      

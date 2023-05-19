@@ -1,5 +1,6 @@
-"""Mobilenet V2 Pretraining"""
+"""yolov5 Pretraining"""
 
+#sys lib 
 import os
 import sys
 import time
@@ -7,25 +8,29 @@ from typing import Any, Tuple
 import argparse
 from pathlib import Path
 
+# benchmark path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+
+# local lib
 import config
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
+
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
-from dataloaders.dataloader import build_train_dataset, \
-    build_eval_dataset, build_train_dataloader, build_eval_dataloader
+
+from dataloaders.dataloader import build_train_dataloader, build_eval_dataloader
 
 logger = None
-# 需要根据本项目做调整 todo
-FILE = Path(__file__).resolve()
-ROOT = FILE.parents[0]  # YOLOv5 root directory
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))  # add ROOT to PATH
-ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+# # 需要根据本项目做调整 todo
+# FILE = Path(__file__).resolve()
+# ROOT = FILE.parents[0]  # YOLOv5 root directory
+# if str(ROOT) not in sys.path:
+#     sys.path.append(str(ROOT))  # add ROOT to PATH
+# ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 def main() -> Tuple[Any, Any]:
     global logger
@@ -42,11 +47,10 @@ def main() -> Tuple[Any, Any]:
 
     init_helper.set_seed(config.seed, config.vendor)
 
-    train_dataset = build_train_dataset(config)
-    eval_dataset = build_eval_dataset(config)
-    train_dataloader = build_train_dataloader(train_dataset, config)
-    eval_dataloader = build_eval_dataloader(eval_dataset, config)
+    train_dataloader,train_dataset = build_train_dataloader(config)
+    eval_dataloader,_ = build_eval_dataloader(config)
 
+    # todo
     evaluator = Evaluator(config, eval_dataloader)
 
     training_state = TrainingState()
@@ -64,16 +68,20 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.barrier(config.vendor)
 
     init_evaluation_start = time.time()
-    training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(
-        trainer)
+    # todo
+    # training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(
+    #     trainer)
 
     init_evaluation_end = time.time()
-    init_evaluation_info = dict(eval_acc1=training_state.eval_acc1,
-                                eval_acc5=training_state.eval_acc5,
-                                time=init_evaluation_end -
-                                init_evaluation_start)
+    # yolov5's 
+    # init_evaluation_info = dict(eval_acc1=training_state.eval_acc1,
+    #                             eval_acc5=training_state.eval_acc5,
+    #                             time=init_evaluation_end -
+    #                             init_evaluation_start)
+    init_evaluation_info = dict(time=init_evaluation_end -
+                            init_evaluation_start)
     model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
-
+    
     if not config.do_train:
         return config, training_state
 
@@ -85,23 +93,37 @@ def main() -> Tuple[Any, Any]:
     model_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time
 
-    epoch = -1
-    while training_state.global_steps < config.max_steps and \
-            not training_state.end_training:
-        epoch += 1
+    # epoch = -1
+    # while training_state.global_steps < config.max_steps and \
+    #         not training_state.end_training:
+    #     epoch += 1
+    #     training_state.epoch = epoch
+    #     # begin to train our model
+    #     trainer.train_one_epoch(train_dataloader)
+
+    # begin to train
+    epoch = config.start_epoch
+    while not training_state.end_training:
+        if config.distributed:
+            train_dataloader.sampler.set_epoch(epoch)
+
         training_state.epoch = epoch
-        trainer.train_one_epoch(train_dataloader)
+        trainer.train_all_epoch(train_dataloader,
+                                train_dataset, 
+                                eval_dataloader,
+                                )
 
+    # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time
-
+    raw_train_end_time = logger.previous_log_time  # 训练结束时间，单位为ms
+    
     training_state.raw_train_time = (raw_train_end_time -
                                      raw_train_start_time) / 1e+3
 
-    return config, training_state
+   
 
 
-# train的时候需要用到此处的默认参数 
+# train的时候需要用到此处的默认参数,全转到config里面 
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', type=str, default=ROOT / 'yolov5s.pt', help='initial weights path')
