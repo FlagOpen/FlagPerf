@@ -2,16 +2,16 @@
 
 
 ● 模型Checkpoint下载地址：
-`https://drive.google.com/drive/u/0/folders/1oQF4diVHNPCclykwdvQJw8n_VIWwV0PT`
+https://model.baai.ac.cn/model-detail/100097
    
 ```
-文件列表：
+文件列表： TODO
 tf1_ckpt
 vocab.txt
 bert_config.json
 ```
 
-● 测试数据集下载地址：`https://drive.google.com/drive/folders/1cywmDnAsrP5-2vsr8GDc6QUc7VWe-M3v`
+● 数据集下载地址：`https://drive.google.com/drive/folders/1cywmDnAsrP5-2vsr8GDc6QUc7VWe-M3v`
 
 ```
 文件列表：
@@ -91,5 +91,5 @@ python3 pick_eval_samples.py \
 | 训练资源 | 配置文件 | 运行时长(s) | final_loss | final_mlm_accuracy | Steps数 | 性能 (seq/s) |
 | :-----| :---- | :---- | :---- | :---- | :---- | :---- |
 | 单机单卡 | config_A100x1x1.py | 4616 | 1.1465 | 0.7442 | 25000 | 65.89 |
-| 单机多卡 | config_A100x1x2.py | 4822 | 0.7836 | 0.8130 | 25000 | 125.57 |
+| 单机两卡 | config_A100x1x2.py | 4822 | 0.7836 | 0.8130 | 25000 | 125.57 |
 
