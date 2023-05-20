@@ -58,27 +58,31 @@ def main() -> Tuple[Any, Any]:
 
     # 构建dataset, dataloader 【train && validate】
     train_dataset = build_train_dataset(config)
-    eval_dataset = build_eval_dataset(config)
-    train_dataloader = build_train_dataloader(config, train_dataset)
-    eval_dataloader = build_eval_dataloader()
+    val_dataset = build_eval_dataset(config)
+    train_dataloader = build_train_dataloader(
+        config, train_dataset, distributed_run=config.distributed)
+    val_dataloader = build_eval_dataloader(val_dataset, config)
 
     print(
         f"构建dataset, dataloader 【train && validate】 done...{config.local_rank}"
     )
     # 根据 eval_dataloader 构建evaluator
-    evaluator = Evaluator(config, eval_dataloader)
+    evaluator = Evaluator(config, val_dataloader)
 
     # 创建TrainingState对象
     training_state = TrainingState()
 
     # 构建 trainer：依赖 evaluator、TrainingState对象
-    trainer = Trainer(driver=model_driver,
-                      adapter=trainer_adapter,
-                      evaluator=evaluator,
-                      training_state=training_state,
-                      device=config.device,
-                      config=config,
-                      world_size=world_size)
+    trainer = Trainer(
+        driver=model_driver,
+        adapter=trainer_adapter,
+        evaluator=evaluator,
+        training_state=training_state,
+        device=config.device,
+        config=config,
+        world_size=world_size,
+        train_dataloader=train_dataloader,
+    )
     training_state._trainer = trainer
 
     # 设置分布式环境, trainer init()
@@ -122,15 +126,8 @@ def main() -> Tuple[Any, Any]:
     raw_train_start_time = logger.previous_log_time  # 训练起始时间，单位为ms
 
     # 训练过程
-    epoch = -1
     while not training_state.end_training:
-        
-        if config.distributed:
-            train_dataloader.sampler.set_epoch(epoch)
-
         trainer.train_one_epoch(train_dataloader)
-        epoch += 1
-        training_state.epoch = epoch
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
@@ -184,11 +181,13 @@ if __name__ == "__main__":
                          state.global_steps) / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": training_perf,
+            "training_sampples_per_second": training_perf,
             "converged": state.converged,
-            "final_accuracy": state.eval_accuracy,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
+            "epoch": state.epoch,
+            "global_steps": state.global_steps,
+            "num_trained_samples":state.num_trained_samples,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

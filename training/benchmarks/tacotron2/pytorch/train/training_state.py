@@ -13,7 +13,6 @@ class TrainingState:
     iter_dataloader_idx = 0
 
     train_loss: float = 0.0
-    eval_accuracy: float = 0.0
 
     epoch: int = 1
     num_trained_samples = 0

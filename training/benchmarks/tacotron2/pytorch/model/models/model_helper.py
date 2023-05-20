@@ -11,7 +11,6 @@ def get_model(model_config,
     model = None
 
     if forward_is_infer:
-
         class Tacotron2__forward_is_infer(Tacotron2):
 
             def forward(self, inputs, input_lengths):

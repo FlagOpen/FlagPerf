@@ -25,12 +25,12 @@ class Trainer:
 
     def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
                  training_state: TrainingState, device: Device, config,
-                 world_size):
+                 world_size, train_dataloader):
         super(Trainer, self).__init__()
         self.driver = driver
         self.adapter = adapter
         self.training_state = training_state
-        self.grad_scaler = None
+        self.scaler = None
 
         self.device = device
         self.optimizer = None
@@ -41,20 +41,24 @@ class Trainer:
         self.lr_scheduler = None
         self.global_batch_size = None
         self.criterion = None
+
         self.world_size = world_size
+        self.train_dataloader = train_dataloader
 
     def init(self):
         self.model_config = create_model_config(config)
         self.model = create_model(config)
         self.model = self._init_model(self.model)
+        self.model = self.adapter.model_to_ddp(self.model, self.config)
         self.criterion = get_loss_function()
-        print(self.model)
-        print("============ create_model done ==========")
         # self.model = self.adapter.model_to_fp16(self.model, self.optimizer)
         self.optimizer = self.adapter.create_optimizer(self.model, self.config)
-        self.model = self.adapter.model_to_ddp(self.model)
+
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        self.grad_scaler = self.adapter.create_grad_scaler(self.config)
+        self.scaler = self.adapter.create_grad_scaler(self.config)
+
+        torch.backends.cudnn.enabled = self.config.cudnn_enabled
+        torch.backends.cudnn.benchmark = self.config.cudnn_benchmark
 
     def _init_model(self, model):
         # resume from checkpoint
@@ -65,22 +69,32 @@ class Trainer:
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
         driver = self.driver
+
+        if self.config.local_rank == 0:
+            state.epoch += 1
+
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
         torch.cuda.synchronize()
-        epoch_start_time = time.perf_counter()
+        # epoch_start_time = time.perf_counter()
         # used to calculate avg items/sec over epoch
-        reduced_num_items_epoch = 0
+        # reduced_num_items_epoch = 0
 
-        train_epoch_items_per_sec = 0.0
+        # train_epoch_items_per_sec = 0.0
 
-        num_iters = 0
-        reduced_loss = 0
+        # num_iters = 0
+        # reduced_loss = 0
+
+        if self.config.distributed:
+            self.train_dataloader.sampler.set_epoch(state.epoch)
 
         epoch_start_num_sample = state.num_trained_samples
 
-        for _, batch in enumerate(train_dataloader):
+        for batch in train_dataloader:
             self.train_one_step(batch)
+
+            self.detect_training_status()
+
             if state.end_training:
                 break
 
@@ -90,13 +104,7 @@ class Trainer:
 
         args = self.config
 
-        # val_loss, val_items_per_sec = self.evaluator.evaluate(
-        #     self.model, self.criterion, valset, self.training_state.epoch,
-        #     self.training_state.global_steps, self.config.eval_batch_size,
-        #     self.world_size, collate_fn, args.distributed,
-        #     args.bench_class == "perf-train", batch_to_gpu, args.amp)
-
-        val_loss, val_items_per_sec = self.evaluator.evaluate(self)
+        # val_loss, val_items_per_sec = self.evaluator.evaluate(self)
 
         if (state.epoch % self.config.epochs_per_checkpoint
                 == 0) and (args.bench_class == ""
@@ -111,14 +119,9 @@ class Trainer:
     def train_one_step(self, batch):
         driver = self.driver
         state = self.training_state
-        self.training_state.global_steps += 1
-
-        dist_pytorch.main_proc_print(
-            f"global_steps: {self.training_state.global_steps}")
-
         args = self.config
-        torch.cuda.synchronize()
 
+        torch.cuda.synchronize()
         iter_start_time = time.perf_counter()
         adjust_learning_rate(self.training_state.global_steps,
                              self.training_state.epoch, self.optimizer,
@@ -145,10 +148,8 @@ class Trainer:
 
         # DLLogger.log(step=(epoch, i), data={'train_loss': reduced_loss})
 
-        num_iters += 1
-
         # accumulate number of items processed in this epoch
-        reduced_num_items_epoch += reduced_num_items
+        # reduced_num_items_epoch += reduced_num_items
 
         if args.amp:
             self.scaler.scale(loss).backward()
@@ -169,19 +170,30 @@ class Trainer:
         iter_stop_time = time.perf_counter()
         iter_time = iter_stop_time - iter_start_time
         items_per_sec = reduced_num_items / iter_time
-        train_epoch_items_per_sec += items_per_sec
+        # train_epoch_items_per_sec += items_per_sec
+
+        state.train_loss = reduced_loss
         step_info = dict(step=state.global_steps, train_loss=reduced_loss)
-        driver.event(Event.EPOCH_END, message=step_info)
+
+        self.training_state.global_steps += 1
+        driver.event(Event.STEP_END, state.global_steps, message=step_info)
+
+    def detect_training_status(self):
+        config = self.config
+        state = self.training_state
+        if state.train_loss <= config.target_train_loss:
+            state.converged_success()
+
+        if state.epoch > config.max_epochs:
+            state.end_training = True
+
+        return state.end_training
 
 
 # TODO 改成AnnealScheduler
 def adjust_learning_rate(iteration, epoch, optimizer, learning_rate,
                          anneal_steps, anneal_factor, rank):
     p = 0
-
-    print(
-        f"adjust_learning_rate: anneal_steps:{anneal_steps} anneal_factor:{anneal_factor} learning_rate:{learning_rate} epoch:{epoch}"
-    )
 
     if anneal_steps is not None:
         for i, a_step in enumerate(anneal_steps):

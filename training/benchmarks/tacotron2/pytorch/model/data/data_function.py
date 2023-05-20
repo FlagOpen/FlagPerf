@@ -32,22 +32,25 @@ import model.layers.layers as layers
 from model.common.utils import load_wav_to_torch, load_filepaths_and_text, to_gpu
 from model.utils.text import text_to_sequence
 
+
 class TextMelLoader(torch.utils.data.Dataset):
     """
         1) loads audio,text pairs
         2) normalizes text and converts them to sequences of one-hot vectors
         3) computes mel-spectrograms from audio files.
     """
+
     def __init__(self, dataset_path, audiopaths_and_text, args):
-        self.audiopaths_and_text = load_filepaths_and_text(dataset_path, audiopaths_and_text)
+        self.audiopaths_and_text = load_filepaths_and_text(
+            dataset_path, audiopaths_and_text)
         self.text_cleaners = args.text_cleaners
         self.max_wav_value = args.max_wav_value
         self.sampling_rate = args.sampling_rate
         self.load_mel_from_disk = args.load_mel_from_disk
-        self.stft = layers.TacotronSTFT(
-            args.filter_length, args.hop_length, args.win_length,
-            args.n_mel_channels, args.sampling_rate, args.mel_fmin,
-            args.mel_fmax)
+        self.stft = layers.TacotronSTFT(args.filter_length, args.hop_length,
+                                        args.win_length, args.n_mel_channels,
+                                        args.sampling_rate, args.mel_fmin,
+                                        args.mel_fmax)
 
     def get_mel_text_pair(self, audiopath_and_text):
         # separate filename and text
@@ -90,6 +93,7 @@ class TextMelLoader(torch.utils.data.Dataset):
 
 class TextMelCollate():
     """ Zero-pads model inputs and targets based on number of frames per step """
+
     def __init__(self, n_frames_per_step):
         self.n_frames_per_step = n_frames_per_step
 
@@ -100,9 +104,10 @@ class TextMelCollate():
         batch: [text_normalized, mel_normalized]
         """
         # Right zero-pad all one-hot text sequences to max input length
-        input_lengths, ids_sorted_decreasing = torch.sort(
-            torch.LongTensor([len(x[0]) for x in batch]),
-            dim=0, descending=True)
+        input_lengths, ids_sorted_decreasing = torch.sort(torch.LongTensor(
+            [len(x[0]) for x in batch]),
+                                                          dim=0,
+                                                          descending=True)
         max_input_len = input_lengths[0]
 
         text_padded = torch.LongTensor(len(batch), max_input_len)
@@ -127,7 +132,7 @@ class TextMelCollate():
         for i in range(len(ids_sorted_decreasing)):
             mel = batch[ids_sorted_decreasing[i]][1]
             mel_padded[i, :, :mel.size(1)] = mel
-            gate_padded[i, mel.size(1)-1:] = 1
+            gate_padded[i, mel.size(1) - 1:] = 1
             output_lengths[i] = mel.size(1)
 
         # count number of items - characters in text
@@ -135,6 +140,7 @@ class TextMelCollate():
         len_x = torch.Tensor(len_x)
         return text_padded, input_lengths, mel_padded, gate_padded, \
             output_lengths, len_x
+
 
 def batch_to_gpu(batch):
     text_padded, input_lengths, mel_padded, gate_padded, \
@@ -148,4 +154,8 @@ def batch_to_gpu(batch):
     x = (text_padded, input_lengths, mel_padded, max_len, output_lengths)
     y = (mel_padded, gate_padded)
     len_x = torch.sum(output_lengths)
+
+
+    # print( f"batch_to_gpu max_len: {max_len},mel_padded:{mel_padded} ,gate_padded:{gate_padded} input_lengths:{input_lengths} output_lengths:{output_lengths}")
+
     return (x, y, len_x)

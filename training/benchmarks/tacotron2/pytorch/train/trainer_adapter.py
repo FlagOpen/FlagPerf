@@ -5,6 +5,8 @@ import torch
 from torch.optim import Optimizer
 from torch import nn, Tensor
 from typing import Tuple
+from torch.nn.parallel import DistributedDataParallel as DDP
+import torch.distributed as dist
 
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -27,7 +29,9 @@ def model_to_fp16(model: nn.Module,
     return model, optimizer
 
 
-def model_to_ddp(model: nn.Module) -> nn.Module:
+def model_to_ddp(model: nn.Module, args) -> nn.Module:
+    if dist.is_available() and dist.is_initialized():
+        model = DDP(model, device_ids=[args.local_rank], output_device=args.local_rank)
     return model
 
 

@@ -6,6 +6,7 @@ seed: int = 1234
 """model args"""
 name: str = "tacotron2"
 """Training parameters"""
+
 # disable uniform initialization of batchnorm layer weight
 disable_uniform_initialize_bn_weight: bool = False
 """ lr_scheduler parameters"""
@@ -27,6 +28,8 @@ loss_scale: float = 4096
 fp16: bool = True
 # Window over which to raise/lower dynamic scale
 loss_scale_window: float = 1000
+# Clip threshold for gradients
+grad_clip_thresh: float = 1.0
 
 # Minimum loss scale for dynamic loss scale
 min_scale: float = 1
@@ -69,8 +72,8 @@ eval_iter_start_samples: int = 1
 # frequency of logging loss. If not positive, no logging is provided for training loss
 log_freq: int = 1
 
-# target val_loss to converge for training
-target_val_loss: float = 0.35
+# target train_loss to converge for training
+target_train_loss: float = 0.35
 """Distributed parameters"""
 distributed: bool = False
 # Whether to read local rank from ENVVAR
@@ -176,3 +179,5 @@ resume_from_last: bool = False
 checkpoint_path: str = ""
 epochs_per_checkpoint: int = 50
 max_epochs: int = 1501
+
+output="output/checkpoint"

@@ -39,5 +39,20 @@ def build_eval_dataset(args):
     return validate_set
 
 
-def build_eval_dataloader():
-    return None
+def build_eval_dataloader(val_dataset, args):
+
+    val_sampler = None
+    if args.distributed:
+        val_sampler = DistributedSampler(val_dataset)
+
+    collate_fn = get_collate_function()    
+
+    val_dataloader = DataLoader(val_dataset,
+                                num_workers=1,
+                                shuffle=False,
+                                sampler=val_sampler,
+                                batch_size=args.eval_batch_size,
+                                pin_memory=False,
+                                collate_fn=collate_fn,
+                                drop_last=False)
+    return val_dataloader

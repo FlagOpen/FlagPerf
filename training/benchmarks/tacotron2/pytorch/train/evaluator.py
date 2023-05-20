@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
-import torch.distributed as dist
+from model.data.data_function import batch_to_gpu
 
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -34,41 +34,21 @@ def evaluating(model):
 
 class Evaluator:
 
-    def __init__(self, config, dataloader):
+    def __init__(self, config, val_dataloader):
         self.config = config
-        self.eval_dataloader = dataloader
+        self.val_dataloader = val_dataloader
 
     def evaluate(self, trainer):
         """Handles all the validation scoring and printing"""
         model = trainer.model
         criterion = trainer.criterion
-        validate_dataset = trainer.validate_dataset
-
-        # TODO
-        batch_iter = None
         world_size = trainer.world_size
-        collate_fn = get_collate_function()
-        batch_to_gpu = None
-
         amp_run = trainer.config.amp
 
         distributed_run = trainer.config.distributed
-        epoch = trainer.epoch
-        batch_size = trainer.eval_batch_size
 
         with evaluating(model), torch.no_grad():
-            val_sampler = None
-            if distributed_run:
-                val_sampler = DistributedSampler(validate_dataset)
-
-            val_loader = DataLoader(validate_dataset,
-                                    num_workers=1,
-                                    shuffle=False,
-                                    sampler=val_sampler,
-                                    batch_size=batch_size,
-                                    pin_memory=False,
-                                    collate_fn=collate_fn,
-                                    drop_last=False)
+            val_loader = self.val_dataloader
 
             val_loss = 0.0
             num_iters = 0
