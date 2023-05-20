@@ -13,7 +13,6 @@ disable_uniform_initialize_bn_weight: bool = False
 learning_rate: float = 0.1
 lr_anneal_steps: list = [500, 1000, 1500]
 lr_anneal_factor: float = 0.3
-
 # learning rate decay function
 lr_decay_style: str = "linear"
 """optimizer args"""
@@ -25,7 +24,7 @@ momentum: float = 0.9
 amp: bool = True
 # Static loss scaling, positive power of 2 values can improve fp16 convergence. If None, dynamicloss scaling is used.
 loss_scale: float = 4096
-
+fp16: bool = True
 # Window over which to raise/lower dynamic scale
 loss_scale_window: float = 1000
 
@@ -98,7 +97,7 @@ cudnn_benchmark: bool = False
 # Loads mel spectrograms from disk instead of computing them on the fly
 load_mel_from_disk: bool = True
 # Path to training filelist
-training_files: str = "filelists/ljs_mel_text_train_subset_2500_filelist.txt"
+training_files: str = "filelists/ljs_mel_text_train_filelist.txt"
 # Path to validation filelist
 validation_files: str = "filelists/ljs_mel_text_val_filelist.txt"
 # Type of text cleaners for input text
@@ -126,7 +125,7 @@ mask_padding: bool = False
 """Symbols parameters"""
 # Number of symbols in dictionary
 # TODO
-n_symbols: int = 0
+n_symbols: int = 148
 # Input embedding dimension
 symbols_embedding_dim: int = 512
 """Encoder parameters"""
@@ -176,4 +175,4 @@ bench_class: str = ""
 resume_from_last: bool = False
 checkpoint_path: str = ""
 epochs_per_checkpoint: int = 50
-max_epochs : int = 1501
+max_epochs: int = 1501
