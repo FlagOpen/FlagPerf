@@ -73,7 +73,7 @@ def main() -> Tuple[Any, Any]:
 
     # evaluation统计
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
-    #all_c, all_top1, all_top5 = evaluator.evaluate(trainer.model, trainer.device)
+    all_c, all_top1, all_top5 = evaluator.evaluate(trainer.model, trainer.device)
 
     init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
     # time单位为秒
