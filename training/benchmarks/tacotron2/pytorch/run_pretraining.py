@@ -188,6 +188,7 @@ if __name__ == "__main__":
             "epoch": state.epoch,
             "global_steps": state.global_steps,
             "num_trained_samples":state.num_trained_samples,
+            "train_loss":state.train_loss,
         }
     else:
         finished_info = {"e2e_time": e2e_time}
