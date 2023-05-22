@@ -168,12 +168,16 @@ class Trainer:
                 train_dataloader.sampler.set_epoch(epoch)
             pbar = enumerate(train_dataloader)
             LOGGER.info(('\n' + '%10s' * 7) % ('Epoch', 'gpu_mem', 'box', 'obj', 'cls', 'labels', 'img_size'))
+            nb = len(train_dataloader)
+            if RANK in {-1, 0}:
+                pbar = tqdm(pbar, total=nb, bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}')  # progress bar
             
             self.optimizer.zero_grad()
             
             # hard code
             nbs = 64
-            batch_size = 8
+            batch_size = config.batch_size
+            print("----batch size:",batch_size)
             gs = max(int(self.model.stride.max()), 32)  # grid size (max stride)
             imgsz = check_img_size(config.imgsz, gs, floor=gs * 2)  # verify imgsz is gs-multiple
             
@@ -235,9 +239,9 @@ class Trainer:
                 if RANK in {-1, 0}:
                     mloss = (mloss * i + loss_items) / (i + 1)  # update mean losses
                     state.lbox, state.lobj, state.lcls = mloss[0], mloss[1], mloss[2]
-                    mem = f'{torch.cuda.memory_reserved() / 1E9 if torch.cuda.is_available() else 0:.3g}G'  # (GB)
-                    pbar.set_description(('%10s' * 2 + '%10.4g' * 5) %
-                                        (f'{epoch}/{epochs - 1}', mem, *mloss, targets.shape[0], imgs.shape[-1]))
+                    # mem = f'{torch.cuda.memory_reserved() / 1E9 if torch.cuda.is_available() else 0:.3g}G'  # (GB)
+                    # pbar.set_description(('%10s' * 2 + '%10.4g' * 5) %
+                                        # (f'{epoch}/{epochs - 1}', mem, *mloss, targets.shape[0], imgs.shape[-1]))
                     callbacks.run('on_train_batch_end', ni, self.model, imgs, targets, paths, plots)
                     if callbacks.stop_training:
                         return
@@ -247,7 +251,7 @@ class Trainer:
             lr = [x['lr'] for x in self.optimizer.param_groups]  # for loggers
             self.lr_scheduler.step()
 
-            # 
+            # process 0
             if RANK in {-1, 0}:
                 # mAP
                 callbacks.run('on_train_epoch_end', epoch=epoch)
@@ -277,7 +281,7 @@ class Trainer:
                     best_fitness = fi
                 log_vals = list(mloss) + list(results) + lr
                 callbacks.run('on_fit_epoch_end', log_vals, epoch, best_fitness, fi)
-
+        print("---------end one epoch----------")
         # end epoch ----------------------------------------------------------------------------------------------------
     # end training -----------------------------------------------------------------------------------------------------            
             

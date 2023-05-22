@@ -39,7 +39,10 @@ HELP_URL = 'https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data'
 IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp'  # include image suffixes
 VID_FORMATS = 'asf', 'avi', 'gif', 'm4v', 'mkv', 'mov', 'mp4', 'mpeg', 'mpg', 'ts', 'wmv'  # include video suffixes
 BAR_FORMAT = '{l_bar}{bar:10}{r_bar}{bar:-10b}'  # tqdm bar format
+
 LOCAL_RANK = int(os.getenv('LOCAL_RANK', -1))  # https://pytorch.org/docs/stable/elastic/run.html
+RANK = int(os.getenv('RANK', -1))
+WORLD_SIZE = int(os.getenv('WORLD_SIZE', 1))
 
 # Get orientation exif tag
 for orientation in ExifTags.TAGS.keys():
@@ -64,7 +67,8 @@ def torch_distributed_zero_first(local_rank: int):
 def build_train_dataloader(config):
     traindir = os.path.join(config.data_dir, config.train_data)
     print("-------traindir:",traindir)
-    with torch_distributed_zero_first(config.rank):  # init dataset *.cache only once if DDP
+    rank = LOCAL_RANK
+    with torch_distributed_zero_first(rank):  # init dataset *.cache only once if DDP
         train_dataset = LoadImagesAndLabels(
             traindir,
             config.imgsz,
@@ -82,7 +86,8 @@ def build_train_dataloader(config):
     batch_size = min(config.batch_size, len(train_dataset))
     nd = torch.cuda.device_count()  # number of CUDA devices
     nw = min([os.cpu_count() // max(nd, 1), batch_size if batch_size > 1 else 0, config.workers])  # number of workers
-    sampler = None if config.rank == -1 else distributed.DistributedSampler(train_dataset, shuffle=config.shuffle)
+    print("-----num of workers:",nw)
+    sampler = None if rank == -1 else distributed.DistributedSampler(train_dataset, shuffle=config.shuffle)
     loader = DataLoader if config.image_weights else InfiniteDataLoader  # only DataLoader allows for attribute updates
     generator = torch.Generator()
     generator.manual_seed(0)
@@ -101,7 +106,8 @@ def build_train_dataloader(config):
 def build_eval_dataloader(config):
     evaldir = os.path.join(config.data_dir, config.eval_data)
     print("evaldir:",evaldir)
-    with torch_distributed_zero_first(config.rank):  # init dataset *.cache only once if DDP
+    rank = LOCAL_RANK
+    with torch_distributed_zero_first(rank):  # init dataset *.cache only once if DDP
         eval_dataset = LoadImagesAndLabels(
             evaldir,
             config.imgsz,
@@ -117,7 +123,7 @@ def build_eval_dataloader(config):
     batch_size = min(config.batch_size, len(eval_dataset))
     nd = torch.cuda.device_count()  # number of CUDA devices
     nw = min([os.cpu_count() // max(nd, 1), batch_size if batch_size > 1 else 0, config.workers])  # number of workers
-    sampler = None if config.rank == -1 else distributed.DistributedSampler(eval_dataset, shuffle=config.shuffle)
+    sampler = None if rank == -1 else distributed.DistributedSampler(eval_dataset, shuffle=config.shuffle)
     loader = DataLoader if config.image_weights else InfiniteDataLoader  # only DataLoader allows for attribute updates
     generator = torch.Generator()
     generator.manual_seed(0)

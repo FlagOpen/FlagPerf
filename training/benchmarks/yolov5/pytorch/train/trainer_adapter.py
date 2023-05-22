@@ -29,15 +29,16 @@ def create_optimizer(model, args):
     # Image size
     gs = max(int(model.stride.max()), 32)  # grid size (max stride)
     imgsz = check_img_size(args.imgsz, gs, floor=gs * 2)  # verify imgsz is gs-multiple
-    
+     
     # Batch size
+    batch_size = config.batch_size
     if RANK == -1 and config.batch_size == -1:  # single-GPU only, estimate best batch size
         batch_size = check_train_batch_size(model, imgsz, amp)
         # loggers.on_params_update({"batch_size": batch_size})
 
     # Optimizer
     nbs = 64  # nominal batch size
-    accumulate = max(round(nbs / config.batch_size), 1)  # accumulate loss before optimizing
+    accumulate = max(round(nbs / batch_size), 1)  # accumulate loss before optimizing
     
     # Hyperparameters
     # from utils.hyp_param import hpy
@@ -45,7 +46,7 @@ def create_optimizer(model, args):
         with open(config.hyp, errors='ignore') as f:
             hyp = yaml.safe_load(f)  # load hyps dict
     
-    hyp['weight_decay'] *= config.batch_size * accumulate / nbs  # scale weight_decay
+    hyp['weight_decay'] *= batch_size * accumulate / nbs  # scale weight_decay
     optimizer = smart_optimizer(model, args.optimizer, hyp['lr0'], hyp['momentum'], hyp['weight_decay'])
 
     return optimizer
