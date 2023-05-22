@@ -25,9 +25,11 @@ class InitHelper:
             name: model name
         """
         config = self.config
+        print("config:", config)
         model_driver = Driver(config, config.mutable_params)
         model_driver.setup_config(argparse.ArgumentParser(config.name))
         model_driver.setup_modules(global_module, local_module)
+        print(model_driver.config)
         check.check_config(model_driver.config)
         return model_driver
 

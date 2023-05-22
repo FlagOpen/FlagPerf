@@ -34,7 +34,7 @@ from tqdm import tqdm
 #     sys.path.append(str(ROOT))  # add ROOT to PATH
 # ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
-from model.common import DetectMultiBackend
+from models.common import DetectMultiBackend
 from utils.callbacks import Callbacks
 from utils.dataloaders import create_dataloader
 from utils.general import (LOGGER, check_dataset, check_img_size, check_requirements, check_yaml,

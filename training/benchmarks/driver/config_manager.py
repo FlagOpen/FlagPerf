@@ -140,7 +140,10 @@ def activate(base_config,
     if path and not config_file:
         raise "Config file's location was not specified."
 
-    ext_config = os.path.join(os.path.abspath(path), config_file)
+    # path 有为None的风险
+    ext_config = ""
+    if path:
+        ext_config = os.path.join(os.path.abspath(path), config_file)
 
     parsed_params = parse_from_args_and_config(params, cmd_args, ext_config,
                                                enable_extern_config)

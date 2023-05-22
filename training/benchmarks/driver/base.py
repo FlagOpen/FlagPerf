@@ -2,6 +2,7 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
 
+from email.policy import default
 import os
 import inspect
 from typing import Iterable
@@ -30,10 +31,12 @@ class Driver(object):
             "--extern_config_dir",
             type=str,
             required=False,
+            default="/workspace/flagperf/training/iluvatar/yolov5-pytorch/config",
             help="Specifies the directory of the external config files")
         parser.add_argument("--extern_config_file",
                             type=str,
                             required=False,
+                            default="config_BI-V100x1x1.py",
                             help="The external config file to use")
         parser.add_argument(
             "--enable_extern_config",

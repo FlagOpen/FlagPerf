@@ -6,7 +6,7 @@ import sys
 import time
 import math
 
-from model import create_model
+from models import create_model
 from schedulers import create_scheduler
 
 from train.evaluator import Evaluator

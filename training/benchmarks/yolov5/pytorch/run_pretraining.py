@@ -35,6 +35,7 @@ logger = None
 def main() -> Tuple[Any, Any]:
     global logger
     global config
+    print(config.name)
     init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
     config = model_driver.config
@@ -48,12 +49,15 @@ def main() -> Tuple[Any, Any]:
     init_helper.set_seed(config.seed, config.vendor)
 
     train_dataloader,train_dataset = build_train_dataloader(config)
-    eval_dataloader,_ = build_eval_dataloader(config)
+    eval_dataloader = build_eval_dataloader(config)[0]
 
+    print("------dataset load success!!!------")
     # todo
     evaluator = Evaluator(config, eval_dataloader)
 
     training_state = TrainingState()
+    
+    print("------init evaluater and Training state success!------")
 
     trainer = Trainer(driver=model_driver,
                       adapter=trainer_adapter,

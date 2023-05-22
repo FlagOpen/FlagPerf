@@ -14,7 +14,7 @@ import argparse
 from pathlib import Path
 import yaml
 
-from model import create_model
+from models import create_model
 from schedulers import create_scheduler
 from utils.general import check_amp
 

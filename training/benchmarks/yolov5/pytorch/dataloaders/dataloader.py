@@ -53,7 +53,8 @@ def torch_distributed_zero_first(local_rank: int):
         dist.barrier(device_ids=[0])    
 
 def build_train_dataloader(config):
-    traindir = os.path.join(config.data_dir, config.train_data) 
+    traindir = os.path.join(config.data_dir, config.train_data)
+    print("-------traindir:",traindir)
     with torch_distributed_zero_first(config.rank):  # init dataset *.cache only once if DDP
         train_dataset = LoadImagesAndLabels(
             traindir,
@@ -89,14 +90,15 @@ def build_train_dataloader(config):
     return train_dataloader, train_dataset
 
 def build_eval_dataloader(config):
-    evaldir = os.path.join(config.data_dir, config.eval_data) 
+    evaldir = os.path.join(config.data_dir, config.eval_data)
+    print("evaldir:",evaldir)
     with torch_distributed_zero_first(config.rank):  # init dataset *.cache only once if DDP
         eval_dataset = LoadImagesAndLabels(
             evaldir,
             config.imgsz,
             config.batch_size,
             stride=config.gs,
-            augment=config.augment,  # augmentation
+            augment=False,  # augmentation
             hyp=config.hyp,  # hyperparameters
             rect=config.rect,  # rectangular batches
             cache_images=config.cache,
