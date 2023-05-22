@@ -108,7 +108,7 @@ class_names: list = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus'
         'hair drier', 'toothbrush']  # class names
 
 imgsz = 640
-batch_size = 64
+batch_size = 16
 
 data: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/coco.yaml"
 gs = 32 # grid size (max stride)
@@ -140,6 +140,7 @@ entity=None
 upload_dataset=False
 bbox_interval=-1
 artifact_alias="latest"
+noval=False
 
 distributed: bool = True
 
