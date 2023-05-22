@@ -31,6 +31,9 @@ from utils.general import (DATASETS_DIR, LOGGER, NUM_THREADS,
 from driver import dist_pytorch
 from contextlib import contextmanager
 
+import config
+import yaml
+
 # Parameters
 HELP_URL = 'https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data'
 IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp'  # include image suffixes
@@ -43,6 +46,11 @@ for orientation in ExifTags.TAGS.keys():
     if ExifTags.TAGS[orientation] == 'Orientation':
         break
 
+hyp = config.hyp
+if isinstance(hyp, str):
+    with open(hyp, errors='ignore') as f:
+        hyp = yaml.safe_load(f)  # load hyps dict
+
 @contextmanager
 def torch_distributed_zero_first(local_rank: int):
     # Decorator to make all processes in distributed training wait for each local_master to do something
@@ -51,6 +59,7 @@ def torch_distributed_zero_first(local_rank: int):
     yield
     if local_rank == 0:
         dist.barrier(device_ids=[0])    
+
 
 def build_train_dataloader(config):
     traindir = os.path.join(config.data_dir, config.train_data)
@@ -61,7 +70,7 @@ def build_train_dataloader(config):
             config.imgsz,
             config.batch_size,
             augment=config.augment,  # augmentation
-            hyp=config.hyp,  # hyperparameters
+            hyp=hyp,  # hyperparameters
             rect=config.rect,  # rectangular batches
             cache_images=config.cache,
             single_cls=config.single_cls,
@@ -99,7 +108,7 @@ def build_eval_dataloader(config):
             config.batch_size,
             stride=config.gs,
             augment=False,  # augmentation
-            hyp=config.hyp,  # hyperparameters
+            hyp=hyp,  # hyperparameters
             rect=config.rect,  # rectangular batches
             cache_images=config.cache,
             single_cls=config.single_cls,
