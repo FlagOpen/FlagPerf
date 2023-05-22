@@ -15,7 +15,7 @@ def run_cmd_wait(cmd, timeout, retouts=True):
                                encoding='utf-8')
 
     try:
-        output = process.communicate(timeout=timeout)
+        output = process.communicate(timeout=None)
     except subprocess.TimeoutExpired:
         process.kill()
         output = process.communicate()
