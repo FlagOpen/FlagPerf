@@ -127,7 +127,6 @@ n_mel_channels: int = 80
 mask_padding: bool = False
 """Symbols parameters"""
 # Number of symbols in dictionary
-# TODO
 n_symbols: int = 148
 # Input embedding dimension
 symbols_embedding_dim: int = 512

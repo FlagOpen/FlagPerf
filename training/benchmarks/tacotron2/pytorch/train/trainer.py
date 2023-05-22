@@ -29,7 +29,7 @@ class Trainer:
         self.driver = driver
         self.adapter = adapter
         self.training_state = training_state
-        self.scaler = None
+        self.grad_scaler = None
 
         self.device = device
         self.optimizer = None
@@ -47,14 +47,10 @@ class Trainer:
         self.model = create_model(config)
         self.model = self.adapter.model_to_ddp(self.model, self.config)
         self.criterion = get_loss_function()
-        # self.model = self.adapter.model_to_fp16(self.model, self.optimizer)
         self.optimizer = self.adapter.create_optimizer(self.model, self.config)
-
-        self.scaler = self.adapter.create_grad_scaler(self.config)
-
+        self.grad_scaler = self.adapter.create_grad_scaler(self.config)
         torch.backends.cudnn.enabled = self.config.cudnn_enabled
         torch.backends.cudnn.benchmark = self.config.cudnn_benchmark
-
 
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
@@ -74,9 +70,7 @@ class Trainer:
 
         for batch in train_dataloader:
             self.train_one_step(batch)
-
             self.detect_training_status()
-
             if state.end_training:
                 break
 
@@ -113,12 +107,12 @@ class Trainer:
             raise Exception("loss is NaN")
 
         if args.amp:
-            self.scaler.scale(loss).backward()
-            self.scaler.unscale_(self.optimizer)
+            self.grad_scaler.scale(loss).backward()
+            self.grad_scaler.unscale_(self.optimizer)
             torch.nn.utils.clip_grad_norm_(self.model.parameters(),
                                            args.grad_clip_thresh)
-            self.scaler.step(self.optimizer)
-            self.scaler.update()
+            self.grad_scaler.step(self.optimizer)
+            self.grad_scaler.update()
         else:
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(),
@@ -147,7 +141,6 @@ class Trainer:
         return state.end_training
 
 
-# TODO 改成AnnealScheduler
 def adjust_learning_rate(epoch, optimizer, learning_rate, anneal_steps,
                          anneal_factor):
     p = 0
