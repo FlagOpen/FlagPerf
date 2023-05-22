@@ -125,8 +125,6 @@ def main() -> Tuple[Any, Any]:
     # 训练过程
     while not training_state.end_training:
         trainer.train_one_epoch(train_dataloader)
-        epoch += 1
-        training_state.epoch = epoch
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
@@ -137,31 +135,6 @@ def main() -> Tuple[Any, Any]:
                                      raw_train_start_time) / 1e+3
 
     return config, training_state
-
-
-# TODO 改成AnnealScheduler
-def adjust_learning_rate(iteration, epoch, optimizer, learning_rate,
-                         anneal_steps, anneal_factor, rank):
-    p = 0
-    if anneal_steps is not None:
-        for i, a_step in enumerate(anneal_steps):
-            if epoch >= int(a_step):
-                p = p + 1
-
-    if anneal_factor == 0.3:
-        lr = learning_rate * ((0.1**(p // 2)) * (1.0 if p % 2 == 0 else 0.3))
-    else:
-        lr = learning_rate * (anneal_factor**p)
-
-    if optimizer.param_groups[0]['lr'] != lr:
-        logger.log(step=(epoch, iteration),
-                   data={
-                       'learning_rate changed':
-                       str(optimizer.param_groups[0]['lr']) + " -> " + str(lr)
-                   })
-
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
 
 
 if __name__ == "__main__":
