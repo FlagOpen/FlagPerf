@@ -67,6 +67,8 @@ def main() -> Tuple[Any, Any]:
                       config=config)
     training_state._trainer = trainer
 
+    print("------init trainer success!-------")
+
     dist_pytorch.barrier(config.vendor)
     trainer.init()
     dist_pytorch.barrier(config.vendor)
@@ -106,12 +108,10 @@ def main() -> Tuple[Any, Any]:
     #     trainer.train_one_epoch(train_dataloader)
 
     # begin to train
+    print("--------start to train---------")
     epoch = config.start_epoch
     while not training_state.end_training:
-        if config.distributed:
-            train_dataloader.sampler.set_epoch(epoch)
-
-        training_state.epoch = epoch
+        # training_state.epoch = epoch
         trainer.train_all_epoch(train_dataloader,
                                 train_dataset, 
                                 eval_dataloader,

@@ -79,7 +79,6 @@ cfg: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/models/yolov5
 hyp: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/hyp.scratch-low.yaml"
 
 resume: bool = False
-data: str = "coco.yaml"
 # cuda device, i.e. 0 or 0,1,2,3 or cpu
 device: str = "0"
 # initial weights path
@@ -141,3 +140,7 @@ entity=None
 upload_dataset=False
 bbox_interval=-1
 artifact_alias="latest"
+
+distributed: bool = True
+
+save_dir: str = "exp"
