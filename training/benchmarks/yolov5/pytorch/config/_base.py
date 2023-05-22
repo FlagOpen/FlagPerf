@@ -69,10 +69,6 @@ resume_from_checkpoint: bool = False
 
 #training_event_instance: BaseTrainingEventInterface = None
 
-# device
-device: str = None
-n_device: int = 1
-
 cfg: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/models/yolov5s.yaml"
 hyp: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/hyp.scratch-low.yaml"
 # initial weights path
@@ -82,8 +78,8 @@ save_dir: str = "exp"
 
 resume: bool = False
 # cuda device, i.e. 0 or 0,1,2,3 or cpu
-device: str = "0"
-n_device: int = 1 
+device: str = "0,1"
+n_device: int = 2
 epochs: int = 100
 
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
@@ -106,7 +102,7 @@ class_names: list = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus'
         'hair drier', 'toothbrush']  # class names
 
 imgsz = 640
-batch_size = 32
+batch_size = 16
 gs = 32 # grid size (max stride)
 pad = 0.5
 augment = True
@@ -131,7 +127,8 @@ patience=100
 freeze=[0]
 save_period=-1
 seed=0
-local_rank=-1
+# local_rank=-1
+# local_rank: int = 0
 entity=None
 upload_dataset=False
 bbox_interval=-1

@@ -45,10 +45,10 @@ def create_model(config):
     else:
         model = Model(cfg, ch=3, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
     
-    # DDP mode
-    cuda = device.type != 'cpu'
-    if cuda and RANK != -1:
-        model = smart_DDP(model)
+    # # DDP mode
+    # cuda = device.type != 'cpu'
+    # if cuda and RANK != -1:
+    #     model = smart_DDP(model)
     
     # Model attributes
     nl = de_parallel(model).model[-1].nl  # number of detection layers (to scale hyps)
