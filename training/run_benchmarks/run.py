@@ -523,10 +523,14 @@ def main():
     # Set logger first
     timestamp_log_dir = "run" + time.strftime("%Y%m%d%H%M%S", time.localtime())
     curr_log_path = os.path.join(tc.FLAGPERF_LOG_PATH, timestamp_log_dir)
+    stdout = sys.stdout
+    nullout = open("/dev/null", "w")
     RUN_LOGGER.init(curr_log_path,
                     "flagperf_run.log",
                     tc.FLAGPERF_LOG_LEVEL,
                     "both",
+                    stdout,
+                    nullout,
                     log_caller=True)
 
     RUN_LOGGER.info("======== Step 1: Check environment and configs. ========")

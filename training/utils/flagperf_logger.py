@@ -12,6 +12,7 @@
 import os
 import logging
 import datetime
+import sys
 
 LOGLEVELS = {
     'debug': logging.DEBUG,
@@ -82,6 +83,16 @@ def _get_caller():
     return caller
 
 
+def logger_print(method):
+
+    def wrapper(self, msg):
+        sys.stdout = self.stdout
+        method(self, msg)
+        sys.stdout = self.nullout
+
+    return wrapper
+
+
 class FlagPerfLogger():
     '''A logger for benchmark.'''
 
@@ -101,6 +112,8 @@ class FlagPerfLogger():
              logfile,
              loglevel='info',
              mode="file",
+             stdout=sys.stdout,
+             nullout=sys.stdout,
              log_caller=False):
         '''Set log level and create the log file.
            Arguments:
@@ -136,6 +149,9 @@ class FlagPerfLogger():
             self.console_handler = logging.StreamHandler()
             self.console_handler.setFormatter(color_handler_formatter)
             self.perf_logger.addHandler(self.console_handler)
+        sys.stdout = nullout
+        self.stdout = stdout
+        self.nullout = nullout
 
     def stop(self):
         '''If any file opened, close here. Then remove handdlers.'''
@@ -146,6 +162,7 @@ class FlagPerfLogger():
         if self.mode == "both" or self.mode == "console":
             self.perf_logger.removeHandler(self.console_handler)
 
+    @logger_print
     def info(self, msg):
         '''Call logging.info() to log time, log level and msg.'''
         if self.log_caller:
@@ -155,6 +172,7 @@ class FlagPerfLogger():
         else:
             self.perf_logger.info(msg)
 
+    @logger_print
     def warning(self, msg):
         '''Call logging.warning() to log time, log level and msg.'''
         if self.log_caller:
@@ -164,6 +182,7 @@ class FlagPerfLogger():
         else:
             self.perf_logger.warning(msg)
 
+    @logger_print
     def debug(self, msg):
         '''Call logging.debug() to log time, log level and msg.'''
         if self.log_caller:
@@ -173,6 +192,7 @@ class FlagPerfLogger():
         else:
             self.perf_logger.debug(msg)
 
+    @logger_print
     def error(self, msg):
         '''Call logging.error() to log time, log level and msg.'''
         if self.log_caller:
