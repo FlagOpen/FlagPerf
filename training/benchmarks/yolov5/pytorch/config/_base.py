@@ -85,7 +85,7 @@ device: str = "0"
 # initial weights path
 weights: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/models/yolov5s.pt"
 
-epoch: int = 300
+epochs: int = 300
 
 # data_dir = "/data/sen.li/workspace/datasets/yolov5/coco/images"
 
@@ -125,3 +125,5 @@ image_weights = False
 quad = False
 prefix = ''
 shuffle = True
+
+optimizer: str = "SGD"
