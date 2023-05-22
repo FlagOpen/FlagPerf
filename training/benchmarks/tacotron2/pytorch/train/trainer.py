@@ -18,7 +18,7 @@ import config
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch
+from driver import Driver, Event
 
 
 class Trainer:
@@ -48,7 +48,6 @@ class Trainer:
     def init(self):
         self.model_config = create_model_config(config)
         self.model = create_model(config)
-        self.model = self._init_model(self.model)
         self.model = self.adapter.model_to_ddp(self.model, self.config)
         self.criterion = get_loss_function()
         # self.model = self.adapter.model_to_fp16(self.model, self.optimizer)
@@ -60,11 +59,6 @@ class Trainer:
         torch.backends.cudnn.enabled = self.config.cudnn_enabled
         torch.backends.cudnn.benchmark = self.config.cudnn_benchmark
 
-    def _init_model(self, model):
-        # resume from checkpoint
-        pass
-
-        return model
 
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
@@ -76,14 +70,6 @@ class Trainer:
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
         torch.cuda.synchronize()
-        # epoch_start_time = time.perf_counter()
-        # used to calculate avg items/sec over epoch
-        # reduced_num_items_epoch = 0
-
-        # train_epoch_items_per_sec = 0.0
-
-        # num_iters = 0
-        # reduced_loss = 0
 
         if self.config.distributed:
             self.train_dataloader.sampler.set_epoch(state.epoch)
@@ -102,18 +88,6 @@ class Trainer:
         epoch_start_num_sample += len(train_dataloader.dataset)
         state.num_trained_samples = epoch_start_num_sample
 
-        args = self.config
-
-        # val_loss, val_items_per_sec = self.evaluator.evaluate(self)
-
-        if (state.epoch % self.config.epochs_per_checkpoint
-                == 0) and (args.bench_class == ""
-                           or args.bench_class == "train"):
-            save_checkpoint(self.model, self.optimizer, self.scaler,
-                            self.training_state.epoch, self.model_config,
-                            args.output, args.model_name, args.local_rank,
-                            self.world_size)
-
         driver.event(Event.EPOCH_END, state.epoch)
 
     def train_one_step(self, batch):
@@ -123,10 +97,9 @@ class Trainer:
 
         torch.cuda.synchronize()
         iter_start_time = time.perf_counter()
-        adjust_learning_rate(self.training_state.global_steps,
-                             self.training_state.epoch, self.optimizer,
+        adjust_learning_rate(self.training_state.epoch, self.optimizer,
                              args.learning_rate, args.lr_anneal_steps,
-                             args.lr_anneal_factor, args.local_rank)
+                             args.lr_anneal_factor)
 
         self.model.zero_grad()
         x, y, num_items = batch_to_gpu(batch)
@@ -138,18 +111,11 @@ class Trainer:
 
         if args.distributed:
             reduced_loss = reduce_tensor(loss.data, self.world_size).item()
-            reduced_num_items = reduce_tensor(num_items.data, 1).item()
         else:
             reduced_loss = loss.item()
-            reduced_num_items = num_items.item()
 
         if np.isnan(reduced_loss):
             raise Exception("loss is NaN")
-
-        # DLLogger.log(step=(epoch, i), data={'train_loss': reduced_loss})
-
-        # accumulate number of items processed in this epoch
-        # reduced_num_items_epoch += reduced_num_items
 
         if args.amp:
             self.scaler.scale(loss).backward()
@@ -167,10 +133,6 @@ class Trainer:
         self.model.zero_grad(set_to_none=True)
 
         torch.cuda.synchronize()
-        iter_stop_time = time.perf_counter()
-        iter_time = iter_stop_time - iter_start_time
-        items_per_sec = reduced_num_items / iter_time
-        # train_epoch_items_per_sec += items_per_sec
 
         state.train_loss = reduced_loss
         step_info = dict(step=state.global_steps, train_loss=reduced_loss)
@@ -191,10 +153,9 @@ class Trainer:
 
 
 # TODO 改成AnnealScheduler
-def adjust_learning_rate(iteration, epoch, optimizer, learning_rate,
-                         anneal_steps, anneal_factor, rank):
+def adjust_learning_rate(epoch, optimizer, learning_rate, anneal_steps,
+                         anneal_factor):
     p = 0
-
     if anneal_steps is not None:
         for i, a_step in enumerate(anneal_steps):
             if epoch >= int(a_step):
@@ -207,63 +168,3 @@ def adjust_learning_rate(iteration, epoch, optimizer, learning_rate,
 
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
-
-
-def save_checkpoint(model, optimizer, scaler, epoch, config, output_dir,
-                    model_name, local_rank, world_size):
-    random_rng_state = torch.random.get_rng_state().cuda()
-    cuda_rng_state = torch.cuda.get_rng_state(local_rank).cuda()
-
-    random_rng_states_all = [
-        torch.empty_like(random_rng_state) for _ in range(world_size)
-    ]
-    cuda_rng_states_all = [
-        torch.empty_like(cuda_rng_state) for _ in range(world_size)
-    ]
-
-    if world_size > 1:
-        dist.all_gather(random_rng_states_all, random_rng_state)
-        dist.all_gather(cuda_rng_states_all, cuda_rng_state)
-    else:
-        random_rng_states_all = [random_rng_state]
-        cuda_rng_states_all = [cuda_rng_state]
-
-    random_rng_states_all = torch.stack(random_rng_states_all).cpu()
-    cuda_rng_states_all = torch.stack(cuda_rng_states_all).cpu()
-
-    if local_rank == 0:
-        checkpoint = {
-            'epoch': epoch,
-            'cuda_rng_state_all': cuda_rng_states_all,
-            'random_rng_states_all': random_rng_states_all,
-            'config': config,
-            'state_dict': model.state_dict(),
-            'optimizer': optimizer.state_dict(),
-            'scaler': scaler.state_dict()
-        }
-
-        checkpoint_filename = "checkpoint_{}_{}.pt".format(model_name, epoch)
-        checkpoint_path = os.path.join(output_dir, checkpoint_filename)
-        print("Saving model and optimizer state at epoch {} to {}".format(
-            epoch, checkpoint_path))
-        torch.save(checkpoint, checkpoint_path)
-
-        symlink_src = checkpoint_filename
-        symlink_dst = os.path.join(output_dir,
-                                   "checkpoint_{}_last.pt".format(model_name))
-        if os.path.exists(symlink_dst) and os.path.islink(symlink_dst):
-            print("Updating symlink", symlink_dst, "to point to", symlink_src)
-            os.remove(symlink_dst)
-
-        os.symlink(symlink_src, symlink_dst)
-
-
-def get_last_checkpoint_filename(output_dir, model_name):
-    symlink = os.path.join(output_dir,
-                           "checkpoint_{}_last.pt".format(model_name))
-    if os.path.exists(symlink):
-        print("Loading checkpoint from symlink", symlink)
-        return os.path.join(output_dir, os.readlink(symlink))
-    else:
-        print("No last checkpoint available - starting from epoch 0 ")
-        return ""
