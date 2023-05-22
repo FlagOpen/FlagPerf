@@ -10,7 +10,7 @@ from model import create_model, create_model_config
 from schedulers import create_scheduler
 from model.loss.loss_function import get_loss_function
 from model.data.data_function import batch_to_gpu
-from .utills import reduce_tensor
+from .utils import reduce_tensor
 
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
@@ -41,6 +41,7 @@ class Trainer:
         self.lr_scheduler = None
         self.global_batch_size = None
         self.criterion = None
+        self.world_size = world_size
 
         self.world_size = world_size
         self.train_dataloader = train_dataloader
@@ -96,13 +97,12 @@ class Trainer:
         args = self.config
 
         torch.cuda.synchronize()
-        iter_start_time = time.perf_counter()
         adjust_learning_rate(self.training_state.epoch, self.optimizer,
                              args.learning_rate, args.lr_anneal_steps,
                              args.lr_anneal_factor)
 
         self.model.zero_grad()
-        x, y, num_items = batch_to_gpu(batch)
+        x, y, _ = batch_to_gpu(batch)
 
         # AMP upstream autocast
         with torch.cuda.amp.autocast(enabled=args.amp):

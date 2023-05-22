@@ -14,7 +14,7 @@ CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 
 from dataloaders.data_functions import get_collate_function
-from .utills import reduce_tensor
+from .utils import reduce_tensor
 
 # adapted from: https://discuss.pytorch.org/t/opinion-eval-should-be-a-context-manager/18998/3
 # Following snippet is licensed under MIT license
