@@ -46,7 +46,7 @@ class Trainer:
         self.model_config = create_model_config(config)
         self.model = create_model(config)
         self.model = self.adapter.model_to_ddp(self.model, self.config)
-        self.model._init_model()
+        self._init_model()
 
         self.criterion = get_loss_function()
         self.optimizer = self.adapter.create_optimizer(self.model, self.config)
