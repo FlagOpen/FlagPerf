@@ -113,7 +113,6 @@ batch_size = 64
 
 data: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/coco.yaml"
 gs = 32 # grid size (max stride)
-single_cls = False
 pad = 0.5
 augment = True
 cache = None
@@ -126,4 +125,19 @@ quad = False
 prefix = ''
 shuffle = True
 
+multi_scale=False, 
+single_cls=False
+sync_bn=False
 optimizer: str = "SGD"
+cos_lr = False
+start_epoch=False
+label_smoothing=0.0
+patience=100
+freeze=[0]
+save_period=-1
+seed=0
+local_rank=-1
+entity=None
+upload_dataset=False
+bbox_interval=-1
+artifact_alias="latest"
