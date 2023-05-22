@@ -7,7 +7,6 @@ import torch.distributed as dist
 import numpy as np
 
 from model import create_model, create_model_config
-from schedulers import create_scheduler
 from model.loss.loss_function import get_loss_function
 from model.data.data_function import batch_to_gpu
 from .utils import reduce_tensor
@@ -38,11 +37,8 @@ class Trainer:
         self.model = None
         self.model_config = None
         self.evaluator = evaluator
-        self.lr_scheduler = None
         self.global_batch_size = None
         self.criterion = None
-        self.world_size = world_size
-
         self.world_size = world_size
         self.train_dataloader = train_dataloader
 
@@ -54,7 +50,6 @@ class Trainer:
         # self.model = self.adapter.model_to_fp16(self.model, self.optimizer)
         self.optimizer = self.adapter.create_optimizer(self.model, self.config)
 
-        self.lr_scheduler = create_scheduler(self.optimizer, self.config)
         self.scaler = self.adapter.create_grad_scaler(self.config)
 
         torch.backends.cudnn.enabled = self.config.cudnn_enabled
