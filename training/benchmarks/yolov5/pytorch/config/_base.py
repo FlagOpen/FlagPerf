@@ -6,7 +6,6 @@ from typing import ClassVar
 # vendor: str = None
 vendor: str = "iluvatar"
 # model name
-# name: str = "MobileNetV2"
 name: str = "yolov5"
 
 do_train = True
@@ -36,7 +35,7 @@ max_steps: int = 600000
 seed: int = 41
 
 # Stop training after reaching this accuracy
-target_acc1: float = 50.0
+target_mAP_5: float = 50.0
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
@@ -48,7 +47,7 @@ eval_interval_samples: int = 100 * 256 * 1
 max_samples_termination: float = 1388270 * 4 * 30
 
 # number workers for dataloader
-num_workers: int = 4
+num_workers: int = 8
 
 # local_rank for distributed training on gpus
 local_rank: int = 0
@@ -75,18 +74,17 @@ device: str = None
 n_device: int = 1
 
 cfg: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/models/yolov5s.yaml"
-# hpy = "path/to/hpy.yaml"
 hyp: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/hyp.scratch-low.yaml"
+# initial weights path
+weights: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/models/yolov5s.pt"
+data: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/coco.yaml"
+save_dir: str = "exp"
 
 resume: bool = False
 # cuda device, i.e. 0 or 0,1,2,3 or cpu
 device: str = "0"
-# initial weights path
-weights: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/models/yolov5s.pt"
-
-epochs: int = 300
-
-# data_dir = "/data/sen.li/workspace/datasets/yolov5/coco/images"
+n_device: int = 1 
+epochs: int = 100
 
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
 #path: ../datasets/coco  # dataset root dir
@@ -108,9 +106,7 @@ class_names: list = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus'
         'hair drier', 'toothbrush']  # class names
 
 imgsz = 640
-batch_size = 16
-
-data: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/coco.yaml"
+batch_size = 32
 gs = 32 # grid size (max stride)
 pad = 0.5
 augment = True
@@ -143,5 +139,3 @@ artifact_alias="latest"
 noval=False
 
 distributed: bool = True
-
-save_dir: str = "exp"
