@@ -1,6 +1,6 @@
 import torch
 import torch.distributed as dist
-import val
+import train.val
 
 class Evaluator:
 

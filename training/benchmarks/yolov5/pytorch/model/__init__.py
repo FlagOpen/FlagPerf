@@ -2,8 +2,8 @@ import os
 from tkinter.ttk import Widget
 import torch
 import torchvision
-from yolo import Model
-from experimental import attempt_load
+from model.yolo import Model
+from model.experimental import attempt_load
 from utils.general import check_suffix,intersect_dicts
 from utils.torch_utils import torch_distributed_zero_first
 from utils.downloads import attempt_download, is_url

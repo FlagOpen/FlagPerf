@@ -27,7 +27,7 @@ from utils.torch_utils import EarlyStopping, ModelEMA, torch_distributed_zero_fi
 from utils.loss import ComputeLoss
 from utils.callbacks import Callbacks
 from utils.metrics import fitness
-import val  # for end-of-epoch mAP
+import train.val  # for end-of-epoch mAP
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))

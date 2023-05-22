@@ -74,11 +74,9 @@ device: str = None
 n_device: int = 1
 
 
-
-
-cfg: str = "/data/sen.li/workspace/code/FlagPerf/training/benchmarks/yolov5/pytorch/model/yolov5s.yaml"
+cfg: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/model/yolov5s.yaml"
 # hpy = "path/to/hpy.yaml"
-hyp: str = "/data/sen.li/workspace/code/FlagPerf/training/benchmarks/yolov5/pytorch/dataloaders/hyp.scratch-low.yaml"
+hyp: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/hyp.scratch-low.yaml"
 
 resume: bool = False
 data: str = "coco.yaml"
@@ -95,12 +93,10 @@ eval_data = "val2017"
 imgsz = 640
 batch_size = 64
 
-data: str = "/data/coco.yaml"
+data: str = "/workspace/flagperf/training/benchmarks/yolov5/pytorch/dataloaders/coco.yaml"
 gs = 32 # grid size (max stride)
 single_cls = True
 pad = 0.5
-# hyp is path/to/hyp.yaml or hyp dictionary
-hyp = "/data/sen.li/workspace/code/yolov5/data/coco.yaml"
 augment = True
 cache = False
 rect = True

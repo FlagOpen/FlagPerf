@@ -308,16 +308,8 @@ class DetectMultiBackend(nn.Module):
         # Usage:
         #   PyTorch:              weights = *.pt
         #   TorchScript:                    *.torchscript
-        #   ONNX Runtime:                   *.onnx
-        #   ONNX OpenCV DNN:                *.onnx with --dnn
-        #   OpenVINO:                       *.xml
-        #   CoreML:                         *.mlmodel
-        #   TensorRT:                       *.engine
-        #   TensorFlow SavedModel:          *_saved_model
-        #   TensorFlow GraphDef:            *.pb
-        #   TensorFlow Lite:                *.tflite
-        #   TensorFlow Edge TPU:            *_edgetpu.tflite
-        from models.experimental import attempt_download, attempt_load  # scoped to avoid circular import
+
+        from model.experimental import attempt_download, attempt_load  # scoped to avoid circular import
 
         super().__init__()
         w = str(weights[0] if isinstance(weights, list) else weights)
@@ -465,60 +457,6 @@ class DetectMultiBackend(nn.Module):
             y = self.model(im, augment=augment, visualize=visualize) if augment or visualize else self.model(im)
             if isinstance(y, tuple):
                 y = y[0]
-        elif self.jit:  # TorchScript
-            y = self.model(im)[0]
-        elif self.dnn:  # ONNX OpenCV DNN
-            im = im.cpu().numpy()  # torch to numpy
-            self.net.setInput(im)
-            y = self.net.forward()
-        elif self.onnx:  # ONNX Runtime
-            im = im.cpu().numpy()  # torch to numpy
-            y = self.session.run([self.session.get_outputs()[0].name], {self.session.get_inputs()[0].name: im})[0]
-        elif self.xml:  # OpenVINO
-            im = im.cpu().numpy()  # FP32
-            y = self.executable_network([im])[self.output_layer]
-        elif self.engine:  # TensorRT
-            if self.dynamic and im.shape != self.bindings['images'].shape:
-                i_in, i_out = (self.model.get_binding_index(x) for x in ('images', 'output'))
-                self.context.set_binding_shape(i_in, im.shape)  # reshape if dynamic
-                self.bindings['images'] = self.bindings['images']._replace(shape=im.shape)
-                self.bindings['output'].data.resize_(tuple(self.context.get_binding_shape(i_out)))
-            s = self.bindings['images'].shape
-            assert im.shape == s, f"input size {im.shape} {'>' if self.dynamic else 'not equal to'} max model size {s}"
-            self.binding_addrs['images'] = int(im.data_ptr())
-            self.context.execute_v2(list(self.binding_addrs.values()))
-            y = self.bindings['output'].data
-        elif self.coreml:  # CoreML
-            im = im.permute(0, 2, 3, 1).cpu().numpy()  # torch BCHW to numpy BHWC shape(1,320,192,3)
-            im = Image.fromarray((im[0] * 255).astype('uint8'))
-            # im = im.resize((192, 320), Image.ANTIALIAS)
-            y = self.model.predict({'image': im})  # coordinates are xywh normalized
-            if 'confidence' in y:
-                box = xywh2xyxy(y['coordinates'] * [[w, h, w, h]])  # xyxy pixels
-                conf, cls = y['confidence'].max(1), y['confidence'].argmax(1).astype(np.float)
-                y = np.concatenate((box, conf.reshape(-1, 1), cls.reshape(-1, 1)), 1)
-            else:
-                k = 'var_' + str(sorted(int(k.replace('var_', '')) for k in y)[-1])  # output key
-                y = y[k]  # output
-        else:  # TensorFlow (SavedModel, GraphDef, Lite, Edge TPU)
-            im = im.permute(0, 2, 3, 1).cpu().numpy()  # torch BCHW to numpy BHWC shape(1,320,192,3)
-            if self.saved_model:  # SavedModel
-                y = (self.model(im, training=False) if self.keras else self.model(im)).numpy()
-            elif self.pb:  # GraphDef
-                y = self.frozen_func(x=self.tf.constant(im)).numpy()
-            else:  # Lite or Edge TPU
-                input, output = self.input_details[0], self.output_details[0]
-                int8 = input['dtype'] == np.uint8  # is TFLite quantized uint8 model
-                if int8:
-                    scale, zero_point = input['quantization']
-                    im = (im / scale + zero_point).astype(np.uint8)  # de-scale
-                self.interpreter.set_tensor(input['index'], im)
-                self.interpreter.invoke()
-                y = self.interpreter.get_tensor(output['index'])
-                if int8:
-                    scale, zero_point = output['quantization']
-                    y = (y.astype(np.float32) - zero_point) * scale  # re-scale
-            y[..., :4] *= [w, h, w, h]  # xywh normalized to pixels
 
         if isinstance(y, np.ndarray):
             y = torch.tensor(y, device=self.device)

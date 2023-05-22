@@ -28,11 +28,11 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-FILE = Path(__file__).resolve()
-ROOT = FILE.parents[0]  # YOLOv5 root directory
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))  # add ROOT to PATH
-ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+# FILE = Path(__file__).resolve()
+# ROOT = FILE.parents[0]  # YOLOv5 root directory
+# if str(ROOT) not in sys.path:
+#     sys.path.append(str(ROOT))  # add ROOT to PATH
+# ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 from model.common import DetectMultiBackend
 from utils.callbacks import Callbacks
@@ -111,7 +111,7 @@ def run(
         save_hybrid=False,  # save label+prediction hybrid results to *.txt
         save_conf=False,  # save confidences in --save-txt labels
         save_json=False,  # save a COCO-JSON results file
-        project=ROOT / 'runs/val',  # save to project/name
+        project='runs/val',  # save to project/name
         name='exp',  # save to project/name
         exist_ok=False,  # existing project/name ok, do not increment
         half=True,  # use FP16 half-precision inference
