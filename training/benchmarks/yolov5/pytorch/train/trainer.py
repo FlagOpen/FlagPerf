@@ -27,7 +27,7 @@ from utils.torch_utils import EarlyStopping, ModelEMA, torch_distributed_zero_fi
 from utils.loss import ComputeLoss
 from utils.callbacks import Callbacks
 from utils.metrics import fitness
-import train.val  # for end-of-epoch mAP
+import train.val as val # for end-of-epoch mAP
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
@@ -117,14 +117,16 @@ class Trainer:
         if isinstance(config.hyp, str):
             with open(config.hyp, errors='ignore') as f:
                 hyp = yaml.safe_load(f)  # load hyps dict
-        amp = check_amp(self.model)  # check AMP
+        # amp = check_amp(self.model)  # check AMP
+        amp = False
         
         # Config
         # init_seeds(config.seed + 1 + RANK, deterministic=True)
         with torch_distributed_zero_first(LOCAL_RANK):
             data_dict = check_dataset(config.data)  # check /data/coco.yaml if None
         # train_path, val_path = data_dict['train'], data_dict['val']
-        
+       
+
         # Start training
         # t0 = time.time()
         nb = len(train_dataloader)  # number of batches
