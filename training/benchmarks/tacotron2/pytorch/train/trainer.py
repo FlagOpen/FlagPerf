@@ -46,11 +46,16 @@ class Trainer:
         self.model_config = create_model_config(config)
         self.model = create_model(config)
         self.model = self.adapter.model_to_ddp(self.model, self.config)
+        self.model._init_model()
+
         self.criterion = get_loss_function()
         self.optimizer = self.adapter.create_optimizer(self.model, self.config)
         self.grad_scaler = self.adapter.create_grad_scaler(self.config)
         torch.backends.cudnn.enabled = self.config.cudnn_enabled
         torch.backends.cudnn.benchmark = self.config.cudnn_benchmark
+
+    def _init_model(self):
+        self.model.train()
 
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
