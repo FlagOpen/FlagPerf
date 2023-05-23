@@ -36,30 +36,35 @@
 3. 解压缩  tar zjvf LJSpeech-1.1.tar.bz2
 4. git clone https://github.com/NVIDIA/DeepLearningExamples
 5. 拷贝filelists目录到数据集路径。 cp -R DeepLearningExamples/PyTorch/SpeechSynthesis/Tacotron2/filelists <YOUR_TACOTRON2_DATASET_PATH>
-6. tree . -L 2，查看目录结构如下
+6. 将tacotron2/scripts/prepare_mels.sh脚本拷贝到  <YOUR_TACOTRON2_DATASET_PATH>
+7. 生成LJSpeech-1.1/mels目录下的数据：cd <YOUR_TACOTRON2_DATASET_PATH> && sh prepare_mels.sh
+8. tree . -L 2，查看目录结构如下
   
 ``` bash
 .
 ├── LJSpeech-1.1
-│   ├── README
-│   ├── metadata.csv
-│   └── wavs
-├── filelists
-│   ├── ljs_audio_text_test_filelist.txt
-│   ├── ljs_audio_text_train_filelist.txt
-│   ├── ljs_audio_text_train_subset_1250_filelist.txt
-│   ├── ljs_audio_text_train_subset_2500_filelist.txt
-│   ├── ljs_audio_text_train_subset_300_filelist.txt
-│   ├── ljs_audio_text_train_subset_625_filelist.txt
-│   ├── ljs_audio_text_train_subset_64_filelist.txt
-│   ├── ljs_audio_text_val_filelist.txt
-│   ├── ljs_mel_text_filelist.txt
-│   ├── ljs_mel_text_test_filelist.txt
-│   ├── ljs_mel_text_train_filelist.txt
-│   ├── ljs_mel_text_train_subset_1250_filelist.txt
-│   ├── ljs_mel_text_train_subset_2500_filelist.txt
-│   ├── ljs_mel_text_train_subset_625_filelist.txt
-│   └── ljs_mel_text_val_filelist.txt
+│   ├── README
+│   ├── mels
+│   ├── metadata.csv
+│   └── wavs
+└── filelists
+    ├── ljs_audio_text_test_filelist.txt
+    ├── ljs_audio_text_train_filelist.txt
+    ├── ljs_audio_text_train_subset_1250_filelist.txt
+    ├── ljs_audio_text_train_subset_2500_filelist.txt
+    ├── ljs_audio_text_train_subset_300_filelist.txt
+    ├── ljs_audio_text_train_subset_625_filelist.txt
+    ├── ljs_audio_text_train_subset_64_filelist.txt
+    ├── ljs_audio_text_val_filelist.txt
+    ├── ljs_mel_text_filelist.txt
+    ├── ljs_mel_text_test_filelist.txt
+    ├── ljs_mel_text_train_filelist.txt
+    ├── ljs_mel_text_train_subset_1250_filelist.txt
+    ├── ljs_mel_text_train_subset_2500_filelist.txt
+    ├── ljs_mel_text_train_subset_625_filelist.txt
+    └── ljs_mel_text_val_filelist.txt
+
+4 directories, 17 files
 ```
 
 
