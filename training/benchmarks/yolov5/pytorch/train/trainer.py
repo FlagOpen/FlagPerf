@@ -173,6 +173,7 @@ class Trainer:
         # EMA
         ema = ModelEMA(model) if RANK in {-1, 0} else None
         plots = False
+        best_fitness = 0.0
         
         for epoch in range(start_epoch, epochs):  # epoch ------------------------------------------------------------------
             callbacks.run('on_train_epoch_start')

@@ -6,9 +6,6 @@ import random
 import numpy as np
 import torch
 from torch.utils.data import Dataset, dataloader, distributed, DataLoader
-from torchvision import datasets, models, transforms
-import torch.distributed as dist
-from torch.utils.data.dataloader import default_collate
 import torch.nn.functional as F
 from pathlib import Path
 import glob
@@ -23,13 +20,13 @@ CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 
+# local
 from utils.augmentations import (Albumentations, augment_hsv, copy_paste,
                                  letterbox, mixup, random_perspective)
-from utils.general import (DATASETS_DIR, LOGGER, NUM_THREADS,
+from utils.general import (LOGGER, NUM_THREADS,
                            cv2, segments2boxes, xyn2xy, xywhn2xyxy, xyxy2xywhn)
-
-from driver import dist_pytorch
-from contextlib import contextmanager
+from utils.torch_utils import torch_distributed_zero_first
+from utils.hyp_param import hyp
 
 import config
 import yaml
@@ -49,24 +46,13 @@ for orientation in ExifTags.TAGS.keys():
     if ExifTags.TAGS[orientation] == 'Orientation':
         break
 
-hyp = config.hyp
-if isinstance(hyp, str):
-    with open(hyp, errors='ignore') as f:
-        hyp = yaml.safe_load(f)  # load hyps dict
-
-@contextmanager
-def torch_distributed_zero_first(local_rank: int):
-    # Decorator to make all processes in distributed training wait for each local_master to do something
-    if local_rank not in [-1, 0]:
-        dist.barrier(device_ids=[local_rank])
-    yield
-    if local_rank == 0:
-        dist.barrier(device_ids=[0])    
-
+# hyp = config.hyp
+# if isinstance(hyp, str):
+#     with open(hyp, errors='ignore') as f:
+#         hyp = yaml.safe_load(f)  # load hyps dict
 
 def build_train_dataloader(config):
     traindir = os.path.join(config.data_dir, config.train_data)
-    print("-------traindir:",traindir)
     rank = LOCAL_RANK
     with torch_distributed_zero_first(rank):  # init dataset *.cache only once if DDP
         train_dataset = LoadImagesAndLabels(
@@ -86,7 +72,6 @@ def build_train_dataloader(config):
     batch_size = min(config.batch_size, len(train_dataset))
     nd = torch.cuda.device_count()  # number of CUDA devices
     nw = min([os.cpu_count() // max(nd, 1), batch_size if batch_size > 1 else 0, config.workers])  # number of workers
-    print("-----num of workers:",nw)
     sampler = None if rank == -1 else distributed.DistributedSampler(train_dataset, shuffle=config.shuffle)
     loader = DataLoader if config.image_weights else InfiniteDataLoader  # only DataLoader allows for attribute updates
     generator = torch.Generator()
@@ -703,18 +688,6 @@ def seed_worker(worker_id):
     np.random.seed(worker_seed)
     random.seed(worker_seed)
 
-
-if __name__ == "__main__":
-    # import argparse
-    # parser = argparse.ArgumentParser()
-    # args = parser.parse_args()
-    # from test_config import *
-    import test_config
-    
-    test_train_dataloader, train_dataset = build_train_dataloader(test_config)
-    test_val_dataloader,eval_dataset = build_eval_dataloader(test_config)
-    print(type(test_train_dataloader))
-    print(type(test_val_dataloader))
     
 
      
