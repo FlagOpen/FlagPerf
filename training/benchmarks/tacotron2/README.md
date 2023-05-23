@@ -31,18 +31,17 @@
 
 
 #### 预处理
-1. 进入数据集根目录
+1. 进入tacotron2数据集路径  cd  <YOUR_TACOTRON2_DATASET_PATH>
 2. 下载数据集 wget https://data.keithito.com/data/speech/LJSpeech-1.1.tar.bz2
 3. 解压缩  tar zjvf LJSpeech-1.1.tar.bz2
-4. mkdir filelists. 
-5. 下载 https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2/filelists下所有的txt文件到 filelists 目录
+4. git clone https://github.com/NVIDIA/DeepLearningExamples
+5. 拷贝filelists目录到数据集路径。 cp -R DeepLearningExamples/PyTorch/SpeechSynthesis/Tacotron2/filelists <YOUR_TACOTRON2_DATASET_PATH>
 6. tree . -L 2，查看目录结构如下
   
 ``` bash
 .
 ├── LJSpeech-1.1
 │   ├── README
-│   ├── mels
 │   ├── metadata.csv
 │   └── wavs
 ├── filelists
@@ -62,8 +61,6 @@
 │   ├── ljs_mel_text_train_subset_625_filelist.txt
 │   └── ljs_mel_text_val_filelist.txt
 ```
-
-
 
 
 ### 框架与芯片支持情况
