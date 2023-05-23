@@ -2,13 +2,12 @@ import torch
 from torch.types import Device
 import os
 import sys
-import time
-import torch.distributed as dist
 import numpy as np
 
 from model import create_model, create_model_config
 from model.loss.loss_function import get_loss_function
 from model.data.data_function import batch_to_gpu
+from optimizers import create_optimizer
 from .utils import reduce_tensor
 
 from train.evaluator import Evaluator
@@ -49,7 +48,7 @@ class Trainer:
         self._init_model()
 
         self.criterion = get_loss_function()
-        self.optimizer = self.adapter.create_optimizer(self.model, self.config)
+        self.optimizer = create_optimizer(self.model, self.config)
         self.grad_scaler = self.adapter.create_grad_scaler(self.config)
         torch.backends.cudnn.enabled = self.config.cudnn_enabled
         torch.backends.cudnn.benchmark = self.config.cudnn_benchmark

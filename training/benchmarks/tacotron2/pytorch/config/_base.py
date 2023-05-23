@@ -22,7 +22,7 @@ weight_decay: float = 1e-6
 # momentum for SGD optimizer
 momentum: float = 0.9
 """Precision parameters"""
-amp: bool = True
+amp: bool = False
 # Static loss scaling, positive power of 2 values can improve fp16 convergence. If None, dynamicloss scaling is used.
 loss_scale: float = 4096
 fp16: bool = True

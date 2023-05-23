@@ -23,7 +23,7 @@ def build_train_dataloader(args,
         train_sampler = None
         shuffle = True
 
-    train_loader = DataLoader(train_dataset,
+    train_dataloader = DataLoader(train_dataset,
                               num_workers=1,
                               shuffle=shuffle,
                               sampler=train_sampler,
@@ -31,7 +31,7 @@ def build_train_dataloader(args,
                               pin_memory=False,
                               drop_last=True,
                               collate_fn=collate_fn)
-    return train_loader
+    return train_dataloader
 
 
 def build_eval_dataset(args):
