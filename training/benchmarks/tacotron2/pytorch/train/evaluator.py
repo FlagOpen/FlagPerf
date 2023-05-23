@@ -2,18 +2,9 @@ import os
 import sys
 import torch
 import time
-
 from contextlib import contextmanager
 
-from torch.utils.data.distributed import DistributedSampler
-from torch.utils.data import DataLoader
 from model.data.data_function import batch_to_gpu
-
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
-
-from dataloaders.data_functions import get_collate_function
 from .utils import reduce_tensor
 
 # adapted from: https://discuss.pytorch.org/t/opinion-eval-should-be-a-context-manager/18998/3
@@ -39,7 +30,7 @@ class Evaluator:
         self.val_dataloader = val_dataloader
 
     def evaluate(self, trainer):
-        """Handles all the validation scoring and printing"""
+        """Handles all the validation scoring"""
         model = trainer.model
         criterion = trainer.criterion
         world_size = trainer.world_size
@@ -68,7 +59,7 @@ class Evaluator:
                     reduced_val_loss = reduce_tensor(loss.data,
                                                      world_size).item()
                     reduced_num_items = reduce_tensor(num_items.data, 1).item()
-                else:  #
+                else:
                     reduced_val_loss = loss.item()
                     reduced_num_items = num_items.item()
                 val_loss += reduced_val_loss
