@@ -22,8 +22,8 @@ from train.evaluator import Evaluator
 from train.training_state import TrainingState
 
 import config
-from utils.general import LOGGER,labels_to_image_weights,check_img_size,one_cycle,check_dataset,init_seeds
-from utils.torch_utils import EarlyStopping, ModelEMA, torch_distributed_zero_first
+from utils.general import LOGGER,labels_to_image_weights,check_img_size,one_cycle,check_dataset,init_seeds,labels_to_class_weights
+from utils.torch_utils import EarlyStopping, ModelEMA, torch_distributed_zero_first, de_parallel
 from utils.loss import ComputeLoss
 from utils.callbacks import Callbacks
 from utils.metrics import fitness
@@ -118,8 +118,29 @@ class Trainer:
         if isinstance(config.hyp, str):
             with open(config.hyp, errors='ignore') as f:
                 hyp = yaml.safe_load(f)  # load hyps dict
-        # amp = check_amp(self.model)  # check AMP
-        amp = False
+        
+        model = self.model
+                
+        # Model attributes
+        nc = 80
+        nl = de_parallel(model).model[-1].nl  # number of detection layers (to scale hyps)
+        hyp['box'] *= 3 / nl  # scale to layers
+        hyp['cls'] *= nc / 80 * 3 / nl  # scale to classes and layers
+        hyp['obj'] *= (config.imgsz / 640) ** 2 * 3 / nl  # scale to image size and layers
+        hyp['label_smoothing'] = config.label_smoothing
+        model.nc = nc  # attach number of classes to model
+        model.hyp = hyp  # attach hyperparameters to model
+        model.class_weights = labels_to_class_weights(train_dataset.labels, nc).to(self.device) * nc  # attach class weights
+    
+        # Read yaml (optional)
+        if isinstance(config.data, (str, Path)):
+            with open(config.data, errors='ignore') as f:
+                data = yaml.safe_load(f)  # dictionary
+        # coco class list
+        model.names = data["names"]
+        amp = check_amp(model)  # check AMP
+        # amp = False
+        # print(model.__dict__)
         
         # Config
         # init_seeds(config.seed + 1 + RANK, deterministic=True)
@@ -143,19 +164,19 @@ class Trainer:
         self.lr_scheduler.last_epoch = start_epoch - 1  # do not move
         scaler = torch.cuda.amp.GradScaler(enabled=amp)
     
-        compute_loss = ComputeLoss(self.model)  # init loss class
+        compute_loss = ComputeLoss(model)  # init loss class
         callbacks = Callbacks()
         callbacks.run('on_train_start')
          
         epochs = config.epochs
         
         # EMA
-        ema = ModelEMA(self.model) if RANK in {-1, 0} else None
+        ema = ModelEMA(model) if RANK in {-1, 0} else None
         plots = False
         
         for epoch in range(start_epoch, epochs):  # epoch ------------------------------------------------------------------
             callbacks.run('on_train_epoch_start')
-            self.model.train()
+            model.train()
 
             # Update image weights (optional, single-GPU only)
             if config.image_weights:
@@ -179,7 +200,8 @@ class Trainer:
             nbs = 64
             batch_size = config.batch_size
             print("----batch size:",batch_size)
-            gs = max(int(self.model.stride.max()), 32)  # grid size (max stride)
+            # gs = max(int(model.stride.max()), 32)  # grid size (max stride)
+            gs = 32
             imgsz = check_img_size(config.imgsz, gs, floor=gs * 2)  # verify imgsz is gs-multiple
             
             if config.cos_lr:
@@ -212,7 +234,7 @@ class Trainer:
 
                 # Forward
                 with torch.cuda.amp.autocast(amp):
-                    pred = self.model(imgs)  # forward
+                    pred = model(imgs)  # forward
                     # return (lbox + lobj + lcls) * bs, torch.cat((lbox, lobj, lcls)).detach()
                     loss, loss_items = compute_loss(pred, targets.to(device))  # loss scaled by batch_size
                     state.loss = loss
@@ -228,12 +250,12 @@ class Trainer:
                 # Optimize - https://pytorch.org/docs/master/notes/amp_examples.html
                 if ni - last_opt_step >= accumulate:
                     scaler.unscale_(self.optimizer)  # unscale gradients
-                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=10.0)  # clip gradients
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=10.0)  # clip gradients
                     scaler.step(self.optimizer)  # optimizer.step
                     scaler.update()
                     self.optimizer.zero_grad()
                     if ema:
-                        ema.update(self.model)
+                        ema.update(model)
                     last_opt_step = ni
 
                 # Log
@@ -243,7 +265,7 @@ class Trainer:
                     # mem = f'{torch.cuda.memory_reserved() / 1E9 if torch.cuda.is_available() else 0:.3g}G'  # (GB)
                     # pbar.set_description(('%10s' * 2 + '%10.4g' * 5) %
                                         # (f'{epoch}/{epochs - 1}', mem, *mloss, targets.shape[0], imgs.shape[-1]))
-                    callbacks.run('on_train_batch_end', ni, self.model, imgs, targets, paths, plots)
+                    callbacks.run('on_train_batch_end', ni, model, imgs, targets, paths, plots)
                     if callbacks.stop_training:
                         return
                 # end batch ------------------------------------------------------------------------------------------------
@@ -256,7 +278,7 @@ class Trainer:
             if RANK in {-1, 0}:
                 # mAP
                 callbacks.run('on_train_epoch_end', epoch=epoch)
-                ema.update_attr(self.model, include=['yaml', 'nc', 'hyp', 'names', 'stride', 'class_weights'])
+                ema.update_attr(model, include=['yaml', 'nc', 'hyp', 'names', 'stride', 'class_weights'])
                 # final_epoch = (epoch + 1 == epochs) or stopper.possible_stop
                 final_epoch = (epoch + 1 == epochs) 
                 if not config.noval or final_epoch:  # Calculate mAP

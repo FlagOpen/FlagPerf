@@ -51,21 +51,21 @@ def create_model(config):
     #     model = smart_DDP(model)
     
     # Model attributes
-    nl = de_parallel(model).model[-1].nl  # number of detection layers (to scale hyps)
-    hyp['box'] *= 3 / nl  # scale to layers
-    hyp['cls'] *= nc / 80 * 3 / nl  # scale to classes and layers
-    hyp['obj'] *= (config.imgsz / 640) ** 2 * 3 / nl  # scale to image size and layers
-    hyp['label_smoothing'] = config.label_smoothing
-    model.nc = nc  # attach number of classes to model
-    model.hyp = hyp  # attach hyperparameters to model
-    # model.class_weights = labels_to_class_weights(dataset.labels, nc).to(device) * nc  # attach class weights
+    # nl = de_parallel(model).model[-1].nl  # number of detection layers (to scale hyps)
+    # hyp['box'] *= 3 / nl  # scale to layers
+    # hyp['cls'] *= nc / 80 * 3 / nl  # scale to classes and layers
+    # hyp['obj'] *= (config.imgsz / 640) ** 2 * 3 / nl  # scale to image size and layers
+    # hyp['label_smoothing'] = config.label_smoothing
+    # model.nc = nc  # attach number of classes to model
+    # model.hyp = hyp  # attach hyperparameters to model
+    # # model.class_weights = labels_to_class_weights(dataset.labels, nc).to(device) * nc  # attach class weights
     
-    # Read yaml (optional)
-    if isinstance(config.data, (str, Path)):
-        with open(config.data, errors='ignore') as f:
-            data = yaml.safe_load(f)  # dictionary
-    # coco class list
-    model.names = data["names"]
+    # # Read yaml (optional)
+    # if isinstance(config.data, (str, Path)):
+    #     with open(config.data, errors='ignore') as f:
+    #         data = yaml.safe_load(f)  # dictionary
+    # # coco class list
+    # model.names = data["names"]
     
     return model
 
