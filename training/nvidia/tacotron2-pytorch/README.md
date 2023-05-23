@@ -1,6 +1,6 @@
 ### 数据集下载
 
-[数据集下载](https://www.image-net.org/challenges/LSVRC/2012/)
+[数据集下载](../../benchmarks/tacotron2/README.md#数据集下载地址)
 
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
@@ -21,11 +21,11 @@
 ### 运行情况
 | 训练资源 | 配置文件        | 运行时长(s) | 目标train_loss | 收敛train_loss | 性能(samples/s) |
 | -------- | --------------- | ----------- | -------------- | -------------- | --------------- |
-| 单机8卡  | config_A100x1x8 | 21596.08    | 0.35           | 0.3477         | 531.79          |
+| 单机8卡  | config_A100x1x8 | 28298.48    | 0.35           | 0.3496         | 431.14          |
 
+注：
 训练精度来源：https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2#results
-
-
+train_loss越小越好
 
 
 ### 许可证
