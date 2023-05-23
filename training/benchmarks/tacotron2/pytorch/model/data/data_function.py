@@ -69,7 +69,8 @@ class TextMelLoader(torch.utils.data.Dataset):
                     sampling_rate, self.stft.sampling_rate))
             audio_norm = audio / self.max_wav_value
             audio_norm = audio_norm.unsqueeze(0)
-            audio_norm = torch.autograd.Variable(audio_norm, requires_grad=False)
+            audio_norm = torch.autograd.Variable(audio_norm,
+                                                 requires_grad=False)
             melspec = self.stft.mel_spectrogram(audio_norm)
             melspec = torch.squeeze(melspec, 0)
         else:
@@ -154,8 +155,5 @@ def batch_to_gpu(batch):
     x = (text_padded, input_lengths, mel_padded, max_len, output_lengths)
     y = (mel_padded, gate_padded)
     len_x = torch.sum(output_lengths)
-
-
-    # print( f"batch_to_gpu max_len: {max_len},mel_padded:{mel_padded} ,gate_padded:{gate_padded} input_lengths:{input_lengths} output_lengths:{output_lengths}")
 
     return (x, y, len_x)

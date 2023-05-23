@@ -61,7 +61,6 @@ def load_wav_to_torch(full_path):
 
 
 def load_filepaths_and_text(dataset_path, filename, split="|"):
-    print(f"load_filepaths_and_text => dataset_path: {dataset_path}, filename: {filename}")
     full_filepath = os.path.join(dataset_path, filename)
     with open(full_filepath, encoding='utf-8') as f:
         def split_line(root, line):
