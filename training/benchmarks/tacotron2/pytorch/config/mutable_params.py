@@ -5,8 +5,6 @@ mutable_params = [
     "gradient_accumulation_steps",
     "train_batch_size",
     "eval_batch_size",
-    "max_steps",
-    "max_samples_termination",
     "learning_rate",
     "weight_decay",
     "seed",

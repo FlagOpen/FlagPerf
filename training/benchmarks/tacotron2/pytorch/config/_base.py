@@ -5,17 +5,21 @@ vendor: str = None
 seed: int = 1234
 """model args"""
 name: str = "tacotron2"
-"""Training parameters"""
 
+"""Training parameters"""
+# max epochs for training
+max_epochs: int = 1501
 # disable uniform initialization of batchnorm layer weight
 disable_uniform_initialize_bn_weight: bool = False
+
 """ lr_scheduler parameters"""
 # initial learning rate
 learning_rate: float = 0.1
+# Epochs after which decrease learning rate
 lr_anneal_steps: list = [500, 1000, 1500]
+# Factor for annealing learning rate
 lr_anneal_factor: float = 0.3
-# learning rate decay function
-lr_decay_style: str = "linear"
+
 """optimizer args"""
 # weight decay coefficient for L2 regularization
 weight_decay: float = 1e-6
@@ -54,17 +58,8 @@ do_train: bool = True
 # Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: int = 1
 
-# Total number of training steps to perform.
-max_steps: int = 50000000
-
-# Total number of training samples to run.
-max_samples_termination: float = 43912600
-
 # number of training samples to run a evaluation once
 eval_interval_samples: int = 20000
-
-# Total number of training samples to run.
-max_samples_termination: float = 1388270 * 4
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 1
@@ -88,13 +83,10 @@ ddp_type: str = "native"
 device: str = None
 n_device: int = 1
 
-pretrained: bool = False
-
-gpu: int = None
-print_freq: int = 10
-
 disable_uniform_initialize_bn_weight: bool = False
+# Enable cudnn
 cudnn_enabled: bool = True
+# Run cudnn benchmark
 cudnn_benchmark: bool = False
 """Dataset parameters"""
 # Loads mel spectrograms from disk instead of computing them on the fly
@@ -171,12 +163,3 @@ attention_dim: int = 128
 attention_location_n_filters: int = 32
 # Kernel size for location-sensitive attention
 attention_location_kernel_size: int = 31
-"""benchmark parameters"""
-bench_class: str = ""
-"""checkpoint parameters"""
-resume_from_last: bool = False
-checkpoint_path: str = ""
-epochs_per_checkpoint: int = 50
-max_epochs: int = 1501
-
-output="output/checkpoint"
