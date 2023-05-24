@@ -30,7 +30,7 @@ Command 4, run at docker(container)
 
 ##### 验证已有case
 
-0. 检查case路径设置，如CASES = {"cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/"}, 当字典中多个k-v时，行为与执行run.py一致。会按照python解释器的字典key值遍历顺序遍历所有case，依次输出对应case的四条命令、执行case（不建议使用dev.py功能时，在CASES中放置多个k-v）
+0. 检查case路径设置，如CASES = {"cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/"}, 当字典中多个k-v时，行为与执行run.py一致。会按照python解释器的字典key值遍历顺序遍历所有case，依次输出对应case的四条命令、执行case（建议使用dev.py功能时，在CASES中只放置一对儿k-v）
 
 1. 已有case的文件结构已经设置正确。因此直接在运行这一case的时候，将run.py更改为dev.py，即可获取到dev.py的专有输出，获取相应命令
 2. 可以在相应主机上，运行command1-4，手动完成“run.py”的大部分流程
