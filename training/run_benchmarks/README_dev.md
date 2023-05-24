@@ -23,11 +23,14 @@ Command 4, run at docker(container)
 
 ### 设计思路
 
+* 区分在容器外和容器内的执行命令，提供容器内执行命令，方便开发者直接在容器中调试。
 * 在“case尚未添加完毕”的时候，方便开发者跳过flagperf启动、加载、检查等环节，直接执行自己case对应的task
 
 ### 简单使用步骤
 
 ##### 验证已有case
+
+0. 检查case路径设置，如CASES = {"cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/"}, 当字典中多个k-v时，行为与执行run.py一致。会按照python解释器的字典key值遍历顺序遍历所有case，依次输出对应case的四条命令、执行case（不建议使用dev.py功能时，在CASES中放置多个k-v）
 
 1. 已有case的文件结构已经设置正确。因此直接在运行这一case的时候，将run.py更改为dev.py，即可获取到dev.py的专有输出，获取相应命令
 2. 可以在相应主机上，运行command1-4，手动完成“run.py”的大部分流程
@@ -46,6 +49,7 @@ Command 4, run at docker(container)
 * 下面以添加faster_rcnn模型pytorch框架标准case（nvidia A100 1\*8）作为样例。添加前首先将数据集、backbone权重等文件存放在了/home/xxx/目录下
 
 	1. 在test_config中，将CASES写为{'faster_rcnn:pytorch:A100:1:8:1':'/home/xxx'}
+
  	2. 在nvidia/下面添加faster_rcnn-pytorch/，在faster_rcnn-pytorch/目录下添加config/与extern/目录，在config/目录下添加config_A100x1x8.py
  	3. 在benchmarks/下面添加faster_rcnn/目录，在faster_rcnn/目录下添加pytorch/目录，在pytorch/目录下添加run_pretraining.py
  	4. 运行dev.py 获取了包含4条命令的输出
