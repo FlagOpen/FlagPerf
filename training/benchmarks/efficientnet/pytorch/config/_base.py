@@ -14,6 +14,7 @@ train_data: str = "train"
 eval_data: str = "val"
 output_dir: str = ""
 init_checkpoint: str = ""
+resume: str = ""
 
 # =========================================================
 # train && evaluate

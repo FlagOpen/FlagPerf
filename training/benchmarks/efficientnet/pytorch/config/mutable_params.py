@@ -3,4 +3,4 @@ mutable_params = [
     'eval_batch_size', 'dist_backend', 'lr', 'weight_decay', "vendor"
 ]
 
-mutable_params += ["local_rank", "do_train", "data_dir", "log_freq"]
+mutable_params += ["local_rank", "do_train", "data_dir", "log_freq", "output_dir"]
