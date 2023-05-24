@@ -67,6 +67,11 @@ def train(hyp, opt, device, callbacks, training_state):  # hyp is path/to/hyp.ya
         opt.resume, opt.noval, opt.nosave, opt.workers, opt.freeze
     callbacks.run('on_pretrain_routine_start')
 
+    result_dir = os.path.join(os.getcwd(),"result")
+    log_dir_list = os.listdir(result_dir)
+    log_dir_list.sort() 
+    save_dir = os.path.join(result_dir,log_dir_list[-1])
+    last, best = save_dir + '/last.pt', save_dir + '/best.pt'
 
     # Hyperparameters
     if isinstance(hyp, str):
@@ -374,14 +379,14 @@ def train(hyp, opt, device, callbacks, training_state):  # hyp is path/to/hyp.ya
                     # 'opt': vars(opt),
                     'date': datetime.now().isoformat()}
 
-                # # Save last, best and delete
-                # torch.save(ckpt, last)
-                # if best_fitness == fi:
-                #     torch.save(ckpt, best)
+                # Save last, best and delete
+                torch.save(ckpt, last)
+                if best_fitness == fi:
+                    torch.save(ckpt, best)
                 # if opt.save_period > 0 and epoch % opt.save_period == 0:
                 #     torch.save(ckpt, w / f'epoch{epoch}.pt')
-                # del ckpt
-                # callbacks.run('on_model_save', last, epoch, final_epoch, best_fitness, fi)
+                del ckpt
+                callbacks.run('on_model_save', last, epoch, final_epoch, best_fitness, fi)
 
         # EarlyStopping
         if RANK != -1:  # if DDP training
