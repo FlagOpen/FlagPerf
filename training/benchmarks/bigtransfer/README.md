@@ -1,7 +1,7 @@
 ### 模型信息
 - Introduction
 
-  Transfer of pre-trained representations improves sample efficiency and simplifies hyperparameter tuning when training deep neural networks for vision. We revisit the paradigm of pre-training on large supervised datasets and fine-tuning the model on a target task. We scale up pre-training, and propose a simple recipe that we call Big Transfer (BiT). By combining a few carefully selected components, and transferring using a simple heuristic, we achieve strong performance on over 20 datasets. 
+  Transfer of pre-trained representations improves sample efficiency and simplifies hyperparameter tuning when training deep neural networks for vision. BIT(Big Transfer) revisit the paradigm of pre-training on large supervised datasets and fine-tuning the model on a target task. By combining a few carefully selected components, and transferring using a simple heuristic, BIT achieve strong performance on over 20 datasets. 
 
 - Paper
 [Big Transfer](https://www.ecva.net/papers/eccv_2020/papers_ECCV/papers/123500477.pdf) 

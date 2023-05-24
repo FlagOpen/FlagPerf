@@ -41,6 +41,13 @@ def tf2th(conv_weights):
 
 
 class PreActBottleneck(nn.Module):
+    """Pre-activation (v2) bottleneck block.
+  
+    Follows the implementation of "Identity Mappings in Deep Residual Networks":
+    https://github.com/KaimingHe/resnet-1k-layers/blob/master/resnet-pre-act.lua
+  
+    Except it puts the stride on 3x3 conv when available.
+    """
 
     def __init__(self, cin, cout=None, cmid=None, stride=1):
         super().__init__()
@@ -95,6 +102,7 @@ class PreActBottleneck(nn.Module):
 
 
 class ResNetV2(nn.Module):
+    """Implementation of Pre-activation (v2) ResNet mode."""
 
     def __init__(self,
                  block_units,

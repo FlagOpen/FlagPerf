@@ -73,7 +73,8 @@ def main() -> Tuple[Any, Any]:
 
     # evaluation统计
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
-    all_c, all_top1, all_top5 = evaluator.evaluate(trainer.model, trainer.device)
+    all_c, all_top1, all_top5 = evaluator.evaluate(trainer.model,
+                                                   trainer.device)
 
     init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
     # time单位为秒
@@ -119,12 +120,12 @@ if __name__ == "__main__":
 
     # 训练信息写日志
     e2e_time = time.time() - start
-    
+
     training_perf = (dist_pytorch.global_batch_size(config_update) *
                      state.global_steps) / state.raw_train_time
     finished_info = {
         "e2e_time": e2e_time,
-        "training_sequences_per_second": training_perf,
+        "training_images_per_second": training_perf,
         "converged": state.converged,
         "final_accuracy": state.eval_mAP,
         "raw_train_time": state.raw_train_time,

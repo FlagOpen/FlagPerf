@@ -61,7 +61,6 @@ class Trainer:
         mixup = 0.1
         cri = torch.nn.CrossEntropyLoss().to(device)
 
-        print("Starting training!")
         mixup_l = np.random.beta(mixup, mixup)
         step = 0
 
@@ -129,7 +128,7 @@ class Trainer:
         # End of training
         elif step >= supports[-1]:
             return None
-        # Staircase decays by factor of 10
+        # Staircase decays by factor of (1.0/lr_gamma)
         else:
             base_lr = config.lr
             for s in supports[1:]:
