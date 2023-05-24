@@ -36,7 +36,7 @@ class Evaluator:
                                  dtype=torch.float32,
                                  device=self.args.device)
             dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
-            self.total_loss, self.total_acc1, self.total_acc5, self.total_batch = total.tolist(
+            self.total_loss, self.total_acc1, self.total_acc5, self.total_size = total.tolist(
             )
 
         loss = self.total_loss / self.total_size
