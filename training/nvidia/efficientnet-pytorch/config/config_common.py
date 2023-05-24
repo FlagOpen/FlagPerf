@@ -17,6 +17,7 @@ model_ema = True
 ra_sampler = True
 ra_reps = 4
 epochs = 600
+num_workers = 8
 
 # efficientnet_v2_s
 TRAIN_SIZE = 300
