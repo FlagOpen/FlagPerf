@@ -11,31 +11,13 @@ from schedulers import create_scheduler
 
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
+from train.utils import accuracy
 
 import config
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
-
-
-def accuracy(output, target, topk=(1, )):
-    """Computes the accuracy over the k top predictions for the specified values of k"""
-    with torch.no_grad():
-        maxk = max(topk)
-        batch_size = target.size(0)
-
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-        res = []
-        for k in topk:
-            correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size))
-        return res
-
-
 class Trainer:
 
     def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
@@ -53,17 +35,18 @@ class Trainer:
         self.evaluator = evaluator
         self.lr_scheduler = None
         self.global_batch_size = None
-        self.overflow_buf = None
 
     def init(self):
         self.model = create_model(config)
         self.model = self._init_model(self.model, self.config, self.device)
-        self.model = self.adapter.convert_model(self.model)
-        self.model = self.adapter.model_to_fp16(self.model)
-        self.optimizer = self.adapter.create_optimizer(self.model, self.config)
-        self.model = self.adapter.model_to_ddp(self.model)
-        self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        self.grad_scaler = self.adapter.create_grad_scaler()
+        self.model = self.adapter.convert_model(self.config, self.model)
+        self.model = self.adapter.model_to_fp16(self.config, self.model)
+        self.optimizer = self.adapter.create_optimizer(self.config, self.model)
+        self.model = self.adapter.model_to_ddp(self.config, self.model)
+
+        self.lr_scheduler = create_scheduler(self.config, self.optimizer)
+        self.grad_scaler = self.adapter.create_grad_scaler(self.config)
+        self.criterion = torch.nn.CrossEntropyLoss(label_smoothing=self.config.label_smoothing)
 
     def _init_model(self, model, args, device):
         checkpoint_name = config.init_checkpoint
@@ -86,6 +69,8 @@ class Trainer:
         step_start_time = time.time()
         epoch_start_num_sample = state.num_trained_samples
 
+        if dist.is_available() and dist.is_initialized():
+            dataloader.sampler.set_epoch(state.epoch)
         for batch_idx, batch in enumerate(dataloader):
 
             state.global_steps += 1
@@ -97,14 +82,12 @@ class Trainer:
             self.train_one_step(batch)
 
             other_state = dict()
-            if state.global_steps % self.config.gradient_accumulation_steps == 0:
-                step_end_time = time.time()
-                step_total_time = step_end_time - step_start_time
-                step_start_time = step_end_time
-                images_per_second = (
-                    dist_pytorch.global_batch_size(self.config) *
-                    self.config.gradient_accumulation_steps) / step_total_time
-                other_state["img/s"] = images_per_second
+
+            step_end_time = time.time()
+            step_total_time = step_end_time - step_start_time
+            step_start_time = step_end_time
+            images_per_second = dist_pytorch.global_batch_size(self.config) / step_total_time
+            other_state["img/s"] = images_per_second
             if hasattr(self.optimizer, 'loss_scaler'):
                 loss_scale = self.optimizer.loss_scaler.loss_scale
                 other_state['loss_scale'] = loss_scale
@@ -146,7 +129,7 @@ class Trainer:
         state = self.training_state
         self.model.train()
         state.loss, state.acc1, state.acc5 = self.forward(batch)
-        self.adapter.backward(state.global_steps, state.loss, self.optimizer)
+        self.adapter.backward(self.config, state.global_steps, state.epoch, state.loss, self.model, self.optimizer, self.grad_scaler)
         if dist.is_available() and dist.is_initialized():
             total = torch.tensor([state.loss, state.acc1, state.acc5],
                                  dtype=torch.float32,
@@ -184,8 +167,7 @@ class Trainer:
     def forward(self, batch):
         images, target = batch
         output = self.model(images)
-        criterion = torch.nn.CrossEntropyLoss()
-        loss = criterion(output, target)
+        loss = self.criterion(output, target)
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
         return loss, acc1, acc5
 
