@@ -28,7 +28,7 @@
 
 训练精度来源：https://paperswithcode.com/paper/large-scale-learning-of-general-visual
 
-训练精度未对其(84.11 VS 85.39)原因：没有采用x4迁移权重。后者在40GB显卡上，不使用FSDP优化无法训练batchsize=16，显存不足。
+训练精度未对齐(84.11 VS 85.39)原因：没有采用x4迁移权重。后者在40GB显卡上，不使用FSDP优化无法训练batchsize=16，显存不足。
 
 ### 许可证
 

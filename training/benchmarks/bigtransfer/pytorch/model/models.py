@@ -34,6 +34,7 @@ def conv1x1(cin, cout, stride=1, bias=False):
 
 
 def tf2th(conv_weights):
+    """Possibly convert HWIO to OIHW"""
     if conv_weights.ndim == 4:
         conv_weights = conv_weights.transpose([3, 2, 0, 1])
     return torch.from_numpy(conv_weights)
