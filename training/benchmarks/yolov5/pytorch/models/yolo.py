@@ -5,8 +5,7 @@ YOLO-specific modules
 Usage:
     $ python path/to/models/yolo.py --cfg yolov5s.yaml
 """
-import torch
-from torch import nn
+
 import argparse
 import contextlib
 import os
@@ -24,13 +23,8 @@ if platform.system() != 'Windows':
 
 from models.common import *
 from models.experimental import *
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
-
 from utils.autoanchor import check_anchor_order
 from utils.general import LOGGER, check_version, check_yaml, make_divisible, print_args
-from utils.plots import feature_visualization
 from utils.torch_utils import (fuse_conv_and_bn, initialize_weights, model_info, profile, scale_img, select_device,
                                time_sync)
 
@@ -109,8 +103,6 @@ class BaseModel(nn.Module):
                 self._profile_one_layer(m, x, dt)
             x = m(x)  # run
             y.append(x if m.i in self.save else None)  # save output
-            if visualize:
-                feature_visualization(x, m.type, m.i, save_dir=visualize)
         return x
 
     def _profile_one_layer(self, m, x, dt):
@@ -250,6 +242,32 @@ class DetectionModel(BaseModel):
 
 
 Model = DetectionModel  # retain YOLOv5 'Model' class for backwards compatibility
+
+
+class ClassificationModel(BaseModel):
+    # YOLOv5 classification model
+    def __init__(self, cfg=None, model=None, nc=1000, cutoff=10):  # yaml, model, number of classes, cutoff index
+        super().__init__()
+        self._from_detection_model(model, nc, cutoff) if model is not None else self._from_yaml(cfg)
+
+    def _from_detection_model(self, model, nc=1000, cutoff=10):
+        # Create a YOLOv5 classification model from a YOLOv5 detection model
+        if isinstance(model, DetectMultiBackend):
+            model = model.model  # unwrap DetectMultiBackend
+        model.model = model.model[:cutoff]  # backbone
+        m = model.model[-1]  # last layer
+        ch = m.conv.in_channels if hasattr(m, 'conv') else m.cv1.conv.in_channels  # ch into module
+        c = Classify(ch, nc)  # Classify()
+        c.i, c.f, c.type = m.i, m.f, 'models.common.Classify'  # index, from, type
+        model.model[-1] = c  # replace
+        self.model = model.model
+        self.stride = model.stride
+        self.save = []
+        self.nc = nc
+
+    def _from_yaml(self, cfg):
+        # Create a YOLOv5 classification model from a *.yaml file
+        self.model = None
 
 
 def parse_model(d, ch):  # model_dict, input_channels(3)

@@ -5,49 +5,31 @@ import torch
 
 @dataclass
 class TrainingState:
-    _trainer = None
-    _status = 'aborted'  # later set to 'success' if termination criteria met
-
-    global_steps = 0
-    skipped_steps = 0
-    iter_dataloader_idx = 0
-
-    loss: float = 0.0
-    # from yolov5's loss_items
-    # box loss
-    lbox: float = 0.0
-    # class loss
-    lcls: float = 0.0
-    # object loss
-    lobj: float = 0.0
     
-    eval_loss: float = 0.0
-    # Precision
-    eval_P: float = 0.0
-    # Recall
-    eval_R: float = 0.0
-    # mAP@0.5 mean Average Precision（IoU=0.5）,将IoU设为0.5时,计算每一个类别下所有图片的平均AP
-    eval_mAP_0_5: float = 0.0
-    # mAP@.5:.95（mAP@[.5:.95]）：表示在不同IoU阈值（0.5～0.95，步长0.05）（0.5、0.55、0.6、0.65、0.7、0.75、0.8、0.85、0.9、0.95）上的平均mAP
-    eval_mAP_5_95: float = 0.0
-    
-    epoch: int = 1
-    num_trained_samples = 0
-    end_training: bool = False
-    converged: bool = False
+    def __init__(self) -> None:
+        self.init_time: int = None
+        self.raw_train_time: int = None
+        self.global_steps: int = -1
+        self.epoch:int = -1
+        
+        self.converged: bool = False
 
-    init_time = 0
-    raw_train_time = 0
-
+        # map
+        self.P:float = 0
+        self.R:float = 0
+        self.mAP50:float = 0
+        self.mAP:float = 0
+        self.best_fitness:float = 0
+        
+        
     def status(self):
         if self.converged:
             self._status = "success"
         return self._status
 
     def converged_success(self):
-        self.end_training = True
         self.converged = True
-
+        
     def _is_property(self, value):
         status = [
             not callable(value), not inspect.isclass(value),
@@ -56,7 +38,7 @@ class TrainingState:
             "classmethod object" not in str(value)
         ]
         return all(status)
-
+        
     def to_dict(self, **kwargs):
         state_dict = dict()
 
@@ -70,7 +52,7 @@ class TrainingState:
         state_dict["learning_rate"] = lr
         # yolov5 
         exclude = [
-            "eval_loss", "eval_P", "eval_R", "eval_mAP_0_5", "eval_mAP_5_95", "skipped_steps",
+            "eval_P", "eval_R", "eval_mAP_0_5", "eval_mAP_5_95", "skipped_steps",
             "converged", "init_time", "raw_train_time"
         ]
         for exkey in exclude:
@@ -84,3 +66,4 @@ class TrainingState:
                 state_dict[k] = state_dict[k].item()
 
         return state_dict
+    

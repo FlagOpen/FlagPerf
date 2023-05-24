@@ -3,17 +3,14 @@
 Common modules
 """
 
-import json
+
 import math
 import platform
 import warnings
-from collections import OrderedDict, namedtuple
-from copy import copy
+
 from pathlib import Path
 
-import cv2
 import numpy as np
-import pandas as pd
 import requests
 import torch
 import torch.nn as nn
@@ -21,9 +18,8 @@ from PIL import Image
 from torch.cuda import amp
 
 from utils.dataloaders import exif_transpose, letterbox
-from utils.general import (LOGGER, ROOT, check_requirements, check_suffix, check_version, colorstr, increment_path,
-                           make_divisible, non_max_suppression, scale_coords, xywh2xyxy, xyxy2xywh, yaml_load)
-from utils.plots import Annotator, colors, save_one_box
+from utils.general import (LOGGER, ROOT, check_suffix,
+                           make_divisible, non_max_suppression, scale_coords, xyxy2xywh, yaml_load)
 from utils.torch_utils import copy_attr, smart_inference_mode, time_sync
 
 
@@ -308,7 +304,15 @@ class DetectMultiBackend(nn.Module):
         # Usage:
         #   PyTorch:              weights = *.pt
         #   TorchScript:                    *.torchscript
-
+        #   ONNX Runtime:                   *.onnx
+        #   ONNX OpenCV DNN:                *.onnx with --dnn
+        #   OpenVINO:                       *.xml
+        #   CoreML:                         *.mlmodel
+        #   TensorRT:                       *.engine
+        #   TensorFlow SavedModel:          *_saved_model
+        #   TensorFlow GraphDef:            *.pb
+        #   TensorFlow Lite:                *.tflite
+        #   TensorFlow Edge TPU:            *_edgetpu.tflite
         from models.experimental import attempt_download, attempt_load  # scoped to avoid circular import
 
         super().__init__()
@@ -324,78 +328,6 @@ class DetectMultiBackend(nn.Module):
             names = model.module.names if hasattr(model, 'module') else model.names  # get class names
             model.half() if fp16 else model.float()
             self.model = model  # explicitly assign for to(), cpu(), cuda(), half()
-        elif jit:  # TorchScript
-            LOGGER.info(f'Loading {w} for TorchScript inference...')
-            extra_files = {'config.txt': ''}  # model metadata
-            model = torch.jit.load(w, _extra_files=extra_files)
-            model.half() if fp16 else model.float()
-            if extra_files['config.txt']:
-                d = json.loads(extra_files['config.txt'])  # extra_files dict
-                stride, names = int(d['stride']), d['names']
-        elif dnn:  # ONNX OpenCV DNN
-            LOGGER.info(f'Loading {w} for ONNX OpenCV DNN inference...')
-            check_requirements(('opencv-python>=4.5.4',))
-            net = cv2.dnn.readNetFromONNX(w)
-        elif onnx:  # ONNX Runtime
-            LOGGER.info(f'Loading {w} for ONNX Runtime inference...')
-            cuda = torch.cuda.is_available() and device.type != 'cpu'
-            check_requirements(('onnx', 'onnxruntime-gpu' if cuda else 'onnxruntime'))
-            import onnxruntime
-            providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if cuda else ['CPUExecutionProvider']
-            session = onnxruntime.InferenceSession(w, providers=providers)
-            meta = session.get_modelmeta().custom_metadata_map  # metadata
-            if 'stride' in meta:
-                stride, names = int(meta['stride']), eval(meta['names'])
-        elif xml:  # OpenVINO
-            LOGGER.info(f'Loading {w} for OpenVINO inference...')
-            check_requirements(('openvino',))  # requires openvino-dev: https://pypi.org/project/openvino-dev/
-            from openvino.runtime import Core, Layout, get_batch
-            ie = Core()
-            if not Path(w).is_file():  # if not *.xml
-                w = next(Path(w).glob('*.xml'))  # get *.xml file from *_openvino_model dir
-            network = ie.read_model(model=w, weights=Path(w).with_suffix('.bin'))
-            if network.get_parameters()[0].get_layout().empty:
-                network.get_parameters()[0].set_layout(Layout("NCHW"))
-            batch_dim = get_batch(network)
-            if batch_dim.is_static:
-                batch_size = batch_dim.get_length()
-            executable_network = ie.compile_model(network, device_name="CPU")  # device_name="MYRIAD" for Intel NCS2
-            output_layer = next(iter(executable_network.outputs))
-            meta = Path(w).with_suffix('.yaml')
-            if meta.exists():
-                stride, names = self._load_metadata(meta)  # load metadata
-        elif engine:  # TensorRT
-            LOGGER.info(f'Loading {w} for TensorRT inference...')
-            import tensorrt as trt  # https://developer.nvidia.com/nvidia-tensorrt-download
-            check_version(trt.__version__, '7.0.0', hard=True)  # require tensorrt>=7.0.0
-            if device.type == 'cpu':
-                device = torch.device('cuda:0')
-            Binding = namedtuple('Binding', ('name', 'dtype', 'shape', 'data', 'ptr'))
-            logger = trt.Logger(trt.Logger.INFO)
-            with open(w, 'rb') as f, trt.Runtime(logger) as runtime:
-                model = runtime.deserialize_cuda_engine(f.read())
-            context = model.create_execution_context()
-            bindings = OrderedDict()
-            fp16 = False  # default updated below
-            dynamic = False
-            for index in range(model.num_bindings):
-                name = model.get_binding_name(index)
-                dtype = trt.nptype(model.get_binding_dtype(index))
-                if model.binding_is_input(index):
-                    if -1 in tuple(model.get_binding_shape(index)):  # dynamic
-                        dynamic = True
-                        context.set_binding_shape(index, tuple(model.get_profile_shape(0, index)[2]))
-                    if dtype == np.float16:
-                        fp16 = True
-                shape = tuple(context.get_binding_shape(index))
-                im = torch.from_numpy(np.empty(shape, dtype=dtype)).to(device)
-                bindings[name] = Binding(name, dtype, shape, im, int(im.data_ptr()))
-            binding_addrs = OrderedDict((n, d.ptr) for n, d in bindings.items())
-            batch_size = bindings['images'].shape[0]  # if dynamic, this is instead max batch size
-        elif coreml:  # CoreML
-            LOGGER.info(f'Loading {w} for CoreML inference...')
-            import coremltools as ct
-            model = ct.models.MLModel(w)
         else:  # TensorFlow (SavedModel, GraphDef, Lite, Edge TPU)
             if saved_model:  # SavedModel
                 LOGGER.info(f'Loading {w} for TensorFlow SavedModel inference...')
@@ -457,6 +389,25 @@ class DetectMultiBackend(nn.Module):
             y = self.model(im, augment=augment, visualize=visualize) if augment or visualize else self.model(im)
             if isinstance(y, tuple):
                 y = y[0]
+        else:  # TensorFlow (SavedModel, GraphDef, Lite, Edge TPU)
+            im = im.permute(0, 2, 3, 1).cpu().numpy()  # torch BCHW to numpy BHWC shape(1,320,192,3)
+            if self.saved_model:  # SavedModel
+                y = (self.model(im, training=False) if self.keras else self.model(im)).numpy()
+            elif self.pb:  # GraphDef
+                y = self.frozen_func(x=self.tf.constant(im)).numpy()
+            else:  # Lite or Edge TPU
+                input, output = self.input_details[0], self.output_details[0]
+                int8 = input['dtype'] == np.uint8  # is TFLite quantized uint8 model
+                if int8:
+                    scale, zero_point = input['quantization']
+                    im = (im / scale + zero_point).astype(np.uint8)  # de-scale
+                self.interpreter.set_tensor(input['index'], im)
+                self.interpreter.invoke()
+                y = self.interpreter.get_tensor(output['index'])
+                if int8:
+                    scale, zero_point = output['quantization']
+                    y = (y.astype(np.float32) - zero_point) * scale  # re-scale
+            y[..., :4] *= [w, h, w, h]  # xywh normalized to pixels
 
         if isinstance(y, np.ndarray):
             y = torch.tensor(y, device=self.device)
@@ -604,77 +555,6 @@ class Detections:
         self.t = tuple((times[i + 1] - times[i]) * 1000 / self.n for i in range(3))  # timestamps (ms)
         self.s = shape  # inference BCHW shape
 
-    def display(self, pprint=False, show=False, save=False, crop=False, render=False, labels=True, save_dir=Path('')):
-        crops = []
-        for i, (im, pred) in enumerate(zip(self.imgs, self.pred)):
-            s = f'image {i + 1}/{len(self.pred)}: {im.shape[0]}x{im.shape[1]} '  # string
-            if pred.shape[0]:
-                for c in pred[:, -1].unique():
-                    n = (pred[:, -1] == c).sum()  # detections per class
-                    s += f"{n} {self.names[int(c)]}{'s' * (n > 1)}, "  # add to string
-                if show or save or render or crop:
-                    annotator = Annotator(im, example=str(self.names))
-                    for *box, conf, cls in reversed(pred):  # xyxy, confidence, class
-                        label = f'{self.names[int(cls)]} {conf:.2f}'
-                        if crop:
-                            file = save_dir / 'crops' / self.names[int(cls)] / self.files[i] if save else None
-                            crops.append({
-                                'box': box,
-                                'conf': conf,
-                                'cls': cls,
-                                'label': label,
-                                'im': save_one_box(box, im, file=file, save=save)})
-                        else:  # all others
-                            annotator.box_label(box, label if labels else '', color=colors(cls))
-                    im = annotator.im
-            else:
-                s += '(no detections)'
-
-            im = Image.fromarray(im.astype(np.uint8)) if isinstance(im, np.ndarray) else im  # from np
-            if pprint:
-                print(s.rstrip(', '))
-            if show:
-                im.show(self.files[i])  # show
-            if save:
-                f = self.files[i]
-                im.save(save_dir / f)  # save
-                if i == self.n - 1:
-                    LOGGER.info(f"Saved {self.n} image{'s' * (self.n > 1)} to {colorstr('bold', save_dir)}")
-            if render:
-                self.imgs[i] = np.asarray(im)
-        if crop:
-            if save:
-                LOGGER.info(f'Saved results to {save_dir}\n')
-            return crops
-
-    def print(self):
-        self.display(pprint=True)  # print results
-        print(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS per image at shape {tuple(self.s)}' % self.t)
-
-    def show(self, labels=True):
-        self.display(show=True, labels=labels)  # show results
-
-    def save(self, labels=True, save_dir='runs/detect/exp'):
-        save_dir = increment_path(save_dir, exist_ok=save_dir != 'runs/detect/exp', mkdir=True)  # increment save_dir
-        self.display(save=True, labels=labels, save_dir=save_dir)  # save results
-
-    def crop(self, save=True, save_dir='runs/detect/exp'):
-        save_dir = increment_path(save_dir, exist_ok=save_dir != 'runs/detect/exp', mkdir=True) if save else None
-        return self.display(crop=True, save=save, save_dir=save_dir)  # crop results
-
-    def render(self, labels=True):
-        self.display(render=True, labels=labels)  # render results
-        return self.imgs
-
-    def pandas(self):
-        # return detections as pandas DataFrames, i.e. print(results.pandas().xyxy[0])
-        new = copy(self)  # return copy
-        ca = 'xmin', 'ymin', 'xmax', 'ymax', 'confidence', 'class', 'name'  # xyxy columns
-        cb = 'xcenter', 'ycenter', 'width', 'height', 'confidence', 'class', 'name'  # xywh columns
-        for k, c in zip(['xyxy', 'xyxyn', 'xywh', 'xywhn'], [ca, ca, cb, cb]):
-            a = [[x[:5] + [int(x[5]), self.names[int(x[5])]] for x in x.tolist()] for x in getattr(self, k)]  # update
-            setattr(new, k, [pd.DataFrame(x, columns=c) for x in a])
-        return new
 
     def tolist(self):
         # return a list of Detections objects, i.e. 'for result in results.tolist():'

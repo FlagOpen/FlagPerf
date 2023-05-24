@@ -28,7 +28,6 @@ from zipfile import ZipFile
 
 import cv2
 import numpy as np
-import pandas as pd
 import pkg_resources as pkg
 import torch
 import torchvision
@@ -50,7 +49,6 @@ FONT = 'Arial.ttf'  # https://ultralytics.com/assets/Arial.ttf
 
 torch.set_printoptions(linewidth=320, precision=5, profile='long')
 np.set_printoptions(linewidth=320, formatter={'float_kind': '{:11.5g}'.format})  # format short g, %precision=5
-pd.options.display.max_columns = 10
 cv2.setNumThreads(0)  # prevent OpenCV from multithreading (incompatible with PyTorch DataLoader)
 os.environ['NUMEXPR_MAX_THREADS'] = str(NUM_THREADS)  # NumExpr max threads
 os.environ['OMP_NUM_THREADS'] = '1' if platform.system() == 'darwin' else str(NUM_THREADS)  # OpenMP (PyTorch and SciPy)
@@ -433,19 +431,6 @@ def check_file(file, suffix=''):
     file = str(file)  # convert to str()
     if Path(file).is_file() or not file:  # exists
         return file
-    elif file.startswith(('http:/', 'https:/')):  # download
-        url = file  # warning: Pathlib turns :// -> :/
-        file = Path(urllib.parse.unquote(file).split('?')[0]).name  # '%2F' to '/', split https://url.com/file.txt?auth
-        if Path(file).is_file():
-            LOGGER.info(f'Found {url} locally at {file}')  # file already exists
-        else:
-            LOGGER.info(f'Downloading {url} to {file}...')
-            torch.hub.download_url_to_file(url, file)
-            assert Path(file).exists() and Path(file).stat().st_size > 0, f'File download failed: {url}'  # check
-        return file
-    elif file.startswith('clearml://'):  # ClearML Dataset ID
-        assert 'clearml' in sys.modules, "ClearML is not installed, so cannot use ClearML dataset. Try running 'pip install clearml'."
-        return file
     else:  # search
         files = []
         for d in 'data', 'models', 'utils':  # search directories
@@ -465,15 +450,7 @@ def check_font(font=FONT, progress=False):
         torch.hub.download_url_to_file(url, str(file), progress=progress)
 
 
-def check_dataset(data, autodownload=True):
-    # Download, check and/or unzip dataset if not found locally
-
-    # Download (optional)
-    extract_dir = ''
-    if isinstance(data, (str, Path)) and str(data).endswith('.zip'):  # i.e. gs://bucket/dir/coco128.zip
-        download(data, dir=f'{DATASETS_DIR}/{Path(data).stem}', unzip=True, delete=False, curl=False, threads=1)
-        data = next((DATASETS_DIR / Path(data).stem).rglob('*.yaml'))
-        extract_dir, autodownload = data.parent, False
+def check_dataset(data, opt_data_dir):
 
     # Read yaml (optional)
     if isinstance(data, (str, Path)):
@@ -488,7 +465,7 @@ def check_dataset(data, autodownload=True):
         data['names'] = [f'class{i}' for i in range(data['nc'])]  # default names
 
     # Resolve paths
-    path = Path(extract_dir or data.get('path') or '')  # optional 'path' default to '.'
+    path = Path(opt_data_dir)  
     if not path.is_absolute():
         path = (ROOT / path).resolve()
     for k in 'train', 'val', 'test':
@@ -501,26 +478,7 @@ def check_dataset(data, autodownload=True):
         val = [Path(x).resolve() for x in (val if isinstance(val, list) else [val])]  # val path
         if not all(x.exists() for x in val):
             LOGGER.info('\nDataset not found ⚠️, missing paths %s' % [str(x) for x in val if not x.exists()])
-            if not s or not autodownload:
-                raise Exception('Dataset not found ❌')
-            t = time.time()
-            root = path.parent if 'path' in data else '..'  # unzip directory i.e. '../'
-            if s.startswith('http') and s.endswith('.zip'):  # URL
-                f = Path(s).name  # filename
-                LOGGER.info(f'Downloading {s} to {f}...')
-                torch.hub.download_url_to_file(s, f)
-                Path(root).mkdir(parents=True, exist_ok=True)  # create root
-                ZipFile(f).extractall(path=root)  # unzip
-                Path(f).unlink()  # remove zip
-                r = None  # success
-            elif s.startswith('bash '):  # bash script
-                LOGGER.info(f'Running {s} ...')
-                r = os.system(s)
-            else:  # python script
-                r = exec(s, {'yaml': data})  # return None
-            dt = f'({round(time.time() - t, 1)}s)'
-            s = f"success ✅ {dt}, saved to {colorstr('bold', root)}" if r in (0, None) else f"failure {dt} ❌"
-            LOGGER.info(f"Dataset download {s}")
+            raise Exception('Dataset not found ❌')
     check_font('Arial.ttf' if is_ascii(data['names']) else 'Arial.Unicode.ttf', progress=True)  # download fonts
     return data  # dictionary
 
@@ -923,46 +881,6 @@ def strip_optimizer(f='best.pt', s=''):  # from utils.general import *; strip_op
     LOGGER.info(f"Optimizer stripped from {f},{f' saved as {s},' if s else ''} {mb:.1f}MB")
 
 
-def print_mutation(results, hyp, save_dir, bucket, prefix=colorstr('evolve: ')):
-    evolve_csv = save_dir / 'evolve.csv'
-    evolve_yaml = save_dir / 'hyp_evolve.yaml'
-    keys = ('metrics/precision', 'metrics/recall', 'metrics/mAP_0.5', 'metrics/mAP_0.5:0.95', 'val/box_loss',
-            'val/obj_loss', 'val/cls_loss') + tuple(hyp.keys())  # [results + hyps]
-    keys = tuple(x.strip() for x in keys)
-    vals = results + tuple(hyp.values())
-    n = len(keys)
-
-    # Download (optional)
-    if bucket:
-        url = f'gs://{bucket}/evolve.csv'
-        if gsutil_getsize(url) > (evolve_csv.stat().st_size if evolve_csv.exists() else 0):
-            os.system(f'gsutil cp {url} {save_dir}')  # download evolve.csv if larger than local
-
-    # Log to evolve.csv
-    s = '' if evolve_csv.exists() else (('%20s,' * n % keys).rstrip(',') + '\n')  # add header
-    with open(evolve_csv, 'a') as f:
-        f.write(s + ('%20.5g,' * n % vals).rstrip(',') + '\n')
-
-    # Save yaml
-    with open(evolve_yaml, 'w') as f:
-        data = pd.read_csv(evolve_csv)
-        data = data.rename(columns=lambda x: x.strip())  # strip keys
-        i = np.argmax(fitness(data.values[:, :4]))  #
-        generations = len(data)
-        f.write('# YOLOv5 Hyperparameter Evolution Results\n' + f'# Best generation: {i}\n' +
-                f'# Last generation: {generations - 1}\n' + '# ' + ', '.join(f'{x.strip():>20s}' for x in keys[:7]) +
-                '\n' + '# ' + ', '.join(f'{x:>20.5g}' for x in data.values[i, :7]) + '\n\n')
-        yaml.safe_dump(data.loc[i][7:].to_dict(), f, sort_keys=False)
-
-    # Print to screen
-    LOGGER.info(prefix + f'{generations} generations finished, current result:\n' + prefix +
-                ', '.join(f'{x.strip():>20s}' for x in keys) + '\n' + prefix + ', '.join(f'{x:20.5g}'
-                                                                                         for x in vals) + '\n\n')
-
-    if bucket:
-        os.system(f'gsutil cp {evolve_csv} {evolve_yaml} gs://{bucket}')  # upload
-
-
 def apply_classifier(x, model, img, im0):
     # Apply a second stage classifier to YOLO outputs
     # Example model = torchvision.models.__dict__['efficientnet_b0'](pretrained=True).to(device).eval()
@@ -996,32 +914,6 @@ def apply_classifier(x, model, img, im0):
             x[i] = x[i][pred_cls1 == pred_cls2]  # retain matching class detections
 
     return x
-
-
-def increment_path(path, exist_ok=False, sep='', mkdir=False):
-    # Increment file or directory path, i.e. runs/exp --> runs/exp{sep}2, runs/exp{sep}3, ... etc.
-    path = Path(path)  # os-agnostic
-    if path.exists() and not exist_ok:
-        path, suffix = (path.with_suffix(''), path.suffix) if path.is_file() else (path, '')
-
-        # Method 1
-        for n in range(2, 9999):
-            p = f'{path}{sep}{n}{suffix}'  # increment path
-            if not os.path.exists(p):  #
-                break
-        path = Path(p)
-
-        # Method 2 (deprecated)
-        # dirs = glob.glob(f"{path}{sep}*")  # similar paths
-        # matches = [re.search(rf"{path.stem}{sep}(\d+)", d) for d in dirs]
-        # i = [int(m.groups()[0]) for m in matches if m]  # indices
-        # n = max(i) + 1 if i else 2  # increment number
-        # path = Path(f"{path}{sep}{n}{suffix}")  # increment path
-
-    if mkdir:
-        path.mkdir(parents=True, exist_ok=True)  # make directory
-
-    return path
 
 
 # OpenCV Chinese-friendly functions ------------------------------------------------------------------------------------
