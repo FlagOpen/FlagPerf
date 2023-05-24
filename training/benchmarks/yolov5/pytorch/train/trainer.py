@@ -47,7 +47,7 @@ from utils.downloads import attempt_download, is_url
 from utils.general import (LOGGER, check_amp, check_dataset, check_file, check_git_status, check_img_size,
                            check_requirements, check_suffix, check_yaml, colorstr, get_latest_run,
                            init_seeds, intersect_dicts, labels_to_class_weights, labels_to_image_weights, methods,
-                           one_cycle, print_args, strip_optimizer)
+                           one_cycle, print_args)
 
 from utils.loss import ComputeLoss
 from utils.metrics import fitness
@@ -79,8 +79,6 @@ def train(hyp, opt, device, callbacks, training_state):  # hyp is path/to/hyp.ya
             hyp = yaml.safe_load(f)  # load hyps dict
     LOGGER.info(colorstr('hyperparameters: ') + ', '.join(f'{k}={v}' for k, v in hyp.items()))
     opt.hyp = hyp.copy()  # for saving hyps to checkpoints
-
-
     
     data_dict = None
 
@@ -200,7 +198,6 @@ def train(hyp, opt, device, callbacks, training_state):  # hyp is path/to/hyp.ya
                                        prefix=colorstr('val: '))[0]
 
         if not resume:
-
             # Anchors
             if not opt.noautoanchor:
                 check_anchors(dataset, model=model, thr=hyp['anchor_t'], imgsz=imgsz)
@@ -401,27 +398,6 @@ def train(hyp, opt, device, callbacks, training_state):  # hyp is path/to/hyp.ya
     # end training -----------------------------------------------------------------------------------------------------
     if RANK in {-1, 0}:
         LOGGER.info(f'\n{epoch - start_epoch + 1} epochs completed in {(time.time() - t0) / 3600:.3f} hours.')
-        # for f in last, best:
-        #     if f.exists():
-        #         strip_optimizer(f)  # strip optimizers
-        #         if f is best:
-        #             LOGGER.info(f'\nValidating {f}...')
-        #             results, _, _ = val.run(
-        #                 data_dict,
-        #                 batch_size=batch_size // WORLD_SIZE * 2,
-        #                 imgsz=imgsz,
-        #                 model=attempt_load(f, device).half(),
-        #                 iou_thres=0.65 if is_coco else 0.60,  # best pycocotools results at 0.65
-        #                 single_cls=single_cls,
-        #                 dataloader=val_loader,
-        #                 save_json=is_coco,
-        #                 verbose=True,
-        #                 plots=False,
-        #                 callbacks=callbacks,
-        #                 compute_loss=compute_loss)  # val best model with plots
-        #             if is_coco:
-        #                 callbacks.run('on_fit_epoch_end', list(mloss) + list(results) + lr, epoch, best_fitness, fi)
-
 
     torch.cuda.empty_cache()
     return results

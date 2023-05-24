@@ -45,7 +45,7 @@ class TrainingState:
         for var_name, value in self.__dict__.items():
             if not var_name.startswith("_") and self._is_property(value):
                 state_dict[var_name] = value
-        # todo  if get_last_lr() exist 
+        
         lr = self._trainer.lr_scheduler.get_last_lr()
         if isinstance(lr, (tuple, list)):
             lr = lr[0]
