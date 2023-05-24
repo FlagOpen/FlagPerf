@@ -11,7 +11,7 @@ from schedulers import create_scheduler
 
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
-from train.utils import accuracy
+from train import utils
 
 import config
 
@@ -26,7 +26,7 @@ class Trainer:
         self.driver = driver
         self.adapter = adapter
         self.training_state = training_state
-        self.grad_scaler = None
+        self.scaler = None
 
         self.device = device
         self.optimizer = None
@@ -45,21 +45,37 @@ class Trainer:
         self.model = self.adapter.model_to_ddp(self.config, self.model)
 
         self.lr_scheduler = create_scheduler(self.config, self.optimizer)
-        self.grad_scaler = self.adapter.create_grad_scaler(self.config)
+        self.scaler = self.adapter.create_grad_scaler(self.config)
         self.criterion = torch.nn.CrossEntropyLoss(label_smoothing=self.config.label_smoothing)
 
+        self.resume()
+
     def _init_model(self, model, args, device):
-        checkpoint_name = config.init_checkpoint
-        if os.path.isfile(checkpoint_name):
-            print('checkpoint_name', checkpoint_name)
-            print('global rank {} is loading pretrained model {}'.format(
-                dist_pytorch.get_rank(), checkpoint_name))
-            # Load the checkpoint.
-            checkpoint = torch.load(checkpoint_name, map_location='cpu')
-            model.load_state_dict(checkpoint['state_dict'])
+        # checkpoint_name = config.init_checkpoint
+        # if os.path.isfile(checkpoint_name):
+        #     print('checkpoint_name', checkpoint_name)
+        #     print('global rank {} is loading pretrained model {}'.format(
+        #         dist_pytorch.get_rank(), checkpoint_name))
+        #     # Load the checkpoint.
+        #     checkpoint = torch.load(checkpoint_name, map_location='cpu')
+        #     model.load_state_dict(checkpoint['state_dict'])
 
         model = model.to(device)
         return model
+    
+    def resume(self):
+        args = self.config
+        if args.resume and os.path.isfile(args.resume):
+            print('global rank {} is loading checkpoint {}'.format(
+                dist_pytorch.get_rank(), args.resume))
+            checkpoint = torch.load(args.resume, map_location="cpu")
+            self.model.load_state_dict(checkpoint["model"])
+            self.optimizer.load_state_dict(checkpoint["optimizer"])
+            self.lr_scheduler.load_state_dict(checkpoint["lr_scheduler"])
+            self.training_state.load_state_dict(checkpoint["training_state"])
+            self.training_state.epoch += 1
+            if self.scaler:
+                self.scaler.load_state_dict(checkpoint["scaler"])
 
     def train_one_epoch(self, dataloader):
         state = self.training_state
@@ -121,6 +137,19 @@ class Trainer:
         state.num_trained_samples = epoch_start_num_sample
 
         self.lr_scheduler.step()
+        if self.config.output_dir:
+            checkpoint = {
+                "model": self.model.state_dict(),
+                "optimizer": self.optimizer.state_dict(),
+                "lr_scheduler": self.lr_scheduler.state_dict(),
+                "training_state": self.training_state.state_dict(),
+                #"epoch": epoch,
+                #"args": args,
+            }
+            if self.scaler:
+                checkpoint["scaler"] = self.scaler.state_dict()
+            utils.save_on_master(checkpoint, os.path.join(self.config.output_dir, f"model_{self.training_state.epoch}.pth"))
+            utils.save_on_master(checkpoint, os.path.join(self.config.output_dir, "checkpoint.pth"))
         driver.event(Event.EPOCH_END, state.epoch)
 
     def train_one_step(self, batch):
@@ -129,7 +158,7 @@ class Trainer:
         state = self.training_state
         self.model.train()
         state.loss, state.acc1, state.acc5 = self.forward(batch)
-        self.adapter.backward(self.config, state.global_steps, state.epoch, state.loss, self.model, self.optimizer, self.grad_scaler)
+        self.adapter.backward(self.config, state.global_steps, state.epoch, state.loss, self.model, self.optimizer, self.scaler)
         if dist.is_available() and dist.is_initialized():
             total = torch.tensor([state.loss, state.acc1, state.acc5],
                                  dtype=torch.float32,
@@ -138,7 +167,7 @@ class Trainer:
             total = total / dist.get_world_size()
             state.loss, state.acc1, state.acc5 = total.tolist()
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
-                          self.optimizer, self.grad_scaler)
+                          self.optimizer, self.scaler)
 
     def detect_training_status(self, state):
         config = self.config
@@ -168,7 +197,7 @@ class Trainer:
         images, target = batch
         output = self.model(images)
         loss = self.criterion(output, target)
-        acc1, acc5 = accuracy(output, target, topk=(1, 5))
+        acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
         return loss, acc1, acc5
 
     def inference(self, batch):
