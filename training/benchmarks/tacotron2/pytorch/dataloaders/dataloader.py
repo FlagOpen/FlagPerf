@@ -24,13 +24,13 @@ def build_train_dataloader(args,
         shuffle = True
 
     train_dataloader = DataLoader(train_dataset,
-                              num_workers=1,
-                              shuffle=shuffle,
-                              sampler=train_sampler,
-                              batch_size=args.train_batch_size,
-                              pin_memory=False,
-                              drop_last=True,
-                              collate_fn=collate_fn)
+                                  num_workers=1,
+                                  shuffle=shuffle,
+                                  sampler=train_sampler,
+                                  batch_size=args.train_batch_size,
+                                  pin_memory=False,
+                                  drop_last=True,
+                                  collate_fn=collate_fn)
     return train_dataloader
 
 
@@ -40,13 +40,8 @@ def build_eval_dataset(args):
 
 
 def build_eval_dataloader(val_dataset, args):
-
-    val_sampler = None
-    if args.distributed:
-        val_sampler = DistributedSampler(val_dataset)
-
-    collate_fn = get_collate_function()    
-
+    val_sampler = DistributedSampler(val_dataset) if args.distributed else None
+    collate_fn = get_collate_function()
     val_dataloader = DataLoader(val_dataset,
                                 num_workers=1,
                                 shuffle=False,

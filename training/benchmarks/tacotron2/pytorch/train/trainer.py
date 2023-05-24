@@ -74,15 +74,18 @@ class Trainer:
 
         for batch in train_dataloader:
             self.train_one_step(batch)
-            self.detect_training_status()
-            if state.end_training:
-                break
 
         torch.cuda.synchronize()
+
+        val_loss, _ = self.evaluator.evaluate(self)
+        state.val_loss = val_loss
+
         epoch_start_num_sample += len(train_dataloader.dataset)
         state.num_trained_samples = epoch_start_num_sample
+        epoch_data = {"val_loss": val_loss, "epoch":state.epoch, "global_steps": state.global_steps}
+        driver.event(Event.EPOCH_END, state.epoch, message=epoch_data)
 
-        driver.event(Event.EPOCH_END, state.epoch)
+        self.detect_training_status()
 
     def train_one_step(self, batch):
         driver = self.driver
@@ -136,7 +139,8 @@ class Trainer:
     def detect_training_status(self):
         config = self.config
         state = self.training_state
-        if state.train_loss <= config.target_train_loss:
+        # for loss: the smaller, the better
+        if state.val_loss <= config.target_val_loss:
             state.converged_success()
 
         if state.epoch > config.max_epochs:

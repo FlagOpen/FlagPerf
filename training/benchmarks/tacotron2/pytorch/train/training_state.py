@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class TrainingState:
     _trainer = None
@@ -7,6 +8,7 @@ class TrainingState:
 
     global_steps = 0
     train_loss: float = 0.0
+    val_loss: float = 0.0
 
     epoch: int = 0
     num_trained_samples = 0

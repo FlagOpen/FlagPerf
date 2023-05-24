@@ -161,6 +161,7 @@ if __name__ == "__main__":
             "global_steps": state.global_steps,
             "num_trained_samples": state.num_trained_samples,
             "train_loss": state.train_loss,
+            "val_loss": state.val_loss,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

@@ -67,8 +67,8 @@ eval_iter_start_samples: int = 1
 # frequency of logging loss. If not positive, no logging is provided for training loss
 log_freq: int = 1
 
-# target train_loss to converge for training
-target_train_loss: float = 0.35
+# target val_loss to converge for training
+target_val_loss: float = 2.7
 """Distributed parameters"""
 distributed: bool = False
 # Whether to read local rank from ENVVAR

@@ -8,5 +8,5 @@ def reduce_tensor(tensor, num_gpus):
     if rt.is_floating_point():
         rt = rt / num_gpus
     else:
-        rt = torch.div(rt, num_gpus, rounding_mode='floor')
+        rt = torch.div(rt, num_gpus)
     return rt
