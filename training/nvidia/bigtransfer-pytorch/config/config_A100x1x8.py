@@ -1,1 +1,1 @@
-vendor: str = "nvidia"
+from config_common import *
