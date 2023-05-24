@@ -115,7 +115,6 @@ class Trainer:
         return state.end_training
 
     def recycle(self, iterable):
-        """Variant of itertools.cycle that does not save iterates."""
         for i in iterable:
             yield i
 

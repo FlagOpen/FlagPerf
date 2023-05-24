@@ -41,7 +41,7 @@ def build_eval_dataset(args):
 
 
 def build_train_dataloader(train_dataset, args):
-    """Traing dataloaders."""
+    """Training dataloaders."""
     dist_pytorch.main_proc_print('building train dataloaders ...')
 
     if torch.distributed.is_available() and torch.distributed.is_initialized():
@@ -67,7 +67,7 @@ def build_train_dataloader(train_dataset, args):
 
 
 def build_eval_dataloader(eval_dataset, args):
-    """Traing and validation dataloaders."""
+    """Validation dataloaders."""
     dist_pytorch.main_proc_print('building eval dataloaders ...')
 
     if torch.distributed.is_available() and torch.distributed.is_initialized():
