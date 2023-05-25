@@ -20,7 +20,7 @@ class TrainingState:
     eval_acc1: float = 0.0
     eval_acc5: float = 0.0
 
-    epoch: int = 1
+    epoch: int = 0
     num_trained_samples = 0
     end_training: bool = False
     converged: bool = False
@@ -78,7 +78,7 @@ class TrainingState:
 
         It contains an entry for every variable in self.__dict__
         """
-        return {key: value for key, value in self.__dict__.items()}
+        return {key: value for key, value in self.__dict__.items() if key != '_trainer'}
 
     def load_state_dict(self, state_dict):
         """Loads the schedulers state.
