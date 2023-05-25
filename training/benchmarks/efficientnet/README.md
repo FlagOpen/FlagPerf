@@ -1,10 +1,10 @@
 ### 模型信息
 - 模型介绍
->MobileNet-v2 is a convolutional neural network that is 53 layers deep. You can load a pretrained version of the network trained on more than a million images from the ImageNet database. The pretrained network can classify images into 1000 object categories, such as keyboard, mouse, pencil, and many animals. 
->Refer to Sandler, M., Howard, A., Zhu, M., Zhmoginov, A. and Chen, L.C. "MobileNetV2: Inverted Residuals and Linear Bottlenecks." In 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition (pp. 4510-4520). IEEE.
+>EfficientNet is a convolutional neural network architecture and scaling method that uniformly scales all dimensions of depth/width/resolution using a compound coefficient. Unlike conventional practice that arbitrary scales these factors, the EfficientNet scaling method uniformly scales network width, depth, and resolution with a set of fixed scaling coefficients. 
+>Refer to EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks
 
 - 模型代码来源
-> https://github.com/pytorch/vision/blob/main/torchvision/models/mobilenetv2.py
+> https://github.com/pytorch/vision/blob/main/torchvision/models/efficientnet.py
 
 ### 数据集
 - 数据集下载地址

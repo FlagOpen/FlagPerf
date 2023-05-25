@@ -1,7 +1,7 @@
 ### 模型Checkpoint下载
-[模型Checkpoint下载](../../benchmarks/mobilenetv2/README.md#模型checkpoint)
+[模型Checkpoint下载](../../benchmarks/efficientnet/README.md#模型checkpoint)
 ### 测试数据集下载
-[测试数据集下载](../../benchmarks/mobilenetv2/README.md#数据集)
+[测试数据集下载](../../benchmarks/efficientnet/README.md#数据集)
 
 ### 昆仑芯XPU配置与运行信息参考
 #### 环境配置
@@ -25,7 +25,7 @@
 | 单机1卡  | config_R300x1x1 |      |       |    |     |             |
 | 单机2卡  | config_R300x1x2 |      |       |    |     |             |
 | 单机4卡  | config_R300x1x4 |      |       |    |     |             |
-| 单机8卡  | config_R300x1x8 |      |  70.634   |  69.549  |   1501500  |           |
+| 单机8卡  | config_R300x1x8 |      |     |    |     |           |
 | 两机8卡  | config_R300x2x8 |      |       |    |     |             |
 
 ### 许可证

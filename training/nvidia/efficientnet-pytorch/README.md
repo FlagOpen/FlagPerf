@@ -1,5 +1,5 @@
 ### 测试数据集下载
-[测试数据集下载](../../benchmarks/mobilenetv2/README.md#数据集)
+[测试数据集下载](../../benchmarks/efficientnet/README.md#数据集)
 
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
@@ -21,7 +21,7 @@
 | 单机1卡  | config_A100x1x1 |      |       |    |     |             |
 | 单机2卡  | config_A100x1x2 |      |       |    |     |             |
 | 单机4卡  | config_A100x1x4 |      |       |    |     |             |
-| 单机8卡  | config_A100x1x8 |   94208.62   |  70.634   |  70.634  |   1501500  |     4081.72        |
+| 单机8卡  | config_A100x1x8 |      |     |    |    |             |
 | 两机8卡  | config_A100x2x8 |      |       |    |     |             |
 
 ### 许可证
