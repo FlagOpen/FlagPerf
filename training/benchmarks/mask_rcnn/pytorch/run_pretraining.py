@@ -54,7 +54,7 @@ def main(start_ts) -> Tuple[Any, Any]:
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
 
-    world_size = dist_pytorch.get_world_size()
+    world_size = dist_pytorch.get_world_size(config.vendor)
     config.distributed = world_size > 1 or False
 
     # 用来保存coco_info的文件
@@ -71,7 +71,7 @@ def main(start_ts) -> Tuple[Any, Any]:
     2. 自定义seed的生成方式：dist_pytorch.setup_seeds得到work_seeds数组，取其中某些元素。参考GLM-Pytorch的run_pretraining.py的seed生成方式
     3. 其他自定义方式
     """
-    init_helper.set_seed(config.seed, model_driver.config.vendor)
+    init_helper.set_seed(config.seed, config.vendor)
 
     # 构建dataset, dataloader 【train && validate】
     train_dataset = build_train_dataset(config)
@@ -121,10 +121,7 @@ def main(start_ts) -> Tuple[Any, Any]:
     init_evaluation_info = dict(time=init_evaluation_end -
                                 init_evaluation_start)
     model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
-
     model_without_ddp = trainer.model
-    if config.distributed:
-        model_without_ddp = trainer.model
 
     # 如果传入resume参数，即上次训练的权重地址，则接着上次的参数训练
     if config.resume:
@@ -199,25 +196,7 @@ def main(start_ts) -> Tuple[Any, Any]:
     raw_train_time_ms = int(raw_train_end_time - raw_train_start_time)
     training_state.raw_train_time = raw_train_time_ms / 1e+3
 
-    # 绘图
-    plot_train_result(config, world_size, train_loss, learning_rate, val_map)
-
     return config, training_state
-
-
-def plot_train_result(config, world_size, train_loss: list,
-                      learning_rate: list, val_map: list):
-    # 绘图
-    if config.local_rank in [-1, 0]:
-        # plot loss and lr curve
-        if len(train_loss) != 0 and len(learning_rate) != 0:
-            from utils.plot_curve import plot_loss_and_lr
-            plot_loss_and_lr(train_loss, learning_rate, world_size)
-
-        # plot mAP curve
-        if len(val_map) != 0:
-            from utils.plot_curve import plot_map
-            plot_map(val_map, world_size)
 
 
 if __name__ == "__main__":
