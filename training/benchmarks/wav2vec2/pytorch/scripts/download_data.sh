@@ -21,4 +21,4 @@ set -e
 : ${SUBSETS:="train-clean-100 train-clean-360 train-other-500 dev-clean dev-other test-clean test-other"}
 # : ${SUBSETS:="dev-clean dev-other test-clean test-other"}
 
-python3 utils/download_librispeech.py $DATASET_DIR --subsets $SUBSETS --skip_download
+python3 common/download_librispeech.py $DATASET_DIR --subsets $SUBSETS --skip_download

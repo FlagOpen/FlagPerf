@@ -19,7 +19,7 @@ no_save=True #[bool], default True, if True , do not save ckpt
 save_frequency=1 
 
 # IO
-output_dir="result/pretrain_base" 
+output_dir="results/pretrain_base" 
 data_dir="/workspace/wav2vec2_Perf/wav2vec2_data/LibriSpeech"
 train_subset="train-full-960"
 valid_subset="dev-other"

@@ -20,11 +20,9 @@
 
 from .add_target_dataset import AddTargetDataset, BaseWrapperDataset
 from .audio.raw_audio_dataset import FileAudioDataset
-from .dictionary import Dictionary
 
 
 __all__ = [
     "AddTargetDataset",
-    "Dictionary",
     "FileAudioDataset",
 ]

@@ -1,10 +1,5 @@
-import wav2vec2.arg_parser
 from common.fairseq.data import AddTargetDataset, FileAudioDataset
-from common.utils import AttrDict, print_once
-from wav2vec2.model import Wav2Vec2Model, Wav2VecEncoder, Wav2VecCtc
 from pathlib import Path
-import copy
-import numpy as np
 
 # Supervised CTC training
 class LabelEncoder(object):

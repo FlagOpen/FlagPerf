@@ -89,15 +89,3 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
         from common.fairseq.dist import ModuleProxyWrapper
         model = ModuleProxyWrapper(model)
     return model
-
-
-def create_grad_scaler():
-    return None
-
-
-def backward(step: int, loss: torch.Tensor, optimizer: Optimizer):
-    loss.backward()
-    update_step = step % config.gradient_accumulation_steps == 0
-    if update_step:
-        optimizer.step()
-        optimizer.zero_grad()

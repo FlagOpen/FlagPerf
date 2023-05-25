@@ -27,7 +27,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from common import fairseq_fake_modules
 from common.fairseq import utils
 from common.fairseq.data.data_utils import compute_mask_indices
 from common.fairseq.modules import (

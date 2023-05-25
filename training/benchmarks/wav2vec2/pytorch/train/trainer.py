@@ -58,9 +58,6 @@ class Trainer:
         self.optimizer = self.adapter.create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
         self.optim = self.optimizer
-        self.grad_scaler = self.adapter.create_grad_scaler()
-
-
 
         Metrics = W2v2Metrics
         self.criterion = Wav2vecCriterion(config)
