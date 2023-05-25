@@ -4,6 +4,7 @@ import datetime
 import os
 import sys
 import time
+import shutil
 from typing import Any, Tuple
 
 # 三方库
@@ -44,7 +45,7 @@ def main(start_ts) -> Tuple[Any, Any]:
 
     # mkdir if necessary
     if config.output_dir:
-        for sub_dir in ["checkpoint", "result", "plot"]:
+        for sub_dir in ["result"]:
             mkdir(os.path.join(config.output_dir, sub_dir))
 
     dist_pytorch.init_dist_training_env(config)
@@ -195,6 +196,10 @@ def main(start_ts) -> Tuple[Any, Any]:
     # 训练时长，单位为秒
     raw_train_time_ms = int(raw_train_end_time - raw_train_start_time)
     training_state.raw_train_time = raw_train_time_ms / 1e+3
+
+
+    if os.path.exists(config.output_dir):
+        shutil.rmtree(config.output_dir)
 
     return config, training_state
 
