@@ -47,19 +47,9 @@ class Trainer:
         self.lr_scheduler = create_scheduler(self.config, self.optimizer)
         self.scaler = self.adapter.create_grad_scaler(self.config)
         self.criterion = torch.nn.CrossEntropyLoss(label_smoothing=self.config.label_smoothing)
-
         self.resume()
 
     def _init_model(self, model, args, device):
-        # checkpoint_name = config.init_checkpoint
-        # if os.path.isfile(checkpoint_name):
-        #     print('checkpoint_name', checkpoint_name)
-        #     print('global rank {} is loading pretrained model {}'.format(
-        #         dist_pytorch.get_rank(), checkpoint_name))
-        #     # Load the checkpoint.
-        #     checkpoint = torch.load(checkpoint_name, map_location='cpu')
-        #     model.load_state_dict(checkpoint['state_dict'])
-
         model = model.to(device)
         return model
     
@@ -143,8 +133,6 @@ class Trainer:
                 "optimizer": self.optimizer.state_dict(),
                 "lr_scheduler": self.lr_scheduler.state_dict(),
                 "training_state": self.training_state.state_dict(),
-                #"epoch": epoch,
-                #"args": args,
             }
             if self.scaler:
                 checkpoint["scaler"] = self.scaler.state_dict()

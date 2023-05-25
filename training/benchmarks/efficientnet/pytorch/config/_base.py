@@ -128,11 +128,11 @@ target_acc1: float = 84.228
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
 
-# If set to -1, disable eval, else evaluate every eval_iter_samples during training TODO
-eval_interval_samples: int = 5005 * 256 * 1  # 1 epoch
+# If set to -1, disable eval, else evaluate every eval_iter_samples during training
+eval_interval_samples: int = 1281167  # 1 epoch
 
-# Total number of training samples to run. TODO
-max_samples_termination: float = 5005 * 256 * 600  # 600 epoch
+# Total number of training samples to run.
+max_samples_termination: float = 1281167 * 600  # 600 epoch
 
 # local_rank for distributed training on gpus
 local_rank: int = 0
