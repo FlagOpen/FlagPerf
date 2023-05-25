@@ -333,8 +333,13 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
         start_cmd += " --visible_dev_env " \
                      + tc.ACCE_VISIBLE_DEVICE_ENV_NAME
     start_cmd += " \""
-    start_task_cmd = "source " + env_file + "; " \
+    if (os.path.isfile(env_file)):
+        start_task_cmd = "source " + env_file + " && " \
                 + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
+                + framework + "/start_" + framework + "_task.py " \
+                + base_args + " --round " + str(count)
+    else:
+        start_task_cmd = "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
                 + framework + "/start_" + framework + "_task.py " \
                 + base_args + " --round " + str(count)
     if tc.ACCE_VISIBLE_DEVICE_ENV_NAME is not None:
