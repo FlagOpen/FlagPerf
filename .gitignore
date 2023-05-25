@@ -5,3 +5,11 @@
 __pycache__/
 .pytest_cache
 training/result/*
+results/*
+results0510/*
+wwl_log/*
+result/*
+requirements.txt
+run.py
+*.log
+*.txt
