@@ -175,7 +175,6 @@ def main(start_ts) -> Tuple[Any, Any]:
         if config.distributed:
             train_sampler.set_epoch(epoch)
 
-        training_state.epoch = epoch
         trainer.train_one_epoch(train_dataloader,
                                 eval_dataloader,
                                 epoch,
