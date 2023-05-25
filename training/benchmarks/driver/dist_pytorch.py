@@ -182,7 +182,6 @@ def init_dist_training_env(config):
                 "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
             rank = int(os.environ["RANK"])
             world_size = int(os.environ["WORLD_SIZE"])
-            host_addr_full="tcp://127.0.0.1:29500"
             torch.distributed.init_process_group(backend=config.dist_backend,
                                                  init_method=host_addr_full,
                                                  rank=rank,
