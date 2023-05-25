@@ -7,7 +7,7 @@ This repository provides an optimized implementation of the wav2vec 2.0 model, a
 https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/SpeechRecognition/wav2vec2/
 
 
-### 数据集下载地址
+### 数据集下载地址(global proxy)
 http://www.openslr.org/resources/12
 
 

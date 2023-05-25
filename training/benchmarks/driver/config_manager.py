@@ -127,8 +127,8 @@ def activate(base_config,
     for mutable_param in mutable_params:
         mutable_params_dict[mutable_param] = getattr(base_config, mutable_param)
 
-    if path is None and not config_file:
-        raise "Config file's location was not specified."
+    if not path or not config_file:
+        raise "path or config file's location was not specified."
 
     ext_config = os.path.join(os.path.abspath(path), config_file)
     parsed_params = merge_args_to_extern_config(mutable_params_dict, args)

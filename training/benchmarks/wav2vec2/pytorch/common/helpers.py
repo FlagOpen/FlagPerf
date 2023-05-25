@@ -22,7 +22,6 @@ import numpy as np
 import torch
 import torch.distributed as dist
 
-from .metrics import word_error_rate
 from common.utils import print_once
 
 
@@ -103,25 +102,6 @@ def ctc_decoder_predictions_tensor(tensor, labels, blank_id=None):
     return hypotheses
 
 
-def greedy_wer(preds, tgt, tgt_lens, labels):
-    """
-    Takes output of greedy ctc decoder and performs ctc decoding algorithm to
-    remove duplicates and special symbol. Prints wer and prediction examples
-    to screen.
-    Args:
-        tensors: A list of 3 tensors (predictions, targets, target_lengths)
-        labels: A list of labels
-
-    Returns:
-        word error rate
-    """
-    with torch.no_grad():
-        references = gather_transcripts([tgt], [tgt_lens], labels)
-        hypotheses = ctc_decoder_predictions_tensor(preds, labels)
-
-    wer, _, _ = word_error_rate(hypotheses, references)
-    return wer, hypotheses[0], references[0]
-
 
 def gather_losses(losses_list):
     return [torch.mean(torch.stack(losses_list))]
@@ -169,57 +149,6 @@ def process_evaluation_batch(tensors, global_vars, labels):
 
     global_vars['txts'] += gather_transcripts(
         transcript_list, transcript_len_list, labels)
-
-
-def process_evaluation_epoch(aggregates):
-    """
-    Processes results from each worker and combine to final result.
-    Args:
-        aggregates: dictionary containing information of entire evaluation
-    Return:
-        wer: final word error rate
-        loss: final loss
-    """
-    if 'losses' in aggregates:
-        eloss = torch.mean(torch.stack(aggregates['losses'])).item()
-    else:
-        eloss = None
-    hypotheses = aggregates['preds']
-    references = aggregates['txts']
-    ids = aggregates['ids']
-
-    wer, scores, num_words = word_error_rate(hypotheses, references)
-    multi_gpu = dist.is_initialized()
-    if multi_gpu:
-        if eloss is not None:
-            eloss /= dist.get_world_size()
-            eloss_tensor = torch.tensor(eloss).cuda()
-            dist.all_reduce(eloss_tensor)
-            eloss = eloss_tensor.item()
-
-        scores_tensor = torch.tensor(scores).cuda().unsqueeze(-1)
-        num_words_tensor = torch.tensor(num_words).cuda().unsqueeze(-1)
-        ids_tensor = torch.tensor(ids).cuda().unsqueeze(-1)
-
-        result_tensor = torch.cat(
-            [scores_tensor, num_words_tensor, ids_tensor], dim=-1)
-        result_tensor_list = [torch.zeros_like(result_tensor)
-                              for i in range(dist.get_world_size())]
-        dist.all_gather(result_tensor_list, result_tensor)
-        if dist.get_rank() == 0:
-            agg_results = torch.cat(result_tensor_list, dim=0)
-            agg_ids = set()
-            agg_score, agg_num_words = 0, 0
-            for x in agg_results.cpu().numpy():
-                score, num_words, sample_id = x
-                if sample_id in agg_ids:
-                    continue
-                else:
-                    agg_ids.add(sample_id)
-                    agg_score += score
-                    agg_num_words += num_words
-            wer = 1.0 * agg_score / agg_num_words
-    return wer, eloss
 
 
 def num_weights(module):

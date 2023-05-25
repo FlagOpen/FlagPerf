@@ -100,53 +100,6 @@ class DistributedSampler(Sampler):
         return self.num_samples // self.world_size
 
 
-class BucketingSampler(DistributedSampler):
-    def __init__(self, dataset, batch_size, num_buckets, world_size, rank):
-        """
-        Bucketing sampler with approx. equally-sized buckets.
-        :param dataset: dataset
-        :param batch_size: local batch size
-        :param seeds: list of seeds, one seed for each training epoch
-        :param num_buckets: number of buckets
-        :param world_size: number of distributed workers
-        :param rank: rank of the current process
-        """
-        super().__init__(dataset, batch_size, world_size, rank)
-
-        self.num_buckets = num_buckets
-        len_ids = np.argsort([sample['duration']
-                              for sample in dataset.samples])
-        self.buckets = [torch.from_numpy(t)
-                        for t in np.array_split(len_ids, num_buckets)]
-
-    def __iter__(self):
-        g = torch.Generator()
-        g.manual_seed(self.epoch)
-        global_bsz = self.global_batch_size
-
-        indices = []
-        for bid in range(self.num_buckets):
-            # random shuffle within current bucket
-            perm = torch.randperm(len(self.buckets[bid]), generator=g)
-            bucket_indices = self.buckets[bid][perm]
-
-            # add samples from current bucket to indices for current epoch
-            indices.append(bucket_indices)
-
-        indices = torch.cat(indices)
-
-        # make indices evenly divisible by global batch size
-        length = len(indices) // global_bsz * global_bsz
-        indices = indices[:length]
-
-        assert len(indices) % self.global_batch_size == 0
-
-        # perform global reshuffle of all global batches
-        indices = self.reshuffle_batches(indices, g)
-        # distribute batches to individual workers
-        indices = self.distribute_batches(indices)
-        return iter(indices)
-
 
 class DistributedIndicesSampler(TorchDistributedSampler):
     """ DistributedSampler operating on indices.

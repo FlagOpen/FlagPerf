@@ -61,16 +61,3 @@ def all_reduce_cpu_scalars(data, device=torch.device('cuda')):
     data_vals = tensor_vals.cpu().numpy()
 
     return dict(zip(data_keys, data_vals))
-
-
-def setup_distributed(local_rank):
-    multi_gpu = int(os.environ.get('WORLD_SIZE', 1)) > 1
-    if multi_gpu:
-        torch.cuda.set_device(local_rank)
-        dist.init_process_group(backend='nccl', init_method='env://')
-        world_size = dist.get_world_size()
-        print_once(f'Distributed training with {world_size} GPUs\n')
-    else:
-        world_size = 1
-
-    return world_size

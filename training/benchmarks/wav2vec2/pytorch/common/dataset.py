@@ -119,7 +119,6 @@ def get_batch_iterator(
     # get indices ordered by example size
     with data_utils.numpy_seed(seed):
         indices = dataset.ordered_indices()
-    print("indices",indices)
     # filter examples that are too large
     if max_positions is not None:
         indices = filter_indices_by_size(
