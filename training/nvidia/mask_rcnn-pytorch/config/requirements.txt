@@ -1,6 +1,0 @@
-torchvision
-pycocotools
-matplotlib
-numpy
-tqdm
-Pillow
