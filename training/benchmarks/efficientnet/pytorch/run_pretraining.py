@@ -57,8 +57,7 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.barrier(config.vendor)
 
     init_evaluation_start = time.time()
-    #training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(trainer)
-    training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = 0.0, 0.0, 0.0
+    training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(trainer)
     init_evaluation_end = time.time()
     init_evaluation_info = dict(eval_acc1=training_state.eval_acc1,
                                 eval_acc5=training_state.eval_acc5,

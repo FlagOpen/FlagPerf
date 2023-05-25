@@ -172,7 +172,7 @@ class ExponentialMovingAverage(torch.optim.swa_utils.AveragedModel):
 
 def accuracy(output, target, topk=(1,)):
     """Computes the accuracy over the k top predictions for the specified values of k"""
-    with torch.inference_mode():
+    with torch.no_grad():
         maxk = max(topk)
         batch_size = target.size(0)
         if target.ndim == 2:
@@ -187,7 +187,6 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].flatten().sum(dtype=torch.float32)
             res.append(correct_k * (100.0 / batch_size))
         return res
-
 
 def mkdir(path):
     try:

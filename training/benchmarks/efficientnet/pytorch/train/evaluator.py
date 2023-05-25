@@ -21,8 +21,7 @@ class Evaluator:
     def evaluate(self, trainer):
         self.total_loss, self.total_acc1, self.total_acc5 = 0.0, 0.0, 0.0
         self.total_size = 0
-        with torch.inference_mode():
-        #with torch.no_grad():
+        with torch.no_grad():
             for i, batch in enumerate(self.dataloader):
                 batch = trainer.process_batch(batch, self.args.device)
                 loss, acc1, acc5 = trainer.inference(batch)
