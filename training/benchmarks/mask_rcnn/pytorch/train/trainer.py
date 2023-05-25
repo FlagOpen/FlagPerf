@@ -1,9 +1,5 @@
-import math
-import time
-import torch
 from torch.types import Device
 import os
-import sys
 
 from model import create_model
 
@@ -13,9 +9,7 @@ from optimizers import create_optimizer
 import utils.train.train_eval_utils as utils
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
-
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
 
 
@@ -37,7 +31,6 @@ class Trainer:
 
     def init(self):
         config = self.config
-
         pretrain_path = os.path.join(config.data_dir, config.pretrained_path)
         dist_pytorch.main_proc_print( f"backbone pretrain_path:{pretrain_path}" )
 
@@ -104,7 +97,6 @@ class Trainer:
             train_loss.append(mean_loss.item())
             learning_rate.append(lr)
             val_map.append(state.eval_map_bbox)
-
             # 写det结果
             with open(det_results_file, "a") as f:
                 # 写入的数据包括coco指标，还有loss和learning rate
@@ -122,28 +114,6 @@ class Trainer:
                 ] + [f"{lr:.6f}"]
                 txt = "epoch:{} {}".format(epoch, '  '.join(result_info))
                 f.write(txt + "\n")
-
-        if config.output_dir:
-            # 只在主进程上执行保存权重操作
-            model_without_ddp = model
-            if config.distributed:
-                model = torch.nn.parallel.DistributedDataParallel(
-                    model, device_ids=[config.gpu])
-                model_without_ddp = model.module
-
-            train_state = {
-                'model': model_without_ddp.state_dict(),
-                'optimizer': self.optimizer.state_dict(),
-                'lr_scheduler': self.lr_scheduler.state_dict(),
-                'epoch': epoch,
-                'train_start_ts': state.train_start_timestamp,
-            }
-            if config.amp:
-                train_state["scaler"] = self.grad_scaler.state_dict()
-
-            checkpoint_path = os.path.join(config.output_dir, "checkpoint",
-                                           f'model_{epoch}.pth')
-            save_on_master(train_state, checkpoint_path)
 
         driver.event(Event.EPOCH_END, state.epoch)
         # check training state
