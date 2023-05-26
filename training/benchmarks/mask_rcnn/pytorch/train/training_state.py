@@ -16,7 +16,7 @@ class TrainingState:
     eval_map_bbox :float = 0.0
     eval_map_segm :float = 0.0
 
-    epoch: int = 1
+    epoch: int = 0
     num_trained_samples = 0
     end_training: bool = False
     converged: bool = False

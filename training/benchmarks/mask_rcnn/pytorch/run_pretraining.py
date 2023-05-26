@@ -43,10 +43,10 @@ def main(start_ts) -> Tuple[Any, Any]:
 
     config = model_driver.config
 
-    # mkdir if necessary
     if config.output_dir:
         for sub_dir in ["result"]:
-            mkdir(os.path.join(config.output_dir, sub_dir))
+            dir_path = os.path.join(config.output_dir, sub_dir)
+            mkdir(dir_path)
 
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
@@ -122,33 +122,6 @@ def main(start_ts) -> Tuple[Any, Any]:
     init_evaluation_info = dict(time=init_evaluation_end -
                                 init_evaluation_start)
     model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
-    model_without_ddp = trainer.model
-
-    # 如果传入resume参数，即上次训练的权重地址，则接着上次的参数训练
-    if config.resume:
-        # If map_location is missing, torch.load will first load the module to CPU
-        # and then copy each parameter to where it was saved,
-        # which would result in all processes on the same machine using the same set of devices.
-
-        # 读取之前保存的权重文件(包括优化器以及学习率策略)
-        checkpoint = torch.load(config.resume, map_location='cpu')
-        model_without_ddp.load_state_dict(checkpoint['model'])
-        trainer.optimizer.load_state_dict(checkpoint['optimizer'])
-        trainer.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
-        config.start_epoch = checkpoint['epoch'] + 1
-
-        if "train_start_ts" in checkpoint:
-            training_state.train_start_timestamp = checkpoint["train_start_ts"]
-            dist_pytorch.main_proc_print(
-                f"resume from checkpoint, read train_start_timestamp: {training_state.train_start_timestamp}"
-            )
-
-        if config.amp and "scaler" in checkpoint:
-            trainer.grad_scaler.load_state_dict(checkpoint["scaler"])
-        dist_pytorch.main_proc_print(
-            f"resume training from checkpoint. checkpoint: {config.resume}, start_epoch:{config.start_epoch}"
-        )
-
     # do evaluation
     if not config.do_train:
         return config, training_state
@@ -170,14 +143,14 @@ def main(start_ts) -> Tuple[Any, Any]:
     val_map = []
 
     # 训练过程
-    epoch = config.start_epoch
+    epoch_index = config.start_epoch
     while not training_state.end_training:
         if config.distributed:
-            train_sampler.set_epoch(epoch)
+            train_sampler.set_epoch(epoch_index)
 
         trainer.train_one_epoch(train_dataloader,
                                 eval_dataloader,
-                                epoch,
+                                epoch_index,
                                 train_loss,
                                 learning_rate,
                                 val_map,
@@ -186,7 +159,7 @@ def main(start_ts) -> Tuple[Any, Any]:
                                 print_freq=config.print_freq,
                                 scaler=trainer.grad_scaler)
 
-        epoch += 1
+        epoch_index += 1
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
@@ -195,10 +168,6 @@ def main(start_ts) -> Tuple[Any, Any]:
     # 训练时长，单位为秒
     raw_train_time_ms = int(raw_train_end_time - raw_train_start_time)
     training_state.raw_train_time = raw_train_time_ms / 1e+3
-
-
-    if os.path.exists(config.output_dir):
-        shutil.rmtree(config.output_dir)
 
     return config, training_state
 
@@ -230,3 +199,6 @@ if __name__ == "__main__":
     else:
         finished_info = {"e2e_time": e2e_time}
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
+
+    if updated_config.local_rank == 0 and os.path.exists(updated_config.output_dir):
+        shutil.rmtree(updated_config.output_dir)
