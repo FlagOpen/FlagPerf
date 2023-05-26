@@ -1,6 +1,5 @@
 vendor = "nvidia"
 dist_backend = "nccl"
-fp16 = False
 
 lr = 0.5
 lr_scheduler = "cosineannealinglr"

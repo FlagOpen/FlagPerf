@@ -13,6 +13,7 @@ import torchvision
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import dist_pytorch
+from train import utils
 
 
 def build_train_dataset(args):
@@ -55,10 +56,10 @@ def build_eval_dataset(args):
 
 
 def build_train_dataloader(train_dataset, args):
-    """Traing dataloaders."""
+    """Training dataloaders."""
     dist_pytorch.main_proc_print('building train dataloaders ...')
 
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
+    if utils.is_dist_avail_and_initialized():
         if hasattr(args, "ra_sampler") and args.ra_sampler:
             train_sampler = RASampler(train_dataset, shuffle=True, repetitions=args.ra_reps)
         else:
@@ -97,10 +98,10 @@ def build_train_dataloader(train_dataset, args):
 
 
 def build_eval_dataloader(eval_dataset, args):
-    """Traing and validation dataloaders."""
+    """Training and validation dataloaders."""
     dist_pytorch.main_proc_print('building eval dataloaders ...')
 
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
+    if utils.is_dist_avail_and_initialized():
         val_sampler = torch.utils.data.distributed.DistributedSampler(
             eval_dataset, shuffle=False, drop_last=True)
         dist_pytorch.main_proc_print(

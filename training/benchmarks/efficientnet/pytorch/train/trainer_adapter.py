@@ -9,7 +9,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from train import utils
 
 def convert_model(args, model: nn.Module) -> nn.Module:
-    if dist.is_available() and dist.is_initialized() and args.sync_bn:
+    if utils.is_dist_avail_and_initialized() and args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
     return model
 

@@ -1,6 +1,6 @@
 import torch
 import torch.distributed as dist
-
+from train import utils
 
 class Evaluator:
 
@@ -27,7 +27,7 @@ class Evaluator:
                 loss, acc1, acc5 = trainer.inference(batch)
                 self.__update(loss.item(), acc1.item(), acc5.item(), batch[0].shape[0])
 
-        if dist.is_available() and dist.is_initialized():
+        if utils.is_dist_avail_and_initialized():
             total = torch.tensor([
                 self.total_loss, self.total_acc1, self.total_acc5,
                 self.total_size
