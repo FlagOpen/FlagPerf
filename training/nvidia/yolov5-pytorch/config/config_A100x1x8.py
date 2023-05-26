@@ -1,11 +1,11 @@
 
 vendor="nvidia"
 
-data_dir = "/home/yanrui/coco128"
+data_dir = "/path/to/dataset/coco"
 
-epochs= 10
+epochs= 300
 batch_size= 64 * 8
 cfg="yolov5s.yaml"
-data="coco128.yaml"
+data="coco.yaml"
 hyp="hyps/hyp.scratch-low.yaml"
 

@@ -10,6 +10,7 @@ from typing import Any, Tuple
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
                                              "../../")))  # benchmarks目录
+sys.path.append(os.path.abspath(CURR_PATH))  # 当前目录
 
 # 本地库
 import config
@@ -93,8 +94,7 @@ if __name__ == "__main__":
             "final_P": state.P,
             "final_R": state.R,
             "final_mAP50": state.mAP50,
-            "final_mAP": state.mAP,
-            "final_fitness": state.best_fitness,   
+            "final_mAP": state.mAP, 
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }
