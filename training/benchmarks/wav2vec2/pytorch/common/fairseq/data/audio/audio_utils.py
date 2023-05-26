@@ -23,21 +23,18 @@ from typing import BinaryIO, Optional, Tuple, Union, List
 import numpy as np
 import torch
 
-
 SF_AUDIO_FILE_EXTENSIONS = {".wav", ".flac", ".ogg"}
 FEATURE_OR_SF_AUDIO_FILE_EXTENSIONS = {".npy", ".wav", ".flac", ".ogg"}
 
 
-def _convert_to_mono(
-        waveform: torch.FloatTensor, sample_rate: int
-) -> torch.FloatTensor:
+def _convert_to_mono(waveform: torch.FloatTensor,
+                     sample_rate: int) -> torch.FloatTensor:
     if waveform.shape[0] > 1:
         try:
             import torchaudio.sox_effects as ta_sox
         except ImportError:
             raise ImportError(
-                "Please install torchaudio to convert multi-channel audios"
-            )
+                "Please install torchaudio to convert multi-channel audios")
         effects = [['channels', '1']]
         return ta_sox.apply_effects_tensor(waveform, sample_rate, effects)[0]
     return waveform
@@ -50,10 +47,12 @@ def convert_to_mono(waveform: np.ndarray, sample_rate: int) -> np.ndarray:
     return waveform
 
 
-def get_waveform(
-        path_or_fp: Union[str, BinaryIO], normalization=True, mono=True,
-        frames=-1, start=0, always_2d=True
-) -> Tuple[np.ndarray, int]:
+def get_waveform(path_or_fp: Union[str, BinaryIO],
+                 normalization=True,
+                 mono=True,
+                 frames=-1,
+                 start=0,
+                 always_2d=True) -> Tuple[np.ndarray, int]:
     """Get the waveform and sample rate of a 16-bit WAV/FLAC/OGG Vorbis audio.
 
     Args:
@@ -76,25 +75,26 @@ def get_waveform(
         import soundfile as sf
     except ImportError:
         raise ImportError(
-            "Please install soundfile to load WAV/FLAC/OGG Vorbis audios"
-        )
+            "Please install soundfile to load WAV/FLAC/OGG Vorbis audios")
 
-    waveform, sample_rate = sf.read(
-        path_or_fp, dtype="float32", always_2d=True, frames=frames, start=start
-    )
+    waveform, sample_rate = sf.read(path_or_fp,
+                                    dtype="float32",
+                                    always_2d=True,
+                                    frames=frames,
+                                    start=start)
     waveform = waveform.T  # T x C -> C x T
     if mono and waveform.shape[0] > 1:
         waveform = convert_to_mono(waveform, sample_rate)
     if not normalization:
-        waveform *= 2 ** 15  # denormalized to 16-bit signed integers
+        waveform *= 2**15  # denormalized to 16-bit signed integers
     if not always_2d:
         waveform = waveform.squeeze(axis=0)
     return waveform, sample_rate
 
 
-def _get_kaldi_fbank(
-        waveform: np.ndarray, sample_rate: int, n_bins=80
-) -> Optional[np.ndarray]:
+def _get_kaldi_fbank(waveform: np.ndarray,
+                     sample_rate: int,
+                     n_bins=80) -> Optional[np.ndarray]:
     """Get mel-filter bank features via PyKaldi."""
     try:
         from kaldi.feat.mel import MelBanksOptions
@@ -116,16 +116,16 @@ def _get_kaldi_fbank(
         return None
 
 
-def _get_torchaudio_fbank(
-        waveform: np.ndarray, sample_rate, n_bins=80
-) -> Optional[np.ndarray]:
+def _get_torchaudio_fbank(waveform: np.ndarray,
+                          sample_rate,
+                          n_bins=80) -> Optional[np.ndarray]:
     """Get mel-filter bank features via TorchAudio."""
     try:
         import torchaudio.compliance.kaldi as ta_kaldi
         waveform = torch.from_numpy(waveform)
-        features = ta_kaldi.fbank(
-            waveform, num_mel_bins=n_bins, sample_frequency=sample_rate
-        )
+        features = ta_kaldi.fbank(waveform,
+                                  num_mel_bins=n_bins,
+                                  sample_frequency=sample_rate)
         return features.numpy()
     except ImportError:
         return None

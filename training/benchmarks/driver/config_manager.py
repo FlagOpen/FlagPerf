@@ -90,10 +90,9 @@ def _merge_dict_to_config(src: dict, target: dict, ignore_none=True):
         target[arg] = value
 
 
-def merge_args_to_extern_config(mutable_params: dict, args,
-                                ):
+def merge_args_to_extern_config(mutable_params, args):
     # TODO: A better config method, yaml or .ini?
-    path =  os.path.join(args.extern_config_dir,args.extern_config_file)
+    path =  os.path.join(args.extern_config_dir, args.extern_config_file)
     config_mod = import_config(path)
     for name, value in get_properties_from_config(config_mod).items():
         if name not in mutable_params:
@@ -102,10 +101,9 @@ def merge_args_to_extern_config(mutable_params: dict, args,
             print(f"SET [Unknown or immutable] CONFIG {name} = {value}")
         else:
             print(f"SET CONFIG {name} = {value}")
-        if vars(args).__dict__.get(name) is None:
-            setattr(vars(args), name, value)
+        if args.__dict__.get(name) is None:
+            setattr(args, name, value)
     return vars(args)
-
 
 def activate(base_config,
              mutable_params,

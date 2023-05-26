@@ -22,15 +22,24 @@ import tarfile
 
 from tqdm import tqdm
 
-
 urls = {
-    "dev-clean": ("http://www.openslr.org/resources/12/dev-clean.tar.gz", "42e2234ba48799c1f50f24a7926300a1"),
-    "dev-other": ("http://www.openslr.org/resources/12/dev-other.tar.gz", "c8d0bcc9cca99d4f8b62fcc847357931"),
-    "test-clean": ("http://www.openslr.org/resources/12/test-clean.tar.gz", "32fa31d27d2e1cad72775fee3f4849a9"),
-    "test-other": ("http://www.openslr.org/resources/12/test-other.tar.gz", "fb5a50374b501bb3bac4815ee91d3135"),
-    "train-clean-100": ("http://www.openslr.org/resources/12/train-clean-100.tar.gz", "2a93770f6d5c6c964bc36631d331a522"),
-    "train-clean-360": ("http://www.openslr.org/resources/12/train-clean-360.tar.gz", "c0e676e450a7ff2f54aeade5171606fa"),
-    "train-other-500": ("http://www.openslr.org/resources/12/train-other-500.tar.gz", "d1a0fd59409feb2c614ce4d30c387708"),
+    "dev-clean": ("http://www.openslr.org/resources/12/dev-clean.tar.gz",
+                  "42e2234ba48799c1f50f24a7926300a1"),
+    "dev-other": ("http://www.openslr.org/resources/12/dev-other.tar.gz",
+                  "c8d0bcc9cca99d4f8b62fcc847357931"),
+    "test-clean": ("http://www.openslr.org/resources/12/test-clean.tar.gz",
+                   "32fa31d27d2e1cad72775fee3f4849a9"),
+    "test-other": ("http://www.openslr.org/resources/12/test-other.tar.gz",
+                   "fb5a50374b501bb3bac4815ee91d3135"),
+    "train-clean-100":
+    ("http://www.openslr.org/resources/12/train-clean-100.tar.gz",
+     "2a93770f6d5c6c964bc36631d331a522"),
+    "train-clean-360":
+    ("http://www.openslr.org/resources/12/train-clean-360.tar.gz",
+     "c0e676e450a7ff2f54aeade5171606fa"),
+    "train-other-500":
+    ("http://www.openslr.org/resources/12/train-other-500.tar.gz",
+     "d1a0fd59409feb2c614ce4d30c387708"),
 }
 
 
@@ -55,8 +64,11 @@ def download_file(url, dest_folder, fname, overwrite=False):
 
     with open(tmp_fpath, 'wb') as fp:
         content_iterator = r.iter_content(chunk_size=chunk_size)
-        chunks = tqdm(content_iterator, total=total_chunks,
-                      unit='MB', desc=fpath, leave=True)
+        chunks = tqdm(content_iterator,
+                      total=total_chunks,
+                      unit='MB',
+                      desc=fpath,
+                      leave=True)
         for chunk in chunks:
             fp.write(chunk)
 
@@ -66,7 +78,7 @@ def download_file(url, dest_folder, fname, overwrite=False):
 def md5_checksum(fpath, target_hash):
     file_hash = hashlib.md5()
     with open(fpath, "rb") as fp:
-        for chunk in iter(lambda: fp.read(1024*1024), b""):
+        for chunk in iter(lambda: fp.read(1024 * 1024), b""):
             file_hash.update(chunk)
     return file_hash.hexdigest() == target_hash
 
@@ -89,18 +101,29 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description='Download, verify and extract dataset files')
-    parser.add_argument('dest', type=str,
-                        help='Download destnation folder.')
-    parser.add_argument('-e', type=str, default=None,
-                        help='Extraction destnation folder. Defaults to download folder if not provided')
-    parser.add_argument('--skip_download', action='store_true',
+    parser.add_argument('dest', type=str, help='Download destnation folder.')
+    parser.add_argument(
+        '-e',
+        type=str,
+        default=None,
+        help=
+        'Extraction destnation folder. Defaults to download folder if not provided'
+    )
+    parser.add_argument('--skip_download',
+                        action='store_true',
                         help='Skip downloading the files')
-    parser.add_argument('--skip_checksum', action='store_true',
+    parser.add_argument('--skip_checksum',
+                        action='store_true',
                         help='Skip checksum')
-    parser.add_argument('--skip_extract', action='store_true',
+    parser.add_argument('--skip_extract',
+                        action='store_true',
                         help='Skip extracting files')
-    parser.add_argument('--subsets', type=str, nargs="+", choices=list(urls.keys()),
-                        default=list(urls.keys()), help='Subsets to download')
+    parser.add_argument('--subsets',
+                        type=str,
+                        nargs="+",
+                        choices=list(urls.keys()),
+                        default=list(urls.keys()),
+                        help='Subsets to download')
     args = parser.parse_args()
     args.e = args.e or args.dest
 

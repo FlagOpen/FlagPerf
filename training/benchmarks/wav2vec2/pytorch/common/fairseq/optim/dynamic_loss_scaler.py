@@ -17,7 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 class DynamicLossScaler(object):
+
     def __init__(
         self,
         init_scale=2.0**15,
@@ -61,7 +63,8 @@ class DynamicLossScaler(object):
 
             self._last_overflow_iter = self._iter
             self._overflows_since_rescale += 1
-            pct_overflow = self._overflows_since_rescale / float(iter_since_rescale)
+            pct_overflow = self._overflows_since_rescale / float(
+                iter_since_rescale)
             if pct_overflow >= self.tolerance:
                 self._decrease_loss_scale()
                 self._last_rescale_iter = self._iter
@@ -71,13 +74,11 @@ class DynamicLossScaler(object):
                 # Use FloatingPointError as an uncommon error that parent
                 # functions can safely catch to stop training.
                 self.loss_scale = prev_scale
-                raise FloatingPointError(
-                    (
-                        "Minimum loss scale reached ({}). Your loss is probably exploding. "
-                        "Try lowering the learning rate, using gradient clipping or "
-                        "increasing the batch size."
-                    ).format(self.min_loss_scale)
-                )
+                raise FloatingPointError((
+                    "Minimum loss scale reached ({}). Your loss is probably exploding. "
+                    "Try lowering the learning rate, using gradient clipping or "
+                    "increasing the batch size.").format(self.min_loss_scale))
 
             self._iter += 1
-            raise OverflowError("setting loss scale to: " + str(self.loss_scale))
+            raise OverflowError("setting loss scale to: " +
+                                str(self.loss_scale))

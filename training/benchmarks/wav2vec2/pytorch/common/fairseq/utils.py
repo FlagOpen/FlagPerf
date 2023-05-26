@@ -24,14 +24,12 @@ from typing import Callable, List
 import torch
 import torch.nn.functional as F
 
-
 MANIFOLD_PATH_SEP = "|"
 
 
 def split_paths(paths: str, separator=os.pathsep) -> List[str]:
-    return (
-        paths.split(separator) if "://" not in paths else paths.split(MANIFOLD_PATH_SEP)
-    )
+    return (paths.split(separator)
+            if "://" not in paths else paths.split(MANIFOLD_PATH_SEP))
 
 
 def get_activation_fn(activation: str) -> Callable:
@@ -44,8 +42,7 @@ def get_activation_fn(activation: str) -> Callable:
         return gelu
     elif activation == "gelu_fast":
         warnings.warn(
-            "--activation-fn=gelu_fast has been renamed to gelu_accurate"
-        )
+            "--activation-fn=gelu_fast has been renamed to gelu_accurate")
         return gelu_accurate
     elif activation == "gelu_accurate":
         return gelu_accurate
@@ -54,7 +51,8 @@ def get_activation_fn(activation: str) -> Callable:
     elif activation == "linear":
         return lambda x: x
     else:
-        raise RuntimeError("--activation-fn {} not supported".format(activation))
+        raise RuntimeError(
+            "--activation-fn {} not supported".format(activation))
 
 
 def index_put(tensor, indices, value):

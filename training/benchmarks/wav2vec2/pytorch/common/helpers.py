@@ -31,7 +31,8 @@ def to_gpu(batch, fp16=False, bf16=False):
         if fp16 and v.dtype is torch.float:
             batch['net_input'][k] = v.cuda(non_blocking=True).half()
         elif bf16 and v.dtype is torch.float:
-            batch['net_input'][k] = v.cuda(non_blocking=True).to(dtype=torch.bfloat16)
+            batch['net_input'][k] = v.cuda(non_blocking=True).to(
+                dtype=torch.bfloat16)
         else:
             batch['net_input'][k] = v.cuda(non_blocking=True)
 
@@ -40,8 +41,8 @@ def apply_multi_tensor_ema(decay, model_weights, ema_model_weights,
                            overflow_buf):
     amp_C.multi_tensor_axpby(
         65536, overflow_buf,
-        [ema_model_weights, model_weights, ema_model_weights],
-        decay, 1-decay, -1)
+        [ema_model_weights, model_weights, ema_model_weights], decay,
+        1 - decay, -1)
 
 
 def ctc_decoder_predictions_tensor(tensor, labels, blank_id=None):
@@ -74,7 +75,6 @@ def ctc_decoder_predictions_tensor(tensor, labels, blank_id=None):
     return hypotheses
 
 
-
 def gather_losses(losses_list):
     return [torch.mean(torch.stack(losses_list))]
 
@@ -82,7 +82,8 @@ def gather_losses(losses_list):
 def gather_predictions(predictions_list, labels, blank_id=None):
     results = []
     for prediction in predictions_list:
-        results += ctc_decoder_predictions_tensor(prediction, labels=labels,
+        results += ctc_decoder_predictions_tensor(prediction,
+                                                  labels=labels,
                                                   blank_id=blank_id)
     return results
 
@@ -164,23 +165,36 @@ class Checkpointer:
 
         val_wer = val_wer or [float("inf")]  # wer absent in pretraining
         train_state.update({
-            'optimizer_type': type_name(optimizer),
-            'scaler_type': type_name(scaler),
-            'step': step,
-            'epoch': epoch + 1,  # fairseq compat; restart at the next epoch
-            'best_val_wer': min(val_wer[0], train_state["best_val_wer"]),
-            'best_val_loss': min(val_losses[0], train_state['best_val_loss']),
+            'optimizer_type':
+            type_name(optimizer),
+            'scaler_type':
+            type_name(scaler),
+            'step':
+            step,
+            'epoch':
+            epoch + 1,  # fairseq compat; restart at the next epoch
+            'best_val_wer':
+            min(val_wer[0], train_state["best_val_wer"]),
+            'best_val_loss':
+            min(val_losses[0], train_state['best_val_loss']),
         })
 
         state = {
             # 'args': args.__dict__,
             # 'args': vars(args),
-            'model': state_dict(unwrap_ddp(model)),
-            'ema_model': state_dict(unwrap_ddp(ema_model)),
-            'optimizer': state_dict(optimizer),
-            'scaler': state_dict(scaler),
-            'train_state': train_state,
-            **({'output_labels': self.output_labels} if self.output_labels else {}),
+            'model':
+            state_dict(unwrap_ddp(model)),
+            'ema_model':
+            state_dict(unwrap_ddp(ema_model)),
+            'optimizer':
+            state_dict(optimizer),
+            'scaler':
+            state_dict(scaler),
+            'train_state':
+            train_state,
+            **({
+                'output_labels': self.output_labels
+            } if self.output_labels else {}),
         }
 
         if is_best_ckpt:
@@ -188,7 +202,8 @@ class Checkpointer:
             print_once(f"Saving {fpath}...")
             torch.save(state, fpath)
 
-        fpath = Path(self.save_dir, f"{self.model_name}_update{step}_{epoch}.pt")
+        fpath = Path(self.save_dir,
+                     f"{self.model_name}_update{step}_{epoch}.pt")
         print_once(f"Saving {fpath}...")
         torch.save(state, fpath)
 
@@ -209,8 +224,13 @@ class Checkpointer:
                 pass
             del self.tracked[epoch]
 
-    def maybe_load_state(self, model=None, ema_model=None, optimizer=None,
-                         scaler=None, train_state=None, train_loader=None):
+    def maybe_load_state(self,
+                         model=None,
+                         ema_model=None,
+                         optimizer=None,
+                         scaler=None,
+                         train_state=None,
+                         train_loader=None):
 
         if self.last_state is None:
             return
@@ -256,13 +276,15 @@ class Checkpointer:
             if 'extra_state' in self.last_state:
                 extra_state = self.last_state['extra_state']
                 train_state.update({
-                    'epoch': extra_state['train_iterator']['epoch'],
-                    'best_val_loss': extra_state['best']
+                    'epoch':
+                    extra_state['train_iterator']['epoch'],
+                    'best_val_loss':
+                    extra_state['best']
                 })
 
                 if 'optimizer_history' in extra_state:
-                    train_state['step'] = (extra_state['optimizer_history']
-                                                      [-1]['num_updates']),
+                    train_state['step'] = (
+                        extra_state['optimizer_history'][-1]['num_updates']),
 
         if train_loader is not None and 'extra_state' in self.last_state:
             state = self.last_state['extra_state']['train_iterator']

@@ -23,7 +23,9 @@ from common.utils import all_reduce_cpu_scalars, print_once
 
 
 class MetricsAggregator:
-    def __init__(self, scopes=('train', 'train_avg'),
+
+    def __init__(self,
+                 scopes=('train', 'train_avg'),
                  dllogger_keys=(),
                  benchmark_keys=(),
                  benchmark_epochs=0,
@@ -142,17 +144,18 @@ class MetricsAggregator:
             return
         ret = all_reduce_cpu_scalars(self.partials)
 
-        self.partials = defaultdict(float,ret
-                                    )
-        
+        self.partials = defaultdict(float, ret)
+
         for k, v in self.partials.items():
 
             if self.accum_reductions[k] in ('mean', 'last'):
-                self.partial_counts[k] *= (world_size - self.partials.get('ignore', 0))
+                self.partial_counts[k] *= (world_size -
+                                           self.partials.get('ignore', 0))
                 if self.partials.get('ignore', 0) > 0:
                     assert self.accum_reductions[k] == 'mean'
-                    print_once(f'reducing with world size {world_size - self.partials.get("ignore", 0)}')
-
+                    print_once(
+                        f'reducing with world size {world_size - self.partials.get("ignore", 0)}'
+                    )
 
     def start_iter(self, iter):
         self._start_accumulating(iter, True, 'train')
@@ -204,15 +207,17 @@ class MetricsAggregator:
         ret = copy(self.metrics[scope])
 
         if target == 'dll':
-            ret = {f'{scope}_{k}': v
-                   for k, v in ret.items() if k in self.dll_keys}
+            ret = {
+                f'{scope}_{k}': v
+                for k, v in ret.items() if k in self.dll_keys
+            }
 
         elif target == 'tb' and self.group_tb_entries:
             # Rename keys so they would group nicely inside TensorBoard
 
             def split_key(k):
                 pos = k.rfind('_')
-                return k[:pos] + '/' + k[pos+1:] if pos >= 0 else k
+                return k[:pos] + '/' + k[pos + 1:] if pos >= 0 else k
 
             ret = {split_key(k): v for k, v in ret.items()}
 

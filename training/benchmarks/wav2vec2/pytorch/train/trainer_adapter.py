@@ -8,7 +8,6 @@ from driver.dist_pytorch import main_proc_print
 from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
 
-
 from common.fairseq.optim.adam import FairseqAdam
 from common.fairseq.optim.fp16_optimizer import FP16Optimizer
 from common.fairseq.optim.fused_adam import get_fused_adam_class
@@ -33,7 +32,8 @@ def create_optimizer(model, args):
 
         params = list(filter(lambda p: p.requires_grad, model.parameters()))
 
-        fp32_params = FP16Optimizer.build_fp32_params(args, params,
+        fp32_params = FP16Optimizer.build_fp32_params(args,
+                                                      params,
                                                       flatten=flatten)
 
         # based on fairseq.optim.build_optimizer
@@ -51,8 +51,7 @@ def create_optimizer(model, args):
         if flatten and not fp32_optimizer.supports_flat_params:
             raise RuntimeError(
                 f"chosen optimizer {fp32_optimizer.__class__.__name__} does "
-                "not support flat params, please set --fp16-no-flatten-grads"
-            )
+                "not support flat params, please set --fp16-no-flatten-grads")
         kwargs = {}
         optimizer = FP16Optimizer(args, params, fp32_optimizer, fp32_params,
                                   **kwargs)
@@ -61,12 +60,13 @@ def create_optimizer(model, args):
         print_once('WARNING: Using FusedAdam instead of Adam')
         kw.update({'betas': args.adam_betas, 'eps': args.adam_eps})
         fused_adam_cls = get_fused_adam_class()
-        print(fused_adam_cls,"fused_adam_cls")
+        print(fused_adam_cls, "fused_adam_cls")
         optimizer = fused_adam_cls(model.parameters(), **kw)
     else:
         raise ValueError(f'Invalid optimizer "{args.optimizer}"')
 
     return optimizer
+
 
 def model_to_fp16(model):
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
@@ -78,7 +78,9 @@ def model_to_fp16(model):
 
 def model_to_ddp(model: nn.Module) -> nn.Module:
     if dist.is_available() and dist.is_initialized():
-        model = DDP(model, device_ids=[config.local_rank], find_unused_parameters=True)
+        model = DDP(model,
+                    device_ids=[config.local_rank],
+                    find_unused_parameters=True)
         from common.fairseq.dist import ModuleProxyWrapper
         model = ModuleProxyWrapper(model)
     return model

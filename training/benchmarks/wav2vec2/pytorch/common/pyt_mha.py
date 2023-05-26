@@ -54,6 +54,7 @@ class PytMultiheadAttention(nn.Module):
 
     Calls torch.nn.functional with combined qkv.
     """
+
     def __init__(
         self,
         embed_dim,
@@ -76,14 +77,15 @@ class PytMultiheadAttention(nn.Module):
             self.rotary_freq = RotaryEmbedding(embed_dim)
 
         self.head_dim = embed_dim // num_heads
-        assert (
-            self.head_dim * num_heads == self.embed_dim
-        ), "embed_dim must be divisible by num_heads"
+        assert (self.head_dim * num_heads == self.embed_dim
+                ), "embed_dim must be divisible by num_heads"
 
-        self.qkv = nn.Linear(embed_dim, 3 * num_heads * self.head_dim,
+        self.qkv = nn.Linear(embed_dim,
+                             3 * num_heads * self.head_dim,
                              bias=bias)
         self.dropatt = nn.Dropout(dropout)
-        self.out_proj = nn.Linear(num_heads * self.head_dim, embed_dim,
+        self.out_proj = nn.Linear(num_heads * self.head_dim,
+                                  embed_dim,
                                   bias=bias)
         self.reset_parameters()
 
@@ -96,7 +98,11 @@ class PytMultiheadAttention(nn.Module):
 
         self._register_load_state_dict_pre_hook(hook)
 
-    def forward(self, query, key=None, value=None, key_padding_mask=None,
+    def forward(self,
+                query,
+                key=None,
+                value=None,
+                key_padding_mask=None,
                 attn_mask=None):
 
         return F.multi_head_attention_forward(
@@ -139,9 +145,12 @@ class PytMultiheadAttention(nn.Module):
     def reset_parameters(self):
         # Init as in Fairseq with qkv_same_dim=True and separate qkv projs
         t = self.qkv.weight.size(0) // 3
-        nn.init.xavier_uniform_(self.qkv.weight[0*t:1*t], gain=1 / (2 ** 0.5))
-        nn.init.xavier_uniform_(self.qkv.weight[1*t:2*t], gain=1 / (2 ** 0.5))
-        nn.init.xavier_uniform_(self.qkv.weight[2*t:3*t], gain=1 / (2 ** 0.5))
+        nn.init.xavier_uniform_(self.qkv.weight[0 * t:1 * t],
+                                gain=1 / (2**0.5))
+        nn.init.xavier_uniform_(self.qkv.weight[1 * t:2 * t],
+                                gain=1 / (2**0.5))
+        nn.init.xavier_uniform_(self.qkv.weight[2 * t:3 * t],
+                                gain=1 / (2**0.5))
 
         nn.init.xavier_uniform_(self.out_proj.weight)
         if self.out_proj.bias is not None:

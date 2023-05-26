@@ -1,10 +1,8 @@
 from wav2vec2.model import Wav2Vec2Model
 
 
-def create_model(args, target_dictionary=None):
+def create_model(args):
 
-    cfg=args
-    assert target_dictionary is None
-    model = Wav2Vec2Model(cfg)
+    model = Wav2Vec2Model(args)
 
     return model

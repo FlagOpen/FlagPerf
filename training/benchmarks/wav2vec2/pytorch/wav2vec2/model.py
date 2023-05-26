@@ -54,10 +54,13 @@ class Fp32Conv1d(nn.Conv1d):
     """
 
     def forward(self, x):
-        return F.conv1d(
-            x.float(), self.weight, bias=self.bias, stride=self.stride,
-            padding=self.padding, dilation=self.dilation, groups=self.groups
-        ).to(dtype=x.dtype)
+        return F.conv1d(x.float(),
+                        self.weight,
+                        bias=self.bias,
+                        stride=self.stride,
+                        padding=self.padding,
+                        dilation=self.dilation,
+                        groups=self.groups).to(dtype=x.dtype)
 
 
 def init_bert_params(module):
@@ -77,9 +80,7 @@ def init_bert_params(module):
     def normal_(data):
         # with FSDP, module params will be on CUDA, so we cast them back to CPU
         # so that the RNG is consistent with and without FSDP
-        data.copy_(
-            data.cpu().normal_(mean=0.0, std=0.02).to(data.device)
-        )
+        data.copy_(data.cpu().normal_(mean=0.0, std=0.02).to(data.device))
 
     if isinstance(module, nn.Linear):
         normal_(module.weight.data)
@@ -129,9 +130,11 @@ class MaskedBlock(nn.Module):
                     *pref, feat, conv, mod_num, layer_num, param = k.split(".")
                     assert feat == "feature_extractor" and conv == "conv_layers"
                     if layer_num == "0":
-                        new_k = ".".join(pref + [feat, conv, mod_num, "conv", param])
+                        new_k = ".".join(pref +
+                                         [feat, conv, mod_num, "conv", param])
                     elif layer_num == "2":
-                        new_k = ".".join(pref + [feat, conv, mod_num, "norm", param])
+                        new_k = ".".join(pref +
+                                         [feat, conv, mod_num, "norm", param])
                     else:
                         raise ValueError
                     print(f"Rename {k} --> {new_k}")
@@ -156,6 +159,7 @@ class MaskedBlock(nn.Module):
 
 
 class Wav2Vec2Model(nn.Module):
+
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
@@ -184,11 +188,9 @@ class Wav2Vec2Model(nn.Module):
                 masked=getattr(cfg, 'masked_feature_extractor', False),
             )
 
-        self.post_extract_proj = (
-            nn.Linear(self.embed, cfg.encoder_embed_dim)
-            if self.embed != cfg.encoder_embed_dim and not cfg.quantize_input
-            else None
-        )
+        self.post_extract_proj = (nn.Linear(self.embed, cfg.encoder_embed_dim)
+                                  if self.embed != cfg.encoder_embed_dim
+                                  and not cfg.quantize_input else None)
         self.mask_prob = cfg.mask_prob
         self.mask_selection = cfg.mask_selection
         self.mask_other = cfg.mask_other
@@ -260,8 +262,7 @@ class Wav2Vec2Model(nn.Module):
             self.project_inp = nn.Linear(vq_dim, cfg.encoder_embed_dim)
 
         self.mask_emb = nn.Parameter(
-            torch.FloatTensor(cfg.encoder_embed_dim).uniform_()
-        )
+            torch.FloatTensor(cfg.encoder_embed_dim).uniform_())
 
         self.encoder = TransformerEncoder(cfg)
         self.layer_norm = LayerNorm(self.embed)
@@ -269,8 +270,7 @@ class Wav2Vec2Model(nn.Module):
         self.target_glu = None
         if cfg.target_glu:
             self.target_glu = nn.Sequential(
-                nn.Linear(final_dim, final_dim * 2), nn.GLU()
-            )
+                nn.Linear(final_dim, final_dim * 2), nn.GLU())
 
         self.final_proj = nn.Linear(cfg.encoder_embed_dim, final_dim)
 
@@ -296,12 +296,8 @@ class Wav2Vec2Model(nn.Module):
                 no_overlap=self.no_mask_channel_overlap,
                 min_space=self.mask_channel_min_space,
             )
-            mask_channel_indices = (
-                torch.from_numpy(mask_channel_indices)
-                .to(x.device)
-                .unsqueeze(1)
-                .expand(-1, T, -1)
-            )
+            mask_channel_indices = (torch.from_numpy(mask_channel_indices).to(
+                x.device).unsqueeze(1).expand(-1, T, -1))
             x[mask_channel_indices] = 0
 
         if self.mask_prob > 0:
@@ -337,11 +333,8 @@ class Wav2Vec2Model(nn.Module):
                     min_space=self.mask_channel_min_space,
                 )
                 mask_channel_indices = (
-                    torch.from_numpy(mask_channel_indices)
-                    .to(x.device)
-                    .unsqueeze(1)
-                    .expand(-1, T, -1)
-                )
+                    torch.from_numpy(mask_channel_indices).to(
+                        x.device).unsqueeze(1).expand(-1, T, -1))
             x[mask_channel_indices] = 0
 
         return x, mask_indices
@@ -363,10 +356,10 @@ class Wav2Vec2Model(nn.Module):
                 tszs = torch.arange(num, device=y.device).unsqueeze(-1)
                 tszs = tszs.expand(-1, self.n_negatives).flatten()
 
-                neg_idxs = torch.randint(
-                    low=0, high=high - 1, size=(bsz, self.n_negatives * num),
-                    device=y.device
-                )
+                neg_idxs = torch.randint(low=0,
+                                         high=high - 1,
+                                         size=(bsz, self.n_negatives * num),
+                                         device=y.device)
                 neg_idxs[neg_idxs >= tszs] += 1
 
             if self.cross_sample_negatives > 0:
@@ -377,8 +370,7 @@ class Wav2Vec2Model(nn.Module):
                     low=0,
                     high=cross_high - 1,
                     size=(bsz, self.cross_sample_negatives * num),
-                    device=y.device
-                )
+                    device=y.device)
                 cross_neg_idxs[cross_neg_idxs >= tszs] += 1
 
         if self.n_negatives > 0:
@@ -391,11 +383,9 @@ class Wav2Vec2Model(nn.Module):
             neg_idxs = torch.cat([neg_idxs, cross_neg_idxs], dim=1)
 
         negs = y[neg_idxs.view(-1)]
-        negs = negs.view(
-            bsz, num, self.n_negatives + self.cross_sample_negatives, fsz
-        ).permute(
-            2, 0, 1, 3
-        )  # to NxBxTxC
+        negs = negs.view(bsz, num,
+                         self.n_negatives + self.cross_sample_negatives,
+                         fsz).permute(2, 0, 1, 3)  # to NxBxTxC
         return negs, neg_idxs
 
     def compute_preds(self, x, y, negatives):
@@ -405,7 +395,8 @@ class Wav2Vec2Model(nn.Module):
         targets = torch.cat([y, negatives], dim=0)
 
         if self.fp32_cosine_sim:
-            logits = torch.cosine_similarity(x.float(), targets.float(),
+            logits = torch.cosine_similarity(x.float(),
+                                             targets.float(),
                                              dim=-1).type_as(x)
         else:
             logits = torch.cosine_similarity(x, targets, dim=-1)
@@ -419,19 +410,19 @@ class Wav2Vec2Model(nn.Module):
 
         return logits
 
-    def _conv_out_length(self, input_length: torch.Tensor, kernel_size: int, stride: int):
+    def _conv_out_length(self, input_length: torch.Tensor, kernel_size: int,
+                         stride: int):
         return torch.floor((input_length - kernel_size) / stride + 1)
 
-    def _get_feat_extract_output_lengths(self, input_lengths: torch.LongTensor):
+    def _get_feat_extract_output_lengths(self,
+                                         input_lengths: torch.LongTensor):
         """
         Computes the output length of the convolutional layers
         """
         for i in range(len(self.conv_cfg_list)):
-            input_lengths = self._conv_out_length(
-                input_lengths,
-                self.conv_cfg_list[i][1],
-                self.conv_cfg_list[i][2]
-            )
+            input_lengths = self._conv_out_length(input_lengths,
+                                                  self.conv_cfg_list[i][1],
+                                                  self.conv_cfg_list[i][2])
 
         return input_lengths.to(torch.long)
 
@@ -441,22 +432,21 @@ class Wav2Vec2Model(nn.Module):
         input_lengths = (1 - padding_mask.long()).sum(-1)
         output_lengths = self._get_feat_extract_output_lengths(input_lengths)
 
-        features, _ = self.feature_extractor.masked_forward(source, input_lengths)
+        features, _ = self.feature_extractor.masked_forward(
+            source, input_lengths)
         features = features.transpose(1, 2)
         features = self.layer_norm(features)
 
-        padding_mask = torch.zeros(
-            features.shape[:2], dtype=features.dtype, device=features.device
-        )
+        padding_mask = torch.zeros(features.shape[:2],
+                                   dtype=features.dtype,
+                                   device=features.device)
 
         # these two operations makes sure that all values
         # before the output lengths indices are attended to
-        padding_mask[
-            (
-                torch.arange(padding_mask.shape[0], device=padding_mask.device),
-                output_lengths - 1,
-            )
-        ] = 1
+        padding_mask[(
+            torch.arange(padding_mask.shape[0], device=padding_mask.device),
+            output_lengths - 1,
+        )] = 1
         padding_mask = (1 - padding_mask.flip([-1]).cumsum(-1).flip([-1])) == 1
 
         if self.post_extract_proj is not None:
@@ -485,28 +475,34 @@ class Wav2Vec2Model(nn.Module):
             if padding_mask is not None and padding_mask.any():
                 input_lengths = (1 - padding_mask.long()).sum(-1)
             else:
-                input_lengths = (torch.zeros(source.size(0)) + source.size(1)).cuda()
+                input_lengths = (torch.zeros(source.size(0)) +
+                                 source.size(1)).cuda()
 
-            features, output_lengths = self.spec_feature_extractor(source, input_lengths)
+            features, output_lengths = self.spec_feature_extractor(
+                source, input_lengths)
             output_lengths = output_lengths.to(torch.long)
 
         else:
             if self.training and self.feature_grad_mult > 0:
                 features = self.feature_extractor(source)
                 if self.feature_grad_mult != 1.0:
-                    features = GradMultiply.apply(features, self.feature_grad_mult)
+                    features = GradMultiply.apply(features,
+                                                  self.feature_grad_mult)
             else:
                 with torch.no_grad():
                     if masked_inference:
                         input_lengths = (1 - padding_mask.long()).sum(-1)
-                        features, _ = self.feature_extractor.masked_forward(source, input_lengths)
+                        features, _ = self.feature_extractor.masked_forward(
+                            source, input_lengths)
                     else:
                         features = self.feature_extractor(source)
 
-            if masked_inference or (padding_mask is not None and padding_mask.any()):
+            if masked_inference or (padding_mask is not None
+                                    and padding_mask.any()):
                 input_lengths = (1 - padding_mask.long()).sum(-1)
                 # apply conv formula to get real output_lengths
-                output_lengths = self._get_feat_extract_output_lengths(input_lengths)
+                output_lengths = self._get_feat_extract_output_lengths(
+                    input_lengths)
             else:
                 output_lengths = None
 
@@ -517,19 +513,19 @@ class Wav2Vec2Model(nn.Module):
 
         if output_lengths is not None:
 
-            padding_mask = torch.zeros(
-                features.shape[:2], dtype=features.dtype, device=features.device
-            )
+            padding_mask = torch.zeros(features.shape[:2],
+                                       dtype=features.dtype,
+                                       device=features.device)
 
             # these two operations makes sure that all values
             # before the output lengths indices are attended to
-            padding_mask[
-                (
-                    torch.arange(padding_mask.shape[0], device=padding_mask.device),
-                    output_lengths - 1,
-                )
-            ] = 1
-            padding_mask = (1 - padding_mask.flip([-1]).cumsum(-1).flip([-1])) == 1
+            padding_mask[(
+                torch.arange(padding_mask.shape[0],
+                             device=padding_mask.device),
+                output_lengths - 1,
+            )] = 1
+            padding_mask = (1 -
+                            padding_mask.flip([-1]).cumsum(-1).flip([-1])) == 1
         else:
             padding_mask = None
 
@@ -553,7 +549,8 @@ class Wav2Vec2Model(nn.Module):
             curr_temp = q["temp"]
             features = self.project_inp(features)
 
-        split_accumulation = sub_batch_sizes is not None and sub_batch_sizes.size(0) > 1
+        split_accumulation = sub_batch_sizes is not None and sub_batch_sizes.size(
+            0) > 1
         if split_accumulation:
             assert sub_batch_sizes is not None
             assert self.quantizer is not None
@@ -567,7 +564,9 @@ class Wav2Vec2Model(nn.Module):
             split_sizes = sub_batch_sizes.tolist()
             sub_x, sub_y, sub_mask_indices, sub_negs = [], [], [], []
 
-            for s, e in zip(np.cumsum(split_sizes) - split_sizes, np.cumsum(split_sizes)):
+            for s, e in zip(
+                    np.cumsum(split_sizes) - split_sizes,
+                    np.cumsum(split_sizes)):
                 x_, mask_indices_ = self.apply_mask(
                     features[s:e],
                     padding_mask[s:e] if padding_mask is not None else None,
@@ -575,8 +574,7 @@ class Wav2Vec2Model(nn.Module):
                 sub_x.append(x_)
                 sub_mask_indices.append(mask_indices_)
                 y_ = unmasked_features[s:e][mask_indices_].view(
-                     e-s, -1, unmasked_features.size(-1)
-                )
+                    e - s, -1, unmasked_features.size(-1))
 
                 q_ = self.quantizer(y_, produce_targets=False)
                 y_ = q_["x"]
@@ -593,7 +591,9 @@ class Wav2Vec2Model(nn.Module):
             x = torch.cat(sub_x, dim=0)
             mask_indices = torch.cat(sub_mask_indices, dim=0)
 
-            x, layer_results = self.encoder(x, padding_mask=padding_mask, layer=layer)
+            x, layer_results = self.encoder(x,
+                                            padding_mask=padding_mask,
+                                            layer=layer)
 
             if features_only:
                 return {
@@ -610,9 +610,11 @@ class Wav2Vec2Model(nn.Module):
 
             sub_x2 = []
             offset = 0
-            for y_, mask_inds_, negs_ in zip(sub_y, sub_mask_indices, sub_negs):
+            for y_, mask_inds_, negs_ in zip(sub_y, sub_mask_indices,
+                                             sub_negs):
                 sz = mask_inds_.sum()
-                x_ = x[offset:offset+sz].view(mask_inds_.size(0), -1, x.size(-1))
+                x_ = x[offset:offset + sz].view(mask_inds_.size(0), -1,
+                                                x.size(-1))
                 x_ = self.compute_preds(x_, y_, negs_)
                 sub_x2.append(x_)
                 offset += sz
@@ -647,8 +649,7 @@ class Wav2Vec2Model(nn.Module):
             )
             if mask_indices is not None:
                 y = unmasked_features[mask_indices].view(
-                    unmasked_features.size(0), -1, unmasked_features.size(-1)
-                )
+                    unmasked_features.size(0), -1, unmasked_features.size(-1))
             else:
                 y = unmasked_features
         else:
@@ -656,7 +657,9 @@ class Wav2Vec2Model(nn.Module):
             y = unmasked_features
             mask_indices = None
 
-        x, layer_results = self.encoder(x, padding_mask=padding_mask, layer=layer)
+        x, layer_results = self.encoder(x,
+                                        padding_mask=padding_mask,
+                                        layer=layer)
 
         if features_only:
             return {
@@ -677,9 +680,8 @@ class Wav2Vec2Model(nn.Module):
             y = self.project_q(y)
 
             if self.negatives_from_everywhere:
-                neg_cands = self.quantizer(unmasked_features, produce_targets=False)[
-                    "x"
-                ]
+                neg_cands = self.quantizer(unmasked_features,
+                                           produce_targets=False)["x"]
                 negs, _ = self.sample_negatives(
                     neg_cands,
                     y.size(1),
@@ -696,11 +698,9 @@ class Wav2Vec2Model(nn.Module):
 
             if self.codebook_negatives > 0:
                 cb_negs = self.quantizer.sample_from_codebook(
-                    y.size(0) * y.size(1), self.codebook_negatives
-                )
-                cb_negs = cb_negs.view(
-                    self.codebook_negatives, y.size(0), y.size(1), -1
-                )  # order doesnt matter
+                    y.size(0) * y.size(1), self.codebook_negatives)
+                cb_negs = cb_negs.view(self.codebook_negatives, y.size(0),
+                                       y.size(1), -1)  # order doesnt matter
                 cb_negs = self.project_q(cb_negs)
                 negs = torch.cat([negs, cb_negs], dim=0)
         else:
@@ -751,9 +751,11 @@ class Wav2Vec2Model(nn.Module):
         return self.quantizer.forward_idx(x)
 
     def extract_features(self, source, padding_mask, mask=False, layer=-1):
-        res = self.forward(
-            source, padding_mask, mask=mask, features_only=True, layer=layer
-        )
+        res = self.forward(source,
+                           padding_mask,
+                           mask=mask,
+                           features_only=True,
+                           layer=layer)
         return res
 
     def get_logits(self, net_output):
@@ -771,9 +773,8 @@ class Wav2Vec2Model(nn.Module):
 
         if "prob_perplexity" in net_output:
             pen.append(
-                (net_output["num_vars"] - net_output["prob_perplexity"])
-                / net_output["num_vars"]
-            )
+                (net_output["num_vars"] - net_output["prob_perplexity"]) /
+                net_output["num_vars"])
 
         if "features_pen" in net_output:
             pen.append(net_output["features_pen"])
@@ -793,7 +794,8 @@ class Wav2Vec2Model(nn.Module):
         sample: Optional[Dict[str, Tensor]] = None,
     ):
         """Get normalized probabilities (or log probs) from a net's output."""
-        return self.get_normalized_probs_scriptable(net_output, log_probs, sample)
+        return self.get_normalized_probs_scriptable(net_output, log_probs,
+                                                    sample)
 
     # TorchScript doesn't support super() method so that the scriptable Subclass
     # can't access the base class model in Torchscript.
@@ -807,7 +809,8 @@ class Wav2Vec2Model(nn.Module):
     ):
         """Scriptable helper function for get_normalized_probs in ~BaseFairseqModel"""
         if hasattr(self, "decoder"):
-            return self.decoder.get_normalized_probs(net_output, log_probs, sample)
+            return self.decoder.get_normalized_probs(net_output, log_probs,
+                                                     sample)
         elif torch.is_tensor(net_output):
             # syntactic sugar for simple models which don't have a decoder
             # (e.g., the classification tutorial)
@@ -874,15 +877,14 @@ class Wav2Vec2Model(nn.Module):
     def prepare_for_inference_(self, cfg):
         """Prepare model for inference."""
         kwargs = {}
-        kwargs["beamable_mm_beam_size"] = (
-            None
-            if getattr(cfg.generation, "no_beamable_mm", False)
-            else getattr(cfg.generation, "beam", 5)
-        )
+        kwargs["beamable_mm_beam_size"] = (None if getattr(
+            cfg.generation, "no_beamable_mm", False) else getattr(
+                cfg.generation, "beam", 5))
         kwargs["need_attn"] = getattr(cfg.generation, "print_alignment", False)
         if getattr(cfg.generation, "retain_dropout", False):
             kwargs["retain_dropout"] = cfg.generation.retain_dropout
-            kwargs["retain_dropout_modules"] = cfg.generation.retain_dropout_modules
+            kwargs[
+                "retain_dropout_modules"] = cfg.generation.retain_dropout_modules
         self.make_generation_fast_(**kwargs)
 
     def make_generation_fast_(self, **kwargs):
@@ -898,7 +900,8 @@ class Wav2Vec2Model(nn.Module):
         def apply_remove_weight_norm(module):
             try:
                 nn.utils.remove_weight_norm(module)
-            except (AttributeError, ValueError):  # this module didn't have weight norm
+            except (AttributeError,
+                    ValueError):  # this module didn't have weight norm
                 return
 
         self.apply(apply_remove_weight_norm)
@@ -916,11 +919,8 @@ class Wav2Vec2Model(nn.Module):
         seen = set()
 
         def apply_prepare_for_onnx_export_(module):
-            if (
-                module != self
-                and hasattr(module, "prepare_for_onnx_export_")
-                and module not in seen
-            ):
+            if (module != self and hasattr(module, "prepare_for_onnx_export_")
+                    and module not in seen):
                 seen.add(module)
                 module.prepare_for_onnx_export_(**kwargs)
 
@@ -934,6 +934,7 @@ class Wav2Vec2Model(nn.Module):
 
 
 class ConvFeatureExtractionModel(nn.Module):
+
     def __init__(
         self,
         conv_layers: List[Tuple[int, int, int]],
@@ -984,10 +985,9 @@ class ConvFeatureExtractionModel(nn.Module):
                 return l
 
             has_norm = is_layer_norm or is_group_norm
-            return Block_(make_conv(),
-                          nn.Dropout(p=dropout),
-                          *([make_norm()] if has_norm else []),
-                          nn.GELU())
+            return Block_(make_conv(), nn.Dropout(p=dropout),
+                          *([make_norm()] if has_norm else []), nn.GELU())
+
         in_d = 1
         self.conv_layers = nn.ModuleList()
         for i, cl in enumerate(conv_layers):
@@ -1003,8 +1003,7 @@ class ConvFeatureExtractionModel(nn.Module):
                     is_layer_norm=mode == "layer_norm",
                     is_group_norm=mode == "default" and i == 0,
                     conv_bias=conv_bias,
-                )
-            )
+                ))
             in_d = dim
 
     def forward(self, x):
@@ -1025,6 +1024,7 @@ class ConvFeatureExtractionModel(nn.Module):
 
 
 class Upsampler(nn.Module):
+
     def __init__(self, emb_dim, factor, mode="linear"):
         super().__init__()
         assert mode in ("linear", "naive")
@@ -1048,6 +1048,7 @@ class Upsampler(nn.Module):
 
 
 class Downsampler(nn.Module):
+
     def __init__(self, emb_dim, factor, mode="linear"):
         super().__init__()
         assert mode in ("linear", "naive")
@@ -1074,6 +1075,7 @@ class Downsampler(nn.Module):
 
 
 class TransformerEncoder(nn.Module):
+
     def __init__(self, args):
         super().__init__()
 
@@ -1090,12 +1092,16 @@ class TransformerEncoder(nn.Module):
             groups=args.conv_pos_groups,
         )
         dropout = 0
-        std = math.sqrt((4 * (1.0 - dropout)) / (args.conv_pos * self.embedding_dim))
+        std = math.sqrt(
+            (4 * (1.0 - dropout)) / (args.conv_pos * self.embedding_dim))
         nn.init.normal_(self.pos_conv.weight, mean=0, std=std)
         nn.init.constant_(self.pos_conv.bias, 0)
 
-        self.pos_conv = nn.utils.weight_norm(self.pos_conv, name="weight", dim=2)
-        self.pos_conv = nn.Sequential(self.pos_conv, SamePad(args.conv_pos), nn.GELU())
+        self.pos_conv = nn.utils.weight_norm(self.pos_conv,
+                                             name="weight",
+                                             dim=2)
+        self.pos_conv = nn.Sequential(self.pos_conv, SamePad(args.conv_pos),
+                                      nn.GELU())
 
         def create_decoder_layers(n_layers):
             return nn.ModuleList([
@@ -1112,8 +1118,7 @@ class TransformerEncoder(nn.Module):
                     mha=args.mha,
                     fp32_transformer_layernorm=args.fp32_transformer_layernorm,
                     fp32_mha_softmax=args.fp32_mha_softmax,
-                )
-                for _ in range(n_layers)
+                ) for _ in range(n_layers)
             ])
 
         if args.hourglass_transformer:
@@ -1128,8 +1133,11 @@ class TransformerEncoder(nn.Module):
             # otherwise i want to resample before merging resutls
             assert not args.layer_norm_first
 
-            kw = {'emb_dim': self.embedding_dim, 'factor': self.shorten_factor,
-                  'mode': args.hourglass_resample}
+            kw = {
+                'emb_dim': self.embedding_dim,
+                'factor': self.shorten_factor,
+                'mode': args.hourglass_resample
+            }
             self.upsample_layer = Upsampler(**kw)
             self.downsample_layer = Downsampler(**kw)
         else:
@@ -1143,7 +1151,9 @@ class TransformerEncoder(nn.Module):
 
         self.apply(init_bert_params)
 
-    def forward(self, x: Tensor, padding_mask: Optional[Tensor] = None,
+    def forward(self,
+                x: Tensor,
+                padding_mask: Optional[Tensor] = None,
                 layer: int = -1):
 
         x, layer_results = self.extract_features(x, padding_mask, layer)
@@ -1153,29 +1163,37 @@ class TransformerEncoder(nn.Module):
 
         return x, layer_results
 
-    def process_layers(self, x: Tensor, padding_mask: Optional[Tensor],
+    def process_layers(self,
+                       x: Tensor,
+                       padding_mask: Optional[Tensor],
                        tgt_layer: int = -1):
 
         for i, layer in enumerate(self.layers):
             if not self.training or (torch.rand(1) > self.layerdrop):
-                x, _ = layer(x, self_attn_padding_mask=padding_mask,
+                x, _ = layer(x,
+                             self_attn_padding_mask=padding_mask,
                              need_weights=False)
             if i == tgt_layer:
                 return x
         return x
 
-    def process_hourglass_layers(self, x: Tensor, padding_mask:
-                                 Optional[Tensor], tgt_layer: int = -1):
+    def process_hourglass_layers(self,
+                                 x: Tensor,
+                                 padding_mask: Optional[Tensor],
+                                 tgt_layer: int = -1):
 
         for i, layer in enumerate(self.hourglass_layers):
             if not self.training or (torch.rand(1) > self.layerdrop):
-                x, _ = layer(x, self_attn_padding_mask=padding_mask,
+                x, _ = layer(x,
+                             self_attn_padding_mask=padding_mask,
                              need_weights=False)
             if i == tgt_layer:
                 return x
         return x
 
-    def process_post_layers(self, x: Tensor, padding_mask: Optional[Tensor],
+    def process_post_layers(self,
+                            x: Tensor,
+                            padding_mask: Optional[Tensor],
                             tgt_layer: int = -1):
 
         if self.post_layers is None:
@@ -1183,13 +1201,16 @@ class TransformerEncoder(nn.Module):
         else:
             for i, layer in enumerate(self.post_layers):
                 if not self.training or (torch.rand(1) > self.layerdrop):
-                    x, _ = layer(x, self_attn_padding_mask=padding_mask,
+                    x, _ = layer(x,
+                                 self_attn_padding_mask=padding_mask,
                                  need_weights=False)
                 if i == tgt_layer:
                     return x
             return x
 
-    def extract_features(self, x: Tensor, padding_mask: Optional[Tensor] = None,
+    def extract_features(self,
+                         x: Tensor,
+                         padding_mask: Optional[Tensor] = None,
                          tgt_layer: int = -1):
 
         if padding_mask is not None:
@@ -1210,8 +1231,9 @@ class TransformerEncoder(nn.Module):
         if self.hourglass_layers is not None:
             # we don't want to take outputs from inside of hourglass
             # as they are shortened and differnt
-            n_layers_before_upsampling = (len(self.layers)  # pre layers
-                                          + len(self.hourglass_layers))
+            n_layers_before_upsampling = (
+                len(self.layers)  # pre layers
+                + len(self.hourglass_layers))
             assert tgt_layer == -1 or tgt_layer >= n_layers_before_upsampling
             if tgt_layer is not None:
                 tgt_layer = tgt_layer - n_layers_before_upsampling
@@ -1220,8 +1242,8 @@ class TransformerEncoder(nn.Module):
             res = x
             hourglass_pad_mask = padding_mask
 
-            diff = ((self.shorten_factor - x.size(0) % self.shorten_factor)
-                    % self.shorten_factor)
+            diff = ((self.shorten_factor - x.size(0) % self.shorten_factor) %
+                    self.shorten_factor)
 
             if diff != 0:
                 x = torch.cat([x, x.new_zeros(diff, x.size(1), x.size(2))])
@@ -1231,13 +1253,13 @@ class TransformerEncoder(nn.Module):
                     hourglass_pad_mask = torch.cat([
                         hourglass_pad_mask,
                         x.new_ones(hourglass_pad_mask.size(0), diff)
-                    ], dim=1)
+                    ],
+                                                   dim=1)
 
                 hourglass_pad_mask = (F.avg_pool1d(
                     hourglass_pad_mask.unsqueeze(0).float(),
-                    self.shorten_factor,
-                    self.shorten_factor
-                ).int() > 0).squeeze(0)
+                    self.shorten_factor, self.shorten_factor).int() >
+                                      0).squeeze(0)
 
             x = self.downsample_layer(x)
             x = self.process_hourglass_layers(x, hourglass_pad_mask)
@@ -1296,16 +1318,16 @@ class TransformerSentenceEncoderLayer(nn.Module):
         # Initialize blocks
         self.activation_fn = utils.get_activation_fn(activation_fn)
 
-        MHA = {'fairseq': MultiheadAttention,
-               'pyt': PytMultiheadAttention}[mha]
+        MHA = {
+            'fairseq': MultiheadAttention,
+            'pyt': PytMultiheadAttention
+        }[mha]
 
-        self.self_attn = MHA(
-            self.embedding_dim,
-            num_attention_heads,
-            dropout=attention_dropout,
-            self_attention=True,
-            rotary_embeddings=rotary_embeddings
-        )
+        self.self_attn = MHA(self.embedding_dim,
+                             num_attention_heads,
+                             dropout=attention_dropout,
+                             self_attention=True,
+                             rotary_embeddings=rotary_embeddings)
 
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(self.activation_dropout)

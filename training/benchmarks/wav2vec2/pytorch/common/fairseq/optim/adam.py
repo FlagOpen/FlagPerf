@@ -38,11 +38,9 @@ class FairseqAdam(FairseqOptimizer):
     def __init__(self, cfg, params):
         super().__init__(cfg)
         fused_adam_cls = get_fused_adam_class()
-        use_fused_adam = (
-            not getattr(cfg, "use_old_adam", False)
-            and fused_adam_cls is not None
-            and torch.cuda.is_available()
-        )
+        use_fused_adam = (not getattr(cfg, "use_old_adam", False)
+                          and fused_adam_cls is not None
+                          and torch.cuda.is_available())
         if use_fused_adam:
             self._optimizer = fused_adam_cls(params, **self.optimizer_config)
         else:
@@ -57,14 +55,16 @@ class FairseqAdam(FairseqOptimizer):
         different learning rate.
         """
         return {
-            "lr": self.cfg.lr[0]
-            if isinstance(self.cfg.lr, Collection)
-            else self.cfg.lr,
-            "betas": eval(self.cfg.adam_betas)
-            if isinstance(self.cfg.adam_betas, str)
-            else self.cfg.adam_betas,
-            "eps": self.cfg.adam_eps,
-            "weight_decay": self.cfg.weight_decay,
+            "lr":
+            self.cfg.lr[0]
+            if isinstance(self.cfg.lr, Collection) else self.cfg.lr,
+            "betas":
+            eval(self.cfg.adam_betas)
+            if isinstance(self.cfg.adam_betas, str) else self.cfg.adam_betas,
+            "eps":
+            self.cfg.adam_eps,
+            "weight_decay":
+            self.cfg.weight_decay,
         }
 
     def average_params(self):
@@ -107,17 +107,19 @@ class Adam(torch.optim.Optimizer):
     """
 
     def __init__(
-        self,
-        params,
-        lr=1e-3,
-        betas=(0.9, 0.999),
-        eps=1e-8,
-        weight_decay=0,
-        amsgrad=False,
+            self,
+            params,
+            lr=1e-3,
+            betas=(0.9, 0.999),
+            eps=1e-8,
+            weight_decay=0,
+            amsgrad=False,
     ):
-        defaults = dict(
-            lr=lr, betas=betas, eps=eps, weight_decay=weight_decay, amsgrad=amsgrad
-        )
+        defaults = dict(lr=lr,
+                        betas=betas,
+                        eps=eps,
+                        weight_decay=weight_decay,
+                        amsgrad=amsgrad)
         super(Adam, self).__init__(params, defaults)
 
     @property
@@ -173,8 +175,7 @@ class Adam(torch.optim.Optimizer):
                     state["exp_avg_sq"] = state["exp_avg_sq"].to(p_data_fp32)
                     if amsgrad:
                         state["max_exp_avg_sq"] = state["max_exp_avg_sq"].to(
-                            p_data_fp32
-                        )
+                            p_data_fp32)
 
                 exp_avg, exp_avg_sq = state["exp_avg"], state["exp_avg_sq"]
                 if amsgrad:
@@ -194,14 +195,15 @@ class Adam(torch.optim.Optimizer):
                 else:
                     denom = exp_avg_sq.sqrt().add_(group["eps"])
 
-                bias_correction1 = 1 - beta1 ** state["step"]
-                bias_correction2 = 1 - beta2 ** state["step"]
-                step_size = group["lr"] * math.sqrt(bias_correction2) / bias_correction1
+                bias_correction1 = 1 - beta1**state["step"]
+                bias_correction2 = 1 - beta2**state["step"]
+                step_size = group["lr"] * math.sqrt(
+                    bias_correction2) / bias_correction1
 
                 if group["weight_decay"] != 0:
-                    p_data_fp32.add_(
-                        p_data_fp32, alpha=-group["weight_decay"] * group["lr"]
-                    )
+                    p_data_fp32.add_(p_data_fp32,
+                                     alpha=-group["weight_decay"] *
+                                     group["lr"])
 
                 p_data_fp32.addcdiv_(exp_avg, denom, value=-step_size)
 

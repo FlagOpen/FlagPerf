@@ -9,14 +9,11 @@ class TrainingState:
     _status = 'aborted'  # later set to 'success' if termination criteria met
 
     global_steps = 0
-    skipped_steps = 0
-    iter_dataloader_idx = 0
 
     val_losses: float = 0.0
     val_acc: float = 0.0
 
     epoch: int = 1
-    num_trained_samples = 0
     end_training: bool = False
     converged: bool = False
 

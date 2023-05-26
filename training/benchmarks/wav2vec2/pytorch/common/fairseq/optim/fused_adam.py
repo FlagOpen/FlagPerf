@@ -101,7 +101,8 @@ class FusedAdamV1(torch.optim.Optimizer):
         fused_adam_cuda = importlib.import_module("fused_adam_cuda")
 
         if amsgrad:
-            raise RuntimeError("FusedAdam does not support the AMSGrad variant.")
+            raise RuntimeError(
+                "FusedAdam does not support the AMSGrad variant.")
         defaults = {
             "lr": lr,
             "bias_correction": bias_correction,
@@ -157,9 +158,8 @@ class FusedAdamV1(torch.optim.Optimizer):
         if grad_norms is None:
             grad_norms = [None] * len(self.param_groups)
 
-        for group, grads_this_group, grad_norm in zip(
-            self.param_groups, grads_group, grad_norms
-        ):
+        for group, grads_this_group, grad_norm in zip(self.param_groups,
+                                                      grads_group, grad_norms):
             if grads_this_group is None:
                 grads_this_group = [None] * len(group["params"])
 
@@ -184,8 +184,7 @@ class FusedAdamV1(torch.optim.Optimizer):
                 if grad.is_sparse:
                     raise RuntimeError(
                         "FusedAdam does not support sparse gradients, "
-                        "please consider SparseAdam instead"
-                    )
+                        "please consider SparseAdam instead")
 
                 p_data_fp32 = p.data.float()
 
@@ -289,25 +288,22 @@ try:
                     if p.grad.data.is_sparse:
                         raise RuntimeError(
                             "FusedAdam does not support sparse gradients, "
-                            "please consider SparseAdam instead"
-                        )
+                            "please consider SparseAdam instead")
 
                     state = self.state[p]
                     # State initialization
                     if len(state) == 0:
                         # Exponential moving average of gradient values
-                        state["exp_avg"] = torch.zeros_like(p.data, dtype=torch.float)
+                        state["exp_avg"] = torch.zeros_like(p.data,
+                                                            dtype=torch.float)
                         # Exponential moving average of squared gradient values
                         state["exp_avg_sq"] = torch.zeros_like(
-                            p.data, dtype=torch.float
-                        )
+                            p.data, dtype=torch.float)
                     else:
                         state["exp_avg"] = state["exp_avg"].to(
-                            device=p.data.device, dtype=torch.float
-                        )
+                            device=p.data.device, dtype=torch.float)
                         state["exp_avg_sq"] = state["exp_avg_sq"].to(
-                            device=p.data.device, dtype=torch.float
-                        )
+                            device=p.data.device, dtype=torch.float)
 
                     if p.dtype == torch.float16:
                         g_16.append(p.grad.data.float())
@@ -321,7 +317,8 @@ try:
                         m_32.append(state["exp_avg"])
                         v_32.append(state["exp_avg_sq"])
                     else:
-                        raise RuntimeError("FusedAdam only support fp16 and fp32.")
+                        raise RuntimeError(
+                            "FusedAdam only support fp16 and fp32.")
 
                 with torch.cuda.device(p.device):
                     if len(g_16) > 0:
@@ -356,7 +353,6 @@ try:
                         )
 
             return loss
-
 
 except ImportError:
     pass

@@ -21,6 +21,7 @@ from torch import nn
 
 
 class SamePad(nn.Module):
+
     def __init__(self, kernel_size, causal=False):
         super().__init__()
         if causal:
@@ -30,5 +31,5 @@ class SamePad(nn.Module):
 
     def forward(self, x):
         if self.remove > 0:
-            x = x[:, :, : -self.remove]
+            x = x[:, :, :-self.remove]
         return x

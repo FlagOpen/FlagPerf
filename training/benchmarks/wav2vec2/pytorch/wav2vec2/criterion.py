@@ -28,6 +28,7 @@ from common.utils import AttrDict
 
 
 class Wav2vecCriterion(_Loss):
+
     def __init__(self, args):
         super().__init__(args)
         self.infonce = args.infonce
@@ -60,9 +61,10 @@ class Wav2vecCriterion(_Loss):
         if self.infonce:
             loss = F.cross_entropy(logits, target, reduction=reduction)
         else:
-            loss = F.binary_cross_entropy_with_logits(
-                logits, target.float(), weights, reduction=reduction
-            )
+            loss = F.binary_cross_entropy_with_logits(logits,
+                                                      target.float(),
+                                                      weights,
+                                                      reduction=reduction)
 
         if 'sample_size' in sample:
             sample_size = sample['sample_size']
@@ -142,104 +144,3 @@ class Wav2vecCriterion(_Loss):
                 log_out["count"] = count
 
         return loss, sample_size, log_out
-
-
-# class CTCCriterion(_Loss):
-#     def __init__(self, target_dictionary, blank_idx=0, pad_idx=1, eos_idx=2,
-#                  zero_infinity=True, sentence_avg=True, post_process='letter'):
-
-#         super().__init__()
-#         # keep all indexes for compatibility with fairseq
-#         self.blank_idx = blank_idx
-#         self.pad_idx = target_dictionary.pad()
-#         self.eos_idx = target_dictionary.eos()
-#         assert self.blank_idx != self.pad_idx != self.eos_idx
-
-#         self.target_dictionary = target_dictionary
-#         self.zero_infinity = zero_infinity
-#         self.sentence_avg = sentence_avg
-#         self.post_process = post_process
-
-#         # currently we don't support decoders (e.g., KenLM)
-#         self.w2l_decoder = None
-
-#     def forward(self, model, sample, reduce=True):
-#         net_out = model(**sample["net_input"])
-#         logp = model.get_normalized_probs(
-#             net_out["encoder_out"], net_out["padding_mask"], log_probs=True
-#         ).contiguous()
-
-#         T, B, _ = logp.size()
-
-#         if net_out["padding_mask"] is not None:
-#             lens = (~net_out["padding_mask"]).long().sum(-1)
-#         else:
-#             lens = logp.new_full((B,), T, dtype=torch.long)
-
-#         tgt = sample["target"]
-#         pad_mask = (tgt != self.pad_idx) & (tgt != self.eos_idx)
-#         tgt_flat = tgt.masked_select(pad_mask)
-#         tgt_lens = sample["target_lengths"]
-
-#         with torch.backends.cudnn.flags(enabled=False):
-#             loss = F.ctc_loss(logp, tgt_flat, lens, tgt_lens,
-#                               blank=self.blank_idx, reduction="sum",
-#                               zero_infinity=self.zero_infinity)
-#         log_out = {
-#             "loss": utils.item(loss.data),
-#             "ntokens": sample["ntokens"],
-#             "nsentences": sample["id"].numel(),
-#             "sample_size": B if self.sentence_avg else sample["ntokens"]
-#         }
-
-#         if not model.training:
-#             log_out.update(self.calculate_wer(sample, logp, lens))
-
-#         return loss, log_out['sample_size'], log_out
-
-#     def calculate_wer(self, sample, logp, lens):
-#         with torch.no_grad():
-#             log = AttrDict({"wv_errs": 0, "w_errs": 0, "w_len": 0,
-#                             "c_errs": 0, "c_len": 0})
-
-#             logp_t = logp.transpose(0, 1).float().contiguous().cpu()
-#             tgt_labels = sample.get('target_label', sample['target'])
-
-#             head = lambda l: None if l is None or len(l) < 1 else l[0]
-
-#             for lp, L, tgt in zip(logp_t, lens, tgt_labels):
-#                 lp = lp[:L].unsqueeze(0)
-
-#                 if self.w2l_decoder is not None:
-#                     decoded = head(head(self.w2l_decoder.decode(lp)))
-#                 else:
-#                     decoded = None
-
-#                 mask = (tgt != self.pad_idx) & (tgt != self.eos_idx)
-#                 tgt_units = self.target_dictionary.string(tgt[mask])
-#                 tgt_units_arr = tgt[mask].tolist()
-
-#                 toks = lp.argmax(dim=-1).unique_consecutive()
-#                 pred_units_arr = toks[toks != self.blank_idx].tolist()
-
-#                 log.c_errs += editdistance.eval(pred_units_arr, tgt_units_arr)
-#                 log.c_len += len(tgt_units_arr)
-
-#                 tgt_words = post_process(tgt_units, self.post_process).split()
-
-#                 pred_units = self.target_dictionary.string(pred_units_arr)
-#                 pred_words_raw = post_process(pred_units,
-#                                               self.post_process).split()
-
-#                 if decoded is not None and "words" in decoded:
-#                     pred_words = decoded["words"]
-#                     log.w_errs += editdistance.eval(pred_words, tgt_words)
-#                     log.wv_errs += editdistance.eval(pred_words_raw, tgt_words)
-#                 else:
-#                     dist = editdistance.eval(pred_words_raw, tgt_words)
-#                     log.w_errs += dist
-#                     log.wv_errs += dist
-
-#                 log.w_len += len(tgt_words)
-
-#             return vars(log)

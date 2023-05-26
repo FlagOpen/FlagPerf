@@ -6,30 +6,20 @@ from common import tb_dllogger as logger
 
 class Evaluator:
 
-    def __init__(self, args, dataloader):
+    def __init__(self, dataloader):
         self.dataloader = dataloader
-        self.args = args
-        self.total_loss = 0.0
-        self.total_acc1 = 0.0
-        self.total_acc5 = 0.0
-        self.total_batch = 0
-
-    def __update(self, loss, acc1, acc5):
-        self.total_loss += loss
-        self.total_acc1 += acc1
-        self.total_acc5 += acc5
-        self.total_batch += 1
 
     @torch.no_grad()
-    def validate(self, epoch, step, valid_loader, model, criterion,
-                val_metrics, val_ema_metrics, world_size, fp16, bf16):
+    def validate(self, epoch, step, model, criterion, val_metrics,
+                 val_ema_metrics, world_size, fp16, bf16):
 
         val_losses = []
         val_acc = []
-        val_wer=[]
+        val_wer = []
         ema_model = None
+        valid_loader = self.dataloader
         for model, metrics, scope in [(model, val_metrics, 'val'),
-                                    (ema_model, val_ema_metrics, 'val_ema')]:
+                                      (ema_model, val_ema_metrics, 'val_ema')]:
             if model is None:
                 continue
 
@@ -39,7 +29,8 @@ class Evaluator:
             output_keys = None
 
             assert len(valid_loader) > 1, (
-                'Validation needs at least 2 iterations to handle empty batches.')
+                'Validation needs at least 2 iterations to handle empty batches.'
+            )
 
             for batch in valid_loader:
                 is_empty_batch = len(batch) == 0
@@ -62,9 +53,11 @@ class Evaluator:
                 metrics.accumulate()
 
             metrics.finish_val(scope=scope)
-            logger.log(() if epoch is None else (epoch,),  metrics, scope=scope,
-                    tb_iter=step)
-            
+            logger.log(() if epoch is None else (epoch, ),
+                       metrics,
+                       scope=scope,
+                       tb_iter=step)
+
             val_losses.append(metrics.metrics[scope]['loss'])
             val_acc = metrics.metrics[scope]['accuracy']
             if 'wer' in metrics.metrics[scope]:

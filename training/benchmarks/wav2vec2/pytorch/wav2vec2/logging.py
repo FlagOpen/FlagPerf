@@ -34,7 +34,8 @@ def init_logger(output_dir, log_file, ema_decay=0.0):
         dllogger.init(backends=[
             JSONStreamBackend(Verbosity.DEFAULT, log_fpath, append=True),
             JSONStreamBackend(Verbosity.DEFAULT, unique_log_fpath(log_fpath)),
-            StdOutBackend(Verbosity.VERBOSE, step_format=stdout_step_format,
+            StdOutBackend(Verbosity.VERBOSE,
+                          step_format=stdout_step_format,
                           metric_format=stdout_metric_format)
         ])
         init_train_metadata()
@@ -54,60 +55,88 @@ def init_logger(output_dir, log_file, ema_decay=0.0):
     enabled = (local_rank == 0)
     tb_dllogger.tb_loggers = {
         s: TBLogger(enabled, log_dir=output_dir, name=subset_names[s])
-        for s in tb_train + tb_val + tb_ema}
+        for s in tb_train + tb_val + tb_ema
+    }
 
 
 def init_train_metadata():
     for id_, pref in [('train', ''), ('train_avg', 'avg train '),
                       ('val', '  avg val '), ('val_ema', '  EMA val ')]:
 
-        dllogger.metadata(f"{id_}_loss",
-                          {"name": f"{pref} loss", "format": ":>6.3f"})
+        dllogger.metadata(f"{id_}_loss", {
+            "name": f"{pref} loss",
+            "format": ":>6.3f"
+        })
 
-        dllogger.metadata(f"{id_}_accuracy",
-                          {"name": f"{pref}acc", "format": ":>6.3f"})
+        dllogger.metadata(f"{id_}_accuracy", {
+            "name": f"{pref}acc",
+            "format": ":>6.3f"
+        })
 
-        dllogger.metadata(f"{id_}_prob_perplexity",
-                          {"name": f"{pref}p pplx", "format": ":>6.3f"})
+        dllogger.metadata(f"{id_}_prob_perplexity", {
+            "name": f"{pref}p pplx",
+            "format": ":>6.3f"
+        })
 
-        dllogger.metadata(f"{id_}_code_perplexity",
-                          {"name": f"{pref}c pplx", "format": ":>6.3f"})
+        dllogger.metadata(f"{id_}_code_perplexity", {
+            "name": f"{pref}c pplx",
+            "format": ":>6.3f"
+        })
 
-        dllogger.metadata(f"{id_}_ntokens",
-                          {"name": None, "unit": "tokens", "format": ":>8.0f"})
+        dllogger.metadata(f"{id_}_ntokens", {
+            "name": None,
+            "unit": "tokens",
+            "format": ":>8.0f"
+        })
 
-        dllogger.metadata(f"{id_}_took",
-                          {"name": "took", "unit": "s", "format": ":>3.2f"})
+        dllogger.metadata(f"{id_}_took", {
+            "name": "took",
+            "unit": "s",
+            "format": ":>3.2f"
+        })
 
-        dllogger.metadata(f"{id_}_ntokens/s",
-                          {"name": None, "unit": "tokens/s", "format": ":>8.2f"})
+        dllogger.metadata(f"{id_}_ntokens/s", {
+            "name": None,
+            "unit": "tokens/s",
+            "format": ":>8.2f"
+        })
 
-        dllogger.metadata(f"{id_}_uer",
-                          {"name": f"{pref} uer", "format": ":>6.2f"})
+        dllogger.metadata(f"{id_}_uer", {
+            "name": f"{pref} uer",
+            "format": ":>6.2f"
+        })
 
-        dllogger.metadata(f"{id_}_wer",
-                          {"name": f"{pref} wer", "format": ":>6.2f"})
+        dllogger.metadata(f"{id_}_wer", {
+            "name": f"{pref} wer",
+            "format": ":>6.2f"
+        })
 
-        dllogger.metadata(f"{id_}_raw_wer",
-                          {"name": f"{pref} raw wer", "format": ":>6.2f"})
+        dllogger.metadata(f"{id_}_raw_wer", {
+            "name": f"{pref} raw wer",
+            "format": ":>6.2f"
+        })
 
-        dllogger.metadata(f"{id_}_lr",
-                          {"name": "lr", "format": ":>3.2e"})
+        dllogger.metadata(f"{id_}_lr", {"name": "lr", "format": ":>3.2e"})
 
-        dllogger.metadata(f"{id_}_loss_scale",
-                          {"name": "loss scale", "format": ":>3.2e"})
+        dllogger.metadata(f"{id_}_loss_scale", {
+            "name": "loss scale",
+            "format": ":>3.2e"
+        })
 
 
 class W2v2Metrics(MetricsAggregator):
 
-    def __init__(self, benchmark_epochs, scopes=('train', 'train_avg'), cuda=True):
+    def __init__(self,
+                 benchmark_epochs,
+                 scopes=('train', 'train_avg'),
+                 cuda=True):
         super().__init__(
             benchmark_epochs=benchmark_epochs,
             benchmark_keys=('took', 'accuracy', 'loss', 'ntokens/s'),
             scopes=scopes,
             dllogger_keys=('loss', 'ntokens', 'accuracy', 'prob_perplexity',
-                           'code_perplexity',
-                           'took', 'loss_scale', 'lr', 'ntokens/s'),
+                           'code_perplexity', 'took', 'loss_scale', 'lr',
+                           'ntokens/s'),
             reduce_mean=('temp', 'prob_perplexity', 'code_perplexity'),
             reduce_last=('lr', 'loss_scale'),
             cuda=cuda)
@@ -118,10 +147,11 @@ class W2v2Metrics(MetricsAggregator):
             ntokens = self.partials['ntokens']
             for k, v in self.partials.items():
                 if k.startswith('loss'):
-                    self.partials[k] = v / ntokens / math.log(2)  # as in fairseq
+                    self.partials[k] = v / ntokens / math.log(
+                        2)  # as in fairseq
 
-            self['accuracy'] = (self.partials.pop('correct')
-                                / self.partials.pop('count'))
+            self['accuracy'] = (self.partials.pop('correct') /
+                                self.partials.pop('count'))
             part_counts = self.partial_counts
             assert part_counts['correct'] == part_counts['count'] == 1
 

@@ -21,6 +21,7 @@ import torch
 
 
 class GradMultiply(torch.autograd.Function):
+
     @staticmethod
     def forward(ctx, x, scale):
         ctx.scale = scale

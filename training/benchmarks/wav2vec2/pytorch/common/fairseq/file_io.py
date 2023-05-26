@@ -24,9 +24,7 @@ import os
 import shutil
 from typing import List, Optional
 
-
 logger = logging.getLogger(__file__)
-
 
 try:
     from iopath.common.file_io import g_pathmgr as IOPathManager
@@ -84,9 +82,9 @@ class PathManager:
     @staticmethod
     def copy(src_path: str, dst_path: str, overwrite: bool = False) -> bool:
         if IOPathManager:
-            return IOPathManager.copy(
-                src_path=src_path, dst_path=dst_path, overwrite=overwrite
-            )
+            return IOPathManager.copy(src_path=src_path,
+                                      dst_path=dst_path,
+                                      overwrite=overwrite)
         return shutil.copyfile(src_path, dst_path)
 
     @staticmethod
@@ -136,13 +134,15 @@ class PathManager:
             return IOPathManager.register_handler(handler=handler)
 
     @staticmethod
-    def copy_from_local(
-        local_path: str, dst_path: str, overwrite: bool = False, **kwargs
-    ) -> None:
+    def copy_from_local(local_path: str,
+                        dst_path: str,
+                        overwrite: bool = False,
+                        **kwargs) -> None:
         if IOPathManager:
-            return IOPathManager.copy_from_local(
-                local_path=local_path, dst_path=dst_path, overwrite=overwrite, **kwargs
-            )
+            return IOPathManager.copy_from_local(local_path=local_path,
+                                                 dst_path=dst_path,
+                                                 overwrite=overwrite,
+                                                 **kwargs)
         return shutil.copyfile(local_path, dst_path)
 
     @staticmethod
@@ -166,6 +166,7 @@ class PathManager:
     """
     ioPath async PathManager methods:
     """
+
     @staticmethod
     def opena(
         path: str,
@@ -185,7 +186,8 @@ class PathManager:
                 from iopath.common.file_io import PathManager
                 IOPathManager = PathManager()
             except Exception:
-                logging.exception("Failed to initialize ioPath PathManager object.")
+                logging.exception(
+                    "Failed to initialize ioPath PathManager object.")
         return IOPathManager.opena(
             path=path,
             mode=mode,

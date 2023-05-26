@@ -16,8 +16,8 @@ from typing import TypeVar, List
 
 import torch
 import numpy as np
-from torch.utils.data import (RandomSampler, Sampler,
-                              DistributedSampler as TorchDistributedSampler)
+from torch.utils.data import (RandomSampler, Sampler, DistributedSampler as
+                              TorchDistributedSampler)
 
 from common.fairseq.data import data_utils
 
@@ -25,6 +25,7 @@ T = TypeVar('T')
 
 
 class DistributedSampler(Sampler):
+
     def __init__(self, dataset, batch_size, world_size, rank):
         """
         Constructor for the DistributedSampler.
@@ -100,7 +101,6 @@ class DistributedSampler(Sampler):
         return self.num_samples // self.world_size
 
 
-
 class DistributedIndicesSampler(TorchDistributedSampler):
     """ DistributedSampler operating on indices.
 
@@ -111,6 +111,7 @@ class DistributedIndicesSampler(TorchDistributedSampler):
     3) if `drop_last` is False, pad indices with `fillvalue`
         or don't pad at all if `fillvalue` is None (useful for validation)
     """
+
     def __init__(self, *args, fillvalue=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.fillvalue = fillvalue
@@ -118,8 +119,8 @@ class DistributedIndicesSampler(TorchDistributedSampler):
             self.total_size = len(self.dataset)
             # possibly different num_samples for each device,
             # this will work with DDP only for validation
-            self.num_samples = len(range(self.rank, self.total_size,
-                                         self.num_replicas))
+            self.num_samples = len(
+                range(self.rank, self.total_size, self.num_replicas))
 
     def __iter__(self):
         indices = list(self.dataset)

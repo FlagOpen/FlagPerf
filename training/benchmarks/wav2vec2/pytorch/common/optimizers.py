@@ -20,9 +20,15 @@ from common.fairseq.optim.fused_adam import get_fused_adam_class
 from common.utils import print_once
 
 
-def lr_poly_policy(step, optimizer, lr, initial_lr_scale=0.0,
-                   final_lr_scale=0.0, warmup_steps=1000, hold_steps=0,
-                   num_steps=None, power=1.0):
+def lr_poly_policy(step,
+                   optimizer,
+                   lr,
+                   initial_lr_scale=0.0,
+                   final_lr_scale=0.0,
+                   warmup_steps=1000,
+                   hold_steps=0,
+                   num_steps=None,
+                   power=1.0):
     """Polynomial decay LR policy with an optional hold period."""
     assert step >= 1
     assert num_steps is not None
@@ -37,10 +43,9 @@ def lr_poly_policy(step, optimizer, lr, initial_lr_scale=0.0,
         new_lr = lr
     elif warmup_steps + hold_steps < step <= num_steps:
         remain = 1 - (step - warmup_steps) / (num_steps - warmup_steps)
-        new_lr = (lr - end_lr) * remain ** power + end_lr
+        new_lr = (lr - end_lr) * remain**power + end_lr
     else:
         new_lr = end_lr
 
     for param_group in optimizer.param_groups:
         param_group['lr'] = new_lr
-

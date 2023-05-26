@@ -53,12 +53,8 @@ class ChunkLineIterator:
             # end bytes to end + 2**32 bytes (4 GB) and this makes it unlikely
             # that the procedure breaks by the undeterministic behavior of
             # f.tell()
-            if (
-                self._end_offset > 0
-                and pos > self._end_offset
-                and pos < self._end_offset + 2 ** 32
-            ):
+            if (self._end_offset > 0 and pos > self._end_offset
+                    and pos < self._end_offset + 2**32):
                 break
             yield line
             line = self._fd.readline()
-

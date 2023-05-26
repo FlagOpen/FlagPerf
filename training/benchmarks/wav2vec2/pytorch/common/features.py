@@ -24,8 +24,14 @@ class BaseFeatures(nn.Module):
     """Base class for GPU accelerated audio preprocessing."""
     __constants__ = ["pad_align", "pad_to_max_duration", "max_len"]
 
-    def __init__(self, pad_align, pad_to_max_duration, max_duration,
-                 sample_rate, window_size, window_stride, spec_augment=None,
+    def __init__(self,
+                 pad_align,
+                 pad_to_max_duration,
+                 max_duration,
+                 sample_rate,
+                 window_size,
+                 window_stride,
+                 spec_augment=None,
                  cutout_augment=None):
         super(BaseFeatures, self).__init__()
 
@@ -37,8 +43,8 @@ class BaseFeatures(nn.Module):
         # Calculate maximum sequence length (# frames)
         if pad_to_max_duration:
             self.max_len = 1 + math.ceil(
-                (max_duration * sample_rate - self.win_length) / self.hop_length
-            )
+                (max_duration * sample_rate - self.win_length) /
+                self.hop_length)
 
         if spec_augment is not None:
             self.spec_augment = SpecAugment(**spec_augment)
@@ -87,8 +93,14 @@ class BaseFeatures(nn.Module):
 class SpecAugment(nn.Module):
     """Spec augment. refer to https://arxiv.org/abs/1904.08779
     """
-    def __init__(self, freq_masks=0, min_freq=0, max_freq=10, time_masks=0,
-                 min_time=0, max_time=10):
+
+    def __init__(self,
+                 freq_masks=0,
+                 min_freq=0,
+                 max_freq=10,
+                 time_masks=0,
+                 min_time=0,
+                 max_time=10):
         super(SpecAugment, self).__init__()
         assert 0 <= min_freq <= max_freq
         assert 0 <= min_time <= max_time
@@ -108,14 +120,16 @@ class SpecAugment(nn.Module):
 
         for idx in range(sh[0]):
             for _ in range(self.freq_masks):
-                w = torch.randint(self.min_freq, self.max_freq + 1, size=(1,)).item()
-                f0 = torch.randint(0, max(1, sh[1] - w), size=(1,))
-                mask[idx, f0:f0+w] = 1
+                w = torch.randint(self.min_freq, self.max_freq + 1,
+                                  size=(1, )).item()
+                f0 = torch.randint(0, max(1, sh[1] - w), size=(1, ))
+                mask[idx, f0:f0 + w] = 1
 
             for _ in range(self.time_masks):
-                w = torch.randint(self.min_time, self.max_time + 1, size=(1,)).item()
-                t0 = torch.randint(0, max(1, sh[2] - w), size=(1,))
-                mask[idx, :, t0:t0+w] = 1
+                w = torch.randint(self.min_time, self.max_time + 1,
+                                  size=(1, )).item()
+                t0 = torch.randint(0, max(1, sh[2] - w), size=(1, ))
+                mask[idx, :, t0:t0 + w] = 1
 
         return x.masked_fill(mask, 0)
 
@@ -123,7 +137,13 @@ class SpecAugment(nn.Module):
 class CutoutAugment(nn.Module):
     """Cutout. refer to https://arxiv.org/pdf/1708.04552.pdf
     """
-    def __init__(self, masks=0, min_freq=20, max_freq=20, min_time=5, max_time=5):
+
+    def __init__(self,
+                 masks=0,
+                 min_freq=20,
+                 max_freq=20,
+                 min_time=5,
+                 max_time=5):
         super(CutoutAugment, self).__init__()
         assert 0 <= min_freq <= max_freq
         assert 0 <= min_time <= max_time
@@ -142,13 +162,15 @@ class CutoutAugment(nn.Module):
         for idx in range(sh[0]):
             for i in range(self.masks):
 
-                w = torch.randint(self.min_freq, self.max_freq + 1, size=(1,)).item()
-                h = torch.randint(self.min_time, self.max_time + 1, size=(1,)).item()
+                w = torch.randint(self.min_freq, self.max_freq + 1,
+                                  size=(1, )).item()
+                h = torch.randint(self.min_time, self.max_time + 1,
+                                  size=(1, )).item()
 
                 f0 = int(random.uniform(0, sh[1] - w))
                 t0 = int(random.uniform(0, sh[2] - h))
 
-                mask[idx, f0:f0+w, t0:t0+h] = 1
+                mask[idx, f0:f0 + w, t0:t0 + h] = 1
 
         return x.masked_fill(mask, 0)
 
@@ -156,10 +178,12 @@ class CutoutAugment(nn.Module):
 @torch.jit.script
 def normalize_batch(x, seq_len, normalize_type: str):
     if normalize_type == "per_feature":
-        x_mean = torch.zeros((seq_len.shape[0], x.shape[1]), dtype=x.dtype,
-                                                 device=x.device)
-        x_std = torch.zeros((seq_len.shape[0], x.shape[1]), dtype=x.dtype,
-                                                device=x.device)
+        x_mean = torch.zeros((seq_len.shape[0], x.shape[1]),
+                             dtype=x.dtype,
+                             device=x.device)
+        x_std = torch.zeros((seq_len.shape[0], x.shape[1]),
+                            dtype=x.dtype,
+                            device=x.device)
         for i in range(x.shape[0]):
             x_mean[i, :] = x[i, :, :seq_len[i]].mean(dim=1)
             x_std[i, :] = x[i, :, :seq_len[i]].std(dim=1)
@@ -200,29 +224,49 @@ def stack_subsample_frames(x, x_lens, stacking: int = 1, subsampling: int = 1):
 
         if x.size(2) > x_lens.max().item():
             assert abs(x.size(2) - x_lens.max().item()) <= 1
-            x = x[:,:,:x_lens.max().item()]
+            x = x[:, :, :x_lens.max().item()]
 
     return x, x_lens
 
 
 class FilterbankFeatures(BaseFeatures):
     # For JIT, https://pytorch.org/docs/stable/jit.html#python-defined-constants
-    __constants__ = ["dither", "preemph", "n_fft", "hop_length", "win_length",
-                     "log", "frame_stacking", "frame_subsampling", "normalize"]
+    __constants__ = [
+        "dither", "preemph", "n_fft", "hop_length", "win_length", "log",
+        "frame_stacking", "frame_subsampling", "normalize"
+    ]
+
     # torchscript: "center" removed due to a bug
 
-    def __init__(self, spec_augment=None, cutout_augment=None,
-                 sample_rate=16000, window_size=0.02, window_stride=0.01,
-                 window="hann", normalize="per_feature", n_fft=512,
-                 preemph=0.97, n_filt=80, lowfreq=0, highfreq=None, log=True,
-                 dither=1e-5, pad_align=16, pad_to_max_duration=False,
-                 max_duration=float('inf'), frame_stacking=1,
+    def __init__(self,
+                 spec_augment=None,
+                 cutout_augment=None,
+                 sample_rate=16000,
+                 window_size=0.02,
+                 window_stride=0.01,
+                 window="hann",
+                 normalize="per_feature",
+                 n_fft=512,
+                 preemph=0.97,
+                 n_filt=80,
+                 lowfreq=0,
+                 highfreq=None,
+                 log=True,
+                 dither=1e-5,
+                 pad_align=16,
+                 pad_to_max_duration=False,
+                 max_duration=float('inf'),
+                 frame_stacking=1,
                  frame_subsampling=1):
-        super(FilterbankFeatures, self).__init__(
-            pad_align=pad_align, pad_to_max_duration=pad_to_max_duration,
-            max_duration=max_duration, sample_rate=sample_rate,
-            window_size=window_size, window_stride=window_stride,
-            spec_augment=spec_augment, cutout_augment=cutout_augment)
+        super(FilterbankFeatures,
+              self).__init__(pad_align=pad_align,
+                             pad_to_max_duration=pad_to_max_duration,
+                             max_duration=max_duration,
+                             sample_rate=sample_rate,
+                             window_size=window_size,
+                             window_stride=window_stride,
+                             spec_augment=spec_augment,
+                             cutout_augment=cutout_augment)
 
         torch_windows = {
             'hann': torch.hann_window,
@@ -232,7 +276,7 @@ class FilterbankFeatures(BaseFeatures):
             'none': None,
         }
 
-        self.n_fft = n_fft or 2 ** math.ceil(math.log2(self.win_length))
+        self.n_fft = n_fft or 2**math.ceil(math.log2(self.win_length))
 
         self.normalize = normalize
         self.log = log
@@ -246,10 +290,12 @@ class FilterbankFeatures(BaseFeatures):
         window_fn = torch_windows.get(window, None)
         window_tensor = window_fn(self.win_length,
                                   periodic=False) if window_fn else None
-        filterbanks = torch.tensor(
-            librosa.filters.mel(sample_rate, self.n_fft, n_mels=n_filt,
-                                fmin=lowfreq, fmax=highfreq),
-            dtype=torch.float).unsqueeze(0)
+        filterbanks = torch.tensor(librosa.filters.mel(sample_rate,
+                                                       self.n_fft,
+                                                       n_mels=n_filt,
+                                                       fmin=lowfreq,
+                                                       fmax=highfreq),
+                                   dtype=torch.float).unsqueeze(0)
         # torchscript
         self.register_buffer("fb", filterbanks)
         self.register_buffer("window", window_tensor)
@@ -258,12 +304,14 @@ class FilterbankFeatures(BaseFeatures):
         return self.n_filt * self.frame_stacking
 
     def get_seq_len(self, seq_len):
-        return torch.ceil(seq_len.to(dtype=torch.float) / self.hop_length).to(
-            dtype=torch.int)
+        return torch.ceil(seq_len.to(dtype=torch.float) /
+                          self.hop_length).to(dtype=torch.int)
 
     # TORCHSCRIPT: center removed due to bug
     def stft(self, x):
-        spec = torch.stft(x, n_fft=self.n_fft, hop_length=self.hop_length,
+        spec = torch.stft(x,
+                          n_fft=self.n_fft,
+                          hop_length=self.hop_length,
                           win_length=self.win_length,
                           window=self.window.to(dtype=torch.float),
                           return_complex=True)
@@ -281,12 +329,12 @@ class FilterbankFeatures(BaseFeatures):
 
         # do preemphasis
         if self.preemph is not None:
-            x = torch.cat(
-                x[:, 0].unsqueeze(1), x[:, 1:] - self.preemph * x[:, :-1],
-                dim=1)
-        x  = self.stft(x)
+            x = torch.cat(x[:, 0].unsqueeze(1),
+                          x[:, 1:] - self.preemph * x[:, :-1],
+                          dim=1)
+        x = self.stft(x)
 
-            # get power spectrum
+        # get power spectrum
         x = x.pow(2).sum(-1)
 
         # dot with filterbank energies

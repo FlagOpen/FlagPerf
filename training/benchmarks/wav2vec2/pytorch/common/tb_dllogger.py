@@ -24,7 +24,6 @@ from torch.utils.tensorboard import SummaryWriter
 
 import dllogger
 
-
 tb_loggers = {}
 
 
@@ -33,14 +32,16 @@ class TBLogger:
     xyz_dummies: stretch the screen with empty plots so the legend would
                  always fit for other plots
     """
+
     def __init__(self, enabled, log_dir, name, interval=1, dummies=True):
         self.enabled = enabled
         self.interval = interval
         self.cache = {}
         if self.enabled:
-            self.summary_writer = SummaryWriter(
-                log_dir=os.path.join(log_dir, name),
-                flush_secs=120, max_queue=200)
+            self.summary_writer = SummaryWriter(log_dir=os.path.join(
+                log_dir, name),
+                                                flush_secs=120,
+                                                max_queue=200)
             atexit.register(self.summary_writer.close)
             if dummies:
                 for key in ('_', '✕'):
@@ -62,17 +63,24 @@ class TBLogger:
 
     def log_grads(self, step, model):
         if self.enabled:
-            norms = [p.grad.norm().item() for p in model.parameters()
-                     if p.grad is not None]
+            norms = [
+                p.grad.norm().item() for p in model.parameters()
+                if p.grad is not None
+            ]
             for stat in ('max', 'min', 'mean'):
-                self.log_value(step, f'grad_{stat}', getattr(np, stat)(norms),
+                self.log_value(step,
+                               f'grad_{stat}',
+                               getattr(np, stat)(norms),
                                stat=stat)
 
 
 def unique_log_fpath(fpath):
     """Have a unique log filename for every separate run"""
-    log_num = max([0] + [int(re.search("\.(\d+)", Path(f).suffix).group(1))
-                         for f in glob.glob(f"{fpath}.*")])
+    log_num = max([0] + [
+        int(re.search("\.(\d+)",
+                      Path(f).suffix).group(1))
+        for f in glob.glob(f"{fpath}.*")
+    ])
     return f"{fpath}.{log_num + 1}"
 
 
