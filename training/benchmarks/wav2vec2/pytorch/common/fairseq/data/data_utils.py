@@ -39,16 +39,6 @@ from common.fairseq.file_io import PathManager
 logger = logging.getLogger(__name__)
 
 
-def infer_language_pair(path):
-    """Infer language pair from filename: <split>.<lang1>-<lang2>.(...).idx"""
-    src, dst = None, None
-    for filename in PathManager.ls(path):
-        parts = filename.split(".")
-        if len(parts) >= 3 and len(parts[1].split("-")) == 2:
-            return parts[1].split("-")
-    return src, dst
-
-
 def collate_tokens(
     values,
     pad_idx,
@@ -83,58 +73,6 @@ def collate_tokens(
     for i, v in enumerate(values):
         copy_tensor(v, res[i][size - len(v) :] if left_pad else res[i][: len(v)])
     return res
-
-def load_indexed_dataset(
-    path, dictionary=None, dataset_impl=None, combine=False, default="cached"
-):
-    """A helper function for loading indexed datasets.
-
-    Args:
-        path (str): path to indexed dataset (e.g., 'data-bin/train')
-        dictionary (~fairseq.data.Dictionary): data dictionary
-        dataset_impl (str, optional): which dataset implementation to use. If
-            not provided, it will be inferred automatically. For legacy indexed
-            data we use the 'cached' implementation by default.
-        combine (bool, optional): automatically load and combine multiple
-            datasets. For example, if *path* is 'data-bin/train', then we will
-            combine 'data-bin/train', 'data-bin/train1', ... and return a
-            single ConcatDataset instance.
-    """
-    import fairseq.data.indexed_dataset as indexed_dataset
-    from fairseq.data.concat_dataset import ConcatDataset
-
-    datasets = []
-    for k in itertools.count():
-        path_k = path + (str(k) if k > 0 else "")
-        try:
-            path_k = indexed_dataset.get_indexed_dataset_to_local(path_k)
-        except Exception as e:
-            if "StorageException: [404] Path not found" in str(e):
-                logger.warning(f"path_k: {e} not found")
-            else:
-                raise e
-
-        dataset_impl_k = dataset_impl
-        if dataset_impl_k is None:
-            dataset_impl_k = indexed_dataset.infer_dataset_impl(path_k)
-        dataset = indexed_dataset.make_dataset(
-            path_k,
-            impl=dataset_impl_k or default,
-            fix_lua_indexing=True,
-            dictionary=dictionary,
-        )
-        if dataset is None:
-            break
-        logger.info("loaded {:,} examples from: {}".format(len(dataset), path_k))
-        datasets.append(dataset)
-        if not combine:
-            break
-    if len(datasets) == 0:
-        return None
-    elif len(datasets) == 1:
-        return datasets[0]
-    else:
-        return ConcatDataset(datasets)
 
 
 @contextlib.contextmanager
@@ -200,95 +138,6 @@ def _filter_by_size_dynamic(indices, size_fn, max_positions, raise_exception=Fal
     itr = collect_filtered(check_size, indices, ignored)
     indices = np.fromiter(itr, dtype=np.int64, count=-1)
     return indices, ignored
-
-
-def filter_by_size(indices, dataset, max_positions, raise_exception=False):
-    """
-    [deprecated] Filter indices based on their size.
-    Use `FairseqDataset::filter_indices_by_size` instead.
-
-    Args:
-        indices (List[int]): ordered list of dataset indices
-        dataset (FairseqDataset): fairseq dataset instance
-        max_positions (tuple): filter elements larger than this size.
-            Comparisons are done component-wise.
-        raise_exception (bool, optional): if ``True``, raise an exception if
-            any elements are filtered (default: False).
-    """
-    warnings.warn(
-        "data_utils.filter_by_size is deprecated. "
-        "Use `FairseqDataset::filter_indices_by_size` instead.",
-        stacklevel=2,
-    )
-    if isinstance(max_positions, float) or isinstance(max_positions, int):
-        if hasattr(dataset, "sizes") and isinstance(dataset.sizes, np.ndarray):
-            ignored = indices[dataset.sizes[indices] > max_positions].tolist()
-            indices = indices[dataset.sizes[indices] <= max_positions]
-        elif (
-            hasattr(dataset, "sizes")
-            and isinstance(dataset.sizes, list)
-            and len(dataset.sizes) == 1
-        ):
-            ignored = indices[dataset.sizes[0][indices] > max_positions].tolist()
-            indices = indices[dataset.sizes[0][indices] <= max_positions]
-        else:
-            indices, ignored = _filter_by_size_dynamic(
-                indices, dataset.size, max_positions
-            )
-    else:
-        indices, ignored = _filter_by_size_dynamic(indices, dataset.size, max_positions)
-
-    if len(ignored) > 0 and raise_exception:
-        raise Exception(
-            (
-                "Size of sample #{} is invalid (={}) since max_positions={}, "
-                "skip this example with --skip-invalid-size-inputs-valid-test"
-            ).format(ignored[0], dataset.size(ignored[0]), max_positions)
-        )
-    if len(ignored) > 0:
-        logger.warning(
-            (
-                "{} samples have invalid sizes and will be skipped, "
-                "max_positions={}, first few sample ids={}"
-            ).format(len(ignored), max_positions, ignored[:10])
-        )
-    return indices
-
-
-def filter_paired_dataset_indices_by_size(src_sizes, tgt_sizes, indices, max_sizes):
-    """Filter a list of sample indices. Remove those that are longer
-        than specified in max_sizes.
-
-    Args:
-        indices (np.array): original array of sample indices
-        max_sizes (int or list[int] or tuple[int]): max sample size,
-            can be defined separately for src and tgt (then list or tuple)
-
-    Returns:
-        np.array: filtered sample array
-        list: list of removed indices
-    """
-    if max_sizes is None:
-        return indices, []
-    if type(max_sizes) in (int, float):
-        max_src_size, max_tgt_size = max_sizes, max_sizes
-    else:
-        max_src_size, max_tgt_size = max_sizes
-    if tgt_sizes is None:
-        ignored = indices[src_sizes[indices] > max_src_size]
-    else:
-        ignored = indices[
-            (src_sizes[indices] > max_src_size) | (tgt_sizes[indices] > max_tgt_size)
-        ]
-    if len(ignored) > 0:
-        if tgt_sizes is None:
-            indices = indices[src_sizes[indices] <= max_src_size]
-        else:
-            indices = indices[
-                (src_sizes[indices] <= max_src_size)
-                & (tgt_sizes[indices] <= max_tgt_size)
-            ]
-    return indices, ignored.tolist()
 
 
 def batch_by_size(
@@ -524,16 +373,6 @@ def compute_mask_indices(
     return mask
 
 
-def get_mem_usage():
-    try:
-        import psutil
-
-        mb = 1024 * 1024
-        return f"used={psutil.virtual_memory().used / mb}Mb; avail={psutil.virtual_memory().available / mb}Mb"
-    except ImportError:
-        return "N/A"
-
-
 def get_buckets(sizes, num_buckets):
     buckets = np.unique(
         np.percentile(
@@ -555,14 +394,3 @@ def get_bucketed_sizes(orig_sizes, buckets):
         start_val = end_val
     return sizes
 
-
-def _find_extra_valid_paths(dataset_path: str) -> set:
-    paths = utils.split_paths(dataset_path)
-    all_valid_paths = set()
-    for sub_dir in paths:
-        contents = PathManager.ls(sub_dir)
-        valid_paths = [c for c in contents if re.match("valid*[0-9].*", c) is not None]
-        all_valid_paths |= {os.path.basename(p) for p in valid_paths}
-    # Remove .bin, .idx etc
-    roots = {os.path.splitext(p)[0] for p in all_valid_paths}
-    return roots

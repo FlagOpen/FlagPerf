@@ -109,21 +109,6 @@ def log(when, metrics={}, scope='train', flush_log=False, tb_iter=None):
         flush()
 
 
-def log_grads_tb(tb_total_steps, grads, tb_subset='train'):
-    tb_loggers[tb_subset].log_grads(tb_total_steps, grads)
-
-
-def log_parameters(data, verbosity=0, tb_subset=None):
-    for k, v in data.items():
-        v = str(v) if isinstance(v, Path) else v
-        dllogger.log(step="PARAMETER", data={k: v}, verbosity=verbosity)
-
-    if tb_subset is not None and tb_loggers[tb_subset].enabled:
-        tb_data = {k: v for k, v in data.items()
-                   if type(v) in (str, bool, int, float)}
-        tb_loggers[tb_subset].summary_writer.add_hparams(tb_data, {})
-
-
 def flush():
     dllogger.flush()
     for tbl in tb_loggers.values():

@@ -131,29 +131,6 @@ def _get_torchaudio_fbank(
         return None
 
 
-def get_fbank(path_or_fp: Union[str, BinaryIO], n_bins=80) -> np.ndarray:
-    """Get mel-filter bank features via PyKaldi or TorchAudio. Prefer PyKaldi
-    (faster CPP implementation) to TorchAudio (Python implementation). Note that
-    Kaldi/TorchAudio requires 16-bit signed integers as inputs and hence the
-    waveform should not be normalized."""
-    waveform, sample_rate = get_waveform(path_or_fp, normalization=False)
-
-    features = _get_kaldi_fbank(waveform, sample_rate, n_bins)
-    if features is None:
-        features = _get_torchaudio_fbank(waveform, sample_rate, n_bins)
-    if features is None:
-        raise ImportError(
-            "Please install pyKaldi or torchaudio to enable "
-            "online filterbank feature extraction"
-        )
-
-    return features
-
-
-def is_npy_data(data: bytes) -> bool:
-    return data[0] == 147 and data[1] == 78
-
-
 def is_sf_audio_data(data: bytes) -> bool:
     is_wav = (data[0] == 82 and data[1] == 73 and data[2] == 70)
     is_flac = (data[0] == 102 and data[1] == 76 and data[2] == 97)

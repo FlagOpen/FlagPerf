@@ -98,17 +98,6 @@ def init_train_metadata():
                           {"name": "loss scale", "format": ":>3.2e"})
 
 
-def init_infer_metadata():
-    for step in ['DNN', 'data+DNN', 'data']:
-        for c in [0.99, 0.95, 0.9, 0.5]:
-            cs = 'avg' if c == 0.5 else f'{int(100 * c)}%'
-            dllogger.metadata(f'{step.lower()}_latency_{c}',
-                              {'name': f'{step} latency {cs}',
-                               'format': ':>7.2f', 'unit': 'ms'})
-    dllogger.metadata(
-        'eval_wer', {'name': 'WER', 'format': ':>3.2f', 'unit': '%'})
-
-
 class W2v2Metrics(MetricsAggregator):
 
     def __init__(self, benchmark_epochs, scopes=('train', 'train_avg'), cuda=True):
@@ -143,47 +132,3 @@ class W2v2Metrics(MetricsAggregator):
         m = self.metrics[scope]
         count = self.metric_counts[scope]
         m['ntokens/s'] = m['ntokens'] * count['ntokens'] / m['took']
-
-
-class W2v2FineTuningMetrics(MetricsAggregator):
-
-    def __init__(
-            self,
-            benchmark_epochs,
-            benchmark_keys=('took', 'accuracy', 'loss', 'ntokens/s'),
-            scopes=('train', 'train_avg'),
-            dllogger_keys=('loss', 'ntokens', 'accuracy', 'lr',
-                           'prob_perplexity', 'took', 'ntokens/s', 'uer',
-                           'wer', 'raw_wer'),
-            reduce_mean=('temp', 'prob_perplexity', 'code_perplexity'),
-            reduce_last=('lr',),
-            cuda=True):
-        super().__init__(
-            benchmark_epochs=benchmark_epochs, benchmark_keys=benchmark_keys,
-            scopes=scopes, dllogger_keys=dllogger_keys,
-            reduce_mean=reduce_mean, reduce_last=reduce_last, cuda=cuda)
-
-    def accumulate(self, scopes=None):
-        if 'ignore' not in self.partials or self.partials['ignore'] == 0.0:
-            # compute_loss_and_accuracy
-            nsentences = self.partials['nsentences']
-            for k, v in self.partials.items():
-                if k.startswith('loss'):
-                    self.partials[k] = v / nsentences / math.log(2)  # as in fairseq
-
-        super().accumulate(scopes=scopes)
-
-    def _finish_accumulating(self, scope='train'):
-        super()._finish_accumulating(scope=scope)
-
-        m = self.metrics[scope]
-        count = self.metric_counts[scope]
-
-        m['ntokens/s'] = m['ntokens'] * count['ntokens'] / m['took']
-
-        if 'c_errs' in m:
-            m['uer'] = 100 * m['c_errs'] / m['c_len']
-        if 'w_errs' in m:
-            m['wer'] = 100 * m['w_errs'] / m['w_len']
-        if 'wv_errs' in m:
-            m['raw_wer'] = 100 * m['wv_errs'] / m['w_len']

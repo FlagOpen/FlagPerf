@@ -20,32 +20,6 @@ class Evaluator:
         self.total_acc5 += acc5
         self.total_batch += 1
 
-    def evaluate(self, trainer):
-        self.total_loss, self.total_acc1, self.total_acc5 = 0.0, 0.0, 0.0
-        self.total_batch = 0
-        with torch.no_grad():
-            for i, batch in enumerate(self.dataloader):
-                batch = trainer.process_batch(batch, self.args.device)
-                loss, acc1, acc5 = trainer.inference(batch)
-                self.__update(loss.item(), acc1.item(), acc5.item())
-
-        if dist.is_available() and dist.is_initialized():
-            total = torch.tensor([
-                self.total_loss, self.total_acc1, self.total_acc5,
-                self.total_batch
-            ],
-                                 dtype=torch.float32,
-                                 device=self.args.device)
-            dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
-            self.total_loss, self.total_acc1, self.total_acc5, self.total_batch = total.tolist(
-            )
-
-        loss = self.total_loss / self.total_batch
-        acc1 = self.total_acc1 / self.total_batch
-        acc5 = self.total_acc5 / self.total_batch
-        return loss, acc1, acc5
-
-
     @torch.no_grad()
     def validate(self, epoch, step, valid_loader, model, criterion,
                 val_metrics, val_ema_metrics, world_size, fp16, bf16):

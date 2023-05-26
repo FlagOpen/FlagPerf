@@ -36,40 +36,12 @@ def to_gpu(batch, fp16=False, bf16=False):
             batch['net_input'][k] = v.cuda(non_blocking=True)
 
 
-def init_multi_tensor_ema(model, ema_model):
-    model_weights = list(model.state_dict().values())
-    ema_model_weights = list(ema_model.state_dict().values())
-    ema_overflow_buf = torch.cuda.IntTensor([0])
-    return model_weights, ema_model_weights, ema_overflow_buf
-
-
 def apply_multi_tensor_ema(decay, model_weights, ema_model_weights,
                            overflow_buf):
     amp_C.multi_tensor_axpby(
         65536, overflow_buf,
         [ema_model_weights, model_weights, ema_model_weights],
         decay, 1-decay, -1)
-
-
-def apply_ema(model, ema_model, decay, patch_conv_wn=False):
-    if not decay:
-        return
-
-    if patch_conv_wn:
-        torch.nn.utils.remove_weight_norm(model.encoder.pos_conv[0])
-
-    sd = getattr(model, 'module', model).state_dict()
-
-    for k, v in ema_model.state_dict().items():
-        v.copy_(decay * v + (1 - decay) * sd[k])
-
-    if patch_conv_wn:
-        torch.nn.utils.weight_norm(
-            model.encoder.pos_conv[0], name="weight", dim=2)
-
-
-def add_ctc_blank(symbols):
-    return symbols + ['<BLANK>']
 
 
 def ctc_decoder_predictions_tensor(tensor, labels, blank_id=None):
@@ -126,35 +98,6 @@ def gather_transcripts(transcript_list, transcript_len_list, labels):
     return results
 
 
-def process_evaluation_batch(tensors, global_vars, labels):
-    """
-    Processes results of an iteration and saves it in global_vars
-    Args:
-        tensors: dictionary with results of an evaluation iteration,
-        e.g., loss, predictions, transcript, and output
-        global_vars: dictionary where processes results of iteration are saved
-        labels: A list of labels
-    """
-    for kv, v in tensors.items():
-        if kv.startswith('loss'):
-            global_vars['EvalLoss'] += gather_losses(v)
-        elif kv.startswith('predictions'):
-            global_vars['preds'] += gather_predictions(v, labels)
-        elif kv.startswith('transcript_length'):
-            transcript_len_list = v
-        elif kv.startswith('transcript'):
-            transcript_list = v
-        elif kv.startswith('output'):
-            global_vars['logits'] += v
-
-    global_vars['txts'] += gather_transcripts(
-        transcript_list, transcript_len_list, labels)
-
-
-def num_weights(module):
-    return sum(p.numel() for p in module.parameters() if p.requires_grad)
-
-
 def load_wrapped_state(model, state_dict, strict=True):
     if model is None:
         return
@@ -179,7 +122,6 @@ class Checkpointer:
         self.tracked = OrderedDict(sorted(tracked, key=lambda t: t[0]))
 
         fpath = (self.last_checkpoint() if args.resume else None) or args.ckpt
-        print("fpath",fpath)
 
         if fpath is not None:
             print_once(f'Loading model from {fpath}')

@@ -35,22 +35,6 @@ class AttrDict(dict):
         self.__dict__ = self
 
 
-def set_torch_seed(seed):
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed(seed)
-
-
-def reduce_tensor(tensor, world_size, mean=True):
-    if world_size == 1:
-        return tensor
-    rt = tensor.clone()
-    dist.all_reduce(rt, op=dist.ReduceOp.SUM)
-    if mean:
-        rt = rt.true_divide(world_size)
-    return rt
-
-
 def all_reduce_cpu_scalars(data, device=torch.device('cuda')):
     data_keys = list(data.keys())
     data_vals = list(data.values())
