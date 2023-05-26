@@ -87,9 +87,3 @@ num_classes: int = 90
 
 # backbone pretrained path
 pretrained_path: str = "checkpoint/resnet50.pth"
-
-# resume configs
-# resume start checkpoint
-resume: str = None
-# start epoch
-start_epoch: int = 0

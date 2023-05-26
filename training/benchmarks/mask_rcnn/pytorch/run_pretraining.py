@@ -143,7 +143,7 @@ def main(start_ts) -> Tuple[Any, Any]:
     val_map = []
 
     # 训练过程
-    epoch_index = config.start_epoch
+    epoch_index = 0
     while not training_state.end_training:
         if config.distributed:
             train_sampler.set_epoch(epoch_index)
