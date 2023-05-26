@@ -44,8 +44,9 @@ class Trainer:
     def init(self):
         self.model_config = create_model_config(config)
         self.model = create_model(config)
+        self.model = self.adapter.model_to_fp16(self.model,self.config)
         self.model = self.adapter.model_to_ddp(self.model, self.config)
-        self._init_model()
+        self.model.train()
 
         self.criterion = get_loss_function()
         self.optimizer = create_optimizer(self.model, self.config)
@@ -53,15 +54,11 @@ class Trainer:
         torch.backends.cudnn.enabled = self.config.cudnn_enabled
         torch.backends.cudnn.benchmark = self.config.cudnn_benchmark
 
-    def _init_model(self):
-        self.model.train()
-
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
         driver = self.driver
 
-        if self.config.local_rank == 0:
-            state.epoch += 1
+        state.epoch += 1
 
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 

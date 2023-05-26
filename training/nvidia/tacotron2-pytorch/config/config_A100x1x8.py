@@ -1,8 +1,5 @@
 from config_common import *
 
-fp16 = True
-dist_backend = "nccl"
-
 gradient_accumulation_steps = 1
 
 train_batch_size = 128

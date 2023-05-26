@@ -6,8 +6,6 @@ import sys
 import time
 from typing import Any, Tuple
 
-# 三方库
-
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
@@ -86,26 +84,6 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.barrier(config.vendor)
     trainer.init()
     dist_pytorch.barrier(config.vendor)
-
-    # evaluation统计
-    init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
-    """
-    实现Evaluator 类的evaluate()方法，用于返回关键指标信息，如loss，eval_embedding_average等。
-    例如：training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(trainer)
-    """
-
-    init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
-    """
-    收集eval关键信息，用于日志输出
-    例如： init_evaluation_info = dict(
-        eval_loss=training_state.eval_avg_loss,
-        eval_embedding_average=training_state.eval_embedding_average,
-        time=init_evaluation_end - init_evaluation_start)
-    """
-    # time单位为秒
-    init_evaluation_info = dict(time=init_evaluation_end -
-                                init_evaluation_start)
-    model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     # do evaluation
     if not config.do_train:
