@@ -1,7 +1,5 @@
 from config_common import *
 
-gradient_accumulation_steps = 1
-
 train_batch_size = 128
 eval_batch_size = train_batch_size
 
