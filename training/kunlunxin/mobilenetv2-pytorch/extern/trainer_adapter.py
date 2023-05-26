@@ -36,7 +36,7 @@ def model_to_fp16(model):
 
 def model_to_ddp(model: nn.Module) -> nn.Module:
     if dist.is_available() and dist.is_initialized():
-        from torch_xmlir.distributed import DistributedDataParallel as DDP
+        from torch.nn.parallel import DistributedDataParallel as DDP
         model = DDP(model)
     return model
 
@@ -49,7 +49,5 @@ def backward(step: int, loss: torch.Tensor, optimizer: Optimizer):
     loss.backward()
     update_step = step % config.gradient_accumulation_steps == 0
     if update_step:
-        xm.optimizer_step(optimizer, barrier=True)
+        optimizer.step()
         optimizer.zero_grad()
-    else:
-        xm.mark_step()
