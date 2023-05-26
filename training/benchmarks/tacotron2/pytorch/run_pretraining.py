@@ -42,12 +42,6 @@ def main() -> Tuple[Any, Any]:
     # logger
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
-    """
-    这里获取seed的可行方式：
-    1. 配置文件中的seed
-    2. 自定义seed的生成方式：dist_pytorch.setup_seeds得到work_seeds数组，取其中某些元素。参考GLM-Pytorch的run_pretraining.py的seed生成方式
-    3. 其他自定义方式
-    """
 
     init_helper.set_seed(config.seed, model_driver.config.vendor)
 
@@ -124,9 +118,6 @@ if __name__ == "__main__":
     # 训练信息写日志
     e2e_time = time.time() - start
     if config_update.do_train:
-
-        # 构建训练所需的统计信息，包括不限于：e2e_time、training_sequences_per_second、
-        # converged、final_accuracy、raw_train_time、init_time
         training_perf = (dist_pytorch.global_batch_size(config_update) *
                          state.global_steps) / state.raw_train_time
         finished_info = {
