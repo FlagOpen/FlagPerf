@@ -8,6 +8,7 @@ from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
 from train import utils
 
+
 def convert_model(args, model: nn.Module) -> nn.Module:
     if utils.is_dist_avail_and_initialized() and args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
@@ -19,15 +20,20 @@ def create_optimizer(args, model):
     if args.bias_weight_decay is not None:
         custom_keys_weight_decay.append(("bias", args.bias_weight_decay))
     if args.transformer_embedding_decay is not None:
-        for key in ["class_token", "position_embedding", "relative_position_bias_table"]:
-            custom_keys_weight_decay.append((key, args.transformer_embedding_decay))
+        for key in [
+                "class_token", "position_embedding",
+                "relative_position_bias_table"
+        ]:
+            custom_keys_weight_decay.append(
+                (key, args.transformer_embedding_decay))
     parameters = utils.set_weight_decay(
         model,
         args.weight_decay,
         norm_weight_decay=args.norm_weight_decay,
-        custom_keys_weight_decay=custom_keys_weight_decay if len(custom_keys_weight_decay) > 0 else None,
+        custom_keys_weight_decay=custom_keys_weight_decay
+        if len(custom_keys_weight_decay) > 0 else None,
     )
-    
+
     opt_name = args.opt.lower()
     if opt_name.startswith("sgd"):
         optimizer = torch.optim.SGD(
@@ -38,13 +44,20 @@ def create_optimizer(args, model):
             nesterov="nesterov" in opt_name,
         )
     elif opt_name == "rmsprop":
-        optimizer = torch.optim.RMSprop(
-            parameters, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay, eps=0.0316, alpha=0.9
-        )
+        optimizer = torch.optim.RMSprop(parameters,
+                                        lr=args.lr,
+                                        momentum=args.momentum,
+                                        weight_decay=args.weight_decay,
+                                        eps=0.0316,
+                                        alpha=0.9)
     elif opt_name == "adamw":
-        optimizer = torch.optim.AdamW(parameters, lr=args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.AdamW(parameters,
+                                      lr=args.lr,
+                                      weight_decay=args.weight_decay)
     else:
-        raise RuntimeError(f"Invalid optimizer {args.opt}. Only SGD, RMSprop and AdamW are supported.")
+        raise RuntimeError(
+            f"Invalid optimizer {args.opt}. Only SGD, RMSprop and AdamW are supported."
+        )
     return optimizer
 
 
@@ -61,11 +74,14 @@ def model_to_ddp(args, model: nn.Module) -> nn.Module:
         model = DDP(model, device_ids=[args.local_rank])
     return model
 
+
 def create_grad_scaler(args):
     scaler = torch.cuda.amp.GradScaler() if args.amp else None
     return scaler
 
-def backward(args, step: int, epoch: int, loss: torch.Tensor, model: nn.Module, optimizer: Optimizer, scaler):
+
+def backward(args, step: int, epoch: int, loss: torch.Tensor, model: nn.Module,
+             optimizer: Optimizer, scaler):
     optimizer.zero_grad()
     if scaler is not None:
         scaler.scale(loss).backward()

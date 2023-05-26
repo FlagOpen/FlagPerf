@@ -12,7 +12,6 @@ mixup_alpha = 0.2
 cutmix_alpha = 1.0
 weight_decay = 0.00002
 norm_weight_decay = 0.0
-model_ema = True
 ra_sampler = True
 ra_reps = 4
 epochs = 600

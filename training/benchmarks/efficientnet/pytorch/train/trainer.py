@@ -18,6 +18,8 @@ import config
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
+
+
 class Trainer:
 
     def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
@@ -46,13 +48,14 @@ class Trainer:
 
         self.lr_scheduler = create_scheduler(self.config, self.optimizer)
         self.scaler = self.adapter.create_grad_scaler(self.config)
-        self.criterion = torch.nn.CrossEntropyLoss(label_smoothing=self.config.label_smoothing)
+        self.criterion = torch.nn.CrossEntropyLoss(
+            label_smoothing=self.config.label_smoothing)
         self.resume()
 
     def _init_model(self, model, args, device):
         model = model.to(device)
         return model
-    
+
     def resume(self):
         args = self.config
         if args.resume and os.path.isfile(args.resume):
@@ -92,7 +95,8 @@ class Trainer:
             step_end_time = time.time()
             step_total_time = step_end_time - step_start_time
             step_start_time = step_end_time
-            images_per_second = dist_pytorch.global_batch_size(self.config) / step_total_time
+            images_per_second = dist_pytorch.global_batch_size(
+                self.config) / step_total_time
             other_state["img/s"] = images_per_second
             if hasattr(self.optimizer, 'loss_scaler'):
                 loss_scale = self.optimizer.loss_scaler.loss_scale
@@ -136,8 +140,13 @@ class Trainer:
             }
             if self.scaler:
                 checkpoint["scaler"] = self.scaler.state_dict()
-            utils.save_on_master(checkpoint, os.path.join(self.config.output_dir, f"model_{self.training_state.epoch}.pth"))
-            utils.save_on_master(checkpoint, os.path.join(self.config.output_dir, "checkpoint.pth"))
+            utils.save_on_master(
+                checkpoint,
+                os.path.join(self.config.output_dir,
+                             f"model_{self.training_state.epoch}.pth"))
+            utils.save_on_master(
+                checkpoint,
+                os.path.join(self.config.output_dir, "checkpoint.pth"))
         driver.event(Event.EPOCH_END, state.epoch)
 
     def train_one_step(self, batch):
@@ -146,7 +155,9 @@ class Trainer:
         state = self.training_state
         self.model.train()
         state.loss, state.acc1, state.acc5 = self.forward(batch)
-        self.adapter.backward(self.config, state.global_steps, state.epoch, state.loss, self.model, self.optimizer, self.scaler)
+        self.adapter.backward(self.config, state.global_steps, state.epoch,
+                              state.loss, self.model, self.optimizer,
+                              self.scaler)
         if utils.is_dist_avail_and_initialized():
             total = torch.tensor([state.loss, state.acc1, state.acc5],
                                  dtype=torch.float32,

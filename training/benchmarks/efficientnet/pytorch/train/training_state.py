@@ -77,7 +77,10 @@ class TrainingState:
 
         It contains an entry for every variable in self.__dict__
         """
-        return {key: value for key, value in self.__dict__.items() if key != '_trainer'}
+        return {
+            key: value
+            for key, value in self.__dict__.items() if key != '_trainer'
+        }
 
     def load_state_dict(self, state_dict):
         """Loads the schedulers state.

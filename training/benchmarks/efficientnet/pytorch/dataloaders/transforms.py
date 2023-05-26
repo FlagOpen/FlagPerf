@@ -19,7 +19,11 @@ class RandomMixup(torch.nn.Module):
         inplace (bool): boolean to make this transform inplace. Default set to False.
     """
 
-    def __init__(self, num_classes: int, p: float = 0.5, alpha: float = 1.0, inplace: bool = False) -> None:
+    def __init__(self,
+                 num_classes: int,
+                 p: float = 0.5,
+                 alpha: float = 1.0,
+                 inplace: bool = False) -> None:
         super().__init__()
 
         if num_classes < 1:
@@ -49,16 +53,19 @@ class RandomMixup(torch.nn.Module):
         if target.ndim != 1:
             raise ValueError(f"Target ndim should be 1. Got {target.ndim}")
         if not batch.is_floating_point():
-            raise TypeError(f"Batch dtype should be a float tensor. Got {batch.dtype}.")
+            raise TypeError(
+                f"Batch dtype should be a float tensor. Got {batch.dtype}.")
         if target.dtype != torch.int64:
-            raise TypeError(f"Target dtype should be torch.int64. Got {target.dtype}")
+            raise TypeError(
+                f"Target dtype should be torch.int64. Got {target.dtype}")
 
         if not self.inplace:
             batch = batch.clone()
             target = target.clone()
 
         if target.ndim == 1:
-            target = torch.nn.functional.one_hot(target, num_classes=self.num_classes).to(dtype=batch.dtype)
+            target = torch.nn.functional.one_hot(
+                target, num_classes=self.num_classes).to(dtype=batch.dtype)
 
         if torch.rand(1).item() >= self.p:
             return batch, target
@@ -68,7 +75,8 @@ class RandomMixup(torch.nn.Module):
         target_rolled = target.roll(1, 0)
 
         # Implemented as on mixup paper, page 3.
-        lambda_param = float(torch._sample_dirichlet(torch.tensor([self.alpha, self.alpha]))[0])
+        lambda_param = float(
+            torch._sample_dirichlet(torch.tensor([self.alpha, self.alpha]))[0])
         batch_rolled.mul_(1.0 - lambda_param)
         batch.mul_(lambda_param).add_(batch_rolled)
 
@@ -78,14 +86,12 @@ class RandomMixup(torch.nn.Module):
         return batch, target
 
     def __repr__(self) -> str:
-        s = (
-            f"{self.__class__.__name__}("
-            f"num_classes={self.num_classes}"
-            f", p={self.p}"
-            f", alpha={self.alpha}"
-            f", inplace={self.inplace}"
-            f")"
-        )
+        s = (f"{self.__class__.__name__}("
+             f"num_classes={self.num_classes}"
+             f", p={self.p}"
+             f", alpha={self.alpha}"
+             f", inplace={self.inplace}"
+             f")")
         return s
 
 
@@ -103,10 +109,15 @@ class RandomCutmix(torch.nn.Module):
         inplace (bool): boolean to make this transform inplace. Default set to False.
     """
 
-    def __init__(self, num_classes: int, p: float = 0.5, alpha: float = 1.0, inplace: bool = False) -> None:
+    def __init__(self,
+                 num_classes: int,
+                 p: float = 0.5,
+                 alpha: float = 1.0,
+                 inplace: bool = False) -> None:
         super().__init__()
         if num_classes < 1:
-            raise ValueError("Please provide a valid positive value for the num_classes.")
+            raise ValueError(
+                "Please provide a valid positive value for the num_classes.")
         if alpha <= 0:
             raise ValueError("Alpha param can't be zero.")
 
@@ -129,16 +140,19 @@ class RandomCutmix(torch.nn.Module):
         if target.ndim != 1:
             raise ValueError(f"Target ndim should be 1. Got {target.ndim}")
         if not batch.is_floating_point():
-            raise TypeError(f"Batch dtype should be a float tensor. Got {batch.dtype}.")
+            raise TypeError(
+                f"Batch dtype should be a float tensor. Got {batch.dtype}.")
         if target.dtype != torch.int64:
-            raise TypeError(f"Target dtype should be torch.int64. Got {target.dtype}")
+            raise TypeError(
+                f"Target dtype should be torch.int64. Got {target.dtype}")
 
         if not self.inplace:
             batch = batch.clone()
             target = target.clone()
 
         if target.ndim == 1:
-            target = torch.nn.functional.one_hot(target, num_classes=self.num_classes).to(dtype=batch.dtype)
+            target = torch.nn.functional.one_hot(
+                target, num_classes=self.num_classes).to(dtype=batch.dtype)
 
         if torch.rand(1).item() >= self.p:
             return batch, target
@@ -148,11 +162,12 @@ class RandomCutmix(torch.nn.Module):
         target_rolled = target.roll(1, 0)
 
         # Implemented as on cutmix paper, page 12 (with minor corrections on typos).
-        lambda_param = float(torch._sample_dirichlet(torch.tensor([self.alpha, self.alpha]))[0])
+        lambda_param = float(
+            torch._sample_dirichlet(torch.tensor([self.alpha, self.alpha]))[0])
         _, H, W = F.get_dimensions(batch)
 
-        r_x = torch.randint(W, (1,))
-        r_y = torch.randint(H, (1,))
+        r_x = torch.randint(W, (1, ))
+        r_y = torch.randint(H, (1, ))
 
         r = 0.5 * math.sqrt(1.0 - lambda_param)
         r_w_half = int(r * W)
@@ -172,12 +187,10 @@ class RandomCutmix(torch.nn.Module):
         return batch, target
 
     def __repr__(self) -> str:
-        s = (
-            f"{self.__class__.__name__}("
-            f"num_classes={self.num_classes}"
-            f", p={self.p}"
-            f", alpha={self.alpha}"
-            f", inplace={self.inplace}"
-            f")"
-        )
+        s = (f"{self.__class__.__name__}("
+             f"num_classes={self.num_classes}"
+             f", p={self.p}"
+             f", alpha={self.alpha}"
+             f", inplace={self.inplace}"
+             f")")
         return s

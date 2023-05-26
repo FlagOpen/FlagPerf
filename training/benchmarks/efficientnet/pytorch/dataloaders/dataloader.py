@@ -9,7 +9,6 @@ from dataloaders.sampler import RASampler
 from torchvision.transforms.functional import InterpolationMode
 import torchvision
 
-
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import dist_pytorch
@@ -44,12 +43,13 @@ def build_eval_dataset(args):
     valdir = os.path.join(args.data_dir, args.eval_data)
     interpolation = InterpolationMode(args.interpolation)
     preprocessing = presets.ClassificationPresetEval(
-        crop_size=args.val_crop_size, resize_size=args.val_resize_size, interpolation=interpolation
-    )
+        crop_size=args.val_crop_size,
+        resize_size=args.val_resize_size,
+        interpolation=interpolation)
 
     val_dataset = torchvision.datasets.ImageFolder(
-            valdir,
-            preprocessing,
+        valdir,
+        preprocessing,
     )
 
     return val_dataset
@@ -61,9 +61,12 @@ def build_train_dataloader(train_dataset, args):
 
     if utils.is_dist_avail_and_initialized():
         if hasattr(args, "ra_sampler") and args.ra_sampler:
-            train_sampler = RASampler(train_dataset, shuffle=True, repetitions=args.ra_reps)
+            train_sampler = RASampler(train_dataset,
+                                      shuffle=True,
+                                      repetitions=args.ra_reps)
         else:
-            train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
+            train_sampler = torch.utils.data.distributed.DistributedSampler(
+                train_dataset)
         dist_pytorch.main_proc_print(
             f"use sampler: DistributedSampler, num_replicas:{args.n_device}")
     else:
@@ -73,9 +76,13 @@ def build_train_dataloader(train_dataset, args):
     num_classes = len(train_dataset.classes)
     mixup_transforms = []
     if args.mixup_alpha > 0.0:
-        mixup_transforms.append(transforms.RandomMixup(num_classes, p=1.0, alpha=args.mixup_alpha))
+        mixup_transforms.append(
+            transforms.RandomMixup(num_classes, p=1.0, alpha=args.mixup_alpha))
     if args.cutmix_alpha > 0.0:
-        mixup_transforms.append(transforms.RandomCutmix(num_classes, p=1.0, alpha=args.cutmix_alpha))
+        mixup_transforms.append(
+            transforms.RandomCutmix(num_classes,
+                                    p=1.0,
+                                    alpha=args.cutmix_alpha))
     if mixup_transforms:
         mixupcutmix = torchvision.transforms.RandomChoice(mixup_transforms)
 
@@ -108,10 +115,13 @@ def build_eval_dataloader(eval_dataset, args):
             f"use sampler: DistributedSampler, num_replicas:{args.n_device}")
     else:
         val_sampler = torch.utils.data.SequentialSampler(eval_dataset)
-    
+
     eval_dataloader = torch.utils.data.DataLoader(
-        eval_dataset, batch_size=args.eval_batch_size, sampler=val_sampler, num_workers=args.num_workers, pin_memory=True
-    )
+        eval_dataset,
+        batch_size=args.eval_batch_size,
+        sampler=val_sampler,
+        num_workers=args.num_workers,
+        pin_memory=True)
 
     dist_pytorch.main_proc_print(
         f'eval samples:{len(eval_dataset)}, batch size:{args.eval_batch_size}')

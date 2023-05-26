@@ -2,6 +2,7 @@ import torch
 import torch.distributed as dist
 from train import utils
 
+
 class Evaluator:
 
     def __init__(self, args, dataloader):
@@ -25,7 +26,8 @@ class Evaluator:
             for i, batch in enumerate(self.dataloader):
                 batch = trainer.process_batch(batch, self.args.device)
                 loss, acc1, acc5 = trainer.inference(batch)
-                self.__update(loss.item(), acc1.item(), acc5.item(), batch[0].shape[0])
+                self.__update(loss.item(), acc1.item(), acc5.item(),
+                              batch[0].shape[0])
 
         if utils.is_dist_avail_and_initialized():
             total = torch.tensor([
