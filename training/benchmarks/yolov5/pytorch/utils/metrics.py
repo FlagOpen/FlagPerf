@@ -290,14 +290,6 @@ def bbox_ioa(box1, box2, eps=1E-7):
     return inter_area / box2_area
 
 
-def wh_iou(wh1, wh2):
-    # Returns the nxm IoU matrix. wh1 is nx2, wh2 is mx2
-    wh1 = wh1[:, None]  # [N,1,2]
-    wh2 = wh2[None]  # [1,M,2]
-    inter = torch.min(wh1, wh2).prod(2)  # [N,M]
-    return inter / (wh1.prod(2) + wh2.prod(2) - inter)  # iou = inter / (area1 + area2 - inter)
-
-
 # Plots ----------------------------------------------------------------------------------------------------------------
 
 def plot_pr_curve(px, py, ap, save_dir='pr_curve.png', names=()):

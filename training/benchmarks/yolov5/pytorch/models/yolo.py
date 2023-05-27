@@ -210,11 +210,6 @@ class Model(nn.Module):
             LOGGER.info(
                 ('%6g Conv2d.bias:' + '%10.3g' * 6) % (mi.weight.shape[1], *b[:5].mean(1).tolist(), b[5:].mean()))
 
-    # def _print_weights(self):
-    #     for m in self.model.modules():
-    #         if type(m) is Bottleneck:
-    #             LOGGER.info('%10.3g' % (m.w.detach().sigmoid() * 2))  # shortcut weights
-
     def fuse(self):  # fuse model Conv2d() + BatchNorm2d() layers
         LOGGER.info('Fusing layers... ')
         for m in self.model.modules():

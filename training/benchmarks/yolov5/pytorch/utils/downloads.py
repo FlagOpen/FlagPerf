@@ -79,12 +79,3 @@ def attempt_download(file, repo='ultralytics/yolov5'):  # from utils.downloads i
 
     return str(file)
 
-
-
-def get_token(cookie="./cookie"):
-    with open(cookie) as f:
-        for line in f:
-            if "download" in line:
-                return line.split()[-1]
-    return ""
-

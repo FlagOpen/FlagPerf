@@ -46,7 +46,7 @@ from utils.autobatch import check_train_batch_size
 from utils.callbacks import Callbacks
 from utils.datasets import create_dataloader
 from utils.downloads import attempt_download
-from utils.general import (LOGGER, check_dataset, check_file, check_git_status, check_img_size, check_requirements,
+from utils.general import (LOGGER, check_dataset, check_file, check_img_size, check_requirements,
                            check_suffix, check_yaml, colorstr, get_latest_run, increment_path, init_seeds,
                            intersect_dicts, labels_to_class_weights, labels_to_image_weights, one_cycle,
                            print_args, print_mutation, strip_optimizer)
@@ -89,7 +89,7 @@ def train(hyp,  # path/to/hyp.yaml or hyp dictionary
 
     # Save run settings
     if not evolve:
-        with open(save_dir / 'hyp.yaml', 'w') as f:
+        with open(save_dir + '/hyp.yaml', 'w') as f:
             yaml.safe_dump(hyp, f, sort_keys=False)
 
     # Loggers
@@ -421,7 +421,7 @@ def train(hyp,  # path/to/hyp.yaml or hyp dictionary
     if RANK in [-1, 0]:
         LOGGER.info(f'\n{epoch - start_epoch + 1} epochs completed in {(time.time() - t0) / 3600:.3f} hours.')
         for f in last, best:
-            if f.exists():
+            if os.path.exists(f):
                 strip_optimizer(f)  # strip optimizers
                 if f is best:
                     LOGGER.info(f'\nValidating {f}...')
@@ -452,11 +452,10 @@ def run(opt, training_state=TrainingState(), callbacks=Callbacks()): # flagperf
     # Checks
     if RANK in [-1, 0]:
         print_args(FILE.stem, opt)
-        check_git_status()
         check_requirements(exclude=['thop'])
 
     # Resume
-    if opt.resume and not check_wandb_resume(opt) and not opt.evolve:  # resume an interrupted run
+    if opt.resume and not opt.evolve:  # resume an interrupted run
         ckpt = opt.resume if isinstance(opt.resume, str) else get_latest_run()  # specified or most recent path
         assert os.path.isfile(ckpt), 'ERROR: --resume checkpoint does not exist'
         with open(Path(ckpt).parent.parent / 'opt.yaml', errors='ignore') as f:

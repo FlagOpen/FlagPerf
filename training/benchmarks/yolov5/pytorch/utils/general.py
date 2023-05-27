@@ -64,9 +64,6 @@ def is_writeable(dir, test=False):
 
 def set_logging(name=None, verbose=VERBOSE):
     # Sets level and returns logger
-    if is_kaggle():
-        for h in logging.root.handlers:
-            logging.root.removeHandler(h)  # remove all handlers associated with the root logger object
     rank = int(os.getenv('RANK', -1))  # rank in world for Multi-GPU trainings
     logging.basicConfig(format="%(message)s", level=logging.INFO if (verbose and rank in (-1, 0)) else logging.WARNING)
     return logging.getLogger(name)
@@ -220,27 +217,6 @@ def check_online():
         return True
     except OSError:
         return False
-
-
-@try_except
-@WorkingDirectory(ROOT)
-def check_git_status():
-    # Recommend 'git pull' if code is out of date
-    msg = ', for updates see https://github.com/ultralytics/yolov5'
-    s = colorstr('github: ')  # string
-    assert Path('.git').exists(), s + 'skipping check (not a git repository)' + msg
-    assert not is_docker(), s + 'skipping check (Docker image)' + msg
-    assert check_online(), s + 'skipping check (offline)' + msg
-
-    cmd = 'git fetch && git config --get remote.origin.url'
-    url = check_output(cmd, shell=True, timeout=5).decode().strip().rstrip('.git')  # git fetch
-    branch = check_output('git rev-parse --abbrev-ref HEAD', shell=True).decode().strip()  # checked out
-    n = int(check_output(f'git rev-list {branch}..origin/master --count', shell=True))  # commits behind
-    if n > 0:
-        s += f"⚠️ YOLOv5 is out of date by {n} commit{'s' * (n > 1)}. Use `git pull` or `git clone {url}` to update."
-    else:
-        s += f'up to date with {url} ✅'
-    LOGGER.info(emojis(s))  # emoji-safe
 
 
 def check_python(minimum='3.6.2'):
@@ -424,13 +400,6 @@ def check_dataset(data, autodownload=False, opt_data_dir=""):
                 raise Exception('Dataset not found.')
 
     return data  # dictionary
-
-
-def url2file(url):
-    # Convert URL to filename, i.e. https://url.com/file.txt?auth -> file.txt
-    url = str(Path(url)).replace(':/', '://')  # Pathlib turns :// -> :/
-    file = Path(urllib.parse.unquote(url)).name.split('?')[0]  # '%2F' to '/', split https://url.com/file.txt?auth
-    return file
 
 
 def download(url, dir='.', unzip=True, delete=True, curl=False, threads=1):
