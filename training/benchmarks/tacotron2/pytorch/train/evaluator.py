@@ -9,6 +9,7 @@ from .utils import reduce_tensor
 # Following snippet is licensed under MIT license
 
 
+@contextmanager
 def evaluating(model):
     '''Temporarily switch to evaluation mode.'''
     istrain = model.training
