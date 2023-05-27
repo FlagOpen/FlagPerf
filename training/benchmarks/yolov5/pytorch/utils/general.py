@@ -47,16 +47,6 @@ cv2.setNumThreads(0)  # prevent OpenCV from multithreading (incompatible with Py
 os.environ['NUMEXPR_MAX_THREADS'] = str(NUM_THREADS)  # NumExpr max threads
 
 
-def is_kaggle():
-    # Is environment a Kaggle Notebook?
-    try:
-        assert os.environ.get('PWD') == '/kaggle/working'
-        assert os.environ.get('KAGGLE_URL_BASE') == 'https://www.kaggle.com'
-        return True
-    except AssertionError:
-        return False
-
-
 def is_writeable(dir, test=False):
     # Return True if directory has write permissions, test opening a file with write permissions if test=True
     if test:  # method 1
@@ -188,15 +178,6 @@ def get_latest_run(search_dir='.'):
 def is_docker():
     # Is environment a Docker container?
     return Path('/workspace').exists()  # or Path('/.dockerenv').exists()
-
-
-def is_colab():
-    # Is environment a Google Colab instance?
-    try:
-        import google.colab
-        return True
-    except ImportError:
-        return False
 
 
 def is_pip():
