@@ -33,7 +33,8 @@ RUN apt-get install -y --fix-missing \
      pbzip2 \
      pv \
      numactl \
-     ninja-build 
+     ninja-build \
+     libgl1 
      
 
 # Configure anaconda
