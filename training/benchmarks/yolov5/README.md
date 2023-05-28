@@ -5,7 +5,7 @@
 
 
 - 模型代码来源
-  https://github.com/ultralytics/yolov5.git
+  https://github.com/ultralytics/yolov5
 
 ### 数据集
 #### 数据集下载地址

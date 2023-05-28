@@ -31,12 +31,12 @@ class Driver(object):
             "--extern_config_dir",
             type=str,
             required=False,
-            default="/workspace/flagperf/training/iluvatar/yolov5-pytorch/config",
+            default="",
             help="Specifies the directory of the external config files")
         parser.add_argument("--extern_config_file",
                             type=str,
                             required=False,
-                            default="config_BI-V100x1x1.py",
+                            default="",
                             help="The external config file to use")
         parser.add_argument(
             "--enable_extern_config",
