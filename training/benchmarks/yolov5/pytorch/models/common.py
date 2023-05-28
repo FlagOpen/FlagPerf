@@ -432,66 +432,7 @@ class Detections:
         self.n = len(self.pred)  # number of images (batch size)
         self.t = tuple((times[i + 1] - times[i]) * 1000 / self.n for i in range(3))  # timestamps (ms)
         self.s = shape  # inference BCHW shape
-
-    def display(self, pprint=False, show=False, save=False, crop=False, render=False, save_dir=Path('')):
-        crops = []
-        for i, (im, pred) in enumerate(zip(self.imgs, self.pred)):
-            s = f'image {i + 1}/{len(self.pred)}: {im.shape[0]}x{im.shape[1]} '  # string
-            if pred.shape[0]:
-                for c in pred[:, -1].unique():
-                    n = (pred[:, -1] == c).sum()  # detections per class
-                    s += f"{n} {self.names[int(c)]}{'s' * (n > 1)}, "  # add to string
-                if show or save or render or crop:
-                    annotator = Annotator(im, example=str(self.names))
-                    for *box, conf, cls in reversed(pred):  # xyxy, confidence, class
-                        label = f'{self.names[int(cls)]} {conf:.2f}'
-                        if crop:
-                            file = save_dir / 'crops' / self.names[int(cls)] / self.files[i] if save else None
-                            crops.append({'box': box, 'conf': conf, 'cls': cls, 'label': label,
-                                          'im': save_one_box(box, im, file=file, save=save)})
-                        else:  # all others
-                            annotator.box_label(box, label, color=colors(cls))
-                    im = annotator.im
-            else:
-                s += '(no detections)'
-
-            im = Image.fromarray(im.astype(np.uint8)) if isinstance(im, np.ndarray) else im  # from np
-            if pprint:
-                LOGGER.info(s.rstrip(', '))
-            if show:
-                im.show(self.files[i])  # show
-            if save:
-                f = self.files[i]
-                im.save(save_dir / f)  # save
-                if i == self.n - 1:
-                    LOGGER.info(f"Saved {self.n} image{'s' * (self.n > 1)} to {colorstr('bold', save_dir)}")
-            if render:
-                self.imgs[i] = np.asarray(im)
-        if crop:
-            if save:
-                LOGGER.info(f'Saved results to {save_dir}\n')
-            return crops
-
-    def print(self):
-        self.display(pprint=True)  # print results
-        LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS per image at shape {tuple(self.s)}' %
-                    self.t)
-
-    def show(self):
-        self.display(show=True)  # show results
-
-    def save(self, save_dir='runs/detect/exp'):
-        save_dir = increment_path(save_dir, exist_ok=save_dir != 'runs/detect/exp', mkdir=True)  # increment save_dir
-        self.display(save=True, save_dir=save_dir)  # save results
-
-    def crop(self, save=True, save_dir='runs/detect/exp'):
-        save_dir = increment_path(save_dir, exist_ok=save_dir != 'runs/detect/exp', mkdir=True) if save else None
-        return self.display(crop=True, save=save, save_dir=save_dir)  # crop results
-
-    def render(self):
-        self.display(render=True)  # render results
-        return self.imgs
-
+        
     def pandas(self):
         # return detections as pandas DataFrames, i.e. print(results.pandas().xyxy[0])
         new = copy(self)  # return copy
