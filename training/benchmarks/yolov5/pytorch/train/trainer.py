@@ -52,7 +52,6 @@ from utils.general import (LOGGER, check_dataset, check_file, check_img_size, ch
                            print_args, print_mutation, strip_optimizer)
 from utils.loss import ComputeLoss
 from utils.metrics import fitness
-from utils.plots import plot_evolve, plot_labels
 from utils.torch_utils import EarlyStopping, ModelEMA, de_parallel, select_device, torch_distributed_zero_first
 
 from train.training_state import TrainingState
@@ -231,8 +230,6 @@ def train(hyp,  # path/to/hyp.yaml or hyp dictionary
 
         if not resume:
             labels = np.concatenate(dataset.labels, 0)
-            if plots:
-                plot_labels(labels, names, save_dir)
 
             # Anchors
             if not opt.noautoanchor:

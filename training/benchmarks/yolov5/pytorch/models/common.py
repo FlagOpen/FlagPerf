@@ -131,7 +131,7 @@ class C3(nn.Module):
         c_ = int(c2 * e)  # hidden channels
         self.cv1 = Conv(c1, c_, 1, 1)
         self.cv2 = Conv(c1, c_, 1, 1)
-        self.cv3 = Conv(2 * c_, c2, 1)  # act=FReLU(c2)
+        self.cv3 = Conv(2 * c_, c2, 1) 
         self.m = nn.Sequential(*(Bottleneck(c_, c_, shortcut, g, e=1.0) for _ in range(n)))
         # self.m = nn.Sequential(*[CrossConv(c_, c_, 3, 1, g, 1.0, shortcut) for _ in range(n)])
 
@@ -284,7 +284,7 @@ class DetectMultiBackend(nn.Module):
 
         super().__init__()
         w = str(weights[0] if isinstance(weights, list) else weights)
-        pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs = self.model_type(w)  # get backend
+        pt = self.model_type(w)  # get backend
         stride, names = 64, [f'class{i}' for i in range(1000)]  # assign defaults
         w = attempt_download(w)  # download if not local
         if data:  # data.yaml path (optional)
@@ -310,7 +310,7 @@ class DetectMultiBackend(nn.Module):
 
     def warmup(self, imgsz=(1, 3, 640, 640), half=False):
         # Warmup model by running inference once
-        if self.pt or self.jit or self.onnx or self.engine:  # warmup types
+        if self.pt:  # warmup types
             if isinstance(self.device, torch.device) and self.device.type != 'cpu':  # only warmup GPU models
                 im = torch.zeros(*imgsz).to(self.device).type(torch.half if half else torch.float)  # input image
                 self.forward(im)  # warmup
@@ -322,10 +322,8 @@ class DetectMultiBackend(nn.Module):
         suffixes = list(export_formats().Suffix) + ['.xml']  # export suffixes
         check_suffix(p, suffixes)  # checks
         p = Path(p).name  # eliminate trailing separators
-        pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, xml2 = (s in p for s in suffixes)
-        xml |= xml2  # *_openvino_model or *.xml
-        tflite &= not edgetpu  # *.tflite
-        return pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs
+        pt = (s in p for s in suffixes)
+        return pt
 
 
 class AutoShape(nn.Module):
