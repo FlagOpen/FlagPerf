@@ -78,7 +78,7 @@ class Trainer:
         step_start_time = time.time()
         epoch_start_num_sample = state.num_trained_samples
 
-        if utils.is_dist_avail_and_initialized():
+        if dist_pytorch.is_dist_avail_and_initialized():
             dataloader.sampler.set_epoch(state.epoch)
         for batch_idx, batch in enumerate(dataloader):
 
@@ -158,7 +158,7 @@ class Trainer:
         self.adapter.backward(self.config, state.global_steps, state.epoch,
                               state.loss, self.model, self.optimizer,
                               self.scaler)
-        if utils.is_dist_avail_and_initialized():
+        if dist_pytorch.is_dist_avail_and_initialized():
             total = torch.tensor([state.loss, state.acc1, state.acc5],
                                  dtype=torch.float32,
                                  device=self.config.device)

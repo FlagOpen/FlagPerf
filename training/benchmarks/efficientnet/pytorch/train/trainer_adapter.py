@@ -7,10 +7,14 @@ from driver.dist_pytorch import main_proc_print
 from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
 from train import utils
-
+import os
+import sys
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+from driver import dist_pytorch
 
 def convert_model(args, model: nn.Module) -> nn.Module:
-    if utils.is_dist_avail_and_initialized() and args.sync_bn:
+    if dist_pytorch.is_dist_avail_and_initialized() and args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
     return model
 

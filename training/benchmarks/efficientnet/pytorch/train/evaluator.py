@@ -1,7 +1,11 @@
 import torch
 import torch.distributed as dist
 from train import utils
-
+import os
+import sys
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+from driver import dist_pytorch
 
 class Evaluator:
 
@@ -29,7 +33,7 @@ class Evaluator:
                 self.__update(loss.item(), acc1.item(), acc5.item(),
                               batch[0].shape[0])
 
-        if utils.is_dist_avail_and_initialized():
+        if dist_pytorch.is_dist_avail_and_initialized():
             total = torch.tensor([
                 self.total_loss, self.total_acc1, self.total_acc5,
                 self.total_size
