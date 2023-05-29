@@ -147,22 +147,15 @@ class EvalCOCOMetric:
             "img_ids": eval_ids,
             "results": eval_results
         }
+        results = []
+        [results.extend(i) for i in eval_results]
+        return results
 
-        # 主进程上保存即可
-        if is_main_process():
-            results = []
-            [results.extend(i) for i in eval_results]
-            # write predict results into json file
-            json_str = json.dumps(results, indent=4)
-            with open(self.results_file_name, 'w',
-                      encoding="utf8") as json_file:
-                json_file.write(json_str)
-
-    def evaluate(self):
+    def evaluate(self, results):
         """evaluate"""
         # accumulate predictions from all images
         coco_true = self.coco
-        coco_pre = coco_true.loadRes(self.results_file_name)
+        coco_pre = coco_true.loadRes(results)
 
         self.coco_evaluator = COCOeval(cocoGt=coco_true,
                                        cocoDt=coco_pre,

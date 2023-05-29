@@ -1,6 +1,5 @@
 """Mask R-CNN Pretraining"""
 # 标准库
-import datetime
 import os
 import sys
 import time
@@ -8,7 +7,6 @@ import shutil
 from typing import Any, Tuple
 
 # 三方库
-import torch
 
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -43,11 +41,6 @@ def main(start_ts) -> Tuple[Any, Any]:
 
     config = model_driver.config
 
-    if config.output_dir:
-        for sub_dir in ["result"]:
-            dir_path = os.path.join(config.output_dir, sub_dir)
-            mkdir(dir_path)
-
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.INIT_START)
@@ -57,13 +50,6 @@ def main(start_ts) -> Tuple[Any, Any]:
 
     world_size = dist_pytorch.get_world_size(config.vendor)
     config.distributed = world_size > 1 or False
-
-    # 用来保存coco_info的文件
-    now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    det_results_file = os.path.join(config.output_dir, "result",
-                                    f"det_results_{world_size}_{now}.txt")
-    seg_results_file = os.path.join(config.output_dir, "result",
-                                    f"seg_results_{world_size}_{now}.txt")
 
     # 得到seed
     """
@@ -137,23 +123,15 @@ def main(start_ts) -> Tuple[Any, Any]:
     model_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time  # 单位ms
 
-    # 训练指标
-    train_loss = []
-    learning_rate = []
-    val_map = []
-
     # 训练过程
     while not training_state.end_training and training_state.epoch < config.max_epochs:
 
         if config.distributed:
             train_sampler.set_epoch(training_state.epoch)
+
+
         trainer.train_one_epoch(train_dataloader,
                                 eval_dataloader,
-                                train_loss,
-                                learning_rate,
-                                val_map,
-                                det_results_file,
-                                seg_results_file,
                                 print_freq=config.print_freq,
                                 scaler=trainer.grad_scaler)
 

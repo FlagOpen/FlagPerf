@@ -48,11 +48,6 @@ class Trainer:
     def train_one_epoch(self,
                         dataloader,
                         eval_dataloader,
-                        train_loss: list,
-                        learning_rate: list,
-                        val_map: list,
-                        det_results_file: str,
-                        seg_results_file: str,
                         print_freq=50,
                         warmup=True,
                         scaler=None):
@@ -73,7 +68,6 @@ class Trainer:
                                               print_freq=print_freq,
                                               warmup=warmup,
                                               scaler=scaler)
-        epoch = state.epoch
         dist_pytorch.main_proc_print(f"state.epoch: {state.epoch}")
 
         # update learning rate
@@ -87,29 +81,6 @@ class Trainer:
 
         if seg_info is not None:
             state.eval_map_segm = seg_info[0]
-
-        # 只在主进程上进行写操作
-        if config.local_rank in [-1, 0]:
-            train_loss.append(mean_loss.item())
-            learning_rate.append(lr)
-            val_map.append(state.eval_map_bbox)
-            # 写det结果
-            with open(det_results_file, "a") as f:
-                # 写入的数据包括coco指标，还有loss和learning rate
-                result_info = [
-                    f"{i:.4f}" for i in det_info + [mean_loss.item()]
-                ] + [f"{lr:.6f}"]
-                txt = "epoch:{} {}".format(epoch, '  '.join(result_info))
-                f.write(txt + "\n")
-
-            # 写seg结果
-            with open(seg_results_file, "a") as f:
-                # 写入的数据包括coco指标, 还有loss和learning rate
-                result_info = [
-                    f"{i:.4f}" for i in seg_info + [mean_loss.item()]
-                ] + [f"{lr:.6f}"]
-                txt = "epoch:{} {}".format(epoch, '  '.join(result_info))
-                f.write(txt + "\n")
 
         driver.event(Event.EPOCH_END, state.epoch)
         # check training state

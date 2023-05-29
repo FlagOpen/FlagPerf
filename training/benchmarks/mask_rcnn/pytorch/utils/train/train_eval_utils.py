@@ -126,10 +126,10 @@ def evaluate(model, data_loader, device):
     print("Averaged stats:", metric_logger)
 
     # 同步所有进程中的数据
-    det_metric.synchronize_results()
-    seg_metric.synchronize_results()
+    det_json = det_metric.synchronize_results()
+    seg_json = seg_metric.synchronize_results()
 
-    coco_info = det_metric.evaluate()
-    seg_info = seg_metric.evaluate()
+    coco_info = det_metric.evaluate(det_json)
+    seg_info = seg_metric.evaluate(seg_json)
 
     return coco_info, seg_info
