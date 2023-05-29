@@ -1,7 +1,5 @@
 ### 模型信息
-- 模型介绍
->MobileNet-v2 is a convolutional neural network that is 53 layers deep. You can load a pretrained version of the network trained on more than a million images from the ImageNet database. The pretrained network can classify images into 1000 object categories, such as keyboard, mouse, pencil, and many animals. 
->Refer to Sandler, M., Howard, A., Zhu, M., Zhmoginov, A. and Chen, L.C. "MobileNetV2: Inverted Residuals and Linear Bottlenecks." In 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition (pp. 4510-4520). IEEE.
+[模型介绍](../../benchmarks/mobilenetv2/README.md#模型信息)
 
 - 模型代码来源
 > https://github.com/pytorch/vision/blob/main/torchvision/models/mobilenetv2.py
@@ -30,7 +28,6 @@
 ### 运行情况
 | 训练资源 | 配置文件            | 运行时长(s) | 目标精度 | 收敛精度 | Steps数 | 性能(samples/s) |
 | -------- | ------------------ | ---------- | ------- | -------  | ------- | --------------- |
-| 单机1卡  | config_BI-V100x1x1 |     |      |    |    |     |    |    |    |        |        |
 | 单机8卡  | config_BI-V100x1x8 | 5154.91    | 70.654    | 70.654   | 1156155    |2086.32          |
 
 
