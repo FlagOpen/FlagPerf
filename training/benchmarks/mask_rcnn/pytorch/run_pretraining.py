@@ -125,16 +125,12 @@ def main(start_ts) -> Tuple[Any, Any]:
 
     # 训练过程
     while not training_state.end_training and training_state.epoch < config.max_epochs:
-
         if config.distributed:
             train_sampler.set_epoch(training_state.epoch)
-
-
         trainer.train_one_epoch(train_dataloader,
                                 eval_dataloader,
                                 print_freq=config.print_freq,
                                 scaler=trainer.grad_scaler)
-
         training_state.epoch += 1
 
     # TRAIN_END事件
