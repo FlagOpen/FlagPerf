@@ -3,7 +3,6 @@
 import os
 import sys
 import time
-import shutil
 from typing import Any, Tuple
 
 # 三方库
@@ -171,7 +170,3 @@ if __name__ == "__main__":
     else:
         finished_info = {"e2e_time": e2e_time}
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
-
-    if updated_config.local_rank == 0 and os.path.exists(
-            updated_config.output_dir):
-        shutil.rmtree(updated_config.output_dir)
