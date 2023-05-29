@@ -45,7 +45,7 @@ init_checkpoint: str = None
 # Training data dir
 data_dir: str = None
 # Number of workers to use for dataloading
-num_workers: int = 2
+num_workers: int = 1
 # Total batch size for training.
 train_batch_size: int = 128
 # Total batch size for validating.

@@ -24,7 +24,7 @@ def build_train_dataloader(args,
         shuffle = True
 
     train_dataloader = DataLoader(train_dataset,
-                                  num_workers=1,
+                                  num_workers=args.num_workers,
                                   shuffle=shuffle,
                                   sampler=train_sampler,
                                   batch_size=args.train_batch_size,
@@ -43,7 +43,7 @@ def build_eval_dataloader(val_dataset, args):
     val_sampler = DistributedSampler(val_dataset) if args.distributed else None
     collate_fn = get_collate_function()
     val_dataloader = DataLoader(val_dataset,
-                                num_workers=1,
+                                num_workers=args.num_workers,
                                 shuffle=False,
                                 sampler=val_sampler,
                                 batch_size=args.eval_batch_size,
