@@ -10,9 +10,6 @@ from train import utils
 
 
 def convert_model(args, model: nn.Module) -> nn.Module:
-    if args.vendor == 'kunlunxin':
-        # not support yet
-        return model
     if utils.is_dist_avail_and_initialized() and args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
     return model
@@ -65,9 +62,6 @@ def create_optimizer(args, model):
 
 
 def model_to_fp16(args, model):
-    if args.vendor == 'kunlunxin':
-        # not support yet
-        return model
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if args.fp16:
         main_proc_print(" > use fp16...")
@@ -82,9 +76,6 @@ def model_to_ddp(args, model: nn.Module) -> nn.Module:
 
 
 def create_grad_scaler(args):
-    if args.vendor == 'kunlunxin':
-        # not support yet
-        return None
     scaler = torch.cuda.amp.GradScaler() if args.amp else None
     return scaler
 
