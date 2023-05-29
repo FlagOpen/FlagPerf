@@ -226,12 +226,14 @@ def format_step(step):
         s += "Validation Iteration: {} ".format(step[2])
     return s
 
+
 def is_dist_avail_and_initialized():
     if not torch.distributed.is_available():
         return False
     if not torch.distributed.is_initialized():
         return False
     return True
+
 
 class PyTorchDistributedDataParallel(DDP):
 

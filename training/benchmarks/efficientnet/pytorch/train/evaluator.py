@@ -3,9 +3,11 @@ import torch.distributed as dist
 from train import utils
 import os
 import sys
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import dist_pytorch
+
 
 class Evaluator:
 
