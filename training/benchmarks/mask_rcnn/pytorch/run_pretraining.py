@@ -143,14 +143,12 @@ def main(start_ts) -> Tuple[Any, Any]:
     val_map = []
 
     # 训练过程
-    epoch_index = 0
-    while not training_state.end_training:
-        if config.distributed:
-            train_sampler.set_epoch(epoch_index)
+    while not training_state.end_training and training_state.epoch < config.max_epochs:
 
+        if config.distributed:
+            train_sampler.set_epoch(training_state.epoch)
         trainer.train_one_epoch(train_dataloader,
                                 eval_dataloader,
-                                epoch_index,
                                 train_loss,
                                 learning_rate,
                                 val_map,
@@ -159,7 +157,7 @@ def main(start_ts) -> Tuple[Any, Any]:
                                 print_freq=config.print_freq,
                                 scaler=trainer.grad_scaler)
 
-        epoch_index += 1
+        training_state.epoch += 1
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
@@ -200,5 +198,6 @@ if __name__ == "__main__":
         finished_info = {"e2e_time": e2e_time}
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
 
-    if updated_config.local_rank == 0 and os.path.exists(updated_config.output_dir):
+    if updated_config.local_rank == 0 and os.path.exists(
+            updated_config.output_dir):
         shutil.rmtree(updated_config.output_dir)

@@ -48,7 +48,6 @@ class Trainer:
     def train_one_epoch(self,
                         dataloader,
                         eval_dataloader,
-                        epoch,
                         train_loss: list,
                         learning_rate: list,
                         val_map: list,
@@ -70,14 +69,11 @@ class Trainer:
                                               optimizer,
                                               dataloader,
                                               device,
-                                              epoch,
                                               state=state,
-                                              config=self.config,
                                               print_freq=print_freq,
                                               warmup=warmup,
                                               scaler=scaler)
-        
-        state.epoch += 1
+        epoch = state.epoch
         dist_pytorch.main_proc_print(f"state.epoch: {state.epoch}")
 
         # update learning rate
@@ -128,9 +124,5 @@ class Trainer:
                 f"converged_success. eval_map_bbox: {state.eval_map_bbox}, eval_map_segm:{state.eval_map_segm} \
                     target_map_bbox: {config.target_map_bbox}. target_map_segm:{config.target_map_segm}")
             state.converged_success()
-
-        # notice: epoch starts from 0
-        if state.epoch >= config.max_epochs:
-            state.end_training = True
 
         return state.end_training

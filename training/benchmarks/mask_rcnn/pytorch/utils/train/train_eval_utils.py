@@ -12,17 +12,16 @@ def train_one_epoch(model,
                     optimizer,
                     data_loader,
                     device,
-                    epoch,
                     state,
-                    config,
                     print_freq=50,
                     warmup=False,
                     scaler=None):
 
     # move model to device
     model.to(device)
-
     model.train()
+    epoch = state.epoch
+
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter(
         'lr', utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
