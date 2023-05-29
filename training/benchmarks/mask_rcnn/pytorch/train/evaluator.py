@@ -5,13 +5,6 @@
 
 import numpy as np
 
-# from model.network_files import MaskRCNN
-# from dataloaders.dataset_coco import CocoDetection
-# from utils.train import EvalCOCOMetric
-
-
-
-
 class Evaluator:
 
     def __init__(self, config, eval_dataloader):
@@ -109,31 +102,3 @@ def summarize(self, catId=None):
         raise Exception('Please run accumulate() first')
 
     return stats, print_info
-
-
-def save_info(coco_evaluator,
-              category_index: dict,
-              save_name: str = "record_mAP.txt"):
-    """将验证结果保存至txt文件中"""
-    iou_type = coco_evaluator.params.iouType
-    print(f"IoU metric: {iou_type}")
-    # calculate COCO info for all classes
-    coco_stats, print_coco = summarize(coco_evaluator)
-
-    # calculate voc info for every classes(IoU=0.5)
-    classes = [v for v in category_index.values() if v != "N/A"]
-    voc_map_info_list = []
-    for i in range(len(classes)):
-        stats, _ = summarize(coco_evaluator, catId=i)
-        voc_map_info_list.append(" {:15}: {}".format(classes[i], stats[1]))
-
-    print_voc = "\n".join(voc_map_info_list)
-    print(print_voc)
-
-    # 将验证结果保存至txt文件中
-    with open(save_name, "w", encoding="utf8") as f:
-        record_lines = [
-            "COCO results:", print_coco, "", "mAP(IoU=0.5) for each category:",
-            print_voc
-        ]
-        f.write("\n".join(record_lines))
