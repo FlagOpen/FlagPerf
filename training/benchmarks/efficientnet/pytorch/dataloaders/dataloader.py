@@ -59,7 +59,7 @@ def build_train_dataloader(train_dataset, args):
     """Training dataloaders."""
     dist_pytorch.main_proc_print('building train dataloaders ...')
 
-    if utils.is_dist_avail_and_initialized():
+    if dist_pytorch.is_dist_avail_and_initialized():
         if hasattr(args, "ra_sampler") and args.ra_sampler:
             train_sampler = RASampler(train_dataset,
                                       shuffle=True,
@@ -108,7 +108,7 @@ def build_eval_dataloader(eval_dataset, args):
     """Training and validation dataloaders."""
     dist_pytorch.main_proc_print('building eval dataloaders ...')
 
-    if utils.is_dist_avail_and_initialized():
+    if dist_pytorch.is_dist_avail_and_initialized():
         val_sampler = torch.utils.data.distributed.DistributedSampler(
             eval_dataset, shuffle=False, drop_last=True)
         dist_pytorch.main_proc_print(

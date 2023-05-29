@@ -80,7 +80,7 @@ def main() -> Tuple[Any, Any]:
     while training_state.epoch < config.epochs and \
             not training_state.end_training:
         trainer.train_one_epoch(train_dataloader)
-        training_state.epoch += epoch
+        training_state.epoch += 1
 
     model_driver.event(Event.TRAIN_END)
     raw_train_end_time = logger.previous_log_time
