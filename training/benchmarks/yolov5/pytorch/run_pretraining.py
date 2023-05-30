@@ -18,7 +18,8 @@ from driver import Event, dist_pytorch
 from driver.helper import InitHelper
 
 
-from train import trainer
+from train import trainer_adapter
+from train.trainer import Trainer
 from train.training_state import TrainingState
 
 logger = None
@@ -46,6 +47,16 @@ def main() -> Tuple[Any, Any]:
     # 创建TrainingState对象
     training_state = TrainingState()
 
+    trainer = Trainer(driver=model_driver,
+                    adapter=trainer_adapter,
+                    training_state=training_state,
+                    device=config.device,
+                    config=config)
+    
+    dist_pytorch.barrier(config.vendor)
+    trainer.init()
+    dist_pytorch.barrier(config.vendor)
+    
     if not config.do_train:
         return config, training_state
 
