@@ -15,14 +15,14 @@ import utils.presets
 
 def build_train_dataset(config):
     dataset = get_coco(config.data_dir,
-                       image_set="coco",
+                       image_set="train",
                        transforms=utils.presets.DetectionPresetTrain())
     return dataset
 
 
 def build_eval_dataset(config):
     dataset = get_coco(config.data_dir,
-                       image_set="coco",
+                       image_set="val",
                        transforms=utils.presets.DetectionPresetEval())
     return dataset
 
@@ -57,19 +57,10 @@ def build_eval_dataloader(dataset, config):
     else:
         test_sampler = torch.utils.data.SequentialSampler(dataset)
 
-    if config.aspect_ratio_group_factor >= 0:
-        group_ids = create_aspect_ratio_groups(
-            dataset, k=config.aspect_ratio_group_factor)
-        test_batch_sampler = GroupedBatchSampler(test_sampler, group_ids,
-                                                 config.train_batch_size)
-    else:
-        test_batch_sampler = torch.utils.data.BatchSampler(
-            test_sampler, config.train_batch_size, drop_last=True)
-
     data_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=config.eval_batch_size,
-        sampler=test_batch_sampler,
+        sampler=test_sampler,
         num_workers=config.num_workers,
         collate_fn=utils.utils.collate_fn)
     return data_loader

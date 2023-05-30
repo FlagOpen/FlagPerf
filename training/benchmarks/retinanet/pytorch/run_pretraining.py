@@ -73,15 +73,19 @@ def main() -> Tuple[Any, Any]:
 
     # evaluation统计
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
-    model_driver.event(Event.INIT_EVALUATION)
+
     trainer.evaluate(trainer.model, eval_dataloader, device=trainer.device)
 
     init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
-    # time单位为秒
+
     init_evaluation_info = dict(time=init_evaluation_end -
                                 init_evaluation_start)
 
-    # init 统计
+    model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
+
+    if not config.do_train:
+        return config, training_state
+
     model_driver.event(Event.INIT_END)
     init_end_time = logger.previous_log_time  # init结束时间，单位为ms
     training_state.init_time = (init_end_time -
@@ -89,7 +93,7 @@ def main() -> Tuple[Any, Any]:
 
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
-    model_driver.event(Event.TRAIN_START, init_evaluation_info)
+    model_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time  # 训练起始时间，单位为ms
 
     # 训练过程

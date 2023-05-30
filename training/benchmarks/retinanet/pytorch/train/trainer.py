@@ -55,7 +55,7 @@ class Trainer:
         device = self.device
         epoch = self.training_state.epoch
         if self.config.distributed:
-            self.train_sampler.set_epoch(epoch)
+            train_dataloader.batch_sampler.sampler.set_epoch(epoch)
 
         model.train()
         metric_logger = utils.utils.MetricLogger(delimiter="  ")
