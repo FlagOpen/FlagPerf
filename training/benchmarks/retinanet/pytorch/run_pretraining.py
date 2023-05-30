@@ -14,6 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
 import config
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
+from dataloaders.dataloader import get_coco_api_from_dataset
 
 # TODO 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
 from train import trainer_adapter
@@ -55,9 +56,11 @@ def main() -> Tuple[Any, Any]:
     training_state = TrainingState()
 
     # 构建 trainer：依赖 evaluator、TrainingState对象
+    coco = get_coco_api_from_dataset(eval_dataloader.dataset)
+    evaluator = Evaluator(coco)
     trainer = Trainer(driver=model_driver,
                       adapter=trainer_adapter,
-                      evaluator=None,
+                      evaluator=evaluator,
                       training_state=training_state,
                       device=config.device,
                       config=config)
@@ -91,7 +94,7 @@ def main() -> Tuple[Any, Any]:
 
     # 训练过程
     epoch = 0
-    while epoch < config.max_epoch and not training_state.end_training:
+    while not training_state.end_training:
         training_state.epoch = epoch
         trainer.train_one_epoch(train_dataloader, eval_dataloader)
         epoch += 1

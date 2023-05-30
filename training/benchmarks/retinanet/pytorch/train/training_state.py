@@ -10,8 +10,6 @@ class TrainingState:
     _status = 'aborted'  # later set to 'success' if termination criteria met
 
     global_steps = 0
-    skipped_steps = 0
-    iter_dataloader_idx = 0
 
     loss: float = 0.0
     eval_mAP: float = 0.0

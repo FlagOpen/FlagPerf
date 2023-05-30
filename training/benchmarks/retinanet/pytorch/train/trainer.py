@@ -48,9 +48,6 @@ class Trainer:
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
 
-        coco = get_coco_api_from_dataset(self.data_loader_test.dataset)
-        self.evaluator = Evaluator(coco)
-
     def train_one_epoch(self, train_dataloader, eval_dataloader):
         model = self.model
         optimizer = self.optimizer
@@ -74,7 +71,8 @@ class Trainer:
             lr_scheduler = utils.utils.warmup_lr_scheduler(
                 optimizer, warmup_iters, warmup_factor)
 
-        for images, targets in metric_logger.log_every(data_loader, 100,
+        for images, targets in metric_logger.log_every(data_loader,
+                                                       self.config.log_freq,
                                                        header):
             images = list(image.to(device) for image in images)
             targets = [{k: v.to(device)
@@ -122,8 +120,6 @@ class Trainer:
             state.end_training = True
         state.num_trained_samples += len(data_loader.dataset)
 
-        return state.end_training
-
     @torch.no_grad()
     def evaluate(self, model, data_loader, device):
         coco = get_coco_api_from_dataset(data_loader.dataset)
@@ -133,7 +129,8 @@ class Trainer:
         metric_logger = utils.utils.MetricLogger(delimiter="  ")
         header = 'Test:'
 
-        for images, targets in metric_logger.log_every(data_loader, 100,
+        for images, targets in metric_logger.log_every(data_loader,
+                                                       self.config.log_freq,
                                                        header):
             images = list(img.to(device) for img in images)
 
