@@ -1,7 +1,7 @@
 ### 模型backbone权重下载
 [模型backbone权重下载](https://download.pytorch.org/models/resnet50-0676ba61.pth)
 
-这一部分路径在FlagPerf/training/benchmarks/faster_rcnn/pytorch/model/\_\_init__.py中提供：
+这一部分路径在FlagPerf/training/benchmarks/retinanet/pytorch/model/\_\_init__.py中提供：
 
 ```python
 torchvision.models.resnet.__dict__['model_urls'][
@@ -32,12 +32,9 @@ torchvision.models.resnet.__dict__['model_urls'][
 ### 运行情况
 | 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(mAP) | 性能（samples/s） |
 | -------- | --------------- | ----------- | -------- | ------------- | ----------------- |
-| 单机1卡  | config_A100x1x1 |     |    |       |             |
-| 单机4卡  | config_A100x1x4 |    |    |        |             |
 | 单机8卡  | config_A100x1x8 | 16730.435    | 0.35     | 0.3520        | 182.24            |
-| 两机8卡  | config_A100x2x8 |      |      |        |            |
 
-训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.fasterrcnn_resnet50_fpn)
+训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.retinanet_resnet50_fpn)
 
 ### 许可证
 
