@@ -3,8 +3,7 @@ import sys
 import torch
 
 import torch.distributed as dist
-from torch.optim import Optimizer
-from torch import nn, Tensor
+from torch import nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 import config
 
@@ -37,10 +36,3 @@ def create_grad_scaler():
     """create_grad_scaler for mixed precision training"""
     scaler = torch.cuda.amp.GradScaler() if config.amp else None
     return scaler
-
-
-def backward(loss: Tensor, optimizer: Optimizer):
-    """backward pass"""
-    loss.backward()
-    optimizer.step()
-    optimizer.zero_grad()
