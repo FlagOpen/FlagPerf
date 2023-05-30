@@ -37,7 +37,6 @@ class EvalCOCOMetric:
     def __init__(self,
                  coco: COCO = None,
                  iou_type: str = None,
-                 results_file_name: str = "predict_results.json",
                  classes_mapping: dict = None):
         self.coco = copy.deepcopy(coco)
         self.img_ids = []  # 记录每个进程处理图片的ids
@@ -47,7 +46,6 @@ class EvalCOCOMetric:
         self.coco_evaluator = None
         assert iou_type in ["bbox", "segm", "keypoints"]
         self.iou_type = iou_type
-        self.results_file_name = results_file_name
 
     def prepare_for_coco_detection(self, targets, outputs):
         """将预测的结果转换成COCOeval指定的格式，针对目标检测任务"""

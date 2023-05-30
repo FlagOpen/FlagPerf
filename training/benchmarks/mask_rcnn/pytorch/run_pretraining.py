@@ -51,12 +51,6 @@ def main(start_ts) -> Tuple[Any, Any]:
     config.distributed = world_size > 1 or False
 
     # 得到seed
-    """
-    这里获取seed的可行方式：
-    1. 配置文件中的seed
-    2. 自定义seed的生成方式：dist_pytorch.setup_seeds得到work_seeds数组，取其中某些元素。参考GLM-Pytorch的run_pretraining.py的seed生成方式
-    3. 其他自定义方式
-    """
     init_helper.set_seed(config.seed, config.vendor)
 
     # 构建dataset, dataloader 【train && validate】
