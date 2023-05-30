@@ -1,7 +1,18 @@
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-from .data_functions import get_data_loader, get_collate_function
+from model.data.data_function import TextMelCollate
+from model.data.data_function import TextMelLoader
+
+
+def get_collate_function(n_frames_per_step=1):
+    collate_fn = TextMelCollate(n_frames_per_step)
+    return collate_fn
+
+
+def get_data_loader(dataset_path, audiopaths_and_text, args):
+    data_loader = TextMelLoader(dataset_path, audiopaths_and_text, args)
+    return data_loader
 
 
 def build_train_dataset(args):
