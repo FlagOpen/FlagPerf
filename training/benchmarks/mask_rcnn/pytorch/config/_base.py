@@ -21,7 +21,7 @@ init_checkpoint: str = ""
 # train && evaluate
 # =========================================================
 train_batch_size: int = 8
-eval_batch_size: int = 8
+eval_batch_size: int = 1
 dist_backend: str = 'nccl'
 
 gradient_accumulation_steps: int = 1
