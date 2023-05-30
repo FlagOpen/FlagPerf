@@ -78,7 +78,7 @@ def process_batch(detections, labels, iouv):
 
 
 @torch.no_grad()
-def run(data,
+def evaluate(data,
         weights=None,  # model.pt path(s)
         batch_size=32,  # batch size
         imgsz=640,  # inference size (pixels)
