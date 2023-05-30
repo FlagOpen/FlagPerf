@@ -64,7 +64,6 @@ class Trainer:
         if self.config.distributed:
             self.train_dataloader.sampler.set_epoch(state.epoch)
 
-        epoch_start_num_sample = state.num_trained_samples
 
         for batch in train_dataloader:
             self.train_one_step(batch)
@@ -72,8 +71,6 @@ class Trainer:
         val_loss, _ = self.evaluator.evaluate(self)
         state.val_loss = val_loss
 
-        epoch_start_num_sample += len(train_dataloader.dataset)
-        state.num_trained_samples = epoch_start_num_sample
         epoch_data = {
             "val_loss": val_loss,
             "epoch": state.epoch,

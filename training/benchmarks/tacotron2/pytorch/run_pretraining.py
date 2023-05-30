@@ -128,7 +128,6 @@ if __name__ == "__main__":
             "init_time": state.init_time,
             "epoch": state.epoch,
             "global_steps": state.global_steps,
-            "num_trained_samples": state.num_trained_samples,
             "train_loss": state.train_loss,
             "val_loss": state.val_loss,
         }
