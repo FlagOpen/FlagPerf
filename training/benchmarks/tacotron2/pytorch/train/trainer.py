@@ -9,7 +9,6 @@ from model.loss.loss_function import get_loss_function
 from model.data.data_function import batch_to_gpu
 from optimizers import create_optimizer
 from .utils import reduce_tensor
-
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
 import config
@@ -17,6 +16,8 @@ import config
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event
+
+import torch.distributed as dist
 
 
 class Trainer:
@@ -44,7 +45,7 @@ class Trainer:
     def init(self):
         self.model_config = create_model_config(config)
         self.model = create_model(config)
-        self.model = self.adapter.model_to_fp16(self.model,self.config)
+        self.model = self.adapter.model_to_fp16(self.model, self.config)
         self.model = self.adapter.model_to_ddp(self.model, self.config)
         self.model.train()
 
@@ -57,12 +58,8 @@ class Trainer:
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
         driver = self.driver
-
         state.epoch += 1
-
         driver.event(Event.EPOCH_BEGIN, state.epoch)
-
-        torch.cuda.synchronize()
 
         if self.config.distributed:
             self.train_dataloader.sampler.set_epoch(state.epoch)
@@ -72,16 +69,19 @@ class Trainer:
         for batch in train_dataloader:
             self.train_one_step(batch)
 
-        torch.cuda.synchronize()
-
         val_loss, _ = self.evaluator.evaluate(self)
         state.val_loss = val_loss
 
         epoch_start_num_sample += len(train_dataloader.dataset)
         state.num_trained_samples = epoch_start_num_sample
-        epoch_data = {"val_loss": val_loss, "epoch":state.epoch, "global_steps": state.global_steps}
-        driver.event(Event.EPOCH_END, state.epoch, message=epoch_data)
+        epoch_data = {
+            "val_loss": val_loss,
+            "epoch": state.epoch,
+            "global_steps": state.global_steps
+        }
+        print(epoch_data)
 
+        driver.event(Event.EPOCH_END, state.epoch)
         self.detect_training_status()
 
     def train_one_step(self, batch):
@@ -89,7 +89,6 @@ class Trainer:
         state = self.training_state
         args = self.config
 
-        torch.cuda.synchronize()
         adjust_learning_rate(self.training_state.epoch, self.optimizer,
                              args.learning_rate, args.lr_anneal_steps,
                              args.lr_anneal_factor)
@@ -125,13 +124,12 @@ class Trainer:
 
         self.model.zero_grad(set_to_none=True)
 
-        torch.cuda.synchronize()
-
         state.train_loss = reduced_loss
         step_info = dict(step=state.global_steps, train_loss=reduced_loss)
 
         self.training_state.global_steps += 1
-        driver.event(Event.STEP_END, state.global_steps, message=step_info)
+        print(f"step_info:{step_info}")
+        driver.event(Event.STEP_END, state.global_steps)
 
     def detect_training_status(self):
         config = self.config

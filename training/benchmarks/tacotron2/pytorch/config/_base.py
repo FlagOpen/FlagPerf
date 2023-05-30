@@ -7,6 +7,8 @@ seed: int = 1234
 name: str = "tacotron2"
 
 """Training parameters"""
+# frequency of logging loss. If not positive, no logging is provided for training loss
+log_freq: int = 1
 # max epochs for training
 max_epochs: int = 1501
 # disable uniform initialization of batchnorm layer weight
@@ -34,7 +36,6 @@ fp16: bool = False
 loss_scale_window: float = 1000
 # Clip threshold for gradients
 grad_clip_thresh: float = 1.0
-
 # Minimum loss scale for dynamic loss scale
 min_scale: float = 1
 """distributed parameters"""
@@ -54,19 +55,8 @@ eval_batch_size: int = 128
 seq_length: int = 200
 # trainer args
 do_train: bool = True
-
 # Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: int = 1
-
-# number of training samples to run a evaluation once
-eval_interval_samples: int = 20000
-
-# Sample to begin performing eval.
-eval_iter_start_samples: int = 1
-
-# frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 1
-
 # target val_loss to converge for training
 target_val_loss: float = 0.4852
 """Distributed parameters"""
@@ -82,8 +72,6 @@ ddp_type: str = "native"
 """device parameters"""
 device: str = None
 n_device: int = 1
-
-disable_uniform_initialize_bn_weight: bool = False
 # Enable cudnn
 cudnn_enabled: bool = True
 # Run cudnn benchmark

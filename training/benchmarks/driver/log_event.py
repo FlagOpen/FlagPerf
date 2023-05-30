@@ -59,12 +59,12 @@ class LogEventManager(EventManager):
     def on_epoch_begin(self, epoch: int):
         """on epoch_begin"""
         epoch_info = dict(epoch=epoch)
-        self._log_event(Event.EPOCH_BEGIN, epoch=epoch_info)
+        self._log_event(Event.EPOCH_BEGIN, epoch_info)
 
-    def on_epoch_end(self, epoch: int, message=None):
+    def on_epoch_end(self, epoch: int):
         """on epoch_end"""
         epoch_info = dict(epoch=epoch)
-        self._log_event(Event.EPOCH_END, epoch=epoch_info, message=message)
+        self._log_event(Event.EPOCH_END, epoch_info)
 
     def on_step_begin(self, step: int = None):
         """on step_begin"""
