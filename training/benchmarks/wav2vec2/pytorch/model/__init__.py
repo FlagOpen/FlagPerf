@@ -1,4 +1,4 @@
-from wav2vec2.model import Wav2Vec2Model
+from .model import Wav2Vec2Model
 
 
 def create_model(args):

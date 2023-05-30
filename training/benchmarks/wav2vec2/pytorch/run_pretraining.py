@@ -20,7 +20,7 @@ from train.training_state import TrainingState
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from dataloaders.dataloader_wav import build_train_dataloader, build_eval_dataloader
-from wav2vec2.logging import init_logger
+from common.logging import init_logger
 import numpy as np
 from common.utils import print_once
 from common import tb_dllogger as logger_init
@@ -148,7 +148,7 @@ def main():
     while step < config.max_update and \
                 not training_state.end_training: # training loop
 
-        step, epoch, training_state.throughoutputs = trainer.train_all_epoch(
+        step, epoch, training_state.throughputs = trainer.train_one_epoch(
             config, epoch, step, train_dataloader, sampler)
 
         if 0 < config.epochs_this_job <= epoch + 1 - start_epoch:
@@ -184,13 +184,12 @@ if __name__ == "__main__":
     if not dist_pytorch.is_main_process():
         sys.exit(0)
 
-    global_batch_size = dist_pytorch.global_batch_size(config_update)  # TODO
     e2e_time = time.time() - start
     finished_info = {"e2e_time": e2e_time}
     if config_update.do_train:
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": state.throughoutputs,
+            "training_ntokens_per_second": state.throughputs,
             "converged": state.converged,
             "final_loss": state.val_losses,
             "final_acc": state.val_acc,

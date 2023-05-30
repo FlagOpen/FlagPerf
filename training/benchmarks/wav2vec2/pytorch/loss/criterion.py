@@ -22,10 +22,6 @@ import torch
 import torch.nn.functional as F
 from torch.nn.modules.loss import _Loss
 
-from common.fairseq import utils
-from common.fairseq.data.data_utils import post_process
-from common.utils import AttrDict
-
 
 class Wav2vecCriterion(_Loss):
 
