@@ -168,7 +168,7 @@ class Trainer:
         optimizer = create_optimizer(nbs, batch_size, model, opt, hyp)
 
         # Scheduler
-        scheduler = create_scheduler(batch_size, model, opt, hyp)
+        scheduler = create_scheduler(optimizer, hyp, epochs)
         # EMA
         ema = ModelEMA(model) if RANK in [-1, 0] else None
 

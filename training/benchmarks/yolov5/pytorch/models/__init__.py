@@ -2,7 +2,7 @@ import torch
 from models.yolo import Model
 from utils.general import check_suffix,intersect_dicts
 
-def create_model(weights,cfg,resume,hyp,device):
+def create_model(weights, cfg, resume, hyp, device):
     # Model
     nc = 80
     check_suffix(weights, '.pt')  # check weights
@@ -16,3 +16,5 @@ def create_model(weights,cfg,resume,hyp,device):
         model.load_state_dict(csd, strict=False)  # load
     else:
         model = Model(cfg, ch=3, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
+        
+    return model

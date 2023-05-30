@@ -53,9 +53,9 @@ def main() -> Tuple[Any, Any]:
                     device=config.device,
                     config=config)
     
-    dist_pytorch.barrier(config.vendor)
-    trainer.init()
-    dist_pytorch.barrier(config.vendor)
+    # dist_pytorch.barrier(config.vendor)
+    # trainer.init()
+    # dist_pytorch.barrier(config.vendor)
     
     if not config.do_train:
         return config, training_state
