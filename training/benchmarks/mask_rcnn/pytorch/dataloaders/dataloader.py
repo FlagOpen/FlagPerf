@@ -75,7 +75,7 @@ def build_eval_dataloader(config, train_dataset, eval_dataset):
 
     eval_dataloader = torch.utils.data.DataLoader(
         eval_dataset,
-        batch_size=1,
+        batch_size=config.eval_batch_size,
         sampler=eval_sampler,
         num_workers=config.num_workers,
         collate_fn=train_dataset.collate_fn)
