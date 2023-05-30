@@ -4,9 +4,8 @@ mutable_params = [
     'data_dir', 'log_freq', 'output_dir', 'resume'
 ]
 mutable_params += [
-    'lr', 'lr_scheduler', 'lr_warmup_epochs', 'lr_warmup_method',
-    'auto_augment', 'random_erase', 'label_smoothing', 'mixup_alpha',
-    'cutmix_alpha', 'weight_decay', 'norm_weight_decay', 'ra_sampler',
-    'ra_reps', 'epochs', 'num_workers', 'train_crop_size', 'val_crop_size',
-    'val_resize_size', 'train_batch_size', 'eval_batch_size'
+    'epochs', 'opt', 'lr', 'wd', 'lr_scheduler', 'lr_warmup_method',
+    'lr_warmup_epochs', 'lr_warmup_decay', 'amp', 'label_smoothing',
+    'mixup_alpha', 'auto_augment', 'clip_grad_norm', 'ra_sampler', 
+    'cutmix_alpha'
 ]
