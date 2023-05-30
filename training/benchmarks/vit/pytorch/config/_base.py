@@ -2,7 +2,7 @@
 # chip vendor: nvidia, kunlunxin,  iluvatar, cambricon etc. key vendor is required.
 vendor: str = None
 # model name
-name: str = "EfficientNet"
+name: str = "VIT"
 
 do_train = True
 fp16 = False
