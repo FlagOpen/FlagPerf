@@ -1,7 +1,5 @@
-### 模型Checkpoint下载
-[模型Checkpoint下载](../../benchmarks/efficientnet/README.md#模型checkpoint)
 ### 测试数据集下载
-[测试数据集下载](../../benchmarks/efficientnet/README.md#数据集)
+[测试数据集下载](../../benchmarks/vit/README.md#数据集)
 
 ### 昆仑芯XPU配置与运行信息参考
 #### 环境配置
