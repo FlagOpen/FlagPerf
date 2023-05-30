@@ -20,6 +20,8 @@ from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
+from dataloaders.dataloader import build_train_dataset, \
+    build_eval_dataset, build_train_dataloader, build_eval_dataloader
 
 logger = None
 
@@ -39,6 +41,11 @@ def main() -> Tuple[Any, Any]:
     # logger
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
+    
+    train_dataset = build_train_dataset(config)
+    eval_dataset = build_eval_dataset(config)
+    train_dataloader = build_train_dataloader(train_dataset, config)
+    eval_dataloader = build_eval_dataloader(eval_dataset, config)
 
     seed = config.seed
 

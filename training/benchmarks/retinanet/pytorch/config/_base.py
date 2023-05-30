@@ -12,10 +12,9 @@ name: str = "retinanet"
 # =========================================================
 train_data: str = "train"
 eval_data: str = "val"
-output_dir: str = "output"
 
 # use torch/hub/checkpoints/resnet50-0676ba61 as backbone weights
-# no init weights for other parts of faster-rcnn
+# no init weights for other parts of retinanet
 
 # =========================================================
 # Model
@@ -26,7 +25,7 @@ num_classes: int = 90
 # =========================================================
 # loss scale
 # =========================================================
-lr: float = 0.08
+lr: float = 0.01
 weight_decay: float = 1e-4
 momentum: float = 0.9
 lr_steps: list = [16, 22]

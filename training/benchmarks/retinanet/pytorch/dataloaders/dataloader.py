@@ -10,6 +10,52 @@ from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 
 
+def build_train_dataset(config):
+    dataset = get_coco(config.data_dir, image_set="coco", transforms=utils.presets.DetectionPresetTrain())
+    return dataset
+                         
+def build_eval_dataset(config):
+    dataset = get_coco(config.data_dir, image_set="coco", transforms=utils.presets.DetectionPresetEval())
+    return dataset
+    
+def build_train_dataloader(train_dataset, config):
+    if self.config.distributed:
+        self.train_sampler = torch.utils.data.distributed.DistributedSampler(
+            dataset)
+        self.test_sampler = torch.utils.data.distributed.DistributedSampler(
+            dataset_test)
+    else:
+        self.train_sampler = torch.utils.data.RandomSampler(dataset)
+        self.test_sampler = torch.utils.data.SequentialSampler(
+            dataset_test)
+
+    if self.config.aspect_ratio_group_factor >= 0:
+        group_ids = create_aspect_ratio_groups(
+            dataset, k=self.config.aspect_ratio_group_factor)
+        self.train_batch_sampler = GroupedBatchSampler(
+            self.train_sampler, group_ids, self.config.train_batch_size)
+    else:
+        self.train_batch_sampler = torch.utils.data.BatchSampler(
+            self.train_sampler,
+            self.config.train_batch_size,
+            drop_last=True)
+
+    self.data_loader = torch.utils.data.DataLoader(
+        dataset,
+        batch_sampler=self.train_batch_sampler,
+        num_workers=self.config.num_workers,
+        collate_fn=utils.utils.collate_fn)
+
+    self.data_loader_test = torch.utils.data.DataLoader(
+        dataset_test,
+        batch_size=self.config.eval_batch_size,
+        sampler=self.test_sampler,
+        num_workers=self.config.num_workers,
+        collate_fn=utils.utils.collate_fn)
+
+def build_eval_dataloader(eval_dataset, config):
+
+    
 class FilterAndRemapCocoCategories(object):
 
     def __init__(self, categories, remap=True):

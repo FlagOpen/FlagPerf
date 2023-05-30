@@ -13,7 +13,7 @@ from schedulers import create_scheduler
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
 
-from dataloaders.dataloader import get_coco, get_coco_kp, get_coco_api_from_dataset
+from dataloaders.dataloader import get_coco_api_from_dataset
 from utils.group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
 import utils.presets
 import utils.utils
@@ -21,22 +21,6 @@ import utils.utils
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
-
-
-def get_dataset(name, image_set, transform, data_path):
-    paths = {
-        "coco": (data_path, get_coco, 91),
-        "coco_kp": (data_path, get_coco_kp, 2)
-    }
-    p, ds_fn, num_classes = paths[name]
-
-    ds = ds_fn(p, image_set=image_set, transforms=transform)
-    return ds, num_classes
-
-
-def get_transform(train):
-    return utils.presets.DetectionPresetTrain(
-    ) if train else utils.presets.DetectionPresetEval()
 
 
 class Trainer:
@@ -64,45 +48,7 @@ class Trainer:
 
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        dataset, num_classes = get_dataset("coco", "train",
-                                           get_transform(train=True),
-                                           self.config.data_dir)
-        dataset_test, _ = get_dataset("coco", "val",
-                                      get_transform(train=False),
-                                      self.config.data_dir)
-        if self.config.distributed:
-            self.train_sampler = torch.utils.data.distributed.DistributedSampler(
-                dataset)
-            self.test_sampler = torch.utils.data.distributed.DistributedSampler(
-                dataset_test)
-        else:
-            self.train_sampler = torch.utils.data.RandomSampler(dataset)
-            self.test_sampler = torch.utils.data.SequentialSampler(
-                dataset_test)
-
-        if self.config.aspect_ratio_group_factor >= 0:
-            group_ids = create_aspect_ratio_groups(
-                dataset, k=self.config.aspect_ratio_group_factor)
-            self.train_batch_sampler = GroupedBatchSampler(
-                self.train_sampler, group_ids, self.config.train_batch_size)
-        else:
-            self.train_batch_sampler = torch.utils.data.BatchSampler(
-                self.train_sampler,
-                self.config.train_batch_size,
-                drop_last=True)
-
-        self.data_loader = torch.utils.data.DataLoader(
-            dataset,
-            batch_sampler=self.train_batch_sampler,
-            num_workers=self.config.num_workers,
-            collate_fn=utils.utils.collate_fn)
-
-        self.data_loader_test = torch.utils.data.DataLoader(
-            dataset_test,
-            batch_size=self.config.eval_batch_size,
-            sampler=self.test_sampler,
-            num_workers=self.config.num_workers,
-            collate_fn=utils.utils.collate_fn)
+        
 
         coco = get_coco_api_from_dataset(self.data_loader_test.dataset)
         self.evaluator = Evaluator(coco)
