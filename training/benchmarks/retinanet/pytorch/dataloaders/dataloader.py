@@ -9,53 +9,72 @@ import torchvision
 from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 
+from utils.group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
+import utils.presets
+
 
 def build_train_dataset(config):
-    dataset = get_coco(config.data_dir, image_set="coco", transforms=utils.presets.DetectionPresetTrain())
+    dataset = get_coco(config.data_dir,
+                       image_set="coco",
+                       transforms=utils.presets.DetectionPresetTrain())
     return dataset
-                         
+
+
 def build_eval_dataset(config):
-    dataset = get_coco(config.data_dir, image_set="coco", transforms=utils.presets.DetectionPresetEval())
+    dataset = get_coco(config.data_dir,
+                       image_set="coco",
+                       transforms=utils.presets.DetectionPresetEval())
     return dataset
-    
-def build_train_dataloader(train_dataset, config):
-    if self.config.distributed:
-        self.train_sampler = torch.utils.data.distributed.DistributedSampler(
+
+
+def build_train_dataloader(dataset, config):
+    if config.distributed:
+        train_sampler = torch.utils.data.distributed.DistributedSampler(
             dataset)
-        self.test_sampler = torch.utils.data.distributed.DistributedSampler(
-            dataset_test)
     else:
-        self.train_sampler = torch.utils.data.RandomSampler(dataset)
-        self.test_sampler = torch.utils.data.SequentialSampler(
-            dataset_test)
+        train_sampler = torch.utils.data.RandomSampler(dataset)
 
-    if self.config.aspect_ratio_group_factor >= 0:
+    if config.aspect_ratio_group_factor >= 0:
         group_ids = create_aspect_ratio_groups(
-            dataset, k=self.config.aspect_ratio_group_factor)
-        self.train_batch_sampler = GroupedBatchSampler(
-            self.train_sampler, group_ids, self.config.train_batch_size)
+            dataset, k=config.aspect_ratio_group_factor)
+        train_batch_sampler = GroupedBatchSampler(train_sampler, group_ids,
+                                                  config.train_batch_size)
     else:
-        self.train_batch_sampler = torch.utils.data.BatchSampler(
-            self.train_sampler,
-            self.config.train_batch_size,
-            drop_last=True)
+        train_batch_sampler = torch.utils.data.BatchSampler(
+            train_sampler, config.train_batch_size, drop_last=True)
 
-    self.data_loader = torch.utils.data.DataLoader(
+    data_loader = torch.utils.data.DataLoader(
         dataset,
-        batch_sampler=self.train_batch_sampler,
-        num_workers=self.config.num_workers,
+        batch_sampler=train_batch_sampler,
+        num_workers=config.num_workers,
         collate_fn=utils.utils.collate_fn)
+    return data_loader
 
-    self.data_loader_test = torch.utils.data.DataLoader(
-        dataset_test,
-        batch_size=self.config.eval_batch_size,
-        sampler=self.test_sampler,
-        num_workers=self.config.num_workers,
+
+def build_eval_dataloader(dataset, config):
+    if config.distributed:
+        test_sampler = torch.utils.data.distributed.DistributedSampler(dataset)
+    else:
+        test_sampler = torch.utils.data.SequentialSampler(dataset)
+
+    if config.aspect_ratio_group_factor >= 0:
+        group_ids = create_aspect_ratio_groups(
+            dataset, k=config.aspect_ratio_group_factor)
+        test_batch_sampler = GroupedBatchSampler(test_sampler, group_ids,
+                                                 config.train_batch_size)
+    else:
+        test_batch_sampler = torch.utils.data.BatchSampler(
+            test_sampler, config.train_batch_size, drop_last=True)
+
+    data_loader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=config.eval_batch_size,
+        sampler=test_batch_sampler,
+        num_workers=config.num_workers,
         collate_fn=utils.utils.collate_fn)
+    return data_loader
 
-def build_eval_dataloader(eval_dataset, config):
 
-    
 class FilterAndRemapCocoCategories(object):
 
     def __init__(self, categories, remap=True):

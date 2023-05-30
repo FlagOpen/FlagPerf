@@ -14,8 +14,7 @@ from train.evaluator import Evaluator
 from train.training_state import TrainingState
 
 from dataloaders.dataloader import get_coco_api_from_dataset
-from utils.group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
-import utils.presets
+
 import utils.utils
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -48,15 +47,14 @@ class Trainer:
 
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        
 
         coco = get_coco_api_from_dataset(self.data_loader_test.dataset)
         self.evaluator = Evaluator(coco)
 
-    def train_one_epoch(self):
+    def train_one_epoch(self, train_dataloader, eval_dataloader):
         model = self.model
         optimizer = self.optimizer
-        data_loader = self.data_loader
+        data_loader = train_dataloader
         device = self.device
         epoch = self.training_state.epoch
         if self.config.distributed:
@@ -107,7 +105,7 @@ class Trainer:
 
         self.lr_scheduler.step()
 
-        self.evaluate(self.model, self.data_loader_test, device=self.device)
+        self.evaluate(self.model, eval_dataloader, device=self.device)
 
         state = self.training_state
         config = self.config

@@ -41,7 +41,7 @@ def main() -> Tuple[Any, Any]:
     # logger
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
-    
+
     train_dataset = build_train_dataset(config)
     eval_dataset = build_eval_dataset(config)
     train_dataloader = build_train_dataloader(train_dataset, config)
@@ -70,18 +70,13 @@ def main() -> Tuple[Any, Any]:
 
     # evaluation统计
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
-    trainer.evaluate(trainer.model,
-                     trainer.data_loader_test,
-                     device=trainer.device)
+    model_driver.event(Event.INIT_EVALUATION)
+    trainer.evaluate(trainer.model, eval_dataloader, device=trainer.device)
 
     init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
     # time单位为秒
-    init_evaluation_info = dict(time=0.0)
-    model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
-
-    # do evaluation
-    if not config.do_train:
-        return config, training_state
+    init_evaluation_info = dict(time=init_evaluation_end -
+                                init_evaluation_start)
 
     # init 统计
     model_driver.event(Event.INIT_END)
@@ -91,14 +86,14 @@ def main() -> Tuple[Any, Any]:
 
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
-    model_driver.event(Event.TRAIN_START)
+    model_driver.event(Event.TRAIN_START, init_evaluation_info)
     raw_train_start_time = logger.previous_log_time  # 训练起始时间，单位为ms
 
     # 训练过程
     epoch = 0
     while epoch < config.max_epoch and not training_state.end_training:
         training_state.epoch = epoch
-        trainer.train_one_epoch()
+        trainer.train_one_epoch(train_dataloader, eval_dataloader)
         epoch += 1
 
     # TRAIN_END事件
