@@ -10,13 +10,13 @@ def get_collate_function(n_frames_per_step=1):
     return collate_fn
 
 
-def get_data_loader(dataset_path, audiopaths_and_text, args):
-    data_loader = TextMelLoader(dataset_path, audiopaths_and_text, args)
-    return data_loader
+def get_dataset(dataset_path, audiopaths_and_text, args):
+    dataset = TextMelLoader(dataset_path, audiopaths_and_text, args)
+    return dataset
 
 
 def build_train_dataset(args):
-    train_dataset = get_data_loader(args.data_dir, args.training_files, args)
+    train_dataset = get_dataset(args.data_dir, args.training_files, args)
     return train_dataset
 
 
@@ -46,7 +46,7 @@ def build_train_dataloader(args,
 
 
 def build_eval_dataset(args):
-    validate_set = get_data_loader(args.data_dir, args.validation_files, args)
+    validate_set = get_dataset(args.data_dir, args.validation_files, args)
     return validate_set
 
 
