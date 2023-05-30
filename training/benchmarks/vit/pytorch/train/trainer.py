@@ -194,7 +194,7 @@ class Trainer:
 
     def forward(self, batch):
         images, target = batch
-        with torch.cuda.amp.autocast(enabled=self.scaler is not None):
+        with torch.cuda.amp.autocast(enabled=self.scaler is not None and self.model.training):
             output = self.model(images)
             loss = self.criterion(output, target)
         acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
