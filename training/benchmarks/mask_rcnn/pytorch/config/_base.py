@@ -15,7 +15,6 @@ fp16 = False
 data_dir: str = None
 train_data: str = "train"
 eval_data: str = "val"
-output_dir: str = "output"
 init_checkpoint: str = ""
 
 # =========================================================
@@ -65,13 +64,8 @@ n_device: int = 1
 
 # Automatic mixed precision
 amp: bool = True
-
 # aspect ratio group factor
 aspect_ratio_group_factor: int = 3
-
-# output path
-output_dir: str = "output"
-
 # Use sync batch norm
 sync_bn: bool = False
 
