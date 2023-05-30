@@ -40,7 +40,7 @@ if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
-import evaluator  # for end-of-epoch mAP
+from evaluator import Evaluator  # for end-of-epoch mAP
 from models.experimental import attempt_load
 from models.yolo import Model
 from utils.autoanchor import check_anchors
@@ -68,8 +68,7 @@ RANK = int(os.getenv('RANK', -1))
 WORLD_SIZE = int(os.getenv('WORLD_SIZE', 1))
 
 class Trainer:
-    # def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
-    def __init__(self, driver: Driver, adapter,
+    def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
                  training_state: TrainingState, device: Device, config):
         super(Trainer, self).__init__()
         self.driver = driver
@@ -168,7 +167,7 @@ class Trainer:
         optimizer = create_optimizer(nbs, batch_size, model, opt, hyp)
 
         # Scheduler
-        scheduler = create_scheduler(optimizer, hyp, epochs)
+        scheduler, lf = create_scheduler(optimizer, hyp, epochs)
         # EMA
         ema = ModelEMA(model) if RANK in [-1, 0] else None
 
@@ -351,7 +350,7 @@ class Trainer:
                 ema.update_attr(model, include=['yaml', 'nc', 'hyp', 'names', 'stride', 'class_weights'])
                 final_epoch = (epoch + 1 == epochs) or stopper.possible_stop
                 if not noval or final_epoch:  # Calculate mAP
-                    results, maps, _ = evaluator.evaluate(data_dict,
+                    results, maps, _ = self.evaluator.evaluate(data_dict,
                                             batch_size=batch_size // WORLD_SIZE * 2,
                                             imgsz=imgsz,
                                             model=ema.ema,
@@ -417,7 +416,7 @@ class Trainer:
                     strip_optimizer(f)  # strip optimizers
                     if f is best:
                         LOGGER.info(f'\nValidating {f}...')
-                        results, _, _ = evaluator.evaluate(data_dict,
+                        results, _, _ = self.evaluator.evaluate(data_dict,
                                                 batch_size=batch_size // WORLD_SIZE * 2,
                                                 imgsz=imgsz,
                                                 model=attempt_load(f, device).half(),

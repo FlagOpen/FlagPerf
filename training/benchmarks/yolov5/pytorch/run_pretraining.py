@@ -21,6 +21,7 @@ from driver.helper import InitHelper
 from train import trainer_adapter
 from train.trainer import Trainer
 from train.training_state import TrainingState
+from train.evaluator import Evaluator
 
 logger = None
 
@@ -43,12 +44,13 @@ def main() -> Tuple[Any, Any]:
 
     init_helper.set_seed(config.seed, config.vendor)
 
-
+    evaluator = Evaluator(config)
     # 创建TrainingState对象
     training_state = TrainingState()
 
     trainer = Trainer(driver=model_driver,
                     adapter=trainer_adapter,
+                    evaluator=evaluator,
                     training_state=training_state,
                     device=config.device,
                     config=config)
