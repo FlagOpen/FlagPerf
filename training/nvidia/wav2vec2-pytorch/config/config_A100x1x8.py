@@ -1,7 +1,4 @@
 # perf
-name: str = "wav2vec2"
-vendor: str = None
-dist_backend: str = "nccl"
 ddp_type: str = "native"
 target_acc = 0.605
 do_train = True

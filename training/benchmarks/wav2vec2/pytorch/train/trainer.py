@@ -4,26 +4,26 @@ import time
 
 import torch
 from torch.types import Device
+from functools import partial
+from itertools import cycle, islice
+from contextlib import suppress as empty_context
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
 
-#cus
-from itertools import cycle, islice
-from contextlib import suppress as empty_context
-from loss.criterion import Wav2vecCriterion
 from common.fairseq.utils import multiply_grads
 from common.helpers import (to_gpu, apply_multi_tensor_ema)
 from common.optimizers import lr_poly_policy
 from common.logging import W2v2Metrics
 from common import tb_dllogger as logger
-from functools import partial
 from common.helpers import Checkpointer
 from model import create_model
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
 from optimizer import create_optimizer
+from loss.criterion import Wav2vecCriterion
+
 
 class Trainer:
 
@@ -49,9 +49,6 @@ class Trainer:
     def init(self):
         self.model = create_model(self.config)
         self.model = self.init_model(self.model, self.device)
-        self.model = self.adapter.convert_model(self.model)
-        self.model = self.adapter.model_to_fp16(self.model)
-        self.model = self.adapter.model_to_ddp(self.model)
         self.optimizer = create_optimizer(self.model, self.config)
         self.optim = self.optimizer
 
