@@ -1,17 +1,18 @@
 import os
 import sys
 import time
+from itertools import cycle, islice
+from functools import partial
+from contextlib import suppress as empty_context
 
 import torch
 from torch.types import Device
-from functools import partial
-from itertools import cycle, islice
-from contextlib import suppress as empty_context
+
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch
 
+from driver import Driver, Event, dist_pytorch
 from common.fairseq.utils import multiply_grads
 from common.helpers import (to_gpu, apply_multi_tensor_ema)
 from common.optimizers import lr_poly_policy
