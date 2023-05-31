@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 from utils import run_cmd
+from loguru import logger
 
 
 def parse_args():
@@ -44,14 +45,12 @@ def install_requriements(vendor, model, framework, pipsource):
     req_file = os.path.join(model_config_path, "requirements.txt")
     env_file = os.path.join(model_config_path, "environment_variables.sh")
     if not os.path.isfile(req_file):
-        print("requirenments file ", req_file, " doesn't exist. Do nothing.")
+        logger.info("requirenments file ", req_file, " doesn't exist. Do nothing.")
         return 0
 
     pip_install_cmd = "source " + env_file + "; pip3 install -r " + req_file \
                                 + " -i " + pipsource
-    print(pip_install_cmd)
     ret, outs = run_cmd.run_cmd_wait(pip_install_cmd, 1200)
-    print(ret, outs[0])
     return ret
 
 
@@ -64,7 +63,7 @@ def install_extensions(vendor, model, framework):
     env_file = os.path.join(model_config_path, "environment_variables.sh")
 
     if not os.path.isdir(source_path):
-        print("extensioin code ", source_path, " doesn't exist. Do nothing.")
+        logger.info("extensioin code ", source_path, " doesn't exist. Do nothing.")
         return 0
 
     sandbox_dir = os.path.join(vend_path, 'sandbox', "extension")
@@ -75,7 +74,6 @@ def install_extensions(vendor, model, framework):
           + source_path + " ;" + " mkdir -p " + sandbox_dir + "; cd " \
           + sandbox_dir + "; " + sys.executable + " " + source_path \
           + "/setup.py install; " + " rm -rf " + sandbox_dir
-    print(cmd)
     return run_cmd.run_cmd_wait(cmd, 1200)
 
 

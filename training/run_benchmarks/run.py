@@ -15,11 +15,10 @@ from config import test_conf as tc
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 from utils import cluster_manager
-from utils import flagperf_logger
 from utils import image_manager
+from loguru import logger as RUN_LOGGER
 
 VERSION = "v0.1"
-RUN_LOGGER = flagperf_logger.FlagPerfLogger()
 CLUSTER_MGR = cluster_manager.ClusterManager()
 
 
@@ -161,7 +160,7 @@ def prepare_running_env(dp_path, container_name, case_config):
     framework = case_config["framework"]
     prepare_cmd = "cd " + dp_path + " && " + sys.executable \
                   + " utils/container_manager.py -o runcmdin -c " \
-                  + container_name + " -t 1800 -r \"python3 " \
+                  + container_name + " -t 1800 -r \"pip install loguru > /dev/null && python3 " \
                   + tc.FLAGPERF_PATH + "/" \
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
@@ -533,11 +532,15 @@ def main():
     # Set logger first
     timestamp_log_dir = "run" + time.strftime("%Y%m%d%H%M%S", time.localtime())
     curr_log_path = os.path.join(tc.FLAGPERF_LOG_PATH, timestamp_log_dir)
-    RUN_LOGGER.init(curr_log_path,
-                    "flagperf_run.log",
-                    tc.FLAGPERF_LOG_LEVEL,
-                    "both",
-                    log_caller=True)
+
+    if not os.path.isdir(curr_log_path):
+        os.makedirs(curr_log_path)
+    curr_log_file = os.path.join(curr_log_path, "flagperf_run.log")
+
+    RUN_LOGGER.remove()
+    RUN_LOGGER.add(sys.stdout, level=tc.FLAGPERF_LOG_LEVEL.upper())
+    RUN_LOGGER.add(curr_log_file, level=tc.FLAGPERF_LOG_LEVEL.upper())
+
 
     RUN_LOGGER.info("======== Step 1: Check environment and configs. ========")
     RUN_LOGGER.info("Initialize logger with log path: " + curr_log_path +
@@ -614,6 +617,7 @@ def main():
                                  " round " + str(count))
                 continue
             RUN_LOGGER.info("2) Start tasks in the cluster...")
+            exit(0)
             start_tasks_in_cluster(dp_path, container_name, case_config,
                                    base_args, count, curr_log_path)
 
@@ -638,4 +642,3 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         usage()
     main()
-    RUN_LOGGER.stop()

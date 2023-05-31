@@ -10,10 +10,8 @@ from argparse import ArgumentParser
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from utils import flagperf_logger
+from loguru import logger as START_LOGGER
 from utils import start_task_helper as helper
-
-START_LOGGER = flagperf_logger.FlagPerfLogger()
 
 
 def parse_args():

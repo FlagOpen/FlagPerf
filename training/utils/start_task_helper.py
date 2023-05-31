@@ -69,9 +69,13 @@ def init_flagperf_logger(logger, task_args):
         task_args.log_dir,
         task_args.case_name + "/" + "round" + str(task_args.round) + "/" +
         task_args.host_addr + "_noderank" + str(task_args.node_rank))
-    logger.init(task_log_dir,
-                "start_" + task_args.framework + "_task.log",
-                task_args.log_level,
-                "both",
-                log_caller=True)
+        
+    if not os.path.isdir(task_log_dir):
+        os.makedirs(task_log_dir)
+    curr_log_file = os.path.join(task_log_dir, "start_" + task_args.framework + "_task.log")
+
+    logger.remove()
+    logger.add(sys.stdout, level=task_args.log_level.upper())
+    logger.add(curr_log_file, level=task_args.log_level.upper())
+
     return task_log_dir

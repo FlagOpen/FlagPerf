@@ -29,7 +29,7 @@ class ContainerManager():
         run_new_cmd = "docker run " + container_run_args + \
                       " --name=" + self.name + " \"" + docker_image + "\" " + \
                       "sleep infinity"
-        print(run_new_cmd)
+        logger.debug(run_new_cmd)
         ret, outs = run_cmd.run_cmd_wait(run_new_cmd, 10)
         return ret, outs
 
@@ -46,9 +46,9 @@ class ContainerManager():
 
         exec_cmd = exec_cmd_head + self.name + " bash -c \"" \
                                              + cmd_in_container + "\""
-        print("run cmd in:", exec_cmd)
+        logger.debug("run cmd in:", exec_cmd)
         ret, outs = run_cmd.run_cmd_wait(exec_cmd, timeout)
-        print("ret:", ret, " outs:", outs[0])
+        logger.debug("ret:", ret, " outs:", outs[0])
         return ret, outs
 
     def start(self):
@@ -109,14 +109,14 @@ class ContainerManager():
         if ret == 0:
             task_pid = int(outs[0])
         else:
-            print("Can't find pid file ", pid_file_path, "in container.")
+            logger.debug("Can't find pid file ", pid_file_path, "in container.")
             return False
         check_cmd = "ls /proc/" + str(task_pid) + "/cmdline"
         ret, outs = self.run_cmd_in(check_cmd, detach=False)
         if ret == 0:
-            print("The process is running.")
+            logger.debug("The process is running.")
             return True
-        print("The process is not running.")
+        logger.debug("The process is not running.")
         return False
 
 

@@ -17,6 +17,7 @@ import schedule
 import datetime
 from multiprocessing import Process
 from run_cmd import run_cmd_wait as rcw
+from loguru import logger
 
 
 class Daemon:
@@ -130,7 +131,7 @@ class Daemon:
 
     def daemonize(self):
         if self.verbose >= 1:
-            print('daemon process starting ...')
+            logger.info('daemon process starting ...')
         try:
             pid = os.fork()
             if pid > 0:
@@ -174,7 +175,7 @@ class Daemon:
                 if os.path.exists(i):
                     os.remove(i)
         if self.verbose >= 1:
-            print('ready to start ......')
+            logger.info('ready to start ......')
         # check for a pid file to see if the daemon already runs
         pid = self.get_pid()
         if pid:
@@ -187,7 +188,7 @@ class Daemon:
 
     def stop(self):
         if self.verbose >= 1:
-            print('stopping ...')
+            logger.info('stopping ...')
         pid = self.get_pid()
         if not pid:
             msg = 'pid file [%s] does not exist. Not running?\n' % self.pidfile
@@ -210,10 +211,10 @@ class Daemon:
                 if os.path.exists(self.pidfile):
                     os.remove(self.pidfile)
             else:
-                print(str(err))
+                logger.error(str(err))
                 sys.exit(1)
             if self.verbose >= 1:
-                print('Stopped!')
+                logger.info('Stopped!')
 
     def restart(self):
         self.stop()
@@ -274,11 +275,11 @@ def main():
     elif operation == 'status':
         pid = subdaemon.status()
         if pid:
-            print('process [%s] is running ......' % pid)
+            logger.debug('process [%s] is running ......' % pid)
         else:
-            print('daemon process [%s] stopped' % pid)
+            logger.info('daemon process [%s] stopped' % pid)
     else:
-        print("invalid argument!")
+        logger.error("invalid argument!")
         sys.exit(1)
 
 

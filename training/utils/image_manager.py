@@ -12,6 +12,7 @@ import sys
 import argparse
 from run_cmd import run_cmd_wait as rcw
 from container_manager import ContainerManager
+from loguru import logger
 
 
 def _parse_args():
@@ -76,8 +77,7 @@ class ImageManager():
         '''
         cmd = "sudo docker images|grep -w \"" + self.repository + "\"|grep -w \"" + \
               self.tag + "\""
-        print(cmd)
-        print(rcw(cmd, 10, retouts=False))
+        logger.debug(cmd)
         if rcw(cmd, 10, retouts=False) != 0:
             return 1
         return 0
@@ -107,7 +107,7 @@ class ImageManager():
         build_cmd = "cd " + image_dir + " && docker build -t " \
                     + tmp_image_name + " ./"
         if rcw(build_cmd, 600, retouts=False) != 0:
-            print("docker build failed. " + tmp_image_name)
+            logger.error("docker build failed. " + tmp_image_name)
             return 1
 
         # Second, start a container with the base image
@@ -123,23 +123,23 @@ class ImageManager():
         cont_mgr.remove()
         ret, outs = cont_mgr.run_new(start_args, tmp_image_name)
         if ret != 0:
-            print("Start new container with base image failed.")
-            print("Error: " + outs[0])
+            logger.error("Start new container with base image failed.")
+            logger.debug("Error: " + outs[0])
             self._rm_tmp_image(tmp_image_name, cont_mgr)
             return ret
 
         # Third, install packages in container.
         install_script = framework + "_install.sh"
         if not os.path.isfile(os.path.join(image_dir, install_script)):
-            print("Can't find <framework>_install.sh")
+            logger.warning("Can't find <framework>_install.sh")
             install_cmd = ":"
         else:
             install_cmd = "bash " + image_dir_in_container + "/" \
                           + install_script
         ret, outs = cont_mgr.run_cmd_in(install_cmd, 1800, detach=False)
         if ret != 0:
-            print("Run install command in temp container failed.")
-            print("Error: " + outs[0])
+            logger.error("Run install command in temp container failed.")
+            logger.debug("Error: " + outs[0])
             self._rm_tmp_image(tmp_image_name, cont_mgr)
             return ret
         commit_cmd = "docker commit -a \"baai\" -m \"flagperf training\" " \
@@ -148,8 +148,8 @@ class ImageManager():
 
         ret, outs = rcw(commit_cmd, 300)
         if ret != 0:
-            print("Commit docker image failed.")
-            print("Error: " + outs[0])
+            logger.error("Commit docker image failed.")
+            logger.debug("Error: " + outs[0])
             self._rm_tmp_image(tmp_image_name, cont_mgr)
             return ret
 
@@ -173,15 +173,15 @@ def main():
     if operation == "exist":
         ret = image_manager.exist()
         if ret == 0:
-            print("Doker image exists.")
+            logger.info("Docker image exists.")
         else:
-            print("Doker image doesn't exist.")
+            logger.warning("Docker image doesn't exist.")
     elif operation == "remove":
         ret = image_manager.remove()
         if ret == 0:
-            print("Remove doker image successfully.")
+            logger.info("Remove docker image successfully.")
         else:
-            print("Remove doker image failed.")
+            logger.warning("Remove docker image failed.")
     elif operation == "build":
         if image_manager.exist() == 0:
             ret = 0
@@ -190,7 +190,7 @@ def main():
             framework = args.f
             ret = image_manager.build_image(image_dir, framework)
     else:
-        print("Invalid operation.")
+        logger.error("Invalid operation.")
         sys.exit(2)
     sys.exit(ret)
 
