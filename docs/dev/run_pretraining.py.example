@@ -38,7 +38,7 @@ def main() -> Tuple[Any, Any]:
     
     # init
     init_helper = InitHelper(config)
-    model_driver = init_helper.init_driver()  # _base.py增加模型名称name
+    model_driver = init_helper.init_driver(globals(), locals())# _base.py增加模型名称name
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
@@ -144,7 +144,7 @@ if __name__ == "__main__":
         sys.exit(0)
     
     # 训练信息写日志
-    e2e_time = time.time() - now
+    e2e_time = time.time() - start
     if config_update.do_train:
 
         # TODO 构建训练所需的统计信息，包括不限于：e2e_time、training_sequences_per_second、
