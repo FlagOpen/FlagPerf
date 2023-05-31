@@ -1,5 +1,6 @@
 '''Some helper functions for starting tasks in container.'''
 import os
+import sys
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 
