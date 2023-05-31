@@ -25,7 +25,7 @@ num_classes: int = 90
 # =========================================================
 # loss scale
 # =========================================================
-lr: float = 0.01
+lr: float = 0.08
 weight_decay: float = 1e-4
 momentum: float = 0.9
 lr_steps: list = [16, 22]
@@ -37,7 +37,7 @@ lr_gamma: float = 0.1
 train_batch_size: int = 16
 eval_batch_size: int = 16
 
-target_mAP: float = 1.0
+target_mAP: float = 0.35
 max_epoch: int = 26
 
 do_train = True
