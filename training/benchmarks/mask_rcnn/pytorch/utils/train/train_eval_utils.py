@@ -9,6 +9,7 @@ from .coco_eval import EvalCOCOMetric
 
 
 def train_one_epoch(model,
+                    adapter,
                     optimizer,
                     data_loader,
                     device,
@@ -46,11 +47,7 @@ def train_one_epoch(model,
         images = list(image.to(device) for image in images)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-        # 混合精度训练上下文管理器，如果在CPU环境中不起任何作用
-        with torch.cuda.amp.autocast(enabled=scaler is not None):
-            loss_dict = model(images, targets)
-            losses = sum(loss for loss in loss_dict.values())
-
+        loss_dict, losses = adapter.sum_loss(model, scaler, images, targets)
         # reduce losses over all GPUs for logging purpose
         loss_dict_reduced = utils.reduce_dict(loss_dict)
         losses_reduced = sum(loss for loss in loss_dict.values())

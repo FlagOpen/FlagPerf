@@ -57,10 +57,10 @@ class Trainer:
         device = self.device
         model = self.model
         optimizer = self.optimizer
-        config = self.config
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
         mean_loss, lr = utils.train_one_epoch(model,
+                                              self.adapter,
                                               optimizer,
                                               dataloader,
                                               device,
