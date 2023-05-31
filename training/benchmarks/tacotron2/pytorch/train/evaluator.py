@@ -32,8 +32,6 @@ class Evaluator:
         model = trainer.model
         criterion = trainer.criterion
         world_size = trainer.world_size
-        amp_run = trainer.config.amp
-
         distributed_run = trainer.config.distributed
 
         with evaluating(model), torch.no_grad():
@@ -48,10 +46,7 @@ class Evaluator:
                 iter_start_time = time.perf_counter()
 
                 x, y, num_items = batch_to_gpu(batch)
-                # AMP upstream autocast
-                with torch.cuda.amp.autocast(enabled=amp_run):
-                    y_pred = model(x)
-                    loss = criterion(y_pred, y)
+                loss = trainer.adapter.calculate_loss(model, trainer.config, criterion, x, y)
 
                 if distributed_run:
                     reduced_val_loss = reduce_tensor(loss.data,

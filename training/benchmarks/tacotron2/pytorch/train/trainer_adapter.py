@@ -28,3 +28,11 @@ def model_to_ddp(model: nn.Module, args) -> nn.Module:
 
 def create_grad_scaler(args):
     return torch.cuda.amp.GradScaler(enabled=args.amp)
+
+
+def calculate_loss(model, args, criterion, x, y):
+    # AMP upstream autocast
+    with torch.cuda.amp.autocast(enabled=args.amp):
+        y_pred = model(x)
+        loss = criterion(y_pred, y)
+    return loss

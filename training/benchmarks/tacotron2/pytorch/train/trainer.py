@@ -93,10 +93,7 @@ class Trainer:
         self.model.zero_grad()
         x, y, _ = batch_to_gpu(batch)
 
-        # AMP upstream autocast
-        with torch.cuda.amp.autocast(enabled=args.amp):
-            y_pred = self.model(x)
-            loss = self.criterion(y_pred, y)
+        loss = self.adapter.calculate_loss(self.model, self.config, self.criterion, x, y)    
 
         if args.distributed:
             reduced_loss = reduce_tensor(loss.data, self.world_size).item()
