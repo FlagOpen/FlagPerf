@@ -45,7 +45,8 @@ def install_requriements(vendor, model, framework, pipsource):
     req_file = os.path.join(model_config_path, "requirements.txt")
     env_file = os.path.join(model_config_path, "environment_variables.sh")
     if not os.path.isfile(req_file):
-        logger.info("requirenments file ", req_file, " doesn't exist. Do nothing.")
+        logger.info("requirenments file ", req_file,
+                    " doesn't exist. Do nothing.")
         return 0
 
     pip_install_cmd = "source " + env_file + "; pip3 install -r " + req_file \
@@ -63,7 +64,8 @@ def install_extensions(vendor, model, framework):
     env_file = os.path.join(model_config_path, "environment_variables.sh")
 
     if not os.path.isdir(source_path):
-        logger.info("extensioin code ", source_path, " doesn't exist. Do nothing.")
+        logger.info("extensioin code ", source_path,
+                    " doesn't exist. Do nothing.")
         return 0
 
     sandbox_dir = os.path.join(vend_path, 'sandbox', "extension")

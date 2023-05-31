@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(CURR_PATH))
 import run_cmd
+from loguru import logger
 
 
 class ContainerManager():
@@ -109,7 +110,8 @@ class ContainerManager():
         if ret == 0:
             task_pid = int(outs[0])
         else:
-            logger.debug("Can't find pid file ", pid_file_path, "in container.")
+            logger.debug("Can't find pid file ", pid_file_path,
+                         "in container.")
             return False
         check_cmd = "ls /proc/" + str(task_pid) + "/cmdline"
         ret, outs = self.run_cmd_in(check_cmd, detach=False)
@@ -184,9 +186,9 @@ def main():
 
     if operation == "exists":
         if container_mgr.exists():
-            print("Container exists.")
+            logger.debug("Container exists.")
             sys.exit(0)
-        print("Container doesn't exist.")
+        logger.debug("Container doesn't exist.")
         sys.exit(1)
 
     if operation == "pidrunning":
@@ -211,11 +213,11 @@ def main():
         ret, outs = container_mgr.run_new(run_args, docker_image)
 
     if ret == 0:
-        print("Output: ", outs[0])
-        print(operation, "successful.")
+        logger.debug("Output: ", outs[0])
+        logger.debug(operation, "successful.")
         sys.exit(0)
-    print("Output: ", outs[0])
-    print(operation, "failed.")
+    logger.debug("Output: ", outs[0])
+    logger.debug(operation, "failed.")
     sys.exit(ret)
 
 

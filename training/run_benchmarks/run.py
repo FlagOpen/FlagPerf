@@ -541,7 +541,6 @@ def main():
     RUN_LOGGER.add(sys.stdout, level=tc.FLAGPERF_LOG_LEVEL.upper())
     RUN_LOGGER.add(curr_log_file, level=tc.FLAGPERF_LOG_LEVEL.upper())
 
-
     RUN_LOGGER.info("======== Step 1: Check environment and configs. ========")
     RUN_LOGGER.info("Initialize logger with log path: " + curr_log_path +
                     "......[SUCCESS]")
@@ -617,7 +616,6 @@ def main():
                                  " round " + str(count))
                 continue
             RUN_LOGGER.info("2) Start tasks in the cluster...")
-            exit(0)
             start_tasks_in_cluster(dp_path, container_name, case_config,
                                    base_args, count, curr_log_path)
 

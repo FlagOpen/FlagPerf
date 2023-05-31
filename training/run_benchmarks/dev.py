@@ -581,11 +581,10 @@ def main(stdout, nullout):
     # Set logger first
     timestamp_log_dir = "run" + time.strftime("%Y%m%d%H%M%S", time.localtime())
     curr_log_path = os.path.join(tc.FLAGPERF_LOG_PATH, timestamp_log_dir)
-    
+
     # actually NULL at sys.stdout. no logger use indeed in dev.py
     RUN_LOGGER.remove()
     RUN_LOGGER.add(sys.stdout, level=tc.FLAGPERF_LOG_LEVEL.upper())
-
 
     RUN_LOGGER.info("======== Step 1: Check environment and configs. ========")
     RUN_LOGGER.info("Initialize logger with log path: " + curr_log_path +

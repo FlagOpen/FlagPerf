@@ -6,6 +6,7 @@
 import os
 import sys
 from argparse import ArgumentParser
+from loguru import logger
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -13,18 +14,8 @@ CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 class DummyBenchmark():
     '''A dummy benchmark that can be added to FlagPerf.'''
     CONFIG_CONTENT = '''
-dummy_config1 = True
-dummy_config2 = False
-dummy_config3 = 99
-'''
+
     PRETRAIN_CONTENT = '''
-import os
-import sys
-print("Get options:", str(sys.argv))
-current_env = os.environ.copy()
-for environ in current_env.keys():
-     print(environ + ":" + current_env[environ])
-'''
 
     def __init__(self, vendor, framework, config_file, data_dir):
         self.vendor = vendor
@@ -52,7 +43,7 @@ for environ in current_env.keys():
         if os.path.isdir(dest_dir):
             return True
         if os.path.isfile(dest_dir):
-            print("Error! ", dest_dir, " is a file!")
+            logger.error("Error! ", dest_dir, " is a file!")
             return False
         os.makedirs(dest_dir)
 
@@ -69,22 +60,24 @@ for environ in current_env.keys():
         pretrain_file = os.path.join(benchmark_code_dir, "run_pretraining.py")
         self._write_file(pretrain_file, self.PRETRAIN_CONTENT)
 
-        print("You can run this command to clear dummy benchmark:")
-        print("rm -rf ", benchmark_code_dir, vendor_config_dir, self.data_dir)
-        print("=======================================================")
+        logger.info("You can run this command to clear dummy benchmark:")
+        logger.info("rm -rf ", benchmark_code_dir, vendor_config_dir,
+                    self.data_dir)
+        logger.info("=======================================================")
 
     def print_dummy_test_conf(self):
-        print("You can add the dummy benchmark case in test_conf like this:")
-        print("DUMMY_TEST = {")
-        print("    \"model\": \"dummy\",")
-        print("    \"framework\": \"" + self.framework + "\",")
-        print("    \"config\": \"" + self.config_file + "\",")
-        print("    \"repeat\": <times to run>,")
-        print("    \"nnodes\": <hosts count>,")
-        print("    \"nproc\": <count of processes on each host>,")
-        print("    \"data_dir_host\": \"" + self.data_dir + "\",")
-        print("    \"data_dir_container\": \"/mnt/data/dummy\",")
-        print("}")
+        logger.info(
+            "You can add the dummy benchmark case in test_conf like this:")
+        logger.info("DUMMY_TEST = {")
+        logger.info("    \"model\": \"dummy\",")
+        logger.info("    \"framework\": \"" + self.framework + "\",")
+        logger.info("    \"config\": \"" + self.config_file + "\",")
+        logger.info("    \"repeat\": <times to run>,")
+        logger.info("    \"nnodes\": <hosts count>,")
+        logger.info("    \"nproc\": <count of processes on each host>,")
+        logger.info("    \"data_dir_host\": \"" + self.data_dir + "\",")
+        logger.info("    \"data_dir_container\": \"/mnt/data/dummy\",")
+        logger.info("}")
 
 
 def _parse_args():
