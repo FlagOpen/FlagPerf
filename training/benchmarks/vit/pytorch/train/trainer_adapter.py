@@ -1,15 +1,15 @@
+import os
+import sys
+from typing import Tuple
+
 import torch
 import torch.distributed as dist
 from torch.optim import Optimizer
-
 from torch import nn, Tensor
-from driver.dist_pytorch import main_proc_print
-from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
-from train import utils
-import os
-import sys
 
+from train import utils
+from driver.dist_pytorch import main_proc_print
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import dist_pytorch

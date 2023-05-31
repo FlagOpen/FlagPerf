@@ -2,13 +2,14 @@
 
 import os
 import sys
+
 import torch
 from torch.utils.data.dataloader import default_collate
-from dataloaders import transforms, presets
-from dataloaders.sampler import RASampler
 from torchvision.transforms.functional import InterpolationMode
 import torchvision
 
+from dataloaders import transforms, presets
+from dataloaders.sampler import RASampler
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import dist_pytorch

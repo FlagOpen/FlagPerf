@@ -1,18 +1,17 @@
-import torch
-from torch.types import Device
-import torch.distributed as dist
 import os
 import sys
 import time
 import math
 
+import torch
+from torch.types import Device
+import torch.distributed as dist
+
 from model import create_model
 from schedulers import create_scheduler
-
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
 from train import utils
-
 import config
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))

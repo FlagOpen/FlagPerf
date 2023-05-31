@@ -1,4 +1,4 @@
-"""EfficientNet Pretraining"""
+"""ViT Pretraining"""
 
 import os
 import sys

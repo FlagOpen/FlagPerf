@@ -8,6 +8,9 @@
 - 模型代码来源
 > https://github.com/pytorch/vision/blob/main/torchvision/models/vision_transformer.py
 
+- 训练代码参考来源
+> https://github.com/pytorch/vision/blob/main/references/classification/train.py
+
 ### 数据集
 > ImageNet_1k_2012数据集
 
