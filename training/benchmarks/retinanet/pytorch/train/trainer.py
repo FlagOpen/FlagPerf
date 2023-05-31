@@ -105,7 +105,7 @@ class Trainer:
         config = self.config
 
         state.eval_map_bbox = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
-        state.eval_map_bbox = self.evaluator.coco_eval['segmentation'].stats.tolist()[0]
+        state.eval_map_bbox = self.evaluator.coco_eval['segm'].stats.tolist()[0]
 
         
         dist_pytorch.main_proc_print(f"epoch: {state.epoch} state.eval_map_bbox:{state.eval_map_bbox}  state.eval_map_bbox:{state.eval_map_bbox}")
