@@ -48,7 +48,6 @@ class Trainer:
 
         self.optimizer = create_optimizer(self.model, self.config)
         self.optimizer.zero_grad()
-        self.grad_scaler = self.adapter.create_grad_scaler()
 
     def train_one_epoch(self, train_dataloader):
         model = self.model

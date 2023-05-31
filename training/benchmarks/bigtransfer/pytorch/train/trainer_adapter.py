@@ -32,9 +32,3 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
     if dist.is_available() and dist.is_initialized():
         model = DDP(model, device_ids=[config.local_rank])
     return model
-
-
-def create_grad_scaler():
-    """create_grad_scaler for mixed precision training"""
-    scaler = torch.cuda.amp.GradScaler() if config.amp else None
-    return scaler

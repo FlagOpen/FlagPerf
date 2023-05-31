@@ -50,7 +50,6 @@ seed: int = 0
 dist_backend: str = 'nccl'
 num_workers: int = 8
 device: str = None
-gpu: int = None
 
 # =========================================================
 # for driver
@@ -60,6 +59,6 @@ use_env: bool = True
 log_freq: int = 20
 print_freq: int = 20
 n_device: int = 1
-amp: bool = True
+amp: bool = False
 sync_bn: bool = False
 gradient_accumulation_steps: int = 1
