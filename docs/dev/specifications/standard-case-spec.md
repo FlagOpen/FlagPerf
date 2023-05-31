@@ -63,22 +63,21 @@
 ### 3.2 添加规范
 * 总结流程如下
   1. 下载数据集和checkpoint(如有)
-  2. 从零(或checkpoint)开始训练，保存ckpt
-  3. 验证精度达标
-  4. 从原始仓库分离模型、config
-  5. 整理trainer、trainer_adapter、run_pretraining、config
-  7. 撰写nvidia-1x8 config
-  8. 测试1x8全流程（结果应与1、2相同）
-  9. 测试1x1,2x8
-  10. 补充case文档，模型文档
-  11. 对照PR提交规范，提交PR
+  2. 从头开始训练，保存ckpt(可选), 验证原始仓库精度达标，对于具有backbone的模型，仅需从头开始训练非backbone的部分
+  3. 从原始仓库分离模型、config
+  4. 整理trainer、trainer_adapter、run_pretraining、config
+  5. 撰写nvidia-1x8 config
+  6. 测试1x8全流程（结果应与1、2相同）
+  7. 测试1x1,2x8
+  8. 补充case文档，模型文档
+  9. 对照PR提交规范，提交PR
 
 以下为详细解释。
 #### 0) 准备工作
 
 * 环境准备
-  优先使用Perf已有的镜像版本，缺包可基于已有镜像新增安装包。
-
+  * 优先使用Perf已有的镜像版本，缺包可基于已有镜像新增安装包。
+  * 配置集群各服务器间root帐号的ssh信任关系和sudo免密
 
 * 原始代码训练验证
 
@@ -92,16 +91,11 @@
 
   * 将数据集下载路径写入文档，便于复现结果。若原始代码不带数据集，使用业内公开知名数据集。
 
-* 【重要】checkpoint保存
+* 【重要】
     
-  * 每**10**个保存一次训练ckeckpoint用于Perf的finetune,提交代码时候将选定ckpt 交给智源方Reviewers.
-  * 最终提交的模型case期望在不同厂商芯片上都可以在【2-5h】内收敛精度达标，因此建议推算使用合适的checkpoint resume训练。
+  * 添加的标准模型case如果能在一周内训练结束，添加case则按照原始配置，倘若时间过久超过1周，则case by case讨论，避免训练过久
 
-**验证原始代码没有问题和收集到目标ckpt之后，开始Perf的适配工作。**
-
-注: 
-- checkpoint文件在PR提交时候交给智源方上传到公开地址供用户下载，ckpt文件命名方式：模型-框架-md5值.pth
-
+**验证原始代码没有问题后，开始Perf的适配工作。**
 
 #### 1) 实现模型训练主体逻辑
 
@@ -149,9 +143,9 @@
 
 这部分链接到文件模块trainer、trainer_adapter、run_pretraining、config, 都属于benchmark 必须项。
 
-该config模块为benchmark case 1*8训练配置，且是和硬件厂商无关的配置，凡和硬件厂商有关的配置，放置于厂商config目录下。
+一般我们推荐优先支持的是1x8的实验配置, _base.py作为config模块的基石，存放和硬件厂商无关的基本配置，如模型结构，基础训练超参设置，凡和硬件厂商有关的配置，放置于厂商config目录下，不同层级的配置优先级为：test_conf.py > config_A100x1x8.py > _base.py，三者都存在的情况下，覆盖式生成最终版本。
 
-提交的最终版本代码，需要由ckpt开始训练，保证2-5内在NV上训练达标【重要】。
+提交的最终版本代码，期望训练时间在一周能够NV上精度达标【重要】。
 
 #### 3) 添加NVIDIA的配置
 
@@ -202,11 +196,11 @@ python3 ./run_benchmarks/run.py
 
 注：调试运行时可在容器中进行，最终提交前需run.py 完整测试，验证代码工作正常。关于配置方法，可参考：https://github.com/FlagOpen/FlagPerf#readme
 
-#### 4) 验证达标要求
+#### 5) 验证达标要求
 
 - 以Perf方式训练模型收敛达到目标精度(NV上原始代码单机8卡精度值)
-- 单个case的收敛时间在2-5h内
-- 多机/多卡吞吐量加速比符合预期
+- 单个case的收敛时间在一周内
+- 多机/多卡吞吐量加速比符合预期，单卡吞吐量尽量调至最优，保证尽可能高的显卡利用率
 - 有训练过程和benchmark结果日志输出（nv机器上），包括训练中的N个steps的和最终结果输出。finished_info包括不限于：e2e_time、training_sequences_per_second、 converged、final_accuracy、raw_train_time、init_time
 - 有可用的NVidia GPU适用的配置样例
 
@@ -227,10 +221,10 @@ python3 ./run_benchmarks/run.py
     - 必选参数：
       - `vendor`，值为"nvidia"即可，会在运行FlagPerf时被配置在test_conf里的vendor值覆盖。
       - `data_dir`，值为""空即可，会在运行FlagPerf时被配置在test_conf中对应case配置项data_dir_container覆盖。
-      - `init_checkpoint`：初始化模型checkpoint文件，填写相对`data_dir`的路径，一般提供文件名即可，下载checkpoint文件后放置于`data_dir`
     - 可选参数：
       - `train_data`：训练数据路径，填写相对`data_dir`的路径
       - `eval_data`：评估数据路径，填写相对`data_dir`的路径
+      - `init_checkpoint`：初始化模型checkpoint文件，填写相对`data_dir`的路径，一般提供文件名即可，下载checkpoint文件后放置于`data_dir`，根据模型情况可选使用
 
 - `可改写配置项`
   - 路径：&lt;model&gt;-&lt;framework&gt;/config/mutable_params.py。**定义厂商（含nvidia）可覆盖的_base中参数列表。**主要是和vendor和运行环境相关的配置项，定义为mutable_params数组。
@@ -249,8 +243,6 @@ python3 ./run_benchmarks/run.py
 
 模型README文档（首次添加该模型的case时，需要填写）及 case README文档 符合文档模版要求。文档模版请参考： [模型README文件模版](../readme-templates/model-readme-template.md) 和 [case README文件模版 ](../readme-templates/case-readme-template.md)。
 
-
-
 ## 4. 代码提交与Review合并
 
 FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://github.com/FlagOpen/FlagPerf/tree/main) 到个人帐号下，修改代码&验证通过后，提交PR给FlagPerf项目指给reviewers。FlagOpen相关研发人员Review通过后，合并代码。具体操作可参照：https://docs.github.com/en/get-started/quickstart/contributing-to-projects
@@ -259,8 +251,7 @@ FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://
   #### 首次添加case
   1. 只提交添加模型必要代码变动，代码格式执行"yapf -i --style "pep8" --recursive ./FlagPerf "
   2. 文档齐全，包括模型、case(包括1x1, 1x8, 2x8 性能精度结果)、厂商(如需)三个
-  3. 提交ckpt到智源方(由智源方上传公开网站供下载)
-  4. 提供到1x1，1x8，2x8精度log给智源方用于存档
+  3. 提供1x1，1x8，2x8精度log给智源方用于存档
 
   #### 修改标准case
   1. 如果Perf中已经存在标准实现, 需要改动标准实现且修改内容影响Case运行结果，请在Case的README.md更新新的运行记录，随PR提交;并建议在PR的comment里提交在Nvidia GPU上运行日志附件。
