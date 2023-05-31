@@ -26,5 +26,5 @@
 
 ### 许可证
 
-
 本项目基于Apache 2.0 license。
+本项目部分代码基于 https://github.com/ultralytics/yolov5 实现。

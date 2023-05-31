@@ -1,20 +1,17 @@
-import torch
 import torch.distributed as dist
-from torch.optim import Optimizer
 import config
 
-from torch import nn, Tensor
+from torch import nn
 from driver.dist_pytorch import main_proc_print
-from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.optim import SGD, Adam, AdamW, lr_scheduler
+from torch.optim import SGD, Adam, AdamW
 
 
 def convert_model(model: nn.Module) -> nn.Module:
     """convert model"""
     return model
 
-def create_optimizer(nbs, batch_size, model, opt, hyp):
+def create_optimizer(model, opt, hyp, batch_size, nbs=64):
     # Optimizer
     accumulate = max(round(nbs / batch_size), 1)  # accumulate loss before optimizing
     hyp['weight_decay'] *= batch_size * accumulate / nbs  # scale weight_decay
@@ -55,9 +52,5 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
         model = DDP(model, device_ids=[config.local_rank],output_device=[config.local_rank])
     return model
 
-# TODO
-def backward(step: int, loss: Tensor, optimizer: Optimizer):
-    """backward"""
-    pass
 
 

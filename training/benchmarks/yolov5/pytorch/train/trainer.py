@@ -47,10 +47,9 @@ from utils.autoanchor import check_anchors
 from utils.autobatch import check_train_batch_size
 from utils.callbacks import Callbacks
 from dataloaders.dataloader import create_dataloader
-from utils.downloads import attempt_download
 from utils.general import (LOGGER, check_dataset, check_file, check_img_size, check_requirements,
                            check_suffix, check_yaml, colorstr, get_latest_run, increment_path, init_seeds,
-                           intersect_dicts, labels_to_class_weights, labels_to_image_weights, one_cycle,
+                           intersect_dicts, labels_to_class_weights, labels_to_image_weights,
                            print_args, print_mutation, strip_optimizer)
 from utils.loss import ComputeLoss
 from utils.metrics import fitness
@@ -58,7 +57,6 @@ from utils.torch_utils import EarlyStopping, ModelEMA, de_parallel, select_devic
 
 from train.training_state import TrainingState
 from models import create_model
-import config
 from driver import Driver, Event, dist_pytorch
 from schedulers import create_scheduler
 from train.trainer_adapter import create_optimizer
@@ -74,27 +72,12 @@ class Trainer:
         self.driver = driver
         self.adapter = adapter
         self.training_state = training_state
-        # self.grad_scaler = None
 
         self.device = device
         self.optimizer = None
         self.config = config
         self.model = None
         self.evaluator = evaluator
-        self.lr_scheduler = None
-        self.global_batch_size = None
-        self.overflow_buf = None
-
-    # def init(self):
-        # self.model = create_model(config)
-        # self.model = self._init_model(self.model, self.config, self.device)
-        # self.model = self.adapter.convert_model(self.model)
-        # self.model = self.adapter.model_to_fp16(self.model)
-        # self.optimizer = self.adapter.create_optimizer(self.model, self.config)
-        # self.model = self.adapter.model_to_ddp(self.model)
-        # self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        # self.grad_scaler = self.adapter.create_grad_scaler()
-
 
     def train(self,
             hyp,  # path/to/hyp.yaml or hyp dictionary
@@ -115,17 +98,12 @@ class Trainer:
         log_dir_list.sort()
         save_dir = os.path.join(result_dir,log_dir_list[-1])
         last, best = save_dir + '/last.pt', save_dir + '/best.pt'
-        
+         
         # Hyperparameters
         if isinstance(hyp, str):
             with open(hyp, errors='ignore') as f:
                 hyp = yaml.safe_load(f)  # load hyps dict
         LOGGER.info(colorstr('hyperparameters: ') + ', '.join(f'{k}={v}' for k, v in hyp.items()))
-
-        # Save run settings
-        if not evolve:
-            with open(save_dir + '/hyp.yaml', 'w') as f:
-                yaml.safe_dump(hyp, f, sort_keys=False)
 
         # Loggers
         data_dict = None
@@ -160,11 +138,10 @@ class Trainer:
         # Batch size
         if RANK == -1 and batch_size == -1:  # single-GPU only, estimate best batch size
             batch_size = check_train_batch_size(model, imgsz)
-            # loggers.on_params_update({"batch_size": batch_size})
 
         # Optimizer
         nbs = 64  # nominal batch size
-        optimizer = create_optimizer(nbs, batch_size, model, opt, hyp)
+        optimizer = create_optimizer(model, opt, hyp, batch_size, nbs)
 
         # Scheduler
         scheduler, lf = create_scheduler(optimizer, hyp, epochs)
@@ -257,10 +234,7 @@ class Trainer:
         scaler = amp.GradScaler(enabled=cuda)
         stopper, stop = EarlyStopping(patience=opt.patience), False
         compute_loss = ComputeLoss(model)  # init loss class
-        LOGGER.info(f'Image sizes {imgsz} train, {imgsz} val\n'
-                    f'Using {train_loader.num_workers * WORLD_SIZE} dataloader workers\n'
-                    f"Logging results to {colorstr('bold', save_dir)}\n"
-                    f'Starting training for {epochs} epochs...')
+        
         for epoch in range(start_epoch, epochs):  # epoch ------------------------------------------------------------------
             
             # flagperf
@@ -557,7 +531,7 @@ class Trainer:
                     hyp[k] = round(hyp[k], 5)  # significant digits
 
                 # Train mutation
-                results = train(hyp.copy(), opt, device, callbacks, training_state)
+                results = self.train(hyp.copy(), opt, device, callbacks, training_state)
                 callbacks = Callbacks()
                 # Write mutation results
                 print_mutation(results, hyp.copy(), save_dir, opt.bucket)
