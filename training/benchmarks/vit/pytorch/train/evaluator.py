@@ -3,8 +3,8 @@ import sys
 
 import torch
 import torch.distributed as dist
-from train import utils
 
+from train import utils
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import dist_pytorch
