@@ -54,16 +54,22 @@ def init_bn(module):
         init_bn(child)
 
 
-def get_model(model_name, model_config, cpu_run,
-              uniform_initialize_bn_weight=False, forward_is_infer=False,
+def get_model(model_name,
+              model_config,
+              cpu_run,
+              uniform_initialize_bn_weight=False,
+              forward_is_infer=False,
               jittable=False):
     """ Code chooses a model based on name"""
     model = None
     if model_name == 'Tacotron2':
         if forward_is_infer:
+
             class Tacotron2__forward_is_infer(Tacotron2):
+
                 def forward(self, inputs, input_lengths):
                     return self.infer(inputs, input_lengths)
+
             model = Tacotron2__forward_is_infer(**model_config)
         else:
             model = Tacotron2(**model_config)
@@ -117,22 +123,17 @@ def get_model_config(model_name, args):
             postnet_embedding_dim=args.postnet_embedding_dim,
             postnet_kernel_size=args.postnet_kernel_size,
             postnet_n_convolutions=args.postnet_n_convolutions,
-            decoder_no_early_stopping=args.decoder_no_early_stopping
-        )
+            decoder_no_early_stopping=args.decoder_no_early_stopping)
         return model_config
     elif model_name == 'WaveGlow':
-        model_config = dict(
-            n_mel_channels=args.n_mel_channels,
-            n_flows=args.flows,
-            n_group=args.groups,
-            n_early_every=args.early_every,
-            n_early_size=args.early_size,
-            WN_config=dict(
-                n_layers=args.wn_layers,
-                kernel_size=args.wn_kernel_size,
-                n_channels=args.wn_channels
-            )
-        )
+        model_config = dict(n_mel_channels=args.n_mel_channels,
+                            n_flows=args.flows,
+                            n_group=args.groups,
+                            n_early_every=args.early_every,
+                            n_early_size=args.early_size,
+                            WN_config=dict(n_layers=args.wn_layers,
+                                           kernel_size=args.wn_kernel_size,
+                                           n_channels=args.wn_channels))
         return model_config
     else:
         raise NotImplementedError(model_name)

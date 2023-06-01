@@ -30,7 +30,7 @@ from .data_function import MelAudioLoader
 from .data_function import batch_to_gpu as batch_to_gpu_waveglow
 
 
-def get_collate_function(model_name,):
+def get_collate_function(model_name, ):
     if model_name == 'WaveGlow':
         collate_fn = torch.utils.data.dataloader.default_collate
     else:

@@ -15,7 +15,7 @@ def convert_model(model):
     return model
 
 
-def model_to_fp16(model, config): 
+def model_to_fp16(model, config):
     """model_to_fp16"""
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if config.fp16:

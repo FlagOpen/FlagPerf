@@ -38,13 +38,14 @@ class MelAudioLoader(torch.utils.data.Dataset):
     """
 
     def __init__(self, dataset_path, audiopaths_and_text, args):
-        self.audiopaths_and_text = load_filepaths_and_text(dataset_path, audiopaths_and_text)
+        self.audiopaths_and_text = load_filepaths_and_text(
+            dataset_path, audiopaths_and_text)
         self.max_wav_value = args.max_wav_value
         self.sampling_rate = args.sampling_rate
-        self.stft = layers.TacotronSTFT(
-            args.filter_length, args.hop_length, args.win_length,
-            args.n_mel_channels, args.sampling_rate, args.mel_fmin,
-            args.mel_fmax)
+        self.stft = layers.TacotronSTFT(args.filter_length, args.hop_length,
+                                        args.win_length, args.n_mel_channels,
+                                        args.sampling_rate, args.mel_fmin,
+                                        args.mel_fmax)
         self.segment_length = args.segment_length
 
     def get_mel_audio_pair(self, filename):
@@ -57,11 +58,13 @@ class MelAudioLoader(torch.utils.data.Dataset):
         # Take segment
         if audio.size(0) >= self.segment_length:
             max_audio_start = audio.size(0) - self.segment_length
-            audio_start = torch.randint(0, max_audio_start + 1, size=(1,)).item()
-            audio = audio[audio_start:audio_start+self.segment_length]
+            audio_start = torch.randint(0, max_audio_start + 1,
+                                        size=(1, )).item()
+            audio = audio[audio_start:audio_start + self.segment_length]
         else:
             audio = torch.nn.functional.pad(
-                audio, (0, self.segment_length - audio.size(0)), 'constant').data
+                audio, (0, self.segment_length - audio.size(0)),
+                'constant').data
 
         audio = audio / self.max_wav_value
         audio_norm = audio.unsqueeze(0)

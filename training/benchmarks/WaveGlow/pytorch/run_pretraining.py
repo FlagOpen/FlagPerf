@@ -39,8 +39,7 @@ import argparse
 import torch
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
-                                             "../../"))) 
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 # 本地库
 import config
 from driver import Event, dist_pytorch
@@ -61,7 +60,7 @@ def main():
     # model config from args
     parser = argparse.ArgumentParser(config.name)
     parser = parse_args(parser)
-    parser =  waveglow_parser(parser, add_help=False)
+    parser = waveglow_parser(parser, add_help=False)
 
     # init
     init_helper = InitHelper(config)
@@ -74,16 +73,16 @@ def main():
     # logger
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
-   
+
     if config.seed is not None:
-        init_helper.set_seed(config.seed + config.local_rank, model_driver.config.vendor)
+        init_helper.set_seed(config.seed + config.local_rank,
+                             model_driver.config.vendor)
 
     #创建TrainingState对象
     training_state = TrainingState()
 
     # 构建 trainer：依赖 evaluator、TrainingState对象
-    trainer = Trainer(training_state=training_state,
-                      config=config)
+    trainer = Trainer(training_state=training_state, config=config)
 
     # 设置分布式环境, trainer init()
     dist_pytorch.barrier(config.vendor)
@@ -93,12 +92,12 @@ def main():
     # do evaluation
     if not config.do_train:
         return config, training_state
-    
+
     trainset = build_train_dataset(config)
     train_loader = build_train_dataloader(trainset, config)
     valset = build_eval_dataset(config)
     val_loader = build_eval_dataloader(valset, config)
-    
+
     start_epoch = [0]
     start_epoch = start_epoch[0]
     iteration = 0
@@ -120,15 +119,8 @@ def main():
     while epoch >= start_epoch and epoch < config.epochs and not training_state.end_training:
         training_state.epoch = epoch
         train_epoch_items_per_sec, val_items_per_sec, val_loss, num_iters = trainer.train_one_epoch(
-                                                                  epoch, 
-                                                                  train_loader, 
-                                                                  val_loader, 
-                                                                  config, 
-                                                                  valset,
-                                                                  iteration,
-                                                                  train_epoch_items_per_sec,
-                                                                  val_loss
-                                                                  )
+            epoch, train_loader, val_loader, config, valset, iteration,
+            train_epoch_items_per_sec, val_loss)
         epoch += 1
 
     # TRAIN_END事件
@@ -138,13 +130,12 @@ def main():
     torch.cuda.synchronize()
     training_state.raw_train_time = (raw_train_end_time -
                                      raw_train_start_time) / 1e+3
-    training_state.train_items_per_sec = (train_epoch_items_per_sec/num_iters if num_iters > 0 else 0.0)
+    training_state.train_items_per_sec = (train_epoch_items_per_sec /
+                                          num_iters if num_iters > 0 else 0.0)
     training_state.val_items_per_sec = val_items_per_sec
-    training_state.val_loss = val_loss 
+    training_state.val_loss = val_loss
 
     return config, training_state
-
-
 
 
 if __name__ == '__main__':
@@ -168,5 +159,3 @@ if __name__ == '__main__':
     else:
         finished_info = {"e2e_time": e2e_time}
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
-
-

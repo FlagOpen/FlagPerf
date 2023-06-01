@@ -44,11 +44,8 @@ class Trainer:
         self.world_size = dist_pytorch.get_world_size()
         self.evaluator = Evaluator
 
-
     def train_one_epoch(self, epoch, train_loader, val_loader, config, valset,
-                                                                  iteration,
-                                                                  train_epoch_items_per_sec,
-                                                                  val_loss):
+                        iteration, train_epoch_items_per_sec, val_loss):
         torch.cuda.synchronize()
         epoch_start_time = time.perf_counter()
         # used to calculate avg items/sec over epoch
@@ -59,17 +56,23 @@ class Trainer:
         reduced_loss = 0
 
         self.model.train()
-        if self.world_size > 1 :
+        if self.world_size > 1:
             train_loader.sampler.set_epoch(epoch)
 
         for i, batch in enumerate(train_loader):
             torch.cuda.synchronize()
             iter_start_time = time.perf_counter()
             self.logger.log(step=(epoch, i),
-                         data={'glob_iter/iters_per_epoch': str(iteration)+"/"+str(len(train_loader))})
+                            data={
+                                'glob_iter/iters_per_epoch':
+                                str(iteration) + "/" + str(len(train_loader))
+                            })
 
-            adjust_learning_rate(iteration, epoch, self.optimizer, self.config.learning_rate,
-                                 self.config.anneal_steps, self.config.anneal_factor, self.config.local_rank)
+            adjust_learning_rate(iteration, epoch, self.optimizer,
+                                 self.config.learning_rate,
+                                 self.config.anneal_steps,
+                                 self.config.anneal_factor,
+                                 self.config.local_rank)
 
             self.model.zero_grad()
 
@@ -80,7 +83,7 @@ class Trainer:
                 y_pred = self.model(x)
                 loss = self.criterion(y_pred, y)
 
-            if  self.world_size > 1:
+            if self.world_size > 1:
                 reduced_loss = reduce_tensor(loss.data, self.world_size).item()
                 reduced_num_items = reduce_tensor(num_items.data, 1).item()
             else:
@@ -89,8 +92,8 @@ class Trainer:
             if np.isnan(reduced_loss):
                 raise Exception("loss is NaN")
 
-            self.logger.log(step=(epoch,i), data={'train_loss': reduced_loss})
-            
+            self.logger.log(step=(epoch, i), data={'train_loss': reduced_loss})
+
             num_iters += 1
 
             # accumulate number of items processed in this epoch
@@ -99,14 +102,14 @@ class Trainer:
             if self.config.amp:
                 self.scaler.scale(loss).backward()
                 self.scaler.unscale_(self.optimizer)
-                torch.nn.utils.clip_grad_norm_(
-                    self.model.parameters(), config.grad_clip_thresh)
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(),
+                                               config.grad_clip_thresh)
                 self.scaler.step(self.optimizer)
                 self.scaler.update()
             else:
                 loss.backward()
-                torch.nn.utils.clip_grad_norm_(
-                    self.model.parameters(), config.grad_clip_thresh)
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(),
+                                               config.grad_clip_thresh)
                 self.optimizer.step()
 
             self.model.zero_grad(set_to_none=True)
@@ -114,41 +117,48 @@ class Trainer:
             torch.cuda.synchronize()
             iter_stop_time = time.perf_counter()
             iter_time = iter_stop_time - iter_start_time
-            items_per_sec = reduced_num_items/iter_time
+            items_per_sec = reduced_num_items / iter_time
             train_epoch_items_per_sec += items_per_sec
 
-            self.logger.log(step=(epoch, i), data={'train_items_per_sec': items_per_sec})
-            self.logger.log(step=(epoch, i), data={'train_iter_time': iter_time})
+            self.logger.log(step=(epoch, i),
+                            data={'train_items_per_sec': items_per_sec})
+            self.logger.log(step=(epoch, i),
+                            data={'train_iter_time': iter_time})
             iteration += 1
 
         torch.cuda.synchronize()
         epoch_stop_time = time.perf_counter()
         epoch_time = epoch_stop_time - epoch_start_time
 
-        self.logger.log(step=(epoch,), data={'train_items_per_sec':
-                                          (train_epoch_items_per_sec/num_iters if num_iters > 0 else 0.0)})
-        self.logger.log(step=(epoch,), data={'train_loss': reduced_loss})
-        self.logger.log(step=(epoch,), data={'train_epoch_time': epoch_time})
+        self.logger.log(step=(epoch, ),
+                        data={
+                            'train_items_per_sec':
+                            (train_epoch_items_per_sec /
+                             num_iters if num_iters > 0 else 0.0)
+                        })
+        self.logger.log(step=(epoch, ), data={'train_loss': reduced_loss})
+        self.logger.log(step=(epoch, ), data={'train_epoch_time': epoch_time})
 
-        if (epoch % config.epochs_per_checkpoint == 0) and (config.bench_class == "" or config.bench_class == "train"):
-            save_checkpoint(self.model, self.optimizer, self.scaler, epoch, self.config.model_config,
-                            self.config.output, self.config.name, self.config.local_rank, self.world_size)
-            
-        val_loss, val_items_per_sec = self.evaluator.validate(self.model, self.criterion, valset, epoch,
-                                               iteration, config.batch_size,
-                                               self.world_size,
-                                               self.world_size > 1, config.bench_class=="perf-train",
-                                               self.batch_to_gpu,
-                                               self.config.amp,
-                                               val_loader)
-        
+        if (epoch % config.epochs_per_checkpoint
+                == 0) and (config.bench_class == ""
+                           or config.bench_class == "train"):
+            save_checkpoint(self.model, self.optimizer, self.scaler, epoch,
+                            self.config.model_config, self.config.output,
+                            self.config.name, self.config.local_rank,
+                            self.world_size)
+
+        val_loss, val_items_per_sec = self.evaluator.validate(
+            self.model, self.criterion, epoch, iteration, self.world_size,
+            self.world_size > 1, config.bench_class == "perf-train",
+            self.batch_to_gpu, self.config.amp, val_loader)
+
         self.training_state.val_loss = val_loss
 
         if self.training_state.val_loss <= self.config.target_loss:
             dist_pytorch.main_proc_print(
                 f"converged_success. eval_val_loss: {self.training_state.eval_mAP}, target_val_loss: {config.target_loss}"
             )
-            self.training_state.converged_success()   
+            self.training_state.converged_success()
 
         if epoch >= config.epochs:
             self.training_state.end_training = True
@@ -157,4 +167,3 @@ class Trainer:
             self.logger.flush()
 
         return train_epoch_items_per_sec, val_items_per_sec, val_loss, num_iters
-

@@ -27,7 +27,9 @@
 
 import torch
 
+
 class WaveGlowLoss(torch.nn.Module):
+
     def __init__(self, sigma=1.0):
         super(WaveGlowLoss, self).__init__()
         self.sigma = sigma
@@ -44,5 +46,6 @@ class WaveGlowLoss(torch.nn.Module):
                 log_det_W_total += log_det_W_list[i]
 
         loss = torch.sum(
-            z * z) / (2 * self.sigma * self.sigma) - log_s_total - log_det_W_total  # noqa: E501
+            z * z) / (2 * self.sigma *
+                      self.sigma) - log_s_total - log_det_W_total  # noqa: E501
         return loss / (z.size(0) * z.size(1) * z.size(2))

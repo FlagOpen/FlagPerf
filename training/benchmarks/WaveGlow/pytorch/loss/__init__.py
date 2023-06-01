@@ -1,5 +1,6 @@
 from . import loss_functions
 
+
 def create_criterion(args):
     try:
         sigma = args.sigma

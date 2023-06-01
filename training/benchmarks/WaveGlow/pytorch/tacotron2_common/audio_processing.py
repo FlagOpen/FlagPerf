@@ -31,8 +31,13 @@ from scipy.signal import get_window
 import librosa.util as librosa_util
 
 
-def window_sumsquare(window, n_frames, hop_length=200, win_length=800,
-                     n_fft=800, dtype=np.float32, norm=None):
+def window_sumsquare(window,
+                     n_frames,
+                     hop_length=200,
+                     win_length=800,
+                     n_fft=800,
+                     dtype=np.float32,
+                     norm=None):
     """
     # from librosa 0.6
     Compute the sum-square envelope of a window function at a given hop length.
@@ -79,7 +84,8 @@ def window_sumsquare(window, n_frames, hop_length=200, win_length=800,
     # Fill the envelope
     for i in range(n_frames):
         sample = i * hop_length
-        x[sample:min(n, sample + n_fft)] += win_sq[:max(0, min(n_fft, n - sample))]
+        x[sample:min(n, sample +
+                     n_fft)] += win_sq[:max(0, min(n_fft, n - sample))]
     return x
 
 

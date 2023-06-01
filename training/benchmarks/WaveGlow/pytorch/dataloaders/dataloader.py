@@ -15,14 +15,13 @@ from driver import dist_pytorch
 
 
 def get_collate_fn(args):
-    collate_fn = data_functions.get_collate_function(
-                args.name)
+    collate_fn = data_functions.get_collate_function(args.name)
     return collate_fn
 
 
 def build_train_dataset(args):
-    trainset = data_functions.get_data_loader(
-        args.name, args.data_dir, args.training_files, args)
+    trainset = data_functions.get_data_loader(args.name, args.data_dir,
+                                              args.training_files, args)
     return trainset
 
 
@@ -33,28 +32,39 @@ def build_train_dataloader(trainset, args):
     else:
         train_sampler = None
         shuffle = True
-    train_loader = DataLoader(trainset, num_workers=1, shuffle=shuffle,
-                            sampler=train_sampler,
-                            batch_size=args.batch_size, pin_memory=False,
-                            drop_last=True, collate_fn=get_collate_fn(args))
+    train_loader = DataLoader(trainset,
+                              num_workers=1,
+                              shuffle=shuffle,
+                              sampler=train_sampler,
+                              batch_size=args.batch_size,
+                              pin_memory=False,
+                              drop_last=True,
+                              collate_fn=get_collate_fn(args))
     return train_loader
 
 
 def build_eval_dataloader(valset, args):
-    val_sampler = DistributedSampler(valset) if dist_pytorch.get_world_size() > 1 else None
-    val_loader = DataLoader(valset, num_workers=1, shuffle=False,
-                            sampler=val_sampler,
-                            batch_size=args.batch_size, pin_memory=False,
-                            collate_fn=get_collate_fn(args),
-                            drop_last=(True if args.bench_class=="perf-train" else False))
+    val_sampler = DistributedSampler(
+        valset) if dist_pytorch.get_world_size() > 1 else None
+    val_loader = DataLoader(
+        valset,
+        num_workers=1,
+        shuffle=False,
+        sampler=val_sampler,
+        batch_size=args.batch_size,
+        pin_memory=False,
+        collate_fn=get_collate_fn(args),
+        drop_last=(True if args.bench_class == "perf-train" else False))
 
     return val_loader
 
+
 def build_eval_dataset(args):
-        valset = data_functions.get_data_loader(
-            args.name, args.data_dir, args.validation_files, args)
-        return valset
-    
+    valset = data_functions.get_data_loader(args.name, args.data_dir,
+                                            args.validation_files, args)
+    return valset
+
+
 class FilterAndRemapCocoCategories(object):
 
     def __init__(self, categories, remap=True):
