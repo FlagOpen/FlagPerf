@@ -24,14 +24,22 @@ from typing import Callable, List
 import torch
 import torch.nn.functional as F
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 MANIFOLD_PATH_SEP = "|"
 
 
 def split_paths(paths: str, separator=os.pathsep) -> List[str]:
+<<<<<<< HEAD
     return (
         paths.split(separator) if "://" not in paths else paths.split(MANIFOLD_PATH_SEP)
     )
+=======
+    return (paths.split(separator)
+            if "://" not in paths else paths.split(MANIFOLD_PATH_SEP))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 
 def get_activation_fn(activation: str) -> Callable:
@@ -44,8 +52,12 @@ def get_activation_fn(activation: str) -> Callable:
         return gelu
     elif activation == "gelu_fast":
         warnings.warn(
+<<<<<<< HEAD
             "--activation-fn=gelu_fast has been renamed to gelu_accurate"
         )
+=======
+            "--activation-fn=gelu_fast has been renamed to gelu_accurate")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return gelu_accurate
     elif activation == "gelu_accurate":
         return gelu_accurate
@@ -54,7 +66,12 @@ def get_activation_fn(activation: str) -> Callable:
     elif activation == "linear":
         return lambda x: x
     else:
+<<<<<<< HEAD
         raise RuntimeError("--activation-fn {} not supported".format(activation))
+=======
+        raise RuntimeError(
+            "--activation-fn {} not supported".format(activation))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 
 def index_put(tensor, indices, value):

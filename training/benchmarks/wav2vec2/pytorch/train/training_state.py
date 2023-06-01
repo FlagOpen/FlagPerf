@@ -9,20 +9,30 @@ class TrainingState:
     _status = 'aborted'  # later set to 'success' if termination criteria met
 
     global_steps = 0
+<<<<<<< HEAD
     skipped_steps = 0
     iter_dataloader_idx = 0
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     val_losses: float = 0.0
     val_acc: float = 0.0
 
     epoch: int = 1
+<<<<<<< HEAD
     num_trained_samples = 0
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     end_training: bool = False
     converged: bool = False
 
     init_time = 0
     raw_train_time = 0
+<<<<<<< HEAD
     throughoutputs = 0
+=======
+    throughputs = 0
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     def status(self):
         if self.converged:
@@ -32,6 +42,7 @@ class TrainingState:
     def converged_success(self):
         self.end_training = True
         self.converged = True
+<<<<<<< HEAD
 
     def _is_property(self, value):
         status = [
@@ -68,3 +79,5 @@ class TrainingState:
                 state_dict[k] = state_dict[k].item()
 
         return state_dict
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb

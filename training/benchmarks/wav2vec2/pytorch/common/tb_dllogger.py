@@ -24,7 +24,10 @@ from torch.utils.tensorboard import SummaryWriter
 
 import dllogger
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 tb_loggers = {}
 
 
@@ -33,14 +36,25 @@ class TBLogger:
     xyz_dummies: stretch the screen with empty plots so the legend would
                  always fit for other plots
     """
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, enabled, log_dir, name, interval=1, dummies=True):
         self.enabled = enabled
         self.interval = interval
         self.cache = {}
         if self.enabled:
+<<<<<<< HEAD
             self.summary_writer = SummaryWriter(
                 log_dir=os.path.join(log_dir, name),
                 flush_secs=120, max_queue=200)
+=======
+            self.summary_writer = SummaryWriter(log_dir=os.path.join(
+                log_dir, name),
+                                                flush_secs=120,
+                                                max_queue=200)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             atexit.register(self.summary_writer.close)
             if dummies:
                 for key in ('_', '✕'):
@@ -62,17 +76,36 @@ class TBLogger:
 
     def log_grads(self, step, model):
         if self.enabled:
+<<<<<<< HEAD
             norms = [p.grad.norm().item() for p in model.parameters()
                      if p.grad is not None]
             for stat in ('max', 'min', 'mean'):
                 self.log_value(step, f'grad_{stat}', getattr(np, stat)(norms),
+=======
+            norms = [
+                p.grad.norm().item() for p in model.parameters()
+                if p.grad is not None
+            ]
+            for stat in ('max', 'min', 'mean'):
+                self.log_value(step,
+                               f'grad_{stat}',
+                               getattr(np, stat)(norms),
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                                stat=stat)
 
 
 def unique_log_fpath(fpath):
     """Have a unique log filename for every separate run"""
+<<<<<<< HEAD
     log_num = max([0] + [int(re.search("\.(\d+)", Path(f).suffix).group(1))
                          for f in glob.glob(f"{fpath}.*")])
+=======
+    log_num = max([0] + [
+        int(re.search("\.(\d+)",
+                      Path(f).suffix).group(1))
+        for f in glob.glob(f"{fpath}.*")
+    ])
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     return f"{fpath}.{log_num + 1}"
 
 
@@ -109,6 +142,7 @@ def log(when, metrics={}, scope='train', flush_log=False, tb_iter=None):
         flush()
 
 
+<<<<<<< HEAD
 def log_grads_tb(tb_total_steps, grads, tb_subset='train'):
     tb_loggers[tb_subset].log_grads(tb_total_steps, grads)
 
@@ -124,6 +158,8 @@ def log_parameters(data, verbosity=0, tb_subset=None):
         tb_loggers[tb_subset].summary_writer.add_hparams(tb_data, {})
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def flush():
     dllogger.flush()
     for tbl in tb_loggers.values():

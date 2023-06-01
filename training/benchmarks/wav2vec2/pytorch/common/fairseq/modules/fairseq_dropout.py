@@ -23,11 +23,18 @@ from typing import List, Optional
 import torch.nn as nn
 import torch.nn.functional as F
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 logger = logging.getLogger(__name__)
 
 
 class FairseqDropout(nn.Module):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, p, module_name=None):
         super().__init__()
         self.p = p
@@ -41,16 +48,25 @@ class FairseqDropout(nn.Module):
             return x
 
     def make_generation_fast_(
+<<<<<<< HEAD
         self,
         name: str,
         retain_dropout: bool = False,
         retain_dropout_modules: Optional[List[str]] = None,
         **kwargs
     ):
+=======
+            self,
+            name: str,
+            retain_dropout: bool = False,
+            retain_dropout_modules: Optional[List[str]] = None,
+            **kwargs):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         if retain_dropout:
             if retain_dropout_modules is not None and self.module_name is None:
                 logger.warning(
                     "Cannot enable dropout during inference for module {} "
+<<<<<<< HEAD
                     "because module_name was not set".format(name)
                 )
             elif (
@@ -60,6 +76,15 @@ class FairseqDropout(nn.Module):
                 logger.info(
                     "Enabling dropout during inference for module: {}".format(name)
                 )
+=======
+                    "because module_name was not set".format(name))
+            elif (retain_dropout_modules is
+                  None  # if None, apply to all modules
+                  or self.module_name in retain_dropout_modules):
+                logger.info(
+                    "Enabling dropout during inference for module: {}".format(
+                        name))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                 self.apply_during_inference = True
             else:
                 logger.info("Disabling dropout for module: {}".format(name))

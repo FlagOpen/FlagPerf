@@ -39,6 +39,7 @@ from common.fairseq.file_io import PathManager
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
 def infer_language_pair(path):
     """Infer language pair from filename: <split>.<lang1>-<lang2>.(...).idx"""
     src, dst = None, None
@@ -49,6 +50,8 @@ def infer_language_pair(path):
     return src, dst
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def collate_tokens(
     values,
     pad_idx,
@@ -65,7 +68,12 @@ def collate_tokens(
     if pad_to_multiple != 1 and size % pad_to_multiple != 0:
         size = int(((size - 0.1) // pad_to_multiple + 1) * pad_to_multiple)
 
+<<<<<<< HEAD
     batch_size = len(values) if pad_to_bsz is None else max(len(values), pad_to_bsz)
+=======
+    batch_size = len(values) if pad_to_bsz is None else max(
+        len(values), pad_to_bsz)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     res = values[0].new(batch_size, size).fill_(pad_idx)
 
     def copy_tensor(src, dst):
@@ -81,6 +89,7 @@ def collate_tokens(
             dst.copy_(src)
 
     for i, v in enumerate(values):
+<<<<<<< HEAD
         copy_tensor(v, res[i][size - len(v) :] if left_pad else res[i][: len(v)])
     return res
 
@@ -136,6 +145,11 @@ def load_indexed_dataset(
     else:
         return ConcatDataset(datasets)
 
+=======
+        copy_tensor(v, res[i][size - len(v):] if left_pad else res[i][:len(v)])
+    return res
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 @contextlib.contextmanager
 def numpy_seed(seed, *addl_seeds):
@@ -171,7 +185,14 @@ def collect_filtered(function, iterable, filtered):
             filtered.append(el)
 
 
+<<<<<<< HEAD
 def _filter_by_size_dynamic(indices, size_fn, max_positions, raise_exception=False):
+=======
+def _filter_by_size_dynamic(indices,
+                            size_fn,
+                            max_positions,
+                            raise_exception=False):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     def check_size(idx):
         if isinstance(max_positions, float) or isinstance(max_positions, int):
@@ -181,20 +202,31 @@ def _filter_by_size_dynamic(indices, size_fn, max_positions, raise_exception=Fal
             assert isinstance(idx_size, dict)
             intersect_keys = set(max_positions.keys()) & set(idx_size.keys())
             return all(
+<<<<<<< HEAD
                 all(
                     a is None or b is None or a <= b
                     for a, b in zip(idx_size[key], max_positions[key])
                 )
                 for key in intersect_keys
             )
+=======
+                all(a is None or b is None or a <= b
+                    for a, b in zip(idx_size[key], max_positions[key]))
+                for key in intersect_keys)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         else:
             # For MultiCorpusSampledDataset, will generalize it later
             if not isinstance(size_fn(idx), Iterable):
                 return all(size_fn(idx) <= b for b in max_positions)
+<<<<<<< HEAD
             return all(
                 a is None or b is None or a <= b
                 for a, b in zip(size_fn(idx), max_positions)
             )
+=======
+            return all(a is None or b is None or a <= b
+                       for a, b in zip(size_fn(idx), max_positions))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     ignored = []
     itr = collect_filtered(check_size, indices, ignored)
@@ -202,6 +234,7 @@ def _filter_by_size_dynamic(indices, size_fn, max_positions, raise_exception=Fal
     return indices, ignored
 
 
+<<<<<<< HEAD
 def filter_by_size(indices, dataset, max_positions, raise_exception=False):
     """
     [deprecated] Filter indices based on their size.
@@ -291,6 +324,8 @@ def filter_paired_dataset_indices_by_size(src_sizes, tgt_sizes, indices, max_siz
     return indices, ignored.tolist()
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def batch_by_size(
     indices,
     num_tokens_fn,
@@ -325,7 +360,12 @@ def batch_by_size(
     if not isinstance(indices, np.ndarray):
         indices = np.fromiter(indices, dtype=np.int64, count=-1)
 
+<<<<<<< HEAD
     if num_tokens_vec is not None and not isinstance(num_tokens_vec, np.ndarray):
+=======
+    if num_tokens_vec is not None and not isinstance(num_tokens_vec,
+                                                     np.ndarray):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         num_tokens_vec = np.fromiter(num_tokens_vec, dtype=np.int64, count=-1)
 
     assert num_tokens_vec is None  # XXX(Adrian) erase if redundant
@@ -335,19 +375,34 @@ def batch_by_size(
         num_tokens_vec[pos] = num_tokens_fn(indices[pos])
 
     assert max_tokens <= 0 or np.max(num_tokens_vec) <= max_tokens, (
+<<<<<<< HEAD
         f"Sentences lengths should not exceed max_tokens={max_tokens}"
     )
+=======
+        f"Sentences lengths should not exceed max_tokens={max_tokens}")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     if indices.shape[0] == 0:
         return []
 
+<<<<<<< HEAD
     batches =  batch_by_size_vec(indices, num_tokens_vec, max_tokens,
                                  max_sentences, bsz_mult)
+=======
+    batches = batch_by_size_vec(indices, num_tokens_vec, max_tokens,
+                                max_sentences, bsz_mult)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     if num_concat_batches > 1:
         # Concatenate subsequent batches
         ga = num_concat_batches
+<<<<<<< HEAD
         grouped = [batches[i*ga:(i+1)*ga] for i in range(len(batches) // ga)]
+=======
+        grouped = [
+            batches[i * ga:(i + 1) * ga] for i in range(len(batches) // ga)
+        ]
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         grouped_batches = [np.concatenate(g) for g in grouped]
 
         return grouped_batches, batches
@@ -421,9 +476,13 @@ def compute_mask_indices(
 
     all_num_mask = int(
         # add a random number for probabilistic rounding
+<<<<<<< HEAD
         mask_prob * all_sz / float(mask_length)
         + np.random.rand()
     )
+=======
+        mask_prob * all_sz / float(mask_length) + np.random.rand())
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     all_num_mask = max(min_masks, all_num_mask)
     min_len = float("inf")
@@ -434,9 +493,13 @@ def compute_mask_indices(
             sz = all_sz - padding_mask[i].long().sum().item()
             num_mask = int(
                 # add a random number for probabilistic rounding
+<<<<<<< HEAD
                 mask_prob * sz / float(mask_length)
                 + np.random.rand()
             )
+=======
+                mask_prob * sz / float(mask_length) + np.random.rand())
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             num_mask = max(min_masks, num_mask)
         else:
             sz = all_sz
@@ -446,9 +509,19 @@ def compute_mask_indices(
             if mask_type == "static":
                 lengths = np.full(num_mask, mask_length)
             elif mask_type == "uniform":
+<<<<<<< HEAD
                 lengths = np.random.randint(mask_other, mask_length * 2 + 1, size=num_mask)
             elif mask_type == "normal":
                 lengths = np.random.normal(mask_length, mask_other, size=num_mask)
+=======
+                lengths = np.random.randint(mask_other,
+                                            mask_length * 2 + 1,
+                                            size=num_mask)
+            elif mask_type == "normal":
+                lengths = np.random.normal(mask_length,
+                                           mask_other,
+                                           size=num_mask)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                 lengths = [max(1, int(round(x))) for x in lengths]
             elif mask_type == "poisson":
                 lengths = np.random.poisson(mask_length, size=num_mask)
@@ -480,7 +553,12 @@ def compute_mask_indices(
             min_length = min(lengths)
             for length in sorted(lengths, reverse=True):
                 lens = np.fromiter(
+<<<<<<< HEAD
                     (e - s if e - s >= length + min_space else 0 for s, e in parts),
+=======
+                    (e - s if e - s >= length + min_space else 0
+                     for s, e in parts),
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                     np.int,
                 )
                 l_sum = np.sum(lens)
@@ -499,6 +577,7 @@ def compute_mask_indices(
 
             mask_idc = np.random.choice(sz - min_len, num_mask, replace=False)
 
+<<<<<<< HEAD
             mask_idc = np.asarray(
                 [
                     mask_idc[j] + offset
@@ -506,6 +585,12 @@ def compute_mask_indices(
                     for offset in range(lengths[j])
                 ]
             )
+=======
+            mask_idc = np.asarray([
+                mask_idc[j] + offset for j in range(len(mask_idc))
+                for offset in range(lengths[j])
+            ])
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         mask_idcs.append(np.unique(mask_idc[mask_idc < sz]))
 
@@ -515,15 +600,22 @@ def compute_mask_indices(
             mask_idc = np.random.choice(mask_idc, min_len, replace=False)
         if mask_dropout > 0:
             num_holes = np.rint(len(mask_idc) * mask_dropout).astype(int)
+<<<<<<< HEAD
             mask_idc = np.random.choice(
                 mask_idc, len(mask_idc) - num_holes, replace=False
             )
+=======
+            mask_idc = np.random.choice(mask_idc,
+                                        len(mask_idc) - num_holes,
+                                        replace=False)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         mask[i, mask_idc] = True
 
     return mask
 
 
+<<<<<<< HEAD
 def get_mem_usage():
     try:
         import psutil
@@ -534,14 +626,20 @@ def get_mem_usage():
         return "N/A"
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def get_buckets(sizes, num_buckets):
     buckets = np.unique(
         np.percentile(
             sizes,
             np.linspace(0, 100, num_buckets + 1),
             interpolation='lower',
+<<<<<<< HEAD
         )[1:]
     )
+=======
+        )[1:])
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     return buckets
 
 
@@ -554,6 +652,7 @@ def get_bucketed_sizes(orig_sizes, buckets):
         sizes[mask] = end_val
         start_val = end_val
     return sizes
+<<<<<<< HEAD
 
 
 def _find_extra_valid_paths(dataset_path: str) -> set:
@@ -566,3 +665,5 @@ def _find_extra_valid_paths(dataset_path: str) -> set:
     # Remove .bin, .idx etc
     roots = {os.path.splitext(p)[0] for p in all_valid_paths}
     return roots
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb

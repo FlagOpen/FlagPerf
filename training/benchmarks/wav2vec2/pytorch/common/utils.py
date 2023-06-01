@@ -30,11 +30,16 @@ def print_once(*msg, local_rank=0):
 
 
 class AttrDict(dict):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, *args, **kwargs):
         super(AttrDict, self).__init__(*args, **kwargs)
         self.__dict__ = self
 
 
+<<<<<<< HEAD
 def set_torch_seed(seed):
     torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -51,6 +56,8 @@ def reduce_tensor(tensor, world_size, mean=True):
     return rt
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def all_reduce_cpu_scalars(data, device=torch.device('cuda')):
     data_keys = list(data.keys())
     data_vals = list(data.values())
@@ -61,6 +68,7 @@ def all_reduce_cpu_scalars(data, device=torch.device('cuda')):
     data_vals = tensor_vals.cpu().numpy()
 
     return dict(zip(data_keys, data_vals))
+<<<<<<< HEAD
 
 
 def setup_distributed(local_rank):
@@ -74,3 +82,5 @@ def setup_distributed(local_rank):
         world_size = 1
 
     return world_size
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb

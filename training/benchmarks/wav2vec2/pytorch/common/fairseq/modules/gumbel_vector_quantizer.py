@@ -23,6 +23,7 @@ import torch.nn.functional as F
 
 
 class GumbelVectorQuantizer(nn.Module):
+<<<<<<< HEAD
     def __init__(
         self,
         dim,
@@ -35,6 +36,21 @@ class GumbelVectorQuantizer(nn.Module):
         activation=nn.GELU(),
         weight_proj_depth=1,
         weight_proj_factor=1,
+=======
+
+    def __init__(
+            self,
+            dim,
+            num_vars,
+            temp,
+            groups,
+            combine_groups,
+            vq_dim,
+            time_first,
+            activation=nn.GELU(),
+            weight_proj_depth=1,
+            weight_proj_factor=1,
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     ):
         """Vector quantization using gumbel softmax
 
@@ -66,13 +82,23 @@ class GumbelVectorQuantizer(nn.Module):
         var_dim = vq_dim // groups
         num_groups = groups if not combine_groups else 1
 
+<<<<<<< HEAD
         self.vars = nn.Parameter(torch.FloatTensor(1, num_groups * num_vars, var_dim))
+=======
+        self.vars = nn.Parameter(
+            torch.FloatTensor(1, num_groups * num_vars, var_dim))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         nn.init.uniform_(self.vars)
 
         if weight_proj_depth > 1:
 
             def block(input_dim, output_dim):
+<<<<<<< HEAD
                 return nn.Sequential(nn.Linear(input_dim, output_dim), activation)
+=======
+                return nn.Sequential(nn.Linear(input_dim, output_dim),
+                                     activation)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
             inner_dim = self.input_dim * weight_proj_factor
             self.weight_proj = nn.Sequential(
@@ -97,9 +123,14 @@ class GumbelVectorQuantizer(nn.Module):
         self.codebook_indices = None
 
     def set_num_updates(self, num_updates):
+<<<<<<< HEAD
         self.curr_temp = max(
             self.max_temp * self.temp_decay ** num_updates, self.min_temp
         )
+=======
+        self.curr_temp = max(self.max_temp * self.temp_decay**num_updates,
+                             self.min_temp)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     def get_codebook_indices(self):
         if self.codebook_indices is None:
@@ -108,6 +139,7 @@ class GumbelVectorQuantizer(nn.Module):
             p = [range(self.num_vars)] * self.groups
             inds = list(product(*p))
             self.codebook_indices = torch.tensor(
+<<<<<<< HEAD
                 inds, dtype=torch.long, device=self.vars.device
             ).flatten()
 
@@ -115,6 +147,13 @@ class GumbelVectorQuantizer(nn.Module):
                 self.codebook_indices = self.codebook_indices.view(
                     self.num_vars ** self.groups, -1
                 )
+=======
+                inds, dtype=torch.long, device=self.vars.device).flatten()
+
+            if not self.combine_groups:
+                self.codebook_indices = self.codebook_indices.view(
+                    self.num_vars**self.groups, -1)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                 for b in range(1, self.groups):
                     self.codebook_indices[:, b] += self.num_vars * b
                 self.codebook_indices = self.codebook_indices.flatten()
@@ -122,11 +161,16 @@ class GumbelVectorQuantizer(nn.Module):
 
     def codebook(self):
         indices = self.get_codebook_indices()
+<<<<<<< HEAD
         return (
             self.vars.squeeze(0)
             .index_select(0, indices)
             .view(self.num_vars ** self.groups, -1)
         )
+=======
+        return (self.vars.squeeze(0).index_select(0, indices).view(
+            self.num_vars**self.groups, -1))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     def sample_from_codebook(self, b, n):
         indices = self.get_codebook_indices()
@@ -135,17 +179,29 @@ class GumbelVectorQuantizer(nn.Module):
         assert (
             n < cb_size
         ), f"sample size {n} is greater than size of codebook {cb_size}"
+<<<<<<< HEAD
         sample_idx = torch.randint(low=0, high=cb_size, size=(b * n,))
         indices = indices[sample_idx]
 
         z = self.vars.squeeze(0).index_select(0, indices.flatten()).view(b, n, -1)
+=======
+        sample_idx = torch.randint(low=0, high=cb_size, size=(b * n, ))
+        indices = indices[sample_idx]
+
+        z = self.vars.squeeze(0).index_select(0, indices.flatten()).view(
+            b, n, -1)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return z
 
     def to_codebook_index(self, indices):
         res = indices.new_full(indices.shape[:-1], 0)
         for i in range(self.groups):
             exponent = self.groups - i - 1
+<<<<<<< HEAD
             res += indices[..., i] * (self.num_vars ** exponent)
+=======
+            res += indices[..., i] * (self.num_vars**exponent)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return res
 
     def forward_idx(self, x):
@@ -165,6 +221,7 @@ class GumbelVectorQuantizer(nn.Module):
         x = x.view(bsz * tsz * self.groups, -1)
 
         _, k = x.max(-1)
+<<<<<<< HEAD
         hard_x = (
             x.new_zeros(*x.shape)
             .scatter_(-1, k.view(-1, 1), 1.0)
@@ -181,11 +238,28 @@ class GumbelVectorQuantizer(nn.Module):
         result["prob_perplexity"] = torch.exp(
             -torch.sum(avg_probs * torch.log(avg_probs + 1e-7), dim=-1)
         ).sum()
+=======
+        hard_x = (x.new_zeros(*x.shape).scatter_(-1, k.view(-1, 1), 1.0).view(
+            bsz * tsz, self.groups, -1))
+        hard_probs = torch.mean(hard_x.float(), dim=0)
+        result["code_perplexity"] = torch.exp(-torch.sum(
+            hard_probs * torch.log(hard_probs + 1e-7), dim=-1)).sum()
+
+        avg_probs = torch.softmax(x.view(bsz * tsz, self.groups, -1).float(),
+                                  dim=-1).mean(dim=0)
+        result["prob_perplexity"] = torch.exp(
+            -torch.sum(avg_probs * torch.log(avg_probs + 1e-7), dim=-1)).sum()
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         result["temp"] = self.curr_temp
 
         if self.training:
+<<<<<<< HEAD
             x = F.gumbel_softmax(x.float(), tau=self.curr_temp, hard=True).type_as(x)
+=======
+            x = F.gumbel_softmax(x.float(), tau=self.curr_temp,
+                                 hard=True).type_as(x)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         else:
             x = hard_x
 
@@ -196,12 +270,18 @@ class GumbelVectorQuantizer(nn.Module):
             vars = vars.repeat(1, self.groups, 1)
 
         if produce_targets:
+<<<<<<< HEAD
             result["targets"] = (
                 x.view(bsz * tsz * self.groups, -1)
                 .argmax(dim=-1)
                 .view(bsz, tsz, self.groups)
                 .detach()
             )
+=======
+            result["targets"] = (x.view(bsz * tsz * self.groups,
+                                        -1).argmax(dim=-1).view(
+                                            bsz, tsz, self.groups).detach())
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         x = x.unsqueeze(-1) * vars
         x = x.view(bsz * tsz, self.groups, self.num_vars, -1)

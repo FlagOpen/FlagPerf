@@ -24,6 +24,10 @@ from torch import Tensor
 
 
 class FairseqIncrementalState(object):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.init_incremental_state()
@@ -59,7 +63,12 @@ class FairseqIncrementalState(object):
 
 
 def with_incremental_state(cls):
+<<<<<<< HEAD
     cls.__bases__ = (FairseqIncrementalState,) + tuple(
         b for b in cls.__bases__ if b != FairseqIncrementalState
     )
+=======
+    cls.__bases__ = (FairseqIncrementalState, ) + tuple(
+        b for b in cls.__bases__ if b != FairseqIncrementalState)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     return cls

@@ -30,9 +30,14 @@ import torch.nn as nn
 def gelu_accurate(x):
     if not hasattr(gelu_accurate, "_a"):
         gelu_accurate._a = math.sqrt(2 / math.pi)
+<<<<<<< HEAD
     return (
         0.5 * x * (1 + torch.tanh(gelu_accurate._a * (x + 0.044715 * torch.pow(x, 3))))
     )
+=======
+    return (0.5 * x * (1 + torch.tanh(gelu_accurate._a *
+                                      (x + 0.044715 * torch.pow(x, 3)))))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 
 def gelu(x: torch.Tensor) -> torch.Tensor:

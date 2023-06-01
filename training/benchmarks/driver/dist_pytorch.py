@@ -157,12 +157,12 @@ def barrier(vendor="nvidia"):
 def init_dist_training_env(config):
     ''' TODO: Support other accelarators.  '''
     if config.vendor == "kunlunxin":
-        import torch_xmlir.core.xpu_model as xm
+        import torch_xmlir
         if int(os.environ.get("WORLD_SIZE", 1)) <= 1:
-            config.device = xm.xpu_device()
+            config.device = torch_xmlir.device("xpu:0")
             config.n_device = 1
         else:
-            config.device = xm.xpu_device(config.local_rank)
+            config.device = torch_xmlir.device(f"xpu:{config.local_rank}")
             host_addr_full = 'tcp://' + os.environ[
                 "MASTER_ADDR"] + ':' + os.environ["MASTER_PORT"]
             rank = int(os.environ["RANK"])
@@ -225,6 +225,14 @@ def format_step(step):
     if len(step) > 2:
         s += "Validation Iteration: {} ".format(step[2])
     return s
+
+
+def is_dist_avail_and_initialized():
+    if not torch.distributed.is_available():
+        return False
+    if not torch.distributed.is_initialized():
+        return False
+    return True
 
 
 class PyTorchDistributedDataParallel(DDP):

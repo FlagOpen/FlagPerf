@@ -101,7 +101,12 @@ class FusedAdamV1(torch.optim.Optimizer):
         fused_adam_cuda = importlib.import_module("fused_adam_cuda")
 
         if amsgrad:
+<<<<<<< HEAD
             raise RuntimeError("FusedAdam does not support the AMSGrad variant.")
+=======
+            raise RuntimeError(
+                "FusedAdam does not support the AMSGrad variant.")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         defaults = {
             "lr": lr,
             "bias_correction": bias_correction,
@@ -157,9 +162,14 @@ class FusedAdamV1(torch.optim.Optimizer):
         if grad_norms is None:
             grad_norms = [None] * len(self.param_groups)
 
+<<<<<<< HEAD
         for group, grads_this_group, grad_norm in zip(
             self.param_groups, grads_group, grad_norms
         ):
+=======
+        for group, grads_this_group, grad_norm in zip(self.param_groups,
+                                                      grads_group, grad_norms):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             if grads_this_group is None:
                 grads_this_group = [None] * len(group["params"])
 
@@ -184,8 +194,12 @@ class FusedAdamV1(torch.optim.Optimizer):
                 if grad.is_sparse:
                     raise RuntimeError(
                         "FusedAdam does not support sparse gradients, "
+<<<<<<< HEAD
                         "please consider SparseAdam instead"
                     )
+=======
+                        "please consider SparseAdam instead")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
                 p_data_fp32 = p.data.float()
 
@@ -289,13 +303,18 @@ try:
                     if p.grad.data.is_sparse:
                         raise RuntimeError(
                             "FusedAdam does not support sparse gradients, "
+<<<<<<< HEAD
                             "please consider SparseAdam instead"
                         )
+=======
+                            "please consider SparseAdam instead")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
                     state = self.state[p]
                     # State initialization
                     if len(state) == 0:
                         # Exponential moving average of gradient values
+<<<<<<< HEAD
                         state["exp_avg"] = torch.zeros_like(p.data, dtype=torch.float)
                         # Exponential moving average of squared gradient values
                         state["exp_avg_sq"] = torch.zeros_like(
@@ -308,6 +327,18 @@ try:
                         state["exp_avg_sq"] = state["exp_avg_sq"].to(
                             device=p.data.device, dtype=torch.float
                         )
+=======
+                        state["exp_avg"] = torch.zeros_like(p.data,
+                                                            dtype=torch.float)
+                        # Exponential moving average of squared gradient values
+                        state["exp_avg_sq"] = torch.zeros_like(
+                            p.data, dtype=torch.float)
+                    else:
+                        state["exp_avg"] = state["exp_avg"].to(
+                            device=p.data.device, dtype=torch.float)
+                        state["exp_avg_sq"] = state["exp_avg_sq"].to(
+                            device=p.data.device, dtype=torch.float)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
                     if p.dtype == torch.float16:
                         g_16.append(p.grad.data.float())
@@ -321,7 +352,12 @@ try:
                         m_32.append(state["exp_avg"])
                         v_32.append(state["exp_avg_sq"])
                     else:
+<<<<<<< HEAD
                         raise RuntimeError("FusedAdam only support fp16 and fp32.")
+=======
+                        raise RuntimeError(
+                            "FusedAdam only support fp16 and fp32.")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
                 with torch.cuda.device(p.device):
                     if len(g_16) > 0:
@@ -357,6 +393,9 @@ try:
 
             return loss
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 except ImportError:
     pass

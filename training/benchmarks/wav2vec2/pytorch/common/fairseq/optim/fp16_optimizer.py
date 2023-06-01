@@ -27,6 +27,10 @@ from common.fairseq.optim.dynamic_loss_scaler import DynamicLossScaler
 
 @torch.no_grad()
 def clip_grad_norm_(params, max_norm, aggregate_norm_fn=None) -> torch.Tensor:
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def grad_exists(p):
         return p is not None and getattr(p, "grad", None) is not None
 
@@ -34,10 +38,19 @@ def clip_grad_norm_(params, max_norm, aggregate_norm_fn=None) -> torch.Tensor:
         params = [params]
     params = list(params)
     grads = [
+<<<<<<< HEAD
         p.grad.detach() for p in params if grad_exists(p) and not hasattr(p, "expert")
     ]
     expert_grads = [
         p.grad.detach() for p in params if grad_exists(p) and hasattr(p, "expert")
+=======
+        p.grad.detach() for p in params
+        if grad_exists(p) and not hasattr(p, "expert")
+    ]
+    expert_grads = [
+        p.grad.detach() for p in params
+        if grad_exists(p) and hasattr(p, "expert")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     ]
 
     if len(grads) == 0:
@@ -64,10 +77,17 @@ def clip_grad_norm_(params, max_norm, aggregate_norm_fn=None) -> torch.Tensor:
             else:
                 device = torch.device("cpu")
             total_norm = torch.norm(
+<<<<<<< HEAD
                 torch.stack(
                     [torch.norm(g, p=2, dtype=torch.float32).to(device) for g in grads]
                 )
             )
+=======
+                torch.stack([
+                    torch.norm(g, p=2, dtype=torch.float32).to(device)
+                    for g in grads
+                ]))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     if aggregate_norm_fn is not None:
         total_norm = aggregate_norm_fn(total_norm)
@@ -81,6 +101,10 @@ def clip_grad_norm_(params, max_norm, aggregate_norm_fn=None) -> torch.Tensor:
 
 
 class FairseqOptimizer(object):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
@@ -98,7 +122,12 @@ class FairseqOptimizer(object):
         if not hasattr(self, "_optimizer"):
             raise NotImplementedError
         if not isinstance(self._optimizer, torch.optim.Optimizer):
+<<<<<<< HEAD
             raise ValueError("_optimizer must be an instance of torch.optim.Optimizer")
+=======
+            raise ValueError(
+                "_optimizer must be an instance of torch.optim.Optimizer")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return self._optimizer
 
     @optimizer.setter
@@ -107,7 +136,12 @@ class FairseqOptimizer(object):
         if not hasattr(self, "_optimizer"):
             raise NotImplementedError
         if not isinstance(self._optimizer, torch.optim.Optimizer):
+<<<<<<< HEAD
             raise ValueError("_optimizer must be an instance of torch.optim.Optimizer")
+=======
+            raise ValueError(
+                "_optimizer must be an instance of torch.optim.Optimizer")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         self._optimizer = optimizer
 
     @property
@@ -244,6 +278,10 @@ class FairseqOptimizer(object):
 
 
 class _FP16OptimizerMixin(object):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, *args, **kwargs):
         # forward __init__ call to the next class in mro(method resolution order)
         super().__init__(*args, **kwargs)
@@ -251,18 +289,29 @@ class _FP16OptimizerMixin(object):
 
     @property
     def has_flat_params(self):
+<<<<<<< HEAD
         return torch.is_tensor(self.fp32_params) or (
             isinstance(self.fp32_params, dict)
             and all(torch.is_tensor(t) for t in self.fp32_params.values())
         )
+=======
+        return torch.is_tensor(
+            self.fp32_params) or (isinstance(self.fp32_params, dict) and all(
+                torch.is_tensor(t) for t in self.fp32_params.values()))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     @classmethod
     def build_fp32_params(cls, args, params, flatten=True):
         # create FP32 copy of parameters and grads
         if flatten:
             is_pipeline_parallel = getattr(
+<<<<<<< HEAD
                 args, "pipeline_model_parallel", False
             ) and getattr(args, "distributed_no_spawn", False)
+=======
+                args, "pipeline_model_parallel", False) and getattr(
+                    args, "distributed_no_spawn", False)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             total_param_size = sum(p.data.numel() for p in params)
             devices = [torch.cuda.current_device()]
             if is_pipeline_parallel:
@@ -270,14 +319,23 @@ class _FP16OptimizerMixin(object):
             fp32_params = {}
             for device in devices:
                 if is_pipeline_parallel:
+<<<<<<< HEAD
                     device_param_size = sum(
                         p.data.numel() for p in params if p.device.index == device
                     )
                     device_params = [p for p in params if p.device.index == device]
+=======
+                    device_param_size = sum(p.data.numel() for p in params
+                                            if p.device.index == device)
+                    device_params = [
+                        p for p in params if p.device.index == device
+                    ]
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                 else:
                     device_param_size = total_param_size
                     device_params = params
                 fp32_params[device] = (
+<<<<<<< HEAD
                     device_params[0].new(0).float().new(device_param_size)
                 )
                 offset = 0
@@ -289,6 +347,18 @@ class _FP16OptimizerMixin(object):
                 fp32_params[device].grad = fp32_params[device].data.new(
                     device_param_size
                 )
+=======
+                    device_params[0].new(0).float().new(device_param_size))
+                offset = 0
+                for p in device_params:
+                    numel = p.data.numel()
+                    fp32_params[device][offset:offset + numel].copy_(
+                        p.data.view(-1))
+                    offset += numel
+                fp32_params[device] = torch.nn.Parameter(fp32_params[device])
+                fp32_params[device].grad = fp32_params[device].data.new(
+                    device_param_size)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             return fp32_params
         else:
             fp32_params = []
@@ -346,6 +416,7 @@ class _FP16OptimizerMixin(object):
                     device_params = device_params_dict[device]
                     offset = 0
                     for p in device_params:
+<<<<<<< HEAD
                         grad_data = (
                             p.grad.data
                             if p.grad is not None
@@ -355,6 +426,15 @@ class _FP16OptimizerMixin(object):
                         self.fp32_params[device].grad.data[
                             offset : offset + numel
                         ].copy_(grad_data.view(-1))
+=======
+                        grad_data = (p.grad.data if p.grad is not None else
+                                     p.data.new_zeros(p.data.shape))
+                        numel = grad_data.numel()
+                        self.fp32_params[device].grad.data[offset:offset +
+                                                           numel].copy_(
+                                                               grad_data.view(
+                                                                   -1))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                         offset += numel
             else:
                 for p, p32 in zip(self.fp16_params, self.fp32_params):
@@ -382,11 +462,17 @@ class _FP16OptimizerMixin(object):
                 offset = 0
                 for p in device_params:
                     numel = p.data.numel()
+<<<<<<< HEAD
                     p.data.copy_(
                         self.fp32_params[device]
                         .data[offset : offset + numel]
                         .view_as(p.data)
                     )
+=======
+                    p.data.copy_(self.fp32_params[device].data[offset:offset +
+                                                               numel].view_as(
+                                                                   p.data))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                     offset += numel
         else:
             for p, p32 in zip(self.fp16_params, self.fp32_params):
@@ -397,6 +483,7 @@ class _FP16OptimizerMixin(object):
     def _unscale_grads(self):
         self._sync_fp16_grads_to_fp32()
         if (
+<<<<<<< HEAD
             # Skip the multiplication if it's a no-op (i.e., if _multiply_factor
             # is 1.0). At the same time, we want to avoid the device-to-host
             # transfer by comparing it to 1.0. Since _multiply_factor starts as
@@ -406,6 +493,16 @@ class _FP16OptimizerMixin(object):
             torch.is_tensor(self._multiply_factor)
             or self._multiply_factor != 1.0
         ):
+=======
+                # Skip the multiplication if it's a no-op (i.e., if _multiply_factor
+                # is 1.0). At the same time, we want to avoid the device-to-host
+                # transfer by comparing it to 1.0. Since _multiply_factor starts as
+                # a Python float, we roughly assume that if it's a tensor then it's
+                # probably not =1.0 anymore and we do the multiplication. Otherwise
+                # we can safely check the value without a D2H transfer.
+                torch.is_tensor(self._multiply_factor)
+                or self._multiply_factor != 1.0):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             self.fp32_optimizer.multiply_grads(self._multiply_factor)
             self._multiply_factor = 1.0
 
@@ -418,8 +515,12 @@ class _FP16OptimizerMixin(object):
         self._sync_fp16_grads_to_fp32()
 
         grad_norm = self._multiply_factor * self.fp32_optimizer.clip_grad_norm(
+<<<<<<< HEAD
             0, aggregate_norm_fn
         )
+=======
+            0, aggregate_norm_fn)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         if self.scaler is not None:
             if grad_norm > max_norm > 0.0:
@@ -437,7 +538,13 @@ class _FP16OptimizerMixin(object):
         self._sync_fp16_grads_to_fp32()
 
         if getattr(self, "supports_step_with_scale", False):
+<<<<<<< HEAD
             self.fp32_optimizer.step(closure, scale=(1.0 / self._multiply_factor), groups=groups)
+=======
+            self.fp32_optimizer.step(closure,
+                                     scale=(1.0 / self._multiply_factor),
+                                     groups=groups)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         else:
             self._unscale_grads()
             self.fp32_optimizer.step(closure, groups=groups)
@@ -480,7 +587,11 @@ class FP16Optimizer(_FP16OptimizerMixin, FairseqOptimizer):
         self.fp32_optimizer = fp32_optimizer
         self.fp32_params = fp32_params
 
+<<<<<<< HEAD
         scale_window = int(2 ** 14 / cfg.world_size / cfg.update_freq)
+=======
+        scale_window = int(2**14 / cfg.world_size / cfg.update_freq)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         if not (cfg.bf16 and cfg.bf16_disable_loss_scaler):
             self.scaler = DynamicLossScaler(

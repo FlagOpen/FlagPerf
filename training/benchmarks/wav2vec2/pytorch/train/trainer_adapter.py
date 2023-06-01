@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 import torch
 import torch.distributed as dist
 from torch.optim import Optimizer
+=======
+import torch.distributed as dist
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 import config
 
 from torch import nn, Tensor
 from driver.dist_pytorch import main_proc_print
+<<<<<<< HEAD
 from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -14,11 +19,17 @@ from common.fairseq.optim.fp16_optimizer import FP16Optimizer
 from common.fairseq.optim.fused_adam import get_fused_adam_class
 from common.utils import print_once
 
+=======
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 def convert_model(model: nn.Module) -> nn.Module:
     return model
 
 
+<<<<<<< HEAD
 def create_optimizer(model, args):
 
     kw = {'lr': args.lr, 'weight_decay': args.weight_decay}
@@ -68,6 +79,8 @@ def create_optimizer(model, args):
 
     return optimizer
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def model_to_fp16(model):
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if config.fp16:
@@ -75,6 +88,7 @@ def model_to_fp16(model):
         model.half()
     return model
 
+<<<<<<< HEAD
 def model_to_bf16(model):
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if config.bf16:
@@ -101,3 +115,14 @@ def backward(step: int, loss: torch.Tensor, optimizer: Optimizer):
     if update_step:
         optimizer.step()
         optimizer.zero_grad()
+=======
+
+def model_to_ddp(model: nn.Module) -> nn.Module:
+    if dist.is_available() and dist.is_initialized():
+        model = DDP(model,
+                    device_ids=[config.local_rank],
+                    find_unused_parameters=True)
+        from common.fairseq.dist import ModuleProxyWrapper
+        model = ModuleProxyWrapper(model)
+    return model
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb

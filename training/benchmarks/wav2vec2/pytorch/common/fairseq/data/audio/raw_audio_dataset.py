@@ -41,7 +41,10 @@ from common.fairseq.data.data_utils import (
 )
 from common.utils import print_once
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 logger = logging.getLogger(__name__)
 
 
@@ -62,9 +65,14 @@ class RawAudioDataset(torch.utils.data.Dataset):
 
         self.sample_rate = sample_rate
         self.sizes = []
+<<<<<<< HEAD
         self.max_sample_size = (
             max_sample_size if max_sample_size is not None else sys.maxsize
         )
+=======
+        self.max_sample_size = (max_sample_size if max_sample_size is not None
+                                else sys.maxsize)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         self.min_sample_size = min_sample_size
         self.pad = pad
         self.shuffle = shuffle
@@ -74,7 +82,12 @@ class RawAudioDataset(torch.utils.data.Dataset):
             self.mask_compute_kwargs = mask_compute_kwargs
             self._features_size_map = {}
             self._C = mask_compute_kwargs["encoder_embed_dim"]
+<<<<<<< HEAD
             self._conv_feature_layers = eval(mask_compute_kwargs["conv_feature_layers"])
+=======
+            self._conv_feature_layers = eval(
+                mask_compute_kwargs["conv_feature_layers"])
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     def __getitem__(self, index):
         raise NotImplementedError()
@@ -87,7 +100,12 @@ class RawAudioDataset(torch.utils.data.Dataset):
             feats = feats.mean(-1)
 
         if curr_sample_rate != self.sample_rate:
+<<<<<<< HEAD
             raise Exception(f"sample rate: {curr_sample_rate}, need {self.sample_rate}")
+=======
+            raise Exception(
+                f"sample rate: {curr_sample_rate}, need {self.sample_rate}")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         assert feats.dim() == 1, feats.dim()
 
@@ -134,8 +152,13 @@ class RawAudioDataset(torch.utils.data.Dataset):
                 min_space=self.mask_compute_kwargs["mask_channel_min_space"],
             )
             mask_channel_indices = (
+<<<<<<< HEAD
                 torch.from_numpy(mask_channel_indices).unsqueeze(1).expand(-1, T, -1)
             )
+=======
+                torch.from_numpy(mask_channel_indices).unsqueeze(1).expand(
+                    -1, T, -1))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         return mask_indices, mask_channel_indices
 
@@ -166,28 +189,49 @@ class RawAudioDataset(torch.utils.data.Dataset):
             batch_inds = [s['batch_id'] for s in samples]
             sub_batch_lens = [len(list(b)) for _, b in groupby(batch_inds)]
             starts_ends = np.cumsum([0] + sub_batch_lens)
+<<<<<<< HEAD
             target_sizes = np.array(
                 [min(max(sizes[s:e]), self.max_sample_size)
                  for s, e in zip(starts_ends[:-1], starts_ends[1:])]
             )
+=======
+            target_sizes = np.array([
+                min(max(sizes[s:e]), self.max_sample_size)
+                for s, e in zip(starts_ends[:-1], starts_ends[1:])
+            ])
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             out["sub_batch_sizes"] = torch.LongTensor(sub_batch_lens)
             out["sub_batch_lens"] = torch.LongTensor(target_sizes)
 
         collated_sources = sources[0].new_zeros(len(sources), target_size)
+<<<<<<< HEAD
         padding_mask = (
             torch.BoolTensor(collated_sources.shape).fill_(False) if self.pad else None
         )
+=======
+        padding_mask = (torch.BoolTensor(collated_sources.shape).fill_(False)
+                        if self.pad else None)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         for i, (source, size) in enumerate(zip(sources, sizes)):
             diff = size - target_size
             if diff == 0:
                 collated_sources[i] = source
             elif diff > 0:
+<<<<<<< HEAD
                 collated_sources[i] = self.crop_to_max_size(source, target_size)
             else:  # diff < 0:
                 assert self.pad
                 collated_sources[i] = torch.cat(
                     [source, source.new_full((-diff,), 0.0)]
                 )
+=======
+                collated_sources[i] = self.crop_to_max_size(
+                    source, target_size)
+            else:  # diff < 0:
+                assert self.pad
+                collated_sources[i] = torch.cat(
+                    [source, source.new_full((-diff, ), 0.0)])
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                 padding_mask[i, diff:] = True
 
         input["source"] = collated_sources
@@ -200,8 +244,15 @@ class RawAudioDataset(torch.utils.data.Dataset):
             bucket = max(self._bucketed_sizes[s["id"]] for s in samples)
             num_pad = bucket - collated_sources.size(-1)
             if num_pad:
+<<<<<<< HEAD
                 input["source"] = self._bucket_tensor(collated_sources, num_pad, 0)
                 input["padding_mask"] = self._bucket_tensor(padding_mask, num_pad, True)
+=======
+                input["source"] = self._bucket_tensor(collated_sources,
+                                                      num_pad, 0)
+                input["padding_mask"] = self._bucket_tensor(
+                    padding_mask, num_pad, True)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         if self.compute_mask_indices:
             B = input["source"].size(0)
@@ -211,8 +262,12 @@ class RawAudioDataset(torch.utils.data.Dataset):
             if extra > 0:
                 padding_mask_reshaped = padding_mask_reshaped[:, :-extra]
             padding_mask_reshaped = padding_mask_reshaped.view(
+<<<<<<< HEAD
                 padding_mask_reshaped.size(0), T, -1
             )
+=======
+                padding_mask_reshaped.size(0), T, -1)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             padding_mask_reshaped = padding_mask_reshaped.all(-1)
             input["padding_count"] = padding_mask_reshaped.sum(-1).max().item()
             mask_indices, mask_channel_indices = self._compute_mask_indices(
@@ -256,8 +311,12 @@ class RawAudioDataset(torch.utils.data.Dataset):
                 np.minimum(
                     np.array(self.sizes),
                     self.max_sample_size,
+<<<<<<< HEAD
                 )
             )
+=======
+                ))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             return np.lexsort(order)[::-1]
         else:
             return np.arange(len(self))
@@ -273,6 +332,7 @@ class RawAudioDataset(torch.utils.data.Dataset):
                 self._collated_sizes,
                 self.num_buckets,
             )
+<<<<<<< HEAD
             self._bucketed_sizes = get_bucketed_sizes(
                 self._collated_sizes, self.buckets
             )
@@ -280,6 +340,13 @@ class RawAudioDataset(torch.utils.data.Dataset):
                 f"{len(self.buckets)} bucket(s) for the audio dataset: "
                 f"{self.buckets}"
             )
+=======
+            self._bucketed_sizes = get_bucketed_sizes(self._collated_sizes,
+                                                      self.buckets)
+            logger.info(
+                f"{len(self.buckets)} bucket(s) for the audio dataset: "
+                f"{self.buckets}")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     def batch_by_size(
         self,
@@ -325,25 +392,41 @@ class RawAudioDataset(torch.utils.data.Dataset):
             if hasattr(self, "sizes") and isinstance(self.sizes, np.ndarray):
                 ignored = indices[self.sizes[indices] > max_sizes].tolist()
                 indices = indices[self.sizes[indices] <= max_sizes]
+<<<<<<< HEAD
             elif (
                 hasattr(self, "sizes")
                 and isinstance(self.sizes, list)
                 and len(self.sizes) == 1
             ):
+=======
+            elif (hasattr(self, "sizes") and isinstance(self.sizes, list)
+                  and len(self.sizes) == 1):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                 ignored = indices[self.sizes[0][indices] > max_sizes].tolist()
                 indices = indices[self.sizes[0][indices] <= max_sizes]
             else:
                 indices, ignored = data_utils._filter_by_size_dynamic(
+<<<<<<< HEAD
                     indices, self.size, max_sizes
                 )
         else:
             indices, ignored = data_utils._filter_by_size_dynamic(
                 indices, self.size, max_sizes
             )
+=======
+                    indices, self.size, max_sizes)
+        else:
+            indices, ignored = data_utils._filter_by_size_dynamic(
+                indices, self.size, max_sizes)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return indices, ignored
 
 
 class FileAudioDataset(RawAudioDataset):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(
         self,
         manifest_path,
@@ -386,7 +469,13 @@ class FileAudioDataset(RawAudioDataset):
                     continue
                 self.fnames.append(items[0])
                 sizes.append(sz)
+<<<<<<< HEAD
         print_once(f"loaded {len(self.fnames)}, skipped {skipped} samples,{manifest_path}")
+=======
+        print_once(
+            f"loaded {len(self.fnames)}, skipped {skipped} samples,{manifest_path}"
+        )
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         self.sizes = np.array(sizes, dtype=np.int64)
 

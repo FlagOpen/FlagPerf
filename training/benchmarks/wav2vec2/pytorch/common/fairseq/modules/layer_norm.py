@@ -21,16 +21,25 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+<<<<<<< HEAD
 
 TORCHSCRIPT = False
 
 
+=======
+TORCHSCRIPT = False
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 try:
     from apex.normalization import FusedLayerNorm as _FusedLayerNorm
 
     has_fused_layernorm = True
 
     class FusedLayerNorm(_FusedLayerNorm):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         @torch.jit.unused
         def forward(self, x):
             if not x.is_cuda:
@@ -39,12 +48,22 @@ try:
                 with torch.cuda.device(x.device):
                     return super().forward(x)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 except ImportError:
     has_fused_layernorm = False
 
 
+<<<<<<< HEAD
 def LayerNorm(normalized_shape, eps=1e-5, elementwise_affine=True, export=False):
+=======
+def LayerNorm(normalized_shape,
+              eps=1e-5,
+              elementwise_affine=True,
+              export=False):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     if torch.jit.is_scripting() or TORCHSCRIPT:
         export = True
     if not export and torch.cuda.is_available() and has_fused_layernorm:
@@ -53,6 +72,10 @@ def LayerNorm(normalized_shape, eps=1e-5, elementwise_affine=True, export=False)
 
 
 class Fp32LayerNorm(nn.LayerNorm):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

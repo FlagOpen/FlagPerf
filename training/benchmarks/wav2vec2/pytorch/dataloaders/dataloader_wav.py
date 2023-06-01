@@ -1,6 +1,7 @@
 from torch.utils.data import DataLoader
 import copy
 from common.fairseq.data import data_utils
+<<<<<<< HEAD
 from common.helpers import print_once
 from common.sampler import DistributedIndicesSampler
 import numpy as np
@@ -18,14 +19,38 @@ def build_train_dataloader(
         shard_id=0,
         num_workers=0,
         num_concat_batches=1,
+=======
+from common.sampler import DistributedIndicesSampler
+import numpy as np
+
+
+def build_train_dataloader(
+    dataset,
+    training,
+    max_tokens=None,
+    max_sentences=None,
+    max_positions=None,
+    ignore_invalid_inputs=False,
+    required_batch_size_multiple=1,
+    seed=1,
+    num_shards=1,
+    shard_id=0,
+    num_workers=0,
+    num_concat_batches=1,
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 ):
     # get indices ordered by example size
     with data_utils.numpy_seed(seed):
         indices = dataset.ordered_indices()
     # filter examples that are too large
     if max_positions is not None:
+<<<<<<< HEAD
         indices = filter_indices_by_size(
             indices, dataset, max_positions, ignore_invalid_inputs)
+=======
+        indices = filter_indices_by_size(indices, dataset, max_positions,
+                                         ignore_invalid_inputs)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     # create mini-batches with given size constraints
     batch_inds, non_grouped_batch_inds = dataset.batch_by_size(
@@ -42,9 +67,17 @@ def build_train_dataloader(
     dataset.batch_ids = {idx: batch_idx for idx, batch_idx in inds_ids}
 
     # Batches are already specified, now we just need to shuffle them
+<<<<<<< HEAD
     batch_ind_sampler = DistributedIndicesSampler(batch_inds, shuffle=training,
                                                   num_replicas=num_shards,
                                                   rank=shard_id, seed=seed,
+=======
+    batch_ind_sampler = DistributedIndicesSampler(batch_inds,
+                                                  shuffle=training,
+                                                  num_replicas=num_shards,
+                                                  rank=shard_id,
+                                                  seed=seed,
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                                                   drop_last=training,
                                                   fillvalue=[])
     loader = DataLoader(
@@ -58,6 +91,7 @@ def build_train_dataloader(
 
     return loader, batch_ind_sampler
 
+<<<<<<< HEAD
 build_eval_dataloader = build_train_dataloader
 
 
@@ -119,6 +153,16 @@ build_eval_dataloader = build_train_dataloader
 def filter_indices_by_size(
     indices, dataset, max_positions=None, ignore_invalid_inputs=False
 ):
+=======
+
+build_eval_dataloader = build_train_dataloader
+
+
+def filter_indices_by_size(indices,
+                           dataset,
+                           max_positions=None,
+                           ignore_invalid_inputs=False):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     """
     Filter examples that are too large
 
@@ -138,6 +182,7 @@ def filter_indices_by_size(
     if len(ignored) > 0:
         if not ignore_invalid_inputs:
             raise Exception(
+<<<<<<< HEAD
                 (
                     "Size of sample #{} is invalid (={}) since max_positions={}, "
                     "skip this example with --skip-invalid-size-inputs-valid-test"
@@ -150,3 +195,12 @@ def filter_indices_by_size(
             ).format(len(ignored), max_positions, ignored[:10])
         )
     return indices
+=======
+                ("Size of sample #{} is invalid (={}) since max_positions={}, "
+                 "skip this example with --skip-invalid-size-inputs-valid-test"
+                 ).format(ignored[0], dataset.size(ignored[0]), max_positions))
+        print(("WARNING: {:,} samples have invalid sizes and will be skipped, "
+               "max_positions={}, first few sample ids={}").format(
+                   len(ignored), max_positions, ignored[:10]))
+    return indices
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb

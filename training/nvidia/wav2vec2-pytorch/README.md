@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 ### 数据集下载
 
 1. Clone the repository.
@@ -41,6 +42,16 @@
 | 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(mAP) | 性能（samples/s） |
 | -------- | --------------- | ----------- | -------- | ------------- | ----------------- |
 | 单机8卡  | config_A100x1x8 | 3-4天    | 0.605    | 0.3520        | 1363049      |
+=======
+### 数据集准备
+
+https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
+
+### 运行情况
+| 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(mAP) | 性能（ntokens/s） |
+| -------- | --------------- | ----------- | -------- | ------------- | ----------------- |
+| 单机8卡  | config_A100x1x8 | 3-4天    | 0.605    | 0.605       | 1363049      |
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 ps：
 因大模型运行较久，参考精度通过resume+ckpt方式训练得到，将如下文件中resume = True && no_save = False 即可支持训练过程保持ckpt，任务断掉后继续接着训练。(wav2vec2_Perf/training/benchmarks/wav2vec2/pytorch/config/_base.py)

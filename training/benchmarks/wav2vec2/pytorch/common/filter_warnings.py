@@ -14,12 +14,19 @@
 
 import warnings
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 # NGC 22.04-py3 container (PyTorch 1.12.0a0+bd13bc6)
 warnings.filterwarnings(
     "ignore",
     message='positional arguments and argument "destination" are deprecated.'
+<<<<<<< HEAD
             ' nn.Module.state_dict will not accept them in the future.')
+=======
+    ' nn.Module.state_dict will not accept them in the future.')
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 # NGC ~22.05-py3
 warnings.filterwarnings(

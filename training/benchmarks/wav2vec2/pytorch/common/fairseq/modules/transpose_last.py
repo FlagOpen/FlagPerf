@@ -24,6 +24,10 @@ import torch.nn as nn
 
 
 class TransposeLast(nn.Module):
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     def __init__(self, deconstruct_idx=None):
         super().__init__()
         self.deconstruct_idx = deconstruct_idx

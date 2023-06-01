@@ -25,28 +25,31 @@ train_batch_size: int = 8
 eval_batch_size: int = 8
 dist_backend: str = 'nccl'
 
-lr: float = 0.1
-weight_decay: float = 1e-4
+lr: float = 0.045
+lr_step_size: int = 1
+lr_gamma: float = 0.98
+
+weight_decay: float = 0.00004
 gradient_accumulation_steps: int = 1
 momentum: float = 0.9
 
-max_steps: int = 600000
+max_steps: int = 5005 * 300  # 300 epoch
 seed: int = 41
 
 # Stop training after reaching this accuracy
-target_acc1: float = 50.0
+target_acc1: float = 70.634
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
 
 # If set to -1, disable eval, else evaluate every eval_iter_samples during training
-eval_interval_samples: int = 100 * 256 * 1
+eval_interval_samples: int = 5005 * 256 * 1  # 1 epoch
 
 # Total number of training samples to run.
-max_samples_termination: float = 1388270 * 4 * 30
+max_samples_termination: float = 5005 * 256 * 300  # 300 epoch
 
 # number workers for dataloader
-num_workers: int = 4
+num_workers: int = 16
 
 # local_rank for distributed training on gpus
 local_rank: int = 0

@@ -31,6 +31,7 @@ def _safe_readline(fd) -> str:
             fd.seek(pos)  # search where this character begins
 
 
+<<<<<<< HEAD
 def find_offsets(filename: str, num_chunks: int) -> tp.List[int]:
     """
     given a file and a number of chuncks, find the offsets in the file
@@ -48,6 +49,8 @@ def find_offsets(filename: str, num_chunks: int) -> tp.List[int]:
         return offsets
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 class ChunkLineIterator:
     """
     Iterator to properly iterate over lines of a file chunck.
@@ -70,6 +73,7 @@ class ChunkLineIterator:
             # end bytes to end + 2**32 bytes (4 GB) and this makes it unlikely
             # that the procedure breaks by the undeterministic behavior of
             # f.tell()
+<<<<<<< HEAD
             if (
                 self._end_offset > 0
                 and pos > self._end_offset
@@ -96,3 +100,10 @@ class Chunker:
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.fd.close()
+=======
+            if (self._end_offset > 0 and pos > self._end_offset
+                    and pos < self._end_offset + 2**32):
+                break
+            yield line
+            line = self._fd.readline()
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb

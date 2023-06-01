@@ -40,7 +40,12 @@ def adjust_max_tokens(train_dataset, world_size, args):
         steps_per_epoch = len(train_loader) // update_freq
         return steps_per_epoch
 
+<<<<<<< HEAD
     steps_ref = get_steps_per_epoch(args.ref_world_size, args.ref_max_tokens, 1)
+=======
+    steps_ref = get_steps_per_epoch(args.ref_world_size, args.ref_max_tokens,
+                                    1)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     min_ = args.ref_max_tokens // 20
     max_ = args.ref_max_tokens * 20
@@ -66,9 +71,16 @@ def adjust_max_tokens(train_dataset, world_size, args):
     args.max_tokens_valid = max_tokens
 
 
+<<<<<<< HEAD
 def filter_indices_by_size(
     indices, dataset, max_positions=None, ignore_invalid_inputs=False
 ):
+=======
+def filter_indices_by_size(indices,
+                           dataset,
+                           max_positions=None,
+                           ignore_invalid_inputs=False):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     """
     Filter examples that are too large
 
@@ -88,6 +100,7 @@ def filter_indices_by_size(
     if len(ignored) > 0:
         if not ignore_invalid_inputs:
             raise Exception(
+<<<<<<< HEAD
                 (
                     "Size of sample #{} is invalid (={}) since max_positions={}, "
                     "skip this example with --skip-invalid-size-inputs-valid-test"
@@ -99,10 +112,19 @@ def filter_indices_by_size(
                 "max_positions={}, first few sample ids={}"
             ).format(len(ignored), max_positions, ignored[:10])
         )
+=======
+                ("Size of sample #{} is invalid (={}) since max_positions={}, "
+                 "skip this example with --skip-invalid-size-inputs-valid-test"
+                 ).format(ignored[0], dataset.size(ignored[0]), max_positions))
+        print(("WARNING: {:,} samples have invalid sizes and will be skipped, "
+               "max_positions={}, first few sample ids={}").format(
+                   len(ignored), max_positions, ignored[:10]))
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     return indices
 
 
 def get_batch_iterator(
+<<<<<<< HEAD
         dataset,
         training,
         max_tokens=None,
@@ -115,15 +137,36 @@ def get_batch_iterator(
         shard_id=0,
         num_workers=0,
         num_concat_batches=1,
+=======
+    dataset,
+    training,
+    max_tokens=None,
+    max_sentences=None,
+    max_positions=None,
+    ignore_invalid_inputs=False,
+    required_batch_size_multiple=1,
+    seed=1,
+    num_shards=1,
+    shard_id=0,
+    num_workers=0,
+    num_concat_batches=1,
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 ):
     # get indices ordered by example size
     with data_utils.numpy_seed(seed):
         indices = dataset.ordered_indices()
+<<<<<<< HEAD
     print("indices",indices)
     # filter examples that are too large
     if max_positions is not None:
         indices = filter_indices_by_size(
             indices, dataset, max_positions, ignore_invalid_inputs)
+=======
+    # filter examples that are too large
+    if max_positions is not None:
+        indices = filter_indices_by_size(indices, dataset, max_positions,
+                                         ignore_invalid_inputs)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
     # create mini-batches with given size constraints
     batch_inds, non_grouped_batch_inds = dataset.batch_by_size(
@@ -140,6 +183,7 @@ def get_batch_iterator(
     dataset.batch_ids = {idx: batch_idx for idx, batch_idx in inds_ids}
 
     # Batches are already specified, now we just need to shuffle them
+<<<<<<< HEAD
     batch_ind_sampler = DistributedIndicesSampler(batch_inds, shuffle=training,
                                                   num_replicas=num_shards,
                                                   rank=shard_id, seed=seed,
@@ -147,6 +191,17 @@ def get_batch_iterator(
                                                   fillvalue=[])
     print("DataLoaderDataLoaderDataLoaderDataLoader")
     
+=======
+    batch_ind_sampler = DistributedIndicesSampler(batch_inds,
+                                                  shuffle=training,
+                                                  num_replicas=num_shards,
+                                                  rank=shard_id,
+                                                  seed=seed,
+                                                  drop_last=training,
+                                                  fillvalue=[])
+    print("DataLoaderDataLoaderDataLoaderDataLoader")
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     loader = DataLoader(
         dataset=dataset,
         collate_fn=dataset.collater,

@@ -22,7 +22,10 @@ import numpy as np
 import torch
 import torch.distributed as dist
 
+<<<<<<< HEAD
 from .metrics import word_error_rate
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 from common.utils import print_once
 
 
@@ -32,11 +35,17 @@ def to_gpu(batch, fp16=False, bf16=False):
         if fp16 and v.dtype is torch.float:
             batch['net_input'][k] = v.cuda(non_blocking=True).half()
         elif bf16 and v.dtype is torch.float:
+<<<<<<< HEAD
             batch['net_input'][k] = v.cuda(non_blocking=True).to(dtype=torch.bfloat16)
+=======
+            batch['net_input'][k] = v.cuda(non_blocking=True).to(
+                dtype=torch.bfloat16)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         else:
             batch['net_input'][k] = v.cuda(non_blocking=True)
 
 
+<<<<<<< HEAD
 def init_multi_tensor_ema(model, ema_model):
     model_weights = list(model.state_dict().values())
     ema_model_weights = list(ema_model.state_dict().values())
@@ -44,10 +53,13 @@ def init_multi_tensor_ema(model, ema_model):
     return model_weights, ema_model_weights, ema_overflow_buf
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def apply_multi_tensor_ema(decay, model_weights, ema_model_weights,
                            overflow_buf):
     amp_C.multi_tensor_axpby(
         65536, overflow_buf,
+<<<<<<< HEAD
         [ema_model_weights, model_weights, ema_model_weights],
         decay, 1-decay, -1)
 
@@ -71,6 +83,10 @@ def apply_ema(model, ema_model, decay, patch_conv_wn=False):
 
 def add_ctc_blank(symbols):
     return symbols + ['<BLANK>']
+=======
+        [ema_model_weights, model_weights, ema_model_weights], decay,
+        1 - decay, -1)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
 
 def ctc_decoder_predictions_tensor(tensor, labels, blank_id=None):
@@ -103,6 +119,7 @@ def ctc_decoder_predictions_tensor(tensor, labels, blank_id=None):
     return hypotheses
 
 
+<<<<<<< HEAD
 def greedy_wer(preds, tgt, tgt_lens, labels):
     """
     Takes output of greedy ctc decoder and performs ctc decoding algorithm to
@@ -123,6 +140,8 @@ def greedy_wer(preds, tgt, tgt_lens, labels):
     return wer, hypotheses[0], references[0]
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def gather_losses(losses_list):
     return [torch.mean(torch.stack(losses_list))]
 
@@ -130,7 +149,12 @@ def gather_losses(losses_list):
 def gather_predictions(predictions_list, labels, blank_id=None):
     results = []
     for prediction in predictions_list:
+<<<<<<< HEAD
         results += ctc_decoder_predictions_tensor(prediction, labels=labels,
+=======
+        results += ctc_decoder_predictions_tensor(prediction,
+                                                  labels=labels,
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                                                   blank_id=blank_id)
     return results
 
@@ -146,6 +170,7 @@ def gather_transcripts(transcript_list, transcript_len_list, labels):
     return results
 
 
+<<<<<<< HEAD
 def process_evaluation_batch(tensors, global_vars, labels):
     """
     Processes results of an iteration and saves it in global_vars
@@ -226,6 +251,8 @@ def num_weights(module):
     return sum(p.numel() for p in module.parameters() if p.requires_grad)
 
 
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 def load_wrapped_state(model, state_dict, strict=True):
     if model is None:
         return
@@ -250,7 +277,10 @@ class Checkpointer:
         self.tracked = OrderedDict(sorted(tracked, key=lambda t: t[0]))
 
         fpath = (self.last_checkpoint() if args.resume else None) or args.ckpt
+<<<<<<< HEAD
         print("fpath",fpath)
+=======
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         if fpath is not None:
             print_once(f'Loading model from {fpath}')
@@ -293,23 +323,54 @@ class Checkpointer:
 
         val_wer = val_wer or [float("inf")]  # wer absent in pretraining
         train_state.update({
+<<<<<<< HEAD
             'optimizer_type': type_name(optimizer),
             'scaler_type': type_name(scaler),
             'step': step,
             'epoch': epoch + 1,  # fairseq compat; restart at the next epoch
             'best_val_wer': min(val_wer[0], train_state["best_val_wer"]),
             'best_val_loss': min(val_losses[0], train_state['best_val_loss']),
+=======
+            'optimizer_type':
+            type_name(optimizer),
+            'scaler_type':
+            type_name(scaler),
+            'step':
+            step,
+            'epoch':
+            epoch + 1,  # fairseq compat; restart at the next epoch
+            'best_val_wer':
+            min(val_wer[0], train_state["best_val_wer"]),
+            'best_val_loss':
+            min(val_losses[0], train_state['best_val_loss']),
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         })
 
         state = {
             # 'args': args.__dict__,
             # 'args': vars(args),
+<<<<<<< HEAD
             'model': state_dict(unwrap_ddp(model)),
             'ema_model': state_dict(unwrap_ddp(ema_model)),
             'optimizer': state_dict(optimizer),
             'scaler': state_dict(scaler),
             'train_state': train_state,
             **({'output_labels': self.output_labels} if self.output_labels else {}),
+=======
+            'model':
+            state_dict(unwrap_ddp(model)),
+            'ema_model':
+            state_dict(unwrap_ddp(ema_model)),
+            'optimizer':
+            state_dict(optimizer),
+            'scaler':
+            state_dict(scaler),
+            'train_state':
+            train_state,
+            **({
+                'output_labels': self.output_labels
+            } if self.output_labels else {}),
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         }
 
         if is_best_ckpt:
@@ -317,7 +378,12 @@ class Checkpointer:
             print_once(f"Saving {fpath}...")
             torch.save(state, fpath)
 
+<<<<<<< HEAD
         fpath = Path(self.save_dir, f"{self.model_name}_update{step}_{epoch}.pt")
+=======
+        fpath = Path(self.save_dir,
+                     f"{self.model_name}_update{step}_{epoch}.pt")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         print_once(f"Saving {fpath}...")
         torch.save(state, fpath)
 
@@ -338,8 +404,18 @@ class Checkpointer:
                 pass
             del self.tracked[epoch]
 
+<<<<<<< HEAD
     def maybe_load_state(self, model=None, ema_model=None, optimizer=None,
                          scaler=None, train_state=None, train_loader=None):
+=======
+    def maybe_load_state(self,
+                         model=None,
+                         ema_model=None,
+                         optimizer=None,
+                         scaler=None,
+                         train_state=None,
+                         train_loader=None):
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         if self.last_state is None:
             return
@@ -385,6 +461,7 @@ class Checkpointer:
             if 'extra_state' in self.last_state:
                 extra_state = self.last_state['extra_state']
                 train_state.update({
+<<<<<<< HEAD
                     'epoch': extra_state['train_iterator']['epoch'],
                     'best_val_loss': extra_state['best']
                 })
@@ -392,6 +469,17 @@ class Checkpointer:
                 if 'optimizer_history' in extra_state:
                     train_state['step'] = (extra_state['optimizer_history']
                                                       [-1]['num_updates']),
+=======
+                    'epoch':
+                    extra_state['train_iterator']['epoch'],
+                    'best_val_loss':
+                    extra_state['best']
+                })
+
+                if 'optimizer_history' in extra_state:
+                    train_state['step'] = (
+                        extra_state['optimizer_history'][-1]['num_updates']),
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
         if train_loader is not None and 'extra_state' in self.last_state:
             state = self.last_state['extra_state']['train_iterator']

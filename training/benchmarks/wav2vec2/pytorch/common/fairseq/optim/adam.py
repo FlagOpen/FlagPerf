@@ -38,11 +38,17 @@ class FairseqAdam(FairseqOptimizer):
     def __init__(self, cfg, params):
         super().__init__(cfg)
         fused_adam_cls = get_fused_adam_class()
+<<<<<<< HEAD
         use_fused_adam = (
             not getattr(cfg, "use_old_adam", False)
             and fused_adam_cls is not None
             and torch.cuda.is_available()
         )
+=======
+        use_fused_adam = (not getattr(cfg, "use_old_adam", False)
+                          and fused_adam_cls is not None
+                          and torch.cuda.is_available())
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         if use_fused_adam:
             self._optimizer = fused_adam_cls(params, **self.optimizer_config)
         else:
@@ -57,6 +63,7 @@ class FairseqAdam(FairseqOptimizer):
         different learning rate.
         """
         return {
+<<<<<<< HEAD
             "lr": self.cfg.lr[0]
             if isinstance(self.cfg.lr, Collection)
             else self.cfg.lr,
@@ -65,6 +72,18 @@ class FairseqAdam(FairseqOptimizer):
             else self.cfg.adam_betas,
             "eps": self.cfg.adam_eps,
             "weight_decay": self.cfg.weight_decay,
+=======
+            "lr":
+            self.cfg.lr[0]
+            if isinstance(self.cfg.lr, Collection) else self.cfg.lr,
+            "betas":
+            eval(self.cfg.adam_betas)
+            if isinstance(self.cfg.adam_betas, str) else self.cfg.adam_betas,
+            "eps":
+            self.cfg.adam_eps,
+            "weight_decay":
+            self.cfg.weight_decay,
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         }
 
     def average_params(self):
@@ -107,6 +126,7 @@ class Adam(torch.optim.Optimizer):
     """
 
     def __init__(
+<<<<<<< HEAD
         self,
         params,
         lr=1e-3,
@@ -118,6 +138,21 @@ class Adam(torch.optim.Optimizer):
         defaults = dict(
             lr=lr, betas=betas, eps=eps, weight_decay=weight_decay, amsgrad=amsgrad
         )
+=======
+            self,
+            params,
+            lr=1e-3,
+            betas=(0.9, 0.999),
+            eps=1e-8,
+            weight_decay=0,
+            amsgrad=False,
+    ):
+        defaults = dict(lr=lr,
+                        betas=betas,
+                        eps=eps,
+                        weight_decay=weight_decay,
+                        amsgrad=amsgrad)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         super(Adam, self).__init__(params, defaults)
 
     @property
@@ -173,8 +208,12 @@ class Adam(torch.optim.Optimizer):
                     state["exp_avg_sq"] = state["exp_avg_sq"].to(p_data_fp32)
                     if amsgrad:
                         state["max_exp_avg_sq"] = state["max_exp_avg_sq"].to(
+<<<<<<< HEAD
                             p_data_fp32
                         )
+=======
+                            p_data_fp32)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
                 exp_avg, exp_avg_sq = state["exp_avg"], state["exp_avg_sq"]
                 if amsgrad:
@@ -194,6 +233,7 @@ class Adam(torch.optim.Optimizer):
                 else:
                     denom = exp_avg_sq.sqrt().add_(group["eps"])
 
+<<<<<<< HEAD
                 bias_correction1 = 1 - beta1 ** state["step"]
                 bias_correction2 = 1 - beta2 ** state["step"]
                 step_size = group["lr"] * math.sqrt(bias_correction2) / bias_correction1
@@ -202,6 +242,17 @@ class Adam(torch.optim.Optimizer):
                     p_data_fp32.add_(
                         p_data_fp32, alpha=-group["weight_decay"] * group["lr"]
                     )
+=======
+                bias_correction1 = 1 - beta1**state["step"]
+                bias_correction2 = 1 - beta2**state["step"]
+                step_size = group["lr"] * math.sqrt(
+                    bias_correction2) / bias_correction1
+
+                if group["weight_decay"] != 0:
+                    p_data_fp32.add_(p_data_fp32,
+                                     alpha=-group["weight_decay"] *
+                                     group["lr"])
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
                 p_data_fp32.addcdiv_(exp_avg, denom, value=-step_size)
 

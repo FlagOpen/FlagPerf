@@ -24,10 +24,15 @@ import os
 import shutil
 from typing import List, Optional
 
+<<<<<<< HEAD
 
 logger = logging.getLogger(__file__)
 
 
+=======
+logger = logging.getLogger(__file__)
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 try:
     from iopath.common.file_io import g_pathmgr as IOPathManager
 
@@ -84,9 +89,15 @@ class PathManager:
     @staticmethod
     def copy(src_path: str, dst_path: str, overwrite: bool = False) -> bool:
         if IOPathManager:
+<<<<<<< HEAD
             return IOPathManager.copy(
                 src_path=src_path, dst_path=dst_path, overwrite=overwrite
             )
+=======
+            return IOPathManager.copy(src_path=src_path,
+                                      dst_path=dst_path,
+                                      overwrite=overwrite)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return shutil.copyfile(src_path, dst_path)
 
     @staticmethod
@@ -136,6 +147,7 @@ class PathManager:
             return IOPathManager.register_handler(handler=handler)
 
     @staticmethod
+<<<<<<< HEAD
     def copy_from_local(
         local_path: str, dst_path: str, overwrite: bool = False, **kwargs
     ) -> None:
@@ -143,6 +155,17 @@ class PathManager:
             return IOPathManager.copy_from_local(
                 local_path=local_path, dst_path=dst_path, overwrite=overwrite, **kwargs
             )
+=======
+    def copy_from_local(local_path: str,
+                        dst_path: str,
+                        overwrite: bool = False,
+                        **kwargs) -> None:
+        if IOPathManager:
+            return IOPathManager.copy_from_local(local_path=local_path,
+                                                 dst_path=dst_path,
+                                                 overwrite=overwrite,
+                                                 **kwargs)
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return shutil.copyfile(local_path, dst_path)
 
     @staticmethod
@@ -166,6 +189,10 @@ class PathManager:
     """
     ioPath async PathManager methods:
     """
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
     @staticmethod
     def opena(
         path: str,
@@ -185,7 +212,12 @@ class PathManager:
                 from iopath.common.file_io import PathManager
                 IOPathManager = PathManager()
             except Exception:
+<<<<<<< HEAD
                 logging.exception("Failed to initialize ioPath PathManager object.")
+=======
+                logging.exception(
+                    "Failed to initialize ioPath PathManager object.")
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
         return IOPathManager.opena(
             path=path,
             mode=mode,

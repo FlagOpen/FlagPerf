@@ -6,6 +6,7 @@ from common import tb_dllogger as logger
 
 class Evaluator:
 
+<<<<<<< HEAD
     def __init__(self, args, dataloader):
         self.dataloader = dataloader
         self.args = args
@@ -56,6 +57,22 @@ class Evaluator:
         ema_model = None
         for model, metrics, scope in [(model, val_metrics, 'val'),
                                     (ema_model, val_ema_metrics, 'val_ema')]:
+=======
+    def __init__(self, dataloader):
+        self.dataloader = dataloader
+
+    @torch.no_grad()
+    def validate(self, epoch, step, model, criterion, val_metrics,
+                 val_ema_metrics, world_size, fp16, bf16):
+
+        val_losses = []
+        val_acc = []
+        val_wer = []
+        ema_model = None
+        valid_loader = self.dataloader
+        for model, metrics, scope in [(model, val_metrics, 'val'),
+                                      (ema_model, val_ema_metrics, 'val_ema')]:
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             if model is None:
                 continue
 
@@ -65,7 +82,12 @@ class Evaluator:
             output_keys = None
 
             assert len(valid_loader) > 1, (
+<<<<<<< HEAD
                 'Validation needs at least 2 iterations to handle empty batches.')
+=======
+                'Validation needs at least 2 iterations to handle empty batches.'
+            )
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
 
             for batch in valid_loader:
                 is_empty_batch = len(batch) == 0
@@ -88,13 +110,25 @@ class Evaluator:
                 metrics.accumulate()
 
             metrics.finish_val(scope=scope)
+<<<<<<< HEAD
             logger.log(() if epoch is None else (epoch,),  metrics, scope=scope,
                     tb_iter=step)
             
+=======
+            logger.log(() if epoch is None else (epoch, ),
+                       metrics,
+                       scope=scope,
+                       tb_iter=step)
+
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
             val_losses.append(metrics.metrics[scope]['loss'])
             val_acc = metrics.metrics[scope]['accuracy']
             if 'wer' in metrics.metrics[scope]:
                 val_wer.append(metrics.metrics[scope]['wer'])
             model.train()
             criterion.train()
+<<<<<<< HEAD
         return val_losses, val_acc, val_wer
+=======
+        return val_losses, val_acc, val_wer
+>>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
