@@ -292,22 +292,8 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
         tc.FLAGPERF_PATH, tc.VENDOR,
         case_config["model"] + "-" + case_config["framework"],
         "config/environment_variables.sh")
-<<<<<<< HEAD
     framework = case_config["framework"].split("_")[0]
     start_cmd = "cd " + dp_path + " && " + sys.executable \
-=======
-    if (os.path.isfile(env_file)):
-        start_cmd = "cd " + dp_path + " && " + sys.executable \
-                + " utils/container_manager.py -o runcmdin -c " \
-                + container_name + " -d -r \"source " + env_file \
-                + " > " + curr_log_path + "/source_env.log.txt " \
-                + "2>&1 && " \
-                + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
-                + framework + "/start_" + framework + "_task.py " \
-                + base_args + " --round " + str(count)
-    else:
-        start_cmd = "cd " + dp_path + " && " + sys.executable \
->>>>>>> d9f0d2f51a94ff4b7e8ed42c1ddc40d6434b2deb
                 + " utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -d -r \"" \
                 + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
