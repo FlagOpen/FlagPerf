@@ -69,7 +69,6 @@ def main():
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.INIT_START)
-    print("self.config",config.target_val_loss)
     # logger
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
