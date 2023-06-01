@@ -1,6 +1,4 @@
-# Copyright © 2022 BAAI. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License")
+# 本文件部分实现参考 https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/SpeechSynthesis/Tacotron2/train.py
 
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
