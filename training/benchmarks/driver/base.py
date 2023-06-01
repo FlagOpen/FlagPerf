@@ -39,16 +39,27 @@ class Driver(object):
             "--enable_extern_config",
             action="store_true",
             help="Sets True if external config parameters are allowd")
-        path, args = parser.parse_known_args()
+        
+        parser.add_argument("--data_dir",
+                            type=str,
+                            default="/mnt/dataset/",
+                            help="Data directory.")
+        parser.add_argument("--vendor",
+                        type=str,
+                        required=True,
+                        help="The accelerator vendor that run the located.")
+        known_args, unknown_args = parser.parse_known_args()
         config_manager.activate(self.config, self.mutable_params,
-                                path.extern_config_dir,
-                                path.extern_config_file,
-                                path.enable_extern_config, args)
-        if path.extern_module_dir:
-            mod_util.install_extern_modules(path.extern_module_dir,
+                                known_args.extern_config_dir,
+                                known_args.extern_config_file,
+                                known_args.enable_extern_config, known_args, unknown_args)
+
+        if known_args.extern_module_dir:
+            mod_util.install_extern_modules(known_args.extern_module_dir,
                                             self.extern_modules)
         self.logger = perf_logger.PerfLogger.get_default_logger(
             rank=self.config.local_rank)
+        
         # consider different config format between framework，e.g. pytorch & tensorflow
         try:
             log_freq = self.config.log_freq

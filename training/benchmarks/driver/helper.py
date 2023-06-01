@@ -19,17 +19,18 @@ class InitHelper:
         self.config = config
         self.update_local_rank()
 
-    def init_driver(self, global_module, local_module) -> Driver:
+    def init_driver(self, global_module, local_module, parser=None) -> Driver:
         """
         params:
             name: model name
         """
         config = self.config
         model_driver = Driver(config, config.mutable_params)
-        model_driver.setup_config(argparse.ArgumentParser(config.name))
+        parser = argparse.ArgumentParser(config.name) if parser is None else parser
+        model_driver.setup_config(parser)
         model_driver.setup_modules(global_module, local_module)
         check.check_config(model_driver.config)
-        return model_driver
+        return model_driver, parser
 
     def get_logger(self) -> perf_logger.PerfLogger:
         """get logger for FlagPerf"""
@@ -38,8 +39,7 @@ class InitHelper:
 
     def update_local_rank(self) -> int:
         """set local rank"""
-        if 'LOCAL_RANK' in os.environ:
-            self.config.local_rank = int(os.environ['LOCAL_RANK'])
+        self.config.local_rank = int(os.getenv("LOCAL_RANK", 0))
 
     def set_seed(self, seed: int, vendor: str):
         """set seed"""

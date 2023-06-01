@@ -85,34 +85,44 @@ def add_to_argparser(config: dict, parser: ArgumentParser):
 
 def _merge_dict_to_config(src: dict, target: dict, ignore_none=True):
     for arg, value in src.items():
+        # TODO：fix bug: set None in vendor_config.py a& args doesn't work
         if ignore_none and value is None:
             continue
         target[arg] = value
 
 
-def parse_from_args_and_config(base_params: dict,
-                               args=None,
+def parse_from_args_and_config(mut_params: dict,
+                               known_args=None,
+                               unknown_args=None,
                                config=None,
                                enable_extern_config=False):
+    """
+    merge agrs to the extern config, and limit mutable_param
+    """
     parser = ArgumentParser()
-    add_to_argparser(base_params, parser)
-    parsed_args = parser.parse_args(args)
+    add_to_argparser(mut_params, parser)
+    unknown_parsed_args = parser.parse_args(unknown_args)
 
     if config is None:
-        return parsed_args
+        return unknown_parsed_args
 
     # TODO: A better config method, yaml or .ini?
     config_mod = import_config(config)
     for name, value in get_properties_from_config(config_mod).items():
-        if name not in base_params:
+        if name not in mut_params:
             if not enable_extern_config:
                 continue
             print(f"SET [Unknown or immutable] CONFIG {name} = {value}")
         else:
             print(f"SET CONFIG {name} = {value}")
-        if parsed_args.__dict__.get(name) is None:
-            setattr(parsed_args, name, value)
-    return parsed_args
+            mut_params.update({name:value})
+
+        if unknown_parsed_args.__dict__.get(name) is None:
+            setattr(unknown_parsed_args, name, value)
+
+    if known_args is not None:
+        unknown_parsed_args.__dict__.update(vars(known_args))
+    return unknown_parsed_args
 
 
 def activate(base_config,
@@ -120,7 +130,9 @@ def activate(base_config,
              path: str = None,
              config_file: str = None,
              enable_extern_config=False,
-             cmd_args=None):
+             known_args=None,
+             unknown_args=None
+             ):
     """ Find and activates externally defined config parameters by
     adding or updating attributes in the base config module.
 
@@ -136,14 +148,14 @@ def activate(base_config,
 
     for mutable_param in mutable_params:
         params[mutable_param] = getattr(base_config, mutable_param)
-
     if path and not config_file:
         raise "Config file's location was not specified."
 
     ext_config = os.path.join(os.path.abspath(path), config_file)
 
-    parsed_params = parse_from_args_and_config(params, cmd_args, ext_config,
+    parsed_params = parse_from_args_and_config(params, known_args, unknown_args, ext_config,
                                                enable_extern_config)
+    
     # TODO：后续考虑换一个更优雅的方式
     if "tensorflow2" in base_config.__path__:
         base_config.override(parsed_params.__dict__, False)
@@ -155,3 +167,4 @@ def activate(base_config,
     else:
         config_path = base_config.__file__
     base_config.__dict__['config'] = config_path
+
