@@ -41,7 +41,6 @@ class Trainer:
         adapter,
         evaluator: Evaluator,
         training_state: TrainingState,
-        device: Device,
         config,
     ):
         super(Trainer, self).__init__()
@@ -50,7 +49,7 @@ class Trainer:
         self.adapter = adapter
         self.training_state = training_state
         self.grad_scaler = None
-        self.device = device
+        self.device = config.device
 
         self.optimizer = None
         self.config = config
@@ -65,12 +64,12 @@ class Trainer:
     def init(self):
         """init"""
         self.model = create_model(self.config)
+        self.model = self._init_model(self.model, self.device)
         self.model = self.adapter.convert_model(self.model)
         self.optimizer = create_optimizer(self.model, self.config)
         self.model = self.adapter.model_to_fp16(self.model)
         self.model = self.adapter.model_to_ddp(self.model)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        self.model = self._init_model(self.model, self.device)
 
     def _init_model(self, model, device):
         # resume from checkpoint
