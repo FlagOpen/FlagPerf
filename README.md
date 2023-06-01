@@ -30,7 +30,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>Paddle</td>
@@ -39,43 +39,25 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>CPM</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>CPM</td>
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl70" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" target="_parent">GLM</a></td>
+    <td class="xl70" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" target="_parent">GLM</a></td>
     <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="50.40" rowspan="3" style='height:50.40pt;border-right:none;border-bottom:none;' x:str>ResNet50</td>
+    <td class="xl65" height="50.40" rowspan="2" style='height:50.40pt;border-right:none;border-bottom:none;' x:str>ResNet50</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>under review</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>TensorFlow2</td>
@@ -84,71 +66,77 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MobileNetV2</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MobileNetV2</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>✅</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>ViT</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Faster_rcnn</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>big transfer</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>wav2vec</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Efficient Net</td>
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>ViT</td>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>mask rcnn</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>N/As</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-CLIP</td>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RetinaNet</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Seg</td>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Waveglow</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Det</td>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>tacotron2</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
+
 
 ### 部署说明
 
