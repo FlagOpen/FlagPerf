@@ -73,7 +73,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/mobilenetv2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>ViT</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Vision Transformer</td>
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/85" style="text-decoration:none" target="_parent">under review</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/85" style="text-decoration:none" target="_parent">under review</a></td>
@@ -108,7 +108,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>mask rcnn</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MaskRCNN</td>
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/75" style="text-decoration:none" target="_parent">under review</a></td>
     <td class="xl69" x:str>N/A</td>
@@ -122,7 +122,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>tacotron2</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Tacotron2</td>
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/79" style="text-decoration:none" target="_parent">under review</a></td>
     <td class="xl69" x:str>N/A</td>
