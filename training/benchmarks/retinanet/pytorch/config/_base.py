@@ -5,7 +5,7 @@ vendor: str = "nvidia"
 data_dir: str = None
 name: str = "retinanet"
 
-# Optional paramters
+# Optional parameters
 
 # =========================================================
 # data
