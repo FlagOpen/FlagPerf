@@ -8,19 +8,19 @@ import torchvision
 from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 
-from . import data_functions
+from . import data_function
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
 from driver import dist_pytorch
 
 
 def get_collate_fn(args):
-    collate_fn = data_functions.get_collate_function(args.name)
+    collate_fn = data_function.get_collate_function(args.name)
     return collate_fn
 
 
 def build_train_dataset(args):
-    trainset = data_functions.get_data_loader(args.name, args.data_dir,
+    trainset = data_function.get_data_loader(args.name, args.data_dir,
                                               args.training_files, args)
     return trainset
 
@@ -60,7 +60,7 @@ def build_eval_dataloader(valset, args):
 
 
 def build_eval_dataset(args):
-    valset = data_functions.get_data_loader(args.name, args.data_dir,
+    valset = data_function.get_data_loader(args.name, args.data_dir,
                                             args.validation_files, args)
     return valset
 

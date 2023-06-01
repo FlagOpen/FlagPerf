@@ -87,3 +87,31 @@ def batch_to_gpu(batch):
     y = to_gpu(y).float()
     len_y = to_gpu(torch.sum(len_y))
     return ((x, y), y, len_y)
+
+
+def get_collate_function(model_name, ):
+    if model_name == 'WaveGlow':
+        collate_fn = torch.utils.data.dataloader.default_collate
+    else:
+        raise NotImplementedError(
+            "unknown collate function requested: {}".format(model_name))
+
+    return collate_fn
+
+
+def get_data_loader(model_name, dataset_path, audiopaths_and_text, args):
+    if model_name == 'WaveGlow':
+        data_loader = MelAudioLoader(dataset_path, audiopaths_and_text, args)
+    else:
+        raise NotImplementedError(
+            "unknown data loader requested: {}".format(model_name))
+
+    return data_loader
+
+
+def get_batch_to_gpu(model_name):
+    if model_name == 'WaveGlow':
+        return batch_to_gpu
+    else:
+        raise NotImplementedError(
+            "unknown batch_to_gpu requested: {}".format(model_name))

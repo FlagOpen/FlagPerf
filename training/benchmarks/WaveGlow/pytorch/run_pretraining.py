@@ -69,7 +69,7 @@ def main():
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.INIT_START)
-
+    print("self.config",config.target_val_loss)
     # logger
     logger = model_driver.logger
     init_start_time = logger.previous_log_time  # init起始时间，单位ms
@@ -119,7 +119,7 @@ def main():
     while epoch >= start_epoch and epoch < config.epochs and not training_state.end_training:
         training_state.epoch = epoch
         train_epoch_items_per_sec, val_items_per_sec, val_loss, num_iters = trainer.train_one_epoch(
-            epoch, train_loader, val_loader, config, valset, iteration,
+            epoch, train_loader, val_loader, config, iteration,
             train_epoch_items_per_sec, val_loss)
         epoch += 1
 

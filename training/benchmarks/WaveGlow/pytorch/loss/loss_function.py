@@ -26,8 +26,6 @@
 # *****************************************************************************
 
 import torch
-
-
 class WaveGlowLoss(torch.nn.Module):
 
     def __init__(self, sigma=1.0):
@@ -49,3 +47,16 @@ class WaveGlowLoss(torch.nn.Module):
             z * z) / (2 * self.sigma *
                       self.sigma) - log_s_total - log_det_W_total  # noqa: E501
         return loss / (z.size(0) * z.size(1) * z.size(2))
+
+
+
+
+def get_loss_function(loss_function, sigma=1.0):
+    if loss_function == 'WaveGlow':
+        loss = WaveGlowLoss(sigma=sigma)
+    else:
+        raise NotImplementedError(
+            "unknown loss function requested: {}".format(loss_function))
+
+    loss.cuda()
+    return loss

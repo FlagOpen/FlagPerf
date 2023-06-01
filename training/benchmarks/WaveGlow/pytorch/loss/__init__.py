@@ -1,4 +1,4 @@
-from . import loss_functions
+from . import loss_function
 
 
 def create_criterion(args):
@@ -6,5 +6,5 @@ def create_criterion(args):
         sigma = args.sigma
     except AttributeError:
         sigma = None
-    criterion = loss_functions.get_loss_function(args.name, sigma)
+    criterion = loss_function.get_loss_function(args.name, sigma)
     return criterion

@@ -7,6 +7,9 @@ from utils.utils import reduce_tensor
 
 class Evaluator(object):
 
+    def __init__(self, logger):
+        self.logger = logger
+
     @torch.no_grad()
     def validate(self, model, criterion, epoch, batch_iter, world_size,
                  distributed_run, batch_to_gpu, amp_run, val_loader):

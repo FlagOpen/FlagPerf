@@ -3,13 +3,15 @@ name: str = "WaveGlow"
 dist_backend = "nccl"
 vendor: str = "nvidia"
 # tar_val_loss = -5.72  #https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
-tar_val_loss = -1  #https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
+target_val_loss = -2  #https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
+
+save_checkpoint = True
 
 #Perf
 do_train = True
 local_rank = -1
 log_freq = 1
-output = "result/"
+output = "training/result/"
 log_file = "nvlog.json"
 gradient_accumulation_steps = 1
 
