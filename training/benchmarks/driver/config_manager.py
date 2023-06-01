@@ -167,4 +167,3 @@ def activate(base_config,
     else:
         config_path = base_config.__file__
     base_config.__dict__['config'] = config_path
-

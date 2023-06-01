@@ -39,7 +39,6 @@ class Driver(object):
             "--enable_extern_config",
             action="store_true",
             help="Sets True if external config parameters are allowd")
-        
         parser.add_argument("--data_dir",
                             type=str,
                             default="/mnt/dataset/",

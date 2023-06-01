@@ -6,7 +6,6 @@ import os
 import random
 import numpy as np
 import torch
-import driver
 from driver import perf_logger, Driver, check
 
 

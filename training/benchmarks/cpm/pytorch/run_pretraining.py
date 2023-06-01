@@ -44,7 +44,7 @@ def main():
 
     check.check_config(config)
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     cpm_driver.event(Event.INIT_START)
     init_start_time = logger.previous_log_time
 
@@ -80,10 +80,10 @@ def main():
 
     training_state._trainer = trainer
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     trainer.init()
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     init_evaluation_start = time.time()
     training_state.eval_avg_loss, training_state.eval_embedding_average = evaluator.evaluate(
         trainer)
@@ -96,14 +96,14 @@ def main():
     cpm_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     if not config.do_train:
-        return config, training_state, init_evaluation_info["time"]
+        return config, training_state
 
     # training_event.on_init_end()
     cpm_driver.event(Event.INIT_END)
     init_end_time = logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
-    dist_pytorch.barrier()
+    dist_pytorch.barrier(config.vendor)
     epoch = -1
     # training_event.on_train_begin()
     cpm_driver.event(Event.TRAIN_START)
