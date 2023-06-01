@@ -32,7 +32,7 @@ torchvision.models.resnet.__dict__['model_urls'][
 ### 运行情况
 | 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(mAP) | 性能（samples/s） |
 | -------- | --------------- | ----------- | -------- | ------------- | ----------------- |
-| 单机8卡  | config_A100x1x8 | 16730.435    | 0.35     | 0.3520        | 182.24            |
+| 单机8卡  | config_A100x1x8 | 15094.1 | 0.35     | 0.3528       | 139.84       |
 
 训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.retinanet_resnet50_fpn)
 
