@@ -52,7 +52,6 @@ seed: int = 0
 dist_backend: str = 'nccl'
 num_workers: int = 4
 device: str = None
-gpu: int = None
 
 # =========================================================
 # for driver
