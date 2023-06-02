@@ -123,17 +123,19 @@ if __name__ == "__main__":
         sys.exit(0)
 
     # 训练信息写日志
-    e2e_time = time.time() - state.train_start_timestamp
-    if config_update.do_train:
+    e2e_time = time.time() - start
 
-        training_perf = state.num_trained_samples / state.raw_train_time
+    if config_update.do_train:
+        training_perf = state.num_trained_samples * config_update.n_device / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
             "training_samples_per_second": training_perf,
             "converged": state.converged,
-            "final_mAP": state.eval_mAP,
+            "final_map_bbox": state.eval_map_bbox,
+            "final_map_segm": state.eval_map_segm,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
+            "num_trained_samples": state.num_trained_samples,
         }
     else:
         finished_info = {"e2e_time": e2e_time}
