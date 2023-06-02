@@ -136,6 +136,7 @@ def activate(base_config,
         base_config.override(parsed_params.__dict__, False)
     else:
         _merge_dict_to_config(parsed_params, base_config.__dict__)
+
     if ext_config:
         config_path = ext_config
     else:
