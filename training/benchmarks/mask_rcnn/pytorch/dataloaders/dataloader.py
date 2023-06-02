@@ -1,6 +1,4 @@
-# Copyright © 2022 BAAI. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License")
+# 本文件部分代码基于 https://github.com/pytorch/vision/blob/release/0.9/references/detection/coco_utils.py 实现
 
 import copy
 import os
@@ -302,6 +300,7 @@ def get_coco(root, image_set, transforms, mode='instances'):
         "val": ("val2017",
                 os.path.join("annotations",
                              anno_file_template.format(mode, "val"))),
+        # "train": ("val2017", os.path.join("annotations", anno_file_template.format(mode, "val")))
     }
 
     t = [ConvertCocoPolysToMask()]

@@ -1,15 +1,14 @@
+# 本文件基于 https://github.com/pytorch/vision/blob/release/0.9/references/detection/coco_eval.py 实现
 import json
-
 import numpy as np
 import copy
+from collections import defaultdict
+
 import torch
 import torch._six
-
 from pycocotools.cocoeval import COCOeval
 from pycocotools.coco import COCO
 import pycocotools.mask as mask_util
-
-from collections import defaultdict
 
 import utils.utils
 
