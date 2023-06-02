@@ -23,7 +23,6 @@ from driver.helper import InitHelper
 
 # 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
 from train import trainer_adapter
-from train.device import Device
 from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
@@ -90,8 +89,7 @@ def main() -> Tuple[Any, Any]:
     eval_dataloader = build_eval_dataloader(config, val_dataset)
 
     # prepare parameters for training
-    device = Device.get_device(config)
-    criterion = nn.CrossEntropyLoss().to(device)
+    criterion = nn.CrossEntropyLoss().to(config.device)
     evaluator = Evaluator(config, eval_dataloader)
 
     training_state = TrainingState()
@@ -101,7 +99,6 @@ def main() -> Tuple[Any, Any]:
         adapter=trainer_adapter,
         evaluator=evaluator,
         training_state=training_state,
-        device=device,
         config=config,
     )
     training_state.set_trainer(trainer)
