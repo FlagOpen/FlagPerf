@@ -1,18 +1,3 @@
-### 模型backbone权重下载
-[模型backbone权重下载](https://download.pytorch.org/models/resnet50-0676ba61.pth)
-
-这一部分路径在FlagPerf/training/benchmarks/faster_rcnn/pytorch/model/\_\_init__.py中提供：
-
-```python
-torchvision.models.resnet.__dict__['model_urls'][
-    'resnet50'] = 'https://download.pytorch.org/models/resnet50-0676ba61.pth'
-```
-本case中默认配置为，从官网同路径（0676ba61）自动下载backbone权重。用户如需手动指定，可自行下载至被挂载到容器内的路径下，并于此处修改路径为"file://"+download_path
-
-### 测试数据集下载
-
-[测试数据集下载](https://cocodataset.org/)
-
 ### 天数智芯 BI-V100 GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
@@ -30,12 +15,5 @@ torchvision.models.resnet.__dict__['model_urls'][
 ### 运行情况
 | 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(mAP) | 性能（samples/s） |
 | -------- | --------------- | ----------- | -------- | ------------- | ----------------- |
-| 单机8卡  | config_A100x1x8 | 35619.838    | 0.35     | 0.3654       | 55.96            |
+| 单机8卡  | config_BI-Vx1x8 | 35619.838    | 0.35     | 0.3654       | 55.96            |
 
-训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.fasterrcnn_resnet50_fpn)
-
-### 许可证
-
-本项目基于Apache 2.0 license。
-
-本项目部分代码基于torchvision https://github.com/pytorch/vision/tree/release/0.9/references/detection 实现。
