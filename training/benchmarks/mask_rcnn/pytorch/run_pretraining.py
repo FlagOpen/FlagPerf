@@ -126,7 +126,7 @@ if __name__ == "__main__":
     e2e_time = time.time() - start
 
     if config_update.do_train:
-        training_perf = state.num_trained_samples * config_update.n_device / state.raw_train_time
+        training_perf = state.num_trained_samples / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
             "training_samples_per_second": training_perf,
