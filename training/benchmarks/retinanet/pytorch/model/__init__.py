@@ -1,7 +1,10 @@
+# Copyright © 2022 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+
 import os
 import torchvision
 from torchvision.models.detection import maskrcnn_resnet50_fpn
-
 
 def create_model(args):
     resnet50_pretrained_path = os.path.join(args.data_dir,

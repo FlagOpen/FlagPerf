@@ -25,7 +25,7 @@ num_classes: int = 90
 # =========================================================
 # loss scale
 # =========================================================
-lr: float = 0.08
+lr: float = 0.16
 weight_decay: float = 1e-4
 momentum: float = 0.9
 lr_steps: list = [16, 22]

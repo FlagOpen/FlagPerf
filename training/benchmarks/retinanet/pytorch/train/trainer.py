@@ -1,3 +1,7 @@
+# Copyright © 2022 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+
 import math
 import time
 import torch
@@ -105,10 +109,10 @@ class Trainer:
         config = self.config
 
         state.eval_map_bbox = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
-        state.eval_map_bbox = self.evaluator.coco_eval['segm'].stats.tolist()[0]
+        state.eval_map_segm = self.evaluator.coco_eval['segm'].stats.tolist()[0]
 
         
-        dist_pytorch.main_proc_print(f"epoch: {state.epoch} state.eval_map_bbox:{state.eval_map_bbox}  state.eval_map_bbox:{state.eval_map_bbox}")
+        dist_pytorch.main_proc_print(f"epoch: {state.epoch} state.eval_map_bbox:{state.eval_map_bbox}  state.eval_map_bbox:{state.eval_map_segm}")
 
         if state.eval_map_bbox >= config.target_map_bbox and state.eval_map_segm >= config.target_map_segm:
             dist_pytorch.main_proc_print(
