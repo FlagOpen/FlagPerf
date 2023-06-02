@@ -5,7 +5,7 @@ vendor: str = "nvidia"
 data_dir: str = None
 name: str = "retinanet"
 
-# Optional paramters
+# Optional parameters
 
 # =========================================================
 # data
@@ -14,7 +14,7 @@ train_data: str = "train"
 eval_data: str = "val"
 
 # use torch/hub/checkpoints/resnet50-0676ba61 as backbone weights
-# no init weights for other parts of retinanet
+# no init weights for other parts of mask-rcnn
 
 # =========================================================
 # Model

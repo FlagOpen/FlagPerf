@@ -1,7 +1,3 @@
-vendor = "nvidia"
-dist_backend = "nccl"
-
 train_batch_size = 16
-
-warmup = 0.1
-lr = 0.02
+eval_batch_size = 16
+lr = 0.16
