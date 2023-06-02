@@ -1,9 +1,14 @@
+# Copyright © 2022 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+
 import os
 import sys
 import torch
 
 import torch.distributed as dist
-from torch import nn
+from torch.optim import Optimizer
+from torch import nn, Tensor
 from torch.nn.parallel import DistributedDataParallel as DDP
 import config
 
@@ -39,9 +44,8 @@ def create_grad_scaler():
     return scaler
 
 
-def sum_loss(model, scaler, images, targets):
-    # 混合精度训练上下文管理器，如果在CPU环境中不起任何作用
-    with torch.cuda.amp.autocast(enabled=scaler is not None):
-        loss_dict = model(images, targets)
-        losses = sum(loss for loss in loss_dict.values())
-    return loss_dict, losses
+def backward(loss: Tensor, optimizer: Optimizer):
+    """backward pass"""
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()

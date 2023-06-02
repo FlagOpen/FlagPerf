@@ -1,15 +1,25 @@
+# Copyright © 2022 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+
+import math
+import time
+import torch
+import torch.utils.data
 from torch.types import Device
 import os
+import sys
 
 from model import create_model
-
-from schedulers import create_scheduler
 from optimizers import create_optimizer
-
-import utils.train.train_eval_utils as utils
+from schedulers import create_scheduler
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
+from dataloaders.dataloader import get_coco_api_from_dataset
+import utils.utils
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
 
 
@@ -21,79 +31,139 @@ class Trainer:
         self.driver = driver
         self.adapter = adapter
         self.training_state = training_state
-        self.grad_scaler = None
         self.device = device
-        self.optimizer = None
         self.config = config
-        self.model = None
         self.evaluator = evaluator
-        self.lr_scheduler = None
 
     def init(self):
-        config = self.config
-        pretrain_path = os.path.join(config.data_dir, config.pretrained_path)
-        dist_pytorch.main_proc_print( f"backbone pretrain_path:{pretrain_path}" )
-
+        torch.set_num_threads(1)
+        dist_pytorch.main_proc_print("Init progress:")
         self.model = create_model(self.config)
-        self.model.to(self.device)
+        self.model.to(self.config.device)
+
         self.model = self.adapter.convert_model(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
         self.model = self.adapter.model_to_ddp(self.model)
-        # Attention: remember to move model to device before create_optimizer, otherwise, you will get a RuntimeError:
-        # RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! when resuming training
+
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        self.grad_scaler = self.adapter.create_grad_scaler()
 
-    def train_one_epoch(self,
-                        dataloader,
-                        eval_dataloader,
-                        print_freq=50,
-                        warmup=True,
-                        scaler=None):
-
-        state = self.training_state
-        driver = self.driver
-        device = self.device
+    def train_one_epoch(self, train_dataloader, eval_dataloader):
         model = self.model
         optimizer = self.optimizer
-        driver.event(Event.EPOCH_BEGIN, state.epoch)
+        data_loader = train_dataloader
+        device = self.device
+        epoch = self.training_state.epoch
+        if self.config.distributed:
+            train_dataloader.batch_sampler.sampler.set_epoch(epoch)
 
-        mean_loss, lr = utils.train_one_epoch(model,
-                                              self.adapter,
-                                              optimizer,
-                                              dataloader,
-                                              device,
-                                              state=state,
-                                              print_freq=print_freq,
-                                              warmup=warmup,
-                                              scaler=scaler)
-        dist_pytorch.main_proc_print(f"state.epoch: {state.epoch}")
+        model.train()
+        metric_logger = utils.utils.MetricLogger(delimiter="  ")
+        metric_logger.add_meter(
+            'lr', utils.utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
+        header = 'Epoch: [{}]'.format(epoch)
 
-        # update learning rate
+        lr_scheduler = None
+        if epoch == 0:
+            warmup_factor = 1. / 1000
+            warmup_iters = min(1000, len(data_loader) - 1)
+
+            lr_scheduler = utils.utils.warmup_lr_scheduler(
+                optimizer, warmup_iters, warmup_factor)
+
+        for images, targets in metric_logger.log_every(data_loader,
+                                                       self.config.log_freq,
+                                                       header):
+            images = list(image.to(device) for image in images)
+            targets = [{k: v.to(device)
+                        for k, v in t.items()} for t in targets]
+
+            loss_dict = model(images, targets)
+
+            losses = sum(loss for loss in loss_dict.values())
+
+            # reduce losses over all GPUs for logging purpose
+            loss_dict_reduced = utils.utils.reduce_dict(loss_dict)
+            losses_reduced = sum(loss for loss in loss_dict_reduced.values())
+
+            loss_value = losses_reduced.item()
+
+            if not math.isfinite(loss_value):
+                print("Loss is {}, stopping training".format(loss_value))
+                print(loss_dict_reduced)
+                sys.exit(1)
+
+            self.adapter.backward(losses, optimizer)
+
+            if lr_scheduler is not None:
+                lr_scheduler.step()
+
+            metric_logger.update(loss=losses_reduced, **loss_dict_reduced)
+            metric_logger.update(lr=optimizer.param_groups[0]["lr"])
+
         self.lr_scheduler.step()
 
-        # evaluate after every epoch
-        det_info, seg_info = utils.evaluate(model, eval_dataloader, device)
+        self.evaluate(self.model, eval_dataloader, device=self.device)
 
-        if det_info is not None:
-            state.eval_map_bbox = det_info[0]
-
-        if seg_info is not None:
-            state.eval_map_segm = seg_info[0]
-
-        driver.event(Event.EPOCH_END, state.epoch)
-        # check training state
-        self.detect_training_status()
-        return mean_loss, lr
-
-    def detect_training_status(self):
         state = self.training_state
         config = self.config
+
+        state.eval_map_bbox = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
+        state.eval_map_segm = self.evaluator.coco_eval['segm'].stats.tolist()[0]
+
+        
+        dist_pytorch.main_proc_print(f"epoch: {state.epoch} state.eval_map_bbox:{state.eval_map_bbox}  state.eval_map_bbox:{state.eval_map_segm}")
+
         if state.eval_map_bbox >= config.target_map_bbox and state.eval_map_segm >= config.target_map_segm:
             dist_pytorch.main_proc_print(
                 f"converged_success. eval_map_bbox: {state.eval_map_bbox}, eval_map_segm:{state.eval_map_segm} \
                     target_map_bbox: {config.target_map_bbox}. target_map_segm:{config.target_map_segm}")
             state.converged_success()
 
-        return state.end_training
+        
+        state.num_trained_samples += len(data_loader.dataset)
+        
+        if epoch >= config.max_epoch:
+            state.end_training = True
+
+    @torch.no_grad()
+    def evaluate(self, model, data_loader, device):
+        coco = get_coco_api_from_dataset(data_loader.dataset)
+        self.evaluator = Evaluator(coco)
+        cpu_device = torch.device("cpu")
+        model.eval()
+        metric_logger = utils.utils.MetricLogger(delimiter="  ")
+        header = 'Test:'
+
+        for images, targets in metric_logger.log_every(data_loader,
+                                                       self.config.log_freq,
+                                                       header):
+            images = list(img.to(device) for img in images)
+
+            torch.cuda.synchronize()
+            model_time = time.time()
+            outputs = model(images)
+
+            outputs = [{k: v.to(cpu_device)
+                        for k, v in t.items()} for t in outputs]
+            model_time = time.time() - model_time
+
+            res = {
+                target["image_id"].item(): output
+                for target, output in zip(targets, outputs)
+            }
+            evaluator_time = time.time()
+            self.evaluator.update(res)
+            evaluator_time = time.time() - evaluator_time
+            metric_logger.update(model_time=model_time,
+                                 evaluator_time=evaluator_time)
+
+        # gather the stats from all processes
+        metric_logger.synchronize_between_processes()
+        print("Averaged stats:", metric_logger)
+        self.evaluator.synchronize_between_processes()
+
+        # accumulate predictions from all images
+        self.evaluator.accumulate()
+        self.evaluator.summarize()
+        return self.evaluator

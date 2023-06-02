@@ -1,6 +1,11 @@
+# Copyright © 2022 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+
 from dataclasses import dataclass
 import inspect
 import torch
+
 
 @dataclass
 class TrainingState:
@@ -9,22 +14,20 @@ class TrainingState:
     _status = 'aborted'  # later set to 'success' if termination criteria met
 
     global_steps = 0
-    skipped_steps = 0
-    iter_dataloader_idx = 0
 
     loss: float = 0.0
     eval_map_bbox :float = 0.0
     eval_map_segm :float = 0.0
 
-    epoch: int = 0
+
+    epoch: int = 1
     num_trained_samples = 0
     end_training: bool = False
     converged: bool = False
 
     init_time = 0
     raw_train_time = 0
-    
-    # 训练起始时间戳，用于resume时，累计训练时长
+
     train_start_timestamp = 0
 
     def status(self):
