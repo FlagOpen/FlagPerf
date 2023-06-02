@@ -3,7 +3,7 @@
 # Required parameters
 vendor: str = "nvidia"
 data_dir: str = None
-name: str = "retinanet"
+name: str = "mask_rcnn"
 
 # Optional parameters
 
@@ -54,7 +54,6 @@ seed: int = 0
 dist_backend: str = 'nccl'
 num_workers: int = 4
 device: str = None
-gpu: int = None
 
 # =========================================================
 # for driver
