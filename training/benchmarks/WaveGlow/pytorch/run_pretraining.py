@@ -37,7 +37,7 @@ def main():
 
     # init
     init_helper = InitHelper(config)
-    model_driver, parser = init_helper.init_driver(globals(), locals(), parser)
+    model_driver = init_helper.init_driver(globals(), locals(), parser)
     config = model_driver.config
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
