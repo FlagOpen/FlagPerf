@@ -21,7 +21,7 @@
 ### 运行情况
 | 训练资源 | 配置文件        | 运行时长(s) | 目标val_loss | 收敛val_loss | 性能(samples/s) |
 | -------- | --------------- | ----------- | ------------ | ------------ | --------------- |
-| 单机8卡  | config_A100x1x8 |  12851   | -5.7602     |    -5.7206    |    997479       |
+| 单机8卡  | config_A100x1x8 |  12851   | -5.72     |    -5.72    |    997479       |
 
 注：
 训练精度来源：https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2#results，根据官方仓库中的脚本，训练250epoch得到val_loss=-5.7602
