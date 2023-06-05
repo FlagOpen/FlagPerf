@@ -27,9 +27,3 @@
 精度说明：torchvision的 MaskRCNN 的ResNet50 backbone，在batch_size=2, lr=0.02时，精度为map_bbox=0.379, map_segm=0.346.
 FlagPerf的精度为了达到或者接近原始模型的精度，并且尽可能提高单卡GPU占用率，增大了batch_size和lr, 训练的精度和原始模型相比，略有差异。
 增大batch_size的同时，适当提高lr，会提升训练精度map，参见PR附件训练日志。
-
-
-### 许可证
-本项目基于Apache 2.0 license。
-
-本项目部分代码基于torchvision https://github.com/pytorch/vision/tree/release/0.9/references/detection 实现。

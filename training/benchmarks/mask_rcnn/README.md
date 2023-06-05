@@ -10,8 +10,13 @@ Mask R-CNN is simple to train and adds only a small overhead to Faster R-CNN, ru
 [Mask R-CNN](https://arxiv.org/abs/1703.06870) 
 
 - 模型代码来源
-  <br>
-  https://github.com/pytorch/vision/tree/release/0.9/torchvision/models/detection
+This case includes code from the BSD3.0 protocol open source project [torchvision] at https://github.com/pytorch/vision/tree/release/0.9/references/detection
+
+  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+  Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+<br>
 
 ### 数据集
 #### 数据集下载地址
