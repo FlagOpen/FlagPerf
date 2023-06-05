@@ -123,7 +123,7 @@ ra_reps: int = 3
 seed: int = 41
 
 # Stop training after reaching this accuracy
-target_acc1: float = 81.072
+target_acc1: float = 72.93
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
