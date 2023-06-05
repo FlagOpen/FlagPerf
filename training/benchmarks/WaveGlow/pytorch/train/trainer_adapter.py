@@ -5,6 +5,7 @@ import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
+
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver.dist_pytorch import main_proc_print
@@ -26,7 +27,7 @@ def model_to_fp16(model, config):
 
 def model_to_ddp(model, config):
     """model_to_ddp"""
-    if dist.is_dist_avail_and_initialized():
+    if dist_pytorch.is_dist_avail_and_initialized():
         model = DDP(model, device_ids=[config.local_rank])
     return model
 

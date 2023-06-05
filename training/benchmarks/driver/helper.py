@@ -29,7 +29,7 @@ class InitHelper:
         model_driver.setup_modules(global_module, local_module)
         check.check_config(model_driver.config)
         self.update_local_rank()
-        return model_driver
+        return model_driver, parser
 
     def get_logger(self) -> perf_logger.PerfLogger:
         """get logger for FlagPerf"""
