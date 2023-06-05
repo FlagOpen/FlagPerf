@@ -13,8 +13,7 @@ from typing import Any, Tuple
 
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
-                                             "../../")))  # benchmarks目录
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 # 本地库
 import config
 from driver import Event, dist_pytorch

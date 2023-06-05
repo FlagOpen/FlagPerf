@@ -26,129 +26,121 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl65" x:str>天数智芯</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>BERT</td>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert" style="text-decoration:none" target="_parent">BERT</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/bert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert/paddle" style="text-decoration:none" target="_parent">Paddle</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert-paddle" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/cpm" style="text-decoration:none" target="_parent">CPM</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/cpm/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/cpm-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/cpm-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/cpm-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="50.40" rowspan="1" style='height:50.40pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" style="text-decoration:none" target="_parent">GLM</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/glm-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/glm-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="50.40" rowspan="2" style='height:50.40pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/resnet50" style="text-decoration:none" target="_parent">ResNet50</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/resnet50/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/resnet50-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/resnet50-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/resnet50-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/resnet50/tensorflow2" style="text-decoration:none" target="_parent">TensorFlow2</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/resnet50-tensorflow2" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2" style="text-decoration:none" target="_parent">MobileNetV2</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mobilenetv2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/mobilenetv2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/mobilenetv2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/vit-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/vit-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+   <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn" style="text-decoration:none" target="_parent">FasterRCNN</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer" style="text-decoration:none" target="_parent">BigTransfer</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bigtransfer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2" style="text-decoration:none" target="_parent">Wav2Vec2</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/wav2vec2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/efficientnet" style="text-decoration:none" target="_parent">EfficientNet</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/efficientnet/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/efficientnet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/efficientnet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MaskRCNN</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>✅</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/75" style="text-decoration:none" target="_parent">under review</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>CPM</td>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RetinaNet</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>✅</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/89" style="text-decoration:none" target="_parent">under review</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl70" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm" target="_parent">GLM</a></td>
-    <td class="xl71" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch" target="_parent">PyTorch</a></td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>✅</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="50.40" rowspan="3" style='height:50.40pt;border-right:none;border-bottom:none;' x:str>ResNet50</td>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Tacotron2</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/79" style="text-decoration:none" target="_parent">under review</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>TensorFlow2</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MobileNetV2</td>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Waveglow</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>ViT</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>N/As</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-CLIP</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Seg</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>EVA-Det</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>doing</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/92" style="text-decoration:none" target="_parent">under review</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
+
+
+
+* 你可以点击**模型或训练框架**来跳转到**对应case的训练脚本**，✅来跳转到**对应厂商的运行配置**，**under review**来跳转到**对应的Pull Request**
+
 
 ### 部署说明
 
@@ -220,7 +212,7 @@ __Tips：__
 
  * 请根据自己所在地区，选用合适的pip源来配置PIP_SOURCE
  * 每次运行可配置多个benchmark case，每个benchmark case可以通过repeat来配置运行次数
- * FlagPerf使用CASES变量中的键（key）来索引相应模型（model，如bert），框架（framework，如pytorch），硬件类型（hardware_model，如A100）,主机数量（nnodes，如1），计算卡数量（nproc，如8），和重复测试次数（repeat，如1），以冒号:为分隔符，按照“model:framework:hardware_model:nnodes:nproc:repeat”的格式以字符串存储。键对应的值为运行这一样例对应数据/模型权重所在目录
+ * FlagPerf使用CASES变量中的键（key）来索引相应模型（model，如bert），框架（framework，可选pytorch、pytorch_1.13），硬件类型（hardware_model，如A100）,主机数量（nnodes，如1），计算卡数量（nproc，如8），和重复测试次数（repeat，如1），以冒号:为分隔符，按照“model:framework:hardware_model:nnodes:nproc:repeat”的格式以字符串存储。键对应的值为运行这一样例对应数据/模型权重所在目录
  * 例如，用户在目录/abc/def/data/存放了模型bert在框架pytorch下面运行的数据集与预训练权重，希望在2机8卡A100（共16卡）的环境上测试这一任务，重复3次取平均值，则需要在CASES中增加"bert:pytorch:A100:2:8:3":"/abc/def/data/"这一键值对。key中的bert为模型，pytorch为框架，A100为硬件类型，2为主机数量，8为每个主机上面的计算卡数量，3为重复次数，"abc/def/data/"为数据和权重的存放路径
 
 ```
