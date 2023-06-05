@@ -37,8 +37,9 @@ lr_gamma: float = 0.1
 train_batch_size: int = 16
 eval_batch_size: int = 16
 
-target_map_bbox: float = 0.3558
-target_map_segm: float = 0.3185
+# https://github.com/pytorch/vision/blob/main/torchvision/models/detection/mask_rcnn.py
+target_map_bbox: float = 0.38
+target_map_segm: float = 0.34
 
 max_epoch: int = 26
 
