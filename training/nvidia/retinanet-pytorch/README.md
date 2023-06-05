@@ -35,9 +35,3 @@ torchvision.models.resnet.__dict__['model_urls'][
 | 单机8卡  | config_A100x1x8 | 14978.137 | 0.35     | 0.3528 | 140.92            |
 
 训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.retinanet_resnet50_fpn)
-
-### 许可证
-
-本项目基于Apache 2.0 license。
-
-本项目部分代码基于torchvision https://github.com/pytorch/vision/tree/release/0.9/references/detection 实现。
