@@ -16,7 +16,6 @@ class InitHelper:
 
     def __init__(self, config: object) -> None:
         self.config = config
-        self.update_local_rank()
 
     def init_driver(self, global_module, local_module) -> Driver:
         """
@@ -28,6 +27,7 @@ class InitHelper:
         model_driver.setup_config(argparse.ArgumentParser(config.name))
         model_driver.setup_modules(global_module, local_module)
         check.check_config(model_driver.config)
+        self.update_local_rank()
         return model_driver
 
     def get_logger(self) -> perf_logger.PerfLogger:
