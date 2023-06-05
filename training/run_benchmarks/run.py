@@ -160,7 +160,7 @@ def prepare_running_env(dp_path, container_name, case_config):
     framework = case_config["framework"]
     prepare_cmd = "cd " + dp_path + " && " + sys.executable \
                   + " utils/container_manager.py -o runcmdin -c " \
-                  + container_name + " -t 1800 -r \"pip install loguru > /dev/null && python3 " \
+                  + container_name + " -t 1800 -r \"python3 " \
                   + tc.FLAGPERF_PATH + "/" \
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
