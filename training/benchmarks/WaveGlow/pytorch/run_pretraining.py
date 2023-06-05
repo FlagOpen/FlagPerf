@@ -121,7 +121,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # 训练信息写日志
-    e2e_time = time.time() - state.train_start_timestamp
+    e2e_time = time.time() - start
     if config_update.do_train:
         finished_info = {
             "e2e_time": e2e_time,
