@@ -30,7 +30,6 @@ class Trainer:
         self.logger = init_dllogger(config)
 
     def init(self):
-        # torch.set_num_threads(1)
         dist_pytorch.main_proc_print("Init progress:")
         self.model = create_model(self.config)
         self.model.to(self.config.device)
@@ -41,7 +40,6 @@ class Trainer:
         self.scaler = self.adapter.create_grad_scaler(self.config)
         self.criterion = create_criterion(self.config)
         self.batch_to_gpu = data_function.get_batch_to_gpu(self.config.name)
-        self.world_size = dist_pytorch.get_world_size()
         self.evaluator = Evaluator(self.logger)
 
     def train_one_epoch(self, epoch, train_loader, val_loader, config,
@@ -56,7 +54,7 @@ class Trainer:
         reduced_loss = 0
 
         self.model.train()
-        if self.world_size > 1:
+        if self.config.world_size > 1:
             train_loader.sampler.set_epoch(epoch)
 
         for i, batch in enumerate(train_loader):
@@ -83,8 +81,8 @@ class Trainer:
                 y_pred = self.model(x)
                 loss = self.criterion(y_pred, y)
 
-            if self.world_size > 1:
-                reduced_loss = reduce_tensor(loss.data, self.world_size).item()
+            if self.config.world_size > 1:
+                reduced_loss = reduce_tensor(loss.data, self.config.world_size).item()
                 reduced_num_items = reduce_tensor(num_items.data, 1).item()
             else:
                 reduced_loss = loss.item()
@@ -140,7 +138,7 @@ class Trainer:
         self.logger.log(step=(epoch, ), data={'train_epoch_time': epoch_time})
 
         val_loss, val_items_per_sec = self.evaluator.validate(
-            self.model, self.criterion, epoch, iteration, self.world_size, self.world_size > 1, self.batch_to_gpu, self.config.amp, val_loader)
+            self.model, self.criterion, epoch, iteration, self.config.world_size, self.config.world_size > 1, self.batch_to_gpu, self.config.amp, val_loader)
 
         self.training_state.val_loss = val_loss
 
@@ -162,6 +160,6 @@ class Trainer:
             save_checkpoint(self.model, self.optimizer, self.scaler, epoch,
                             self.config.model_config, self.config.output,
                             self.config.name, self.config.local_rank,
-                            self.world_size)
+                            self.config.world_size)
 
         return train_epoch_items_per_sec, val_items_per_sec, val_loss, num_iters

@@ -220,7 +220,7 @@ __Tips：__
 
  * 请根据自己所在地区，选用合适的pip源来配置PIP_SOURCE
  * 每次运行可配置多个benchmark case，每个benchmark case可以通过repeat来配置运行次数
- * FlagPerf使用CASES变量中的键（key）来索引相应模型（model，如bert），框架（framework，如pytorch），硬件类型（hardware_model，如A100）,主机数量（nnodes，如1），计算卡数量（nproc，如8），和重复测试次数（repeat，如1），以冒号:为分隔符，按照“model:framework:hardware_model:nnodes:nproc:repeat”的格式以字符串存储。键对应的值为运行这一样例对应数据/模型权重所在目录
+ * FlagPerf使用CASES变量中的键（key）来索引相应模型（model，如bert），框架（framework，可选pytorch、pytorch_1.13），硬件类型（hardware_model，如A100）,主机数量（nnodes，如1），计算卡数量（nproc，如8），和重复测试次数（repeat，如1），以冒号:为分隔符，按照“model:framework:hardware_model:nnodes:nproc:repeat”的格式以字符串存储。键对应的值为运行这一样例对应数据/模型权重所在目录
  * 例如，用户在目录/abc/def/data/存放了模型bert在框架pytorch下面运行的数据集与预训练权重，希望在2机8卡A100（共16卡）的环境上测试这一任务，重复3次取平均值，则需要在CASES中增加"bert:pytorch:A100:2:8:3":"/abc/def/data/"这一键值对。key中的bert为模型，pytorch为框架，A100为硬件类型，2为主机数量，8为每个主机上面的计算卡数量，3为重复次数，"abc/def/data/"为数据和权重的存放路径
 
 ```

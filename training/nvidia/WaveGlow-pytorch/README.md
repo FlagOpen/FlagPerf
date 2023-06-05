@@ -1,6 +1,6 @@
 ### 数据集下载
 
-[数据集下载](../../benchmarks/tacotron2/README.md#数据集下载地址)
+[数据集下载](../../benchmarks/WaveGlow/README.md#数据集下载地址)
 
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置

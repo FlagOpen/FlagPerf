@@ -2,7 +2,7 @@
 name: str = "WaveGlow"
 dist_backend = "nccl"
 vendor: str = "nvidia"
-tar_val_loss = -5.72  #https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
+target_val_loss = -10 #-5.72  #https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
 
 save_checkpoint = True
 

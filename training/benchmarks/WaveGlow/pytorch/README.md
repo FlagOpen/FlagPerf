@@ -31,14 +31,7 @@ The WaveGlow model is a flow-based generative model that generates audio samples
 
 
 #### 预处理
-1. 进入tacotron2数据集路径  cd  <YOUR_TACOTRON2_DATASET_PATH>
-2. 下载数据集 wget https://data.keithito.com/data/speech/LJSpeech-1.1.tar.bz2
-3. 解压缩  tar zjvf LJSpeech-1.1.tar.bz2
-4. git clone https://github.com/NVIDIA/DeepLearningExamples
-5. 拷贝filelists目录到数据集路径。 cp -R DeepLearningExamples/PyTorch/SpeechSynthesis/Tacotron2/filelists <YOUR_TACOTRON2_DATASET_PATH>
-6. 将tacotron2/scripts/prepare_mels.sh脚本拷贝到  <YOUR_TACOTRON2_DATASET_PATH>
-7. 生成LJSpeech-1.1/mels目录下的数据：cd <YOUR_TACOTRON2_DATASET_PATH> && sh prepare_mels.sh
-8. tree . -L 2，查看目录结构如下
+参考：https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
 
 ``` bash
 .
