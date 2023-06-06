@@ -84,13 +84,13 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer" style="text-decoration:none" target="_parent">BigTransfer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bigtransfer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/97" style="text-decoration:none" target="_parent">Under Review</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
@@ -108,34 +108,35 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MaskRCNN</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/75" style="text-decoration:none" target="_parent">under review</a></td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn" style="text-decoration:none" target="_parent">MaskRCNN</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RetinaNet</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/89" style="text-decoration:none" target="_parent">under review</a></td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet" style="text-decoration:none" target="_parent">RetinaNet</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Tacotron2</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/79" style="text-decoration:none" target="_parent">under review</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2" style="text-decoration:none" target="_parent">Tacotron2</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/tacotron2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/98" style="text-decoration:none" target="_parent">Under Review</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Waveglow</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/92" style="text-decoration:none" target="_parent">under review</a></td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow" style="text-decoration:none" target="_parent">WaveGlow</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/WaveGlow-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
+
 
 
 
