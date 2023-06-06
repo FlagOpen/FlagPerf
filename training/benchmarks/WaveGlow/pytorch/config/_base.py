@@ -4,7 +4,7 @@ dist_backend = "nccl"
 vendor: str = "nvidia"
 target_val_loss = -5.72  #https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
 
-save_checkpoint = True
+save_checkpoint = False
 
 #Perf
 do_train = True
