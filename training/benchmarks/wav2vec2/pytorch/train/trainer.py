@@ -22,7 +22,6 @@ from common.helpers import Checkpointer
 from model import create_model
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
-from optimizer import create_optimizer
 from loss.criterion import Wav2vecCriterion
 
 
@@ -50,7 +49,7 @@ class Trainer:
     def init(self):
         self.model = create_model(self.config)
         self.model = self.init_model(self.model, self.device)
-        self.optimizer = create_optimizer(self.model, self.config)
+        self.optimizer = self.adapter.create_optimizer(self.model, self.config)
         self.optim = self.optimizer
 
         Metrics = W2v2Metrics
@@ -153,7 +152,7 @@ class Trainer:
                 grads_mult_factor = world_size / self.metrics.partials[
                     'sample_size']
 
-                if self.config.optimizer == 'adam' and not (self.config.fp16
+                if self.config.optimizer == 'fused_adam' and not (self.config.fp16
                                                        or self.config.bf16):
                     # adam and non-amp optimizer - can use 'scale' kwarg for step
                     # and defer grad multiplication
@@ -168,7 +167,7 @@ class Trainer:
                         # calculate grad norm, maybe clip
                         grad_norm = self.optim.clip_grad_norm(self.config.clip_norm)
 
-                    if self.config.optimizer == 'adam' and not (self.config.fp16
+                    if self.config.optimizer == 'fused_adam' and not (self.config.fp16
                                                            or self.config.bf16):
                         self.scaler.step(self.optim,
                                          scale=1. / grads_mult_factor)

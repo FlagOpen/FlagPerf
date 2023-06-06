@@ -9,6 +9,7 @@ https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/SpeechRecogni
 
 ### 数据集下载地址(global proxy)
 http://www.openslr.org/resources/12
+请参考 https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechRecognition/wav2vec2#quick-start-guide 下载和处理数据
 
 
 ### 框架与芯片支持情况
