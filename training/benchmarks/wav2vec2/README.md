@@ -10,8 +10,6 @@ https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/SpeechRecogni
 ### 数据集下载地址(global proxy)
 数据来源 https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechRecognition/wav2vec2#quick-start-guide
 
-下载脚本已迁移至
-
 执行
 
 bash training/benchmarks/wav2vec2/pytorch/scripts/download_data.sh

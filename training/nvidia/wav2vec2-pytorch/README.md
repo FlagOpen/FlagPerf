@@ -1,7 +1,13 @@
 
-### 数据集准备
 
-请参考 https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechRecognition/wav2vec2#quick-start-guide 下载和处理数据
+### 数据集下载地址(global proxy)
+数据来源 https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechRecognition/wav2vec2#quick-start-guide
+
+执行
+
+bash training/benchmarks/wav2vec2/pytorch/scripts/download_data.sh
+
+DATASET_DIR=[PATH]  bash training/benchmarks/wav2vec2/pytorch/scripts/generate_filelists.sh
 
 
 ### 运行情况
