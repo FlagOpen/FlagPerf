@@ -127,7 +127,6 @@ def reduce_tensor(tensor, num_gpus):
 
 def init_dllogger(config):
     if config.local_rank == 0:
-        # log_file = os.path.join(config.output, config.log_file)
         DLLogger.init(backends=[
             JSONStreamBackend(Verbosity.DEFAULT, config.log_file),
             StdOutBackend(Verbosity.VERBOSE)

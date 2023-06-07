@@ -21,8 +21,10 @@
 | 单机1卡  | config_A100x1x1 |      |       |    |     |             |
 | 单机2卡  | config_A100x1x2 |      |       |    |     |             |
 | 单机4卡  | config_A100x1x4 |      |       |    |     |             |
-| 单机8卡  | config_A100x1x8 |      |     |    |    |             |
+| 单机8卡  | config_A100x1x8 |   328383.49   |   82.672  |  82.672  |  750600  |    2340.6    |
 | 两机8卡  | config_A100x2x8 |      |       |    |     |             |
+
+[官方精度](https://github.com/pytorch/vision/blob/main/torchvision/models/efficientnet.py#L669)为84.228，按照[官方配置](https://github.com/pytorch/vision/blob/main/references/classification/README.md)，训完得到的精度为82.672，后续排期优化
 
 ### 许可证
 
