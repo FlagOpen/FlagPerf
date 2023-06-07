@@ -9,9 +9,9 @@ Please refer to this paper for a detailed description of BERT:
 
 
 ###  模型代码来源
-PyTorch && paddle Case
+PyTorch && Paddle Case
 This repository includes software from https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA/benchmarks/bert/implementations
-licensed under the Apache License 2.0.
+licensed under the Apache License, Version 2.0.
 
 Some of the files in this directory were modified by BAAI in 2023 to support FlagPerf.
 

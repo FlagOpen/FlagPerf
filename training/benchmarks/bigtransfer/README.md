@@ -9,7 +9,7 @@
 - 模型代码来源
   
 This repository includes software from https://github.com/google-research/big_transfer
-licensed under the Apache License 2.0.
+licensed under the Apache License, Version 2.0.
 
 Some of the files in this directory were modified by BAAI in 2023 to support FlagPerf.
 
