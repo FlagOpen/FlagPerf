@@ -1,19 +1,6 @@
-import torch.distributed as dist
 import torch
 
 from torch import nn
-from torch.nn.parallel import DistributedDataParallel as DDP
-      
-from common.fairseq.optim.fused_adam import get_fused_adam_class
-from driver.dist_pytorch import main_proc_print
-
-
-def convert_model(model: nn.Module) -> nn.Module:
-    return model
-
-
-def model_to_fp16(model):
-    return model
 
 def create_optimizer(model, args):
 
