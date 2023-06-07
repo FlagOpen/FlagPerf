@@ -7,6 +7,11 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
 更多模型及框架支持持续开发中，欢迎加入共同建设，助力AI产业生态发展。
 
 ----------
+
+<table border=“1”> <tr> <td style=“text-align:center;vertical-align:middle;”><b>姓名</b></td> 
+<td style=“text-align:center;vertical-align:middle;”><b>年龄</b></td>
+</tr> <tr> <td style=“text-align:center;vertical-align:middle;”><font color=“red”>张三</font></td>
+<td style=“text-align:center;vertical-align:middle;”><font color=“blue”>18</font></td> </tr> </table>
 ### 支持模型列表
 <table width="960" border="0" cellpadding="0" cellspacing="0" style='width:960pt;border-collapse:collapse;table-layout:fixed;'>
    <col width="73.60" style='mso-width-source:userset;mso-width-alt:3588;'/>
@@ -17,7 +22,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <tr height="16.80" class="xl65" style='height:16.80pt;'>
     <td class="xl66" height="16.80" width="73.60" rowspan="2" colspan="1" style='height:16.80pt;width:73.60pt;' x:str>模型</td>
     <td class="xl66" width="70" rowspan="2" colspan="1" style='width:70.00pt;' x:str>框架</td>
-    <td class="xl67" width="581.95" colspan="3" style='width:581.95pt;border-right:none;border-bottom:none;' x:str>厂商</td>
+    <td class="xl67" width="581.95" colspan="3" style=“text-align:center;vertical-align:middle;“ x:str>厂商</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>英伟达</td> 
