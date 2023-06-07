@@ -20,7 +20,6 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl67" width="581.95" colspan="3" style='width:581.95pt;border-right:none;border-bottom:none;' x:str>厂商</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td height="16.80" colspan="2" style='height:16.80pt;mso-ignore:colspan;'></td>
     <td class="xl65" x:str>英伟达</td> 
     <td class="xl65" x:str>昆仑芯</td>
     <td class="xl65" x:str>天数智芯</td>
