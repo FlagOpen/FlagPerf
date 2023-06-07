@@ -137,15 +137,15 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
   </table>
 
 
-| 模型      |  框架   | | 厂商 |    |
+|       |     | | |    |
 |----------|----------|--------|-------|-------|
-|          |        |   英伟达   |昆仑芯 | 天数智芯 |
+|  模型        |    框架    |   英伟达   |昆仑芯 | 天数智芯 |
 | BERT              | PyTorch | ✅    | ✅   | ✅   |
 |                   | Paddle  | ✅    | N/A  | N/A  |
 | CPM               | PyTorch | ✅    | ✅   | ✅   |
 | GLM               | PyTorch | ✅    | ✅   | ✅   |
 | ResNet50          | PyTorch | ✅    | ✅   | ✅   |
-|                   | TensorFlow2| ✅   | N/A  | N/A  |
+|                   | TensorFlow2| ✅   | N/A  |
 | MobileNetV2       | PyTorch | ✅    | ✅   | ✅   |
 | VisionTransformer | PyTorch | ✅    | ✅   | N/A |
 | FasterRCNN        | PyTorch | ✅    | N/A | ✅   |
