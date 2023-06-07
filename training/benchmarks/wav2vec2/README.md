@@ -12,7 +12,7 @@ https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/SpeechRecogni
 
 执行
 
-bash training/benchmarks/wav2vec2/pytorch/scripts/download_data.sh
+DATASET_DIR=[PATH]  bash training/benchmarks/wav2vec2/pytorch/scripts/download_data.sh
 
 DATASET_DIR=[PATH]  bash training/benchmarks/wav2vec2/pytorch/scripts/generate_filelists.sh
 
