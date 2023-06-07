@@ -136,6 +136,29 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    </tr>
   </table>
 
+
+| 模型      |  框架   | | 厂商 |    |
+|----------|----------|--------|-------|-------|
+|          |        |   英伟达   |昆仑芯 | 天数智芯 |
+| BERT              | PyTorch | ✅    | ✅   | ✅   |
+|                   | Paddle  | ✅    | N/A  | N/A  |
+| CPM               | PyTorch | ✅    | ✅   | ✅   |
+| GLM               | PyTorch | ✅    | ✅   | ✅   |
+| ResNet50          | PyTorch | ✅    | ✅   | ✅   |
+|                   | TensorFlow2| ✅   | N/A  | N/A  |
+| MobileNetV2       | PyTorch | ✅    | ✅   | ✅   |
+| VisionTransformer | PyTorch | ✅    | ✅   | N/A |
+| FasterRCNN        | PyTorch | ✅    | N/A | ✅   |
+| BigTransfer       | PyTorch | ✅    | ✅   | N/A |
+| Wav2Vec2          | PyTorch | ✅    | ✅   | N/A |
+| EfficientNet      | PyTorch | ✅    | ✅   | N/A |
+| MaskRCNN          | PyTorch | ✅    | N/A | N/A |
+| RetinaNet         | PyTorch | ✅    | N/A | N/A |
+| Tacotron2         | PyTorch | ✅    | ✅   | N/A |
+| WaveGlow          | PyTorch | ✅    | ✅   | N/A |
+
+
+
 * 你可以点击**模型或训练框架**来跳转到**对应case的训练脚本**，✅来跳转到**对应厂商的运行配置**，**under review**来跳转到**对应的Pull Request**
 
 
