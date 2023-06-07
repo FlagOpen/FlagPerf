@@ -7,7 +7,11 @@
 [Big Transfer](https://www.ecva.net/papers/eccv_2020/papers_ECCV/papers/123500477.pdf) 
 
 - 模型代码来源
-[Google(author)](https://github.com/google-research/big_transfer) 
+  
+This repository includes software from https://github.com/google-research/big_transfer
+licensed under the Apache License 2.0.
+
+Some of the files in this directory were modified by BAAI in 2023 to support FlagPerf.
 
 ### 数据集
 #### 数据集下载地址

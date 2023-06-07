@@ -29,8 +29,3 @@
 | 单机4卡  | config_A100x1x4 | 1651.28     | 0.8      | 0.8017   | 3454    | 298.22           |
 | 单机8卡  | config_A100x1x8 | 1648.99     | 0.92     | 0.9201   | 3397    | 586.92           |
 | 两机8卡  | config_A100x2x8 | 1453.51     | 0.92     | 0.9208   | 2760    | 1092.23          |
-
-### 许可证
-
-本项目基于Apache 2.0 license。
-本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。

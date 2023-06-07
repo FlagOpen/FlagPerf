@@ -24,7 +24,3 @@
 | 单机8卡  | config_A100x1x8 |      |     |    |    |             |
 | 两机8卡  | config_A100x2x8 |      |       |    |     |             |
 
-### 许可证
-
-
-本项目基于Apache 2.0 license。
