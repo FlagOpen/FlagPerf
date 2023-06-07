@@ -15,12 +15,10 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <col width="195.80" style='mso-width-source:userset;mso-width-alt:9547;'/>
    <col width="185.40" style='mso-width-source:userset;mso-width-alt:9040;'/>
    <tr height="16.80" class="xl65" style='height:16.80pt;'>
-    <td class="xl66" height="16.80" width="73.60" style='height:16.80pt;width:73.60pt;' x:str>模型</td>
-    <td class="xl66" width="70" style='width:70.00pt;' x:str>框架</td>
-    <td class="xl67" width="581.95" colspan="3" style='width:581.95pt;border-right:none;border-bottom:none;' x:str>厂商</td>
+    <td class="xl66" width="73.60" rowspan="2" colspan="1" style='width:70.00pt;' x:str>模型</td>
+    <td class="xl66" width="70"  rowspan="2" colspan="1" style='width:70.00pt;' x:str>框架</td>
+<td class=“xl67” width=“581.95” rowspan=“1” colspan=“1” style=‘width:581.95pt;border-right:none;border-bottom:none;text-align:center;vertical-align:middle;’ x:str>厂商</td>
    </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td height="16.80" colspan="2" style='height:16.80pt;mso-ignore:colspan;'></td>
     <td class="xl65" x:str>英伟达</td>
     <td class="xl65" x:str>昆仑芯</td>
     <td class="xl65" x:str>天数智芯</td>
