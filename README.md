@@ -17,11 +17,11 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <tr height="16.80" class="xl65" style='height:16.80pt;'>
     <td class="xl66" width="73.60" rowspan="2" colspan="1" style='width:70.00pt;' x:str>模型</td>
     <td class="xl66" width="70"  rowspan="2" colspan="1" style='width:70.00pt;' x:str>框架</td>
-<td class=“xl67” width=“581.95” rowspan=“1” colspan=“1” style=‘width:581.95pt;border-right:none;border-bottom:none;text-align:center;vertical-align:middle;’ x:str>厂商</td>
-   </tr>
-    <td class="xl65" x:str>英伟达</td>
-    <td class="xl65" x:str>昆仑芯</td>
-    <td class="xl65" x:str>天数智芯</td>
+<td class=“xl67” width=“581.95” rowspan=“1” colspan=“1” style=‘width:681.95pt;border-right:none;border-bottom:none;text-align:center;vertical-align:middle;’ x:str>厂商</td>
+   </tr>     
+    <td class="xl65"  style=‘text-align:center;vertical-align:middle;’ x:str>英伟达</td> 
+    <td class="xl65" style=‘text-align:center;vertical-align:middle;’ x:str>昆仑芯</td>
+    <td class="xl65"  style=‘text-align:center;vertical-align:middle;’ x:str>天数智芯</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert" style="text-decoration:none" target="_parent">BERT</a></td>
@@ -88,14 +88,14 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer" style="text-decoration:none" target="_parent">BigTransfer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bigtransfer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/97" style="text-decoration:none" target="_parent">Under Review</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/97" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2" style="text-decoration:none" target="_parent">Wav2Vec2</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/wav2vec2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
@@ -123,14 +123,14 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2" style="text-decoration:none" target="_parent">Tacotron2</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/tacotron2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/98" style="text-decoration:none" target="_parent">Under Review</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/98" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow" style="text-decoration:none" target="_parent">WaveGlow</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/WaveGlow-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
