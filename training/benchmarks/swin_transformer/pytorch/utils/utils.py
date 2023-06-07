@@ -12,24 +12,24 @@ from torch._six import inf
 
 
 def load_checkpoint(config, model, optimizer, lr_scheduler, loss_scaler, logger):
-    logger.info(f"==============> Resuming form {config.MODEL.RESUME}....................")
-    if config.MODEL.RESUME.startswith('https'):
+    logger.info(f"==============> Resuming form {config.model.resume}....................")
+    if config.model.resume.startswith('https'):
         checkpoint = torch.hub.load_state_dict_from_url(
-            config.MODEL.RESUME, map_location='cpu', check_hash=True)
+            config.model.resume, map_location='cpu', check_hash=True)
     else:
-        checkpoint = torch.load(config.MODEL.RESUME, map_location='cpu')
+        checkpoint = torch.load(config.model.resume, map_location='cpu')
     msg = model.load_state_dict(checkpoint['model'], strict=False)
     logger.info(msg)
     max_accuracy = 0.0
-    if not config.EVAL_MODE and 'optimizer' in checkpoint and 'lr_scheduler' in checkpoint and 'epoch' in checkpoint:
+    if not config.eval_model and 'optimizer' in checkpoint and 'lr_scheduler' in checkpoint and 'epoch' in checkpoint:
         optimizer.load_state_dict(checkpoint['optimizer'])
         lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
         config.defrost()
-        config.TRAIN.START_EPOCH = checkpoint['epoch'] + 1
+        config.train.start_epoch = checkpoint['epoch'] + 1
         config.freeze()
         if 'scaler' in checkpoint:
             loss_scaler.load_state_dict(checkpoint['scaler'])
-        logger.info(f"=> loaded successfully '{config.MODEL.RESUME}' (epoch {checkpoint['epoch']})")
+        logger.info(f"=> loaded successfully '{config.model.resume}' (epoch {checkpoint['epoch']})")
         if 'max_accuracy' in checkpoint:
             max_accuracy = checkpoint['max_accuracy']
 
@@ -39,8 +39,8 @@ def load_checkpoint(config, model, optimizer, lr_scheduler, loss_scaler, logger)
 
 
 def load_pretrained(config, model, logger):
-    logger.info(f"==============> Loading weight {config.MODEL.PRETRAINED} for fine-tuning......")
-    checkpoint = torch.load(config.MODEL.PRETRAINED, map_location='cpu')
+    logger.info(f"==============> Loading weight {config.model.pretrained} for fine-tuning......")
+    checkpoint = torch.load(config.model.pretrained, map_location='cpu')
     state_dict = checkpoint['model']
 
     # delete relative_position_index since we always re-init it
@@ -122,7 +122,7 @@ def load_pretrained(config, model, logger):
     msg = model.load_state_dict(state_dict, strict=False)
     logger.warning(msg)
 
-    logger.info(f"=> loaded successfully '{config.MODEL.PRETRAINED}'")
+    logger.info(f"=> loaded successfully '{config.model.pretrained}'")
 
     del checkpoint
     torch.cuda.empty_cache()
@@ -137,7 +137,7 @@ def save_checkpoint(config, epoch, model, max_accuracy, optimizer, lr_scheduler,
                   'epoch': epoch,
                   'config': config}
 
-    save_path = os.path.join(config.OUTPUT, f'ckpt_epoch_{epoch}.pth')
+    save_path = os.path.join(config.output, f'ckpt_epoch_{epoch}.pth')
     logger.info(f"{save_path} saving......")
     torch.save(save_state, save_path)
     logger.info(f"{save_path} saved !!!")

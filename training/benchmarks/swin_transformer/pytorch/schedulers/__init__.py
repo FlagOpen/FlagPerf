@@ -5,37 +5,49 @@ from timm.scheduler.scheduler import Scheduler
 
 
 def create_scheduler(config, optimizer, n_iter_per_epoch):
-    num_steps = int(config.TRAIN.EPOCHS * n_iter_per_epoch)
-    warmup_steps = int(config.TRAIN.WARMUP_EPOCHS * n_iter_per_epoch)
-    decay_steps = int(config.TRAIN.LR_SCHEDULER.DECAY_EPOCHS * n_iter_per_epoch)
+    
+    # linear scale the learning rate according to total batch size, may not be optimal
+    linear_scaled_warmup_lr = config.train_warmup_lr * config.train_batch_size * config.n_device / 512.0
+    linear_scaled_min_lr = config.train_min_lr * config.train_batch_size * config.n_device / 512.0
+    # gradient accumulation also need to scale the learning rate
+    if config.train_accumulation_steps > 1:
+        linear_scaled_warmup_lr = linear_scaled_warmup_lr * config.train_accumulation_steps
+        linear_scaled_min_lr = linear_scaled_min_lr * config.train_accumulation_steps
+
+    config.train_warmup_lr = linear_scaled_warmup_lr
+    config.train_min_lr = linear_scaled_min_lr
+
+    num_steps = int(config.train_epochs * n_iter_per_epoch)
+    warmup_steps = int(config.train_warmup_epochs * n_iter_per_epoch)
+    decay_steps = int(config.train_lr_scheduler_decay_epochs * n_iter_per_epoch)
 
     lr_scheduler = None
-    if config.TRAIN.LR_SCHEDULER.NAME == 'cosine':
+    if config.train_lr_scheduler_name == 'cosine':
         lr_scheduler = CosineLRScheduler(
             optimizer,
             t_initial=num_steps,
             t_mul=1.,
-            lr_min=config.TRAIN.MIN_LR,
-            warmup_lr_init=config.TRAIN.WARMUP_LR,
+            lr_min=config.train_min_lr,
+            warmup_lr_init=config.train_warmup_lr,
             warmup_t=warmup_steps,
             cycle_limit=1,
             t_in_epochs=False,
         )
-    elif config.TRAIN.LR_SCHEDULER.NAME == 'linear':
+    elif config.train_lr_scheduler_name == 'linear':
         lr_scheduler = LinearLRScheduler(
             optimizer,
             t_initial=num_steps,
             lr_min_rate=0.01,
-            warmup_lr_init=config.TRAIN.WARMUP_LR,
+            warmup_lr_init=config.train_warmup_lr,
             warmup_t=warmup_steps,
             t_in_epochs=False,
         )
-    elif config.TRAIN.LR_SCHEDULER.NAME == 'step':
+    elif config.train_lr_scheduler_name == 'step':
         lr_scheduler = StepLRScheduler(
             optimizer,
             decay_t=decay_steps,
-            decay_rate=config.TRAIN.LR_SCHEDULER.DECAY_RATE,
-            warmup_lr_init=config.TRAIN.WARMUP_LR,
+            decay_rate=config.train_lr_scheduler_decay_rate,
+            warmup_lr_init=config.train_warmup_lr,
             warmup_t=warmup_steps,
             t_in_epochs=False,
         )

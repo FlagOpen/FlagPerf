@@ -13,7 +13,7 @@ from train.evaluator import Evaluator
 from train.training_state import TrainingState
 
 import config
-
+from utils.logger import create_logger
 from timm.utils import accuracy, AverageMeter
 from utils.utils import load_checkpoint, load_pretrained, save_checkpoint, NativeScalerWithGradNormCount, auto_resume_helper, \
     reduce_tensor
@@ -25,42 +25,17 @@ from driver import Driver, Event, dist_pytorch
 
 class Trainer:
 
-    def __init__(self, driver: Driver, adapter, evaluator: Evaluator,
-                 training_state: TrainingState, device: Device, config, len_train_dataloader):
+    def __init__(self, driver: Driver, training_state: TrainingState, device: Device, config):
         super(Trainer, self).__init__()
         self.driver = driver
-        self.adapter = adapter
         self.training_state = training_state
-        self.grad_scaler = None
-
         self.device = device
-        self.optimizer = None
         self.config = config
-        self.model = None
-        self.evaluator = evaluator
-        self.lr_scheduler = None
-        self.len_train_dataloader = len_train_dataloader
-        # self.global_batch_size = None
-        # self.overflow_buf = None
-
-    def init(self):
-        self.model = create_model(config)
-        self.model = self.adapter.convert_model(self.model)
-        # self.model = self.adapter.model_to_fp16(self.model)
-        self.optimizer = self.adapter.create_optimizer(self.model, self.config)
-        self.model = self.adapter.model_to_ddp(self.model)
-        self.lr_scheduler = create_scheduler(self.optimizer, self.config, self.len_train_dataloader)
-        # self.grad_scaler = self.adapter.create_grad_scaler()
-        self.loss_scaler = NativeScalerWithGradNormCount()
-
 
     # 接入perf的日志体系，dirver events
-    def train_one_epoch(self, criterion, dataloader, epoch, mixup_fn):
+    def train_one_epoch(self, model, criterion, dataloader, optimizer, epoch, mixup_fn, lr_scheduler,
+                        loss_scaler):
         config = self.config
-        model = self.model
-        optimizer = self.optimizer
-        lr_scheduler = self.lr_scheduler
-        loss_scaler = self.loss_scaler
         driver = self.driver
         state = self.training_state
         
@@ -82,19 +57,19 @@ class Trainer:
             if mixup_fn is not None:
                 samples, targets = mixup_fn(samples, targets)
 
-            with torch.cuda.amp.autocast(enabled=config.AMP_ENABLE):
+            with torch.cuda.amp.autocast(enabled=config.amp_enable):
                 outputs = model(samples)
             loss = criterion(outputs, targets)
-            loss = loss / config.TRAIN.ACCUMULATION_STEPS
+            loss = loss / config.train_accumulation_steps
 
             # this attribute is added by timm on one optimizer (adahessian)
             is_second_order = hasattr(optimizer, 'is_second_order') and optimizer.is_second_order
-            grad_norm = loss_scaler(loss, optimizer, clip_grad=config.TRAIN.CLIP_GRAD,
+            grad_norm = loss_scaler(loss, optimizer, clip_grad=config.train_clip_grad,
                                     parameters=model.parameters(), create_graph=is_second_order,
-                                    update_grad=(idx + 1) % config.TRAIN.ACCUMULATION_STEPS == 0)
-            if (idx + 1) % config.TRAIN.ACCUMULATION_STEPS == 0:
+                                    update_grad=(idx + 1) % config.train_accumulation_steps == 0)
+            if (idx + 1) % config.train_accumulation_steps == 0:
                 optimizer.zero_grad()
-                lr_scheduler.step_update((epoch * num_steps + idx) // config.TRAIN.ACCUMULATION_STEPS)
+                lr_scheduler.step_update((epoch * num_steps + idx) // config.train_accumulation_steps)
             loss_scale_value = loss_scaler.state_dict()["scale"]
 
             torch.cuda.synchronize()
@@ -109,14 +84,15 @@ class Trainer:
             state.loss = loss_meter.val
             # state.loss, state.acc1, state.acc5 = total.tolist()
             # driver.event(Event.EPOCH_END, state.loss)
-            if idx % config.PRINT_FREQ == 0:
+            if idx % config.print_freq == 0:
                 lr = optimizer.param_groups[0]['lr']
                 wd = optimizer.param_groups[0]['weight_decay']
                 memory_used = torch.cuda.max_memory_allocated() / (1024.0 * 1024.0)
                 etas = batch_time.avg * (num_steps - idx)
-                driver.event(Event.EPOCH_END,state.loss)
+                print("----Train epoch:",epoch)
+                print("----loss_meter.avg:",loss_meter.avg)
                 # logger.info(
-                #     f'Train: [{epoch}/{config.TRAIN.EPOCHS}][{idx}/{num_steps}]\t'
+                #     f'Train: [{epoch}/{config.train_epochs}][{idx}/{num_steps}]\t'
                 #     f'eta {datetime.timedelta(seconds=int(etas))} lr {lr:.6f}\t wd {wd:.4f}\t'
                 #     f'time {batch_time.val:.4f} ({batch_time.avg:.4f})\t'
                 #     f'loss {loss_meter.val:.4f} ({loss_meter.avg:.4f})\t'
@@ -127,17 +103,13 @@ class Trainer:
             # logger.info(f"EPOCH {epoch} training takes {datetime.timedelta(seconds=int(epoch_time))}")
 
             # 不需要每个step去做eval，需要设置间隔
-            acc1, acc5, loss = self.evaluator.evaluate(config, model)
-            max_accuracy = max(max_accuracy, acc1)
+            # acc1, acc5, loss = self.evaluator.evaluate(config, model)
+            # max_accuracy = max(max_accuracy, acc1)
             
-            state.eval_acc1, state.eval_acc5, state.eval_loss = acc1, acc5, loss
-            state.max_accuracy = max_accuracy
-            driver.event(Event.EVALUATE, state.eval_acc1, state.eval_acc5, state.eval_loss, state.max_accuracy)
+            # state.eval_acc1, state.eval_acc5, state.eval_loss = acc1, acc5, loss
+            # state.max_accuracy = max_accuracy
+            # driver.event(Event.EVALUATE, state.eval_acc1, state.eval_acc5, state.eval_loss, state.max_accuracy)
             
-            end_training = self.detect_training_status(state)
-
-            if end_training:
-                break
 
         # epoch_start_num_sample += len(dataloader.dataset)
         # state.num_trained_samples = epoch_start_num_sample

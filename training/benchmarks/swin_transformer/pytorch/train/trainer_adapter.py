@@ -17,6 +17,15 @@ def create_optimizer(model, config):
     """
     Build optimizer, set weight decay of normalization to 0 by default.
     """
+    # linear scale the learning rate according to total batch size, may not be optimal
+    linear_scaled_lr = config.train_base_lr * config.train_batch_size * config.n_device / 512.0
+
+    # gradient accumulation also need to scale the learning rate
+    if config.train_accumulation_steps > 1:
+        linear_scaled_lr = linear_scaled_lr * config.train_accumulation_steps
+
+    config.train_base_lr = linear_scaled_lr
+
     skip = {}
     skip_keywords = {}
     if hasattr(model, 'no_weight_decay'):
@@ -25,14 +34,14 @@ def create_optimizer(model, config):
         skip_keywords = model.no_weight_decay_keywords()
     parameters = set_weight_decay(model, skip, skip_keywords)
 
-    opt_lower = config.TRAIN.OPTIMIZER.NAME.lower()
+    opt_lower = config.train_optimizer_name.lower()
     optimizer = None
     if opt_lower == 'sgd':
-        optimizer = optim.SGD(parameters, momentum=config.TRAIN.OPTIMIZER.MOMENTUM, nesterov=True,
-                              lr=config.TRAIN.BASE_LR, weight_decay=config.TRAIN.WEIGHT_DECAY)
+        optimizer = optim.SGD(parameters, momentum=config.train_optimizer_momentum, nesterov=True,
+                              lr=config.train_base_lr, weight_decay=config.train_weight_decay)
     elif opt_lower == 'adamw':
-        optimizer = optim.AdamW(parameters, eps=config.TRAIN.OPTIMIZER.EPS, betas=config.TRAIN.OPTIMIZER.BETAS,
-                                lr=config.TRAIN.BASE_LR, weight_decay=config.TRAIN.WEIGHT_DECAY)
+        optimizer = optim.AdamW(parameters, eps=config.train_optimizer_eps, betas=config.train_optimizer_betas,
+                                lr=config.train_base_lr, weight_decay=config.train_weight_decay)
 
     return optimizer
 

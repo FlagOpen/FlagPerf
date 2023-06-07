@@ -13,9 +13,11 @@ from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 try:
     import os, sys
 
-    kernel_path = os.path.abspath(os.path.join('..'))
+    kernel_path = os.path.abspath(os.path.join(''))
     sys.path.append(kernel_path)
-    from kernels.window_process.window_process import WindowProcess, WindowProcessReverse
+    print("--------------kernel_path-------:",kernel_path)
+    # from kernels.window_process.window_process import WindowProcess, WindowProcessReverse
+    from iluvatar.swin_transformer.csrc.window_process import WindowProcess, WindowProcessReverse
 
 except:
     WindowProcess = None

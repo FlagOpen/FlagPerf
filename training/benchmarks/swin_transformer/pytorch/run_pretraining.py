@@ -1,4 +1,4 @@
-"""Mobilenet V2 Pretraining"""
+"""Swin Transformer Pretraining"""
 
 import os
 import sys
@@ -17,8 +17,13 @@ from train.evaluator import Evaluator
 from train.trainer import Trainer
 from train.training_state import TrainingState
 from dataloaders import build_loader
+from models import create_model
+from train.trainer_adapter import create_optimizer
+from schedulers import create_scheduler
 
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
+from utils.utils import load_checkpoint, load_pretrained, save_checkpoint, NativeScalerWithGradNormCount, auto_resume_helper, \
+    reduce_tensor
 
 logger = None
 
@@ -37,52 +42,36 @@ def main() -> Tuple[Any, Any]:
     init_start_time = logger.previous_log_time
 
     init_helper.set_seed(config.seed, config.vendor)
-
-    # train_dataset = build_train_dataset(config)
-    # eval_dataset = build_eval_dataset(config)
-    # train_dataloader = build_train_dataloader(train_dataset, config)
-    # eval_dataloader = build_eval_dataloader(eval_dataset, config)
     
     dataset_train, dataset_val, data_loader_train, data_loader_val, mixup_fn = build_loader(config)
     
     evaluator = Evaluator(data_loader_val)
-    
 
     training_state = TrainingState()
 
-    train_num = len(data_loader_train)
-    trainer = Trainer(train_num,
-                      driver=model_driver,
-                      adapter=trainer_adapter,
-                      evaluator=evaluator,
-                      training_state=training_state,
-                      device=config.device,
-                      config=config)
+    model = create_model(config)
+    model.cuda()
+    # model = trainer_adapter.convert_model(model)
+    optimizer = create_optimizer(model, config)
+    model = trainer_adapter.model_to_ddp(model)
+    loss_scaler = NativeScalerWithGradNormCount()
+    lr_scheduler = create_scheduler(config, optimizer, len(data_loader_train))
+    
+    trainer = Trainer(driver=model_driver,
+                    training_state=training_state,
+                    device=config.device,
+                    config=config,
+                    )
     training_state._trainer = trainer
-
-    dist_pytorch.barrier(config.vendor)
-    trainer.init()
-    dist_pytorch.barrier(config.vendor)
-
-    # init_evaluation_start = time.time()
-    # training_state.eval_loss, training_state.eval_acc1, training_state.eval_acc5 = evaluator.evaluate(
-    #     trainer)
-
-    # init_evaluation_end = time.time()
-    # init_evaluation_info = dict(eval_acc1=training_state.eval_acc1,
-    #                             eval_acc5=training_state.eval_acc5,
-    #                             time=init_evaluation_end -
-    #                             init_evaluation_start)
-    # model_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     if not config.do_train:
         return config, training_state
     
-    if config.AUG.MIXUP > 0.:
+    if config.aug_mixup > 0.:
         # smoothing is handled with mixup label transform
         criterion = SoftTargetCrossEntropy()
-    elif config.MODEL.LABEL_SMOOTHING > 0.:
-        criterion = LabelSmoothingCrossEntropy(smoothing=config.MODEL.LABEL_SMOOTHING)
+    elif config.model_label_smoothing > 0.:
+        criterion = LabelSmoothingCrossEntropy(smoothing=config.model_label_smoothing)
     else:
         criterion = torch.nn.CrossEntropyLoss()
 
@@ -95,14 +84,31 @@ def main() -> Tuple[Any, Any]:
     raw_train_start_time = logger.previous_log_time
 
     epoch = -1
+    max_accuracy = 0.0
     while not training_state.end_training:
         epoch += 1
         training_state.epoch = epoch
-        data_loader_train.sample.set_epoch(epoch)
-        trainer.train_one_epoch(config, criterion, data_loader_train, epoch, mixup_fn)
+        data_loader_train.sampler.set_epoch(epoch)
+        # trainer.train_one_epoch(config, criterion, data_loader_train, epoch, mixup_fn)
+        trainer.train_one_epoch(model, criterion, data_loader_train, optimizer, epoch, mixup_fn, lr_scheduler,
+                        loss_scaler)
         # if dist.get_rank() == 0 and (epoch % config.SAVE_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1)):
         #     save_checkpoint(config, epoch, model_without_ddp, max_accuracy, optimizer, lr_scheduler, loss_scaler,
         #                     logger)
+        print("--------------------------------end one epoch----------------------------------------------------")
+        acc1, acc5, loss = evaluator.evaluate(config, model)
+        max_accuracy = max(max_accuracy, acc1)
+        print("------eval acc1:",max_accuracy)
+        
+        state.eval_acc1, state.eval_acc5, state.eval_loss = acc1, acc5, loss
+        state.max_accuracy = max_accuracy
+        trainer.driver.event(Event.EVALUATE, state.eval_acc1, state.eval_acc5, state.eval_loss, state.max_accuracy)
+        
+        end_training = trainer.detect_training_status(state)
+
+        if end_training:
+            break
+        
 
     model_driver.event(Event.TRAIN_END)
     raw_train_end_time = logger.previous_log_time
