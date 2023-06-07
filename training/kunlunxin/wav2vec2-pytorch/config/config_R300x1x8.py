@@ -9,3 +9,4 @@ max_sample_size = 250000
 min_sample_size = 32000
 max_tokens = 1400000
 eval_steps = 100
+optimizer = 'adam'
