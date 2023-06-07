@@ -7,7 +7,7 @@
 
 - 模型代码来源
 
-This case includes code from the BSD 3-Clause License protocol open source project at https://github.com/pytorch/vision/blob/main/torchvision/models/vision_transformer.py
+This case includes code from the BSD 3-Clause License open source project at https://github.com/pytorch/vision/blob/main/torchvision/models/vision_transformer.py
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
