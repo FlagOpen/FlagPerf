@@ -93,9 +93,10 @@ class Trainer:
                 )
 
             # Update params
-
-            optimizer.step()
-            optimizer.zero_grad()
+            update_step = step % config.gradient_accumulation_steps == 0
+            if update_step:
+                optimizer.step()
+                optimizer.zero_grad()
             # Sample new mixup ratio for next batch
             mixup_l = np.random.beta(mixup, mixup)
 
