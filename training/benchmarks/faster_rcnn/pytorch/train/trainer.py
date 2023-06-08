@@ -149,7 +149,6 @@ class Trainer:
 
             if not math.isfinite(loss_value):
                 print("Loss is {}, stopping training".format(loss_value))
-                print(loss_dict_reduced)
                 sys.exit(1)
 
             self.adapter.backward(losses, optimizer)
@@ -168,7 +167,6 @@ class Trainer:
         config = self.config
 
         state.eval_mAP = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
-        print(state.eval_mAP)
         if state.eval_mAP >= config.target_mAP:
             dist_pytorch.main_proc_print(
                 f"converged_success. eval_mAP: {state.eval_mAP}, target_mAP: {config.target_mAP}"

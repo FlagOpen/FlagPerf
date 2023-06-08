@@ -20,7 +20,7 @@ no_save = True  #[bool], default True, if True , do not save ckpt
 save_frequency = 1
 
 # IO
-output_dir = "results/pretrain_base"
+output_dir = "result/pretrain_base"
 data_dir = None
 train_subset = "train-full-960"
 valid_subset = "dev-other"

@@ -15,12 +15,10 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <col width="195.80" style='mso-width-source:userset;mso-width-alt:9547;'/>
    <col width="185.40" style='mso-width-source:userset;mso-width-alt:9040;'/>
    <tr height="16.80" class="xl65" style='height:16.80pt;'>
-    <td class="xl66" height="16.80" width="73.60" style='height:16.80pt;width:73.60pt;' x:str>模型</td>
-    <td class="xl66" width="70" style='width:70.00pt;' x:str>框架</td>
-    <td class="xl67" width="581.95" colspan="3" style='width:581.95pt;border-right:none;border-bottom:none;' x:str>厂商</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td height="16.80" colspan="2" style='height:16.80pt;mso-ignore:colspan;'></td>
+    <td class="xl65" x:str>模型</td> 
+    <td class="xl65" x:str>框架</td>
     <td class="xl65" x:str>英伟达</td>
     <td class="xl65" x:str>昆仑芯</td>
     <td class="xl65" x:str>天数智芯</td>
@@ -84,20 +82,20 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer" style="text-decoration:none" target="_parent">BigTransfer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bigtransfer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/97" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2" style="text-decoration:none" target="_parent">Wav2Vec2</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/wav2vec2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
@@ -108,36 +106,34 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>MaskRCNN</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/75" style="text-decoration:none" target="_parent">under review</a></td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn" style="text-decoration:none" target="_parent">MaskRCNN</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RetinaNet</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/89" style="text-decoration:none" target="_parent">under review</a></td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet" style="text-decoration:none" target="_parent">RetinaNet</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Tacotron2</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/79" style="text-decoration:none" target="_parent">under review</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2" style="text-decoration:none" target="_parent">Tacotron2</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/tacotron2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/98" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Waveglow</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/92" style="text-decoration:none" target="_parent">under review</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow" style="text-decoration:none" target="_parent">WaveGlow</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/WaveGlow-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69">✅</a></td>
     <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
-
-
 
 * 你可以点击**模型或训练框架**来跳转到**对应case的训练脚本**，✅来跳转到**对应厂商的运行配置**，**under review**来跳转到**对应的Pull Request**
 
