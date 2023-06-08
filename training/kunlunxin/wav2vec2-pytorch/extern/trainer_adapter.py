@@ -1,7 +1,5 @@
 import torch
 
-from torch import nn
-
 def create_optimizer(model, args):
 
     kw = {'lr': args.lr, 'weight_decay': args.weight_decay}
