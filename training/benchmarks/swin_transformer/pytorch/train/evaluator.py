@@ -1,6 +1,5 @@
 import time
 import torch
-import torch.distributed as dist
 from timm.utils import accuracy, AverageMeter
 from utils.utils import reduce_tensor
 
@@ -44,16 +43,15 @@ class Evaluator:
             batch_time.update(time.time() - end)
             end = time.time()
             
-            if idx % config.print_freq == 0:
-                print("-----------eval_acc1:",acc1_meter.avg)
-            #     memory_used = torch.cuda.max_memory_allocated() / (1024.0 * 1024.0)
-                # logger.info(
-                #     f'Test: [{idx}/{len(data_loader)}]\t'
-                #     f'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                #     f'Loss {loss_meter.val:.4f} ({loss_meter.avg:.4f})\t'
-                #     f'Acc@1 {acc1_meter.val:.3f} ({acc1_meter.avg:.3f})\t'
-                #     f'Acc@5 {acc5_meter.val:.3f} ({acc5_meter.avg:.3f})\t'
-                #     f'Mem {memory_used:.0f}MB')
+            if idx % config.print_freq == 0 and config.local_rank == 0:
+                memory_used = torch.cuda.max_memory_allocated() / (1024.0 * 1024.0)
+                print(
+                    f'Test: [{idx}/{len(dataloader)}]\t'
+                    f'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                    f'Loss {loss_meter.val:.4f} ({loss_meter.avg:.4f})\t'
+                    f'Acc@1 {acc1_meter.val:.3f} ({acc1_meter.avg:.3f})\t'
+                    f'Acc@5 {acc5_meter.val:.3f} ({acc5_meter.avg:.3f})\t'
+                    f'Mem {memory_used:.0f}MB')
         # logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f}')
 
         return acc1_meter.avg, acc5_meter.avg, loss_meter.avg

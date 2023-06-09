@@ -137,7 +137,7 @@ def activate(base_config,
     for mutable_param in mutable_params:
         params[mutable_param] = getattr(base_config, mutable_param)
 
-    if path and not config_file:
+    if not path or not config_file:
         raise "Config file's location was not specified."
 
     ext_config = os.path.join(os.path.abspath(path), config_file)

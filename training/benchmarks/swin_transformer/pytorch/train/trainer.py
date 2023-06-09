@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import math
+import datetime
 
 from models import create_model
 from schedulers import create_scheduler
@@ -84,38 +85,20 @@ class Trainer:
             state.loss = loss_meter.val
             # state.loss, state.acc1, state.acc5 = total.tolist()
             # driver.event(Event.EPOCH_END, state.loss)
-            if idx % config.print_freq == 0:
+            if idx % config.print_freq == 0 and config.local_rank == 0:
                 lr = optimizer.param_groups[0]['lr']
                 wd = optimizer.param_groups[0]['weight_decay']
-                memory_used = torch.cuda.max_memory_allocated() / (1024.0 * 1024.0)
                 etas = batch_time.avg * (num_steps - idx)
-                print("----Train epoch:",epoch)
-                print("----loss_meter.avg:",loss_meter.avg)
-                # logger.info(
-                #     f'Train: [{epoch}/{config.train_epochs}][{idx}/{num_steps}]\t'
-                #     f'eta {datetime.timedelta(seconds=int(etas))} lr {lr:.6f}\t wd {wd:.4f}\t'
-                #     f'time {batch_time.val:.4f} ({batch_time.avg:.4f})\t'
-                #     f'loss {loss_meter.val:.4f} ({loss_meter.avg:.4f})\t'
-                #     f'grad_norm {norm_meter.val:.4f} ({norm_meter.avg:.4f})\t'
-                #     f'loss_scale {scaler_meter.val:.4f} ({scaler_meter.avg:.4f})\t'
-                #     f'mem {memory_used:.0f}MB')
-            # epoch_time = time.time() - start
-            # logger.info(f"EPOCH {epoch} training takes {datetime.timedelta(seconds=int(epoch_time))}")
-
-            # 不需要每个step去做eval，需要设置间隔
-            # acc1, acc5, loss = self.evaluator.evaluate(config, model)
-            # max_accuracy = max(max_accuracy, acc1)
-            
-            # state.eval_acc1, state.eval_acc5, state.eval_loss = acc1, acc5, loss
-            # state.max_accuracy = max_accuracy
-            # driver.event(Event.EVALUATE, state.eval_acc1, state.eval_acc5, state.eval_loss, state.max_accuracy)
-            
-
-        # epoch_start_num_sample += len(dataloader.dataset)
-        # state.num_trained_samples = epoch_start_num_sample
-
-        # self.lr_scheduler.step()
-        # driver.event(Event.EPOCH_END, state.epoch)
+                print(
+                    f'Train: [{epoch}/{config.train_epochs}][{idx}/{num_steps}]\t'
+                    f'eta {datetime.timedelta(seconds=int(etas))} lr {lr:.6f}\t wd {wd:.4f}\t'
+                    f'time {batch_time.val:.4f} ({batch_time.avg:.4f})\t'
+                    f'loss {loss_meter.val:.4f} ({loss_meter.avg:.4f})\t'
+                    f'grad_norm {norm_meter.val:.4f} ({norm_meter.avg:.4f})\t'
+                    f'loss_scale {scaler_meter.val:.4f} ({scaler_meter.avg:.4f})\t')
+        epoch_time = time.time() - start
+        if config.local_rank == 0:
+            print("EPOCH {} training takes {}".format(epoch, datetime.timedelta(seconds=int(epoch_time))))
 
 
     def detect_training_status(self, state):

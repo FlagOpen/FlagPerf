@@ -85,8 +85,8 @@ def main() -> Tuple[Any, Any]:
 
     epoch = -1
     max_accuracy = 0.0
-    while not training_state.end_training:
-        epoch += 1
+
+    for epoch in range(config.train_start_epoch, config.train_epochs):
         training_state.epoch = epoch
         data_loader_train.sampler.set_epoch(epoch)
         # trainer.train_one_epoch(config, criterion, data_loader_train, epoch, mixup_fn)
@@ -95,19 +95,22 @@ def main() -> Tuple[Any, Any]:
         # if dist.get_rank() == 0 and (epoch % config.SAVE_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1)):
         #     save_checkpoint(config, epoch, model_without_ddp, max_accuracy, optimizer, lr_scheduler, loss_scaler,
         #                     logger)
-        print("--------------------------------end one epoch----------------------------------------------------")
         acc1, acc5, loss = evaluator.evaluate(config, model)
         max_accuracy = max(max_accuracy, acc1)
-        print("------eval acc1:",max_accuracy)
         
-        state.eval_acc1, state.eval_acc5, state.eval_loss = acc1, acc5, loss
-        state.max_accuracy = max_accuracy
-        trainer.driver.event(Event.EVALUATE, state.eval_acc1, state.eval_acc5, state.eval_loss, state.max_accuracy)
+        training_state.eval_acc1, training_state.eval_acc5, training_state.eval_loss = acc1, acc5, loss
+        training_state.max_accuracy = max_accuracy
+        eval_result = dict(
+                    eval_loss=training_state.eval_loss,
+                    eval_acc1=training_state.eval_acc1,
+                    eval_acc5=training_state.eval_acc5,
+                    max_accuracy=training_state.max_accuracy)
+        trainer.driver.event(Event.EVALUATE, eval_result)
         
-        end_training = trainer.detect_training_status(state)
+        # end_training = trainer.detect_training_status(training_state)
 
-        if end_training:
-            break
+        # if end_training:
+        #     break
         
 
     model_driver.event(Event.TRAIN_END)

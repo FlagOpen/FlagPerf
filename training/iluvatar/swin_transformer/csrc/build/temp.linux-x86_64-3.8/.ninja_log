@@ -1,3 +1,0 @@
-# ninja log v5
-0	15852	1686050328	/workspace/flagperf/training/iluvatar/swin_transformer/csrc/build/temp.linux-x86_64-3.8/swin_window_process.o	78e94871fe5f2204
-1	17466	1686050330	/workspace/flagperf/training/iluvatar/swin_transformer/csrc/build/temp.linux-x86_64-3.8/swin_window_process_kernel.o	256b3e710765b742
