@@ -50,8 +50,7 @@ def main() -> Tuple[Any, Any]:
     training_state = TrainingState()
 
     model = create_model(config)
-    model.cuda()
-    # model = trainer_adapter.convert_model(model)
+    model.to(config.device)
     optimizer = create_optimizer(model, config)
     model = trainer_adapter.model_to_ddp(model)
     loss_scaler = NativeScalerWithGradNormCount()
@@ -63,7 +62,7 @@ def main() -> Tuple[Any, Any]:
                     config=config,
                     )
     training_state._trainer = trainer
-
+    
     if not config.do_train:
         return config, training_state
     
@@ -89,10 +88,9 @@ def main() -> Tuple[Any, Any]:
     for epoch in range(config.train_start_epoch, config.train_epochs):
         training_state.epoch = epoch
         data_loader_train.sampler.set_epoch(epoch)
-        # trainer.train_one_epoch(config, criterion, data_loader_train, epoch, mixup_fn)
         trainer.train_one_epoch(model, criterion, data_loader_train, optimizer, epoch, mixup_fn, lr_scheduler,
                         loss_scaler)
-        # if dist.get_rank() == 0 and (epoch % config.SAVE_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1)):
+        # if dist.get_rank() == 0 and (epoch % config.save_freq == 0 or epoch == (config.train_epochs - 1)):
         #     save_checkpoint(config, epoch, model_without_ddp, max_accuracy, optimizer, lr_scheduler, loss_scaler,
         #                     logger)
         acc1, acc5, loss = evaluator.evaluate(config, model)
@@ -106,11 +104,6 @@ def main() -> Tuple[Any, Any]:
                     eval_acc5=training_state.eval_acc5,
                     max_accuracy=training_state.max_accuracy)
         trainer.driver.event(Event.EVALUATE, eval_result)
-        
-        # end_training = trainer.detect_training_status(training_state)
-
-        # if end_training:
-        #     break
         
 
     model_driver.event(Event.TRAIN_END)

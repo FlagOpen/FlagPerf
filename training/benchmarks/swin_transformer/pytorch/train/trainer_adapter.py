@@ -1,11 +1,8 @@
-import torch
 import torch.distributed as dist
-from torch.optim import Optimizer
 import config
 
-from torch import nn, Tensor
+from torch import nn
 from driver.dist_pytorch import main_proc_print
-from typing import Tuple
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch import optim as optim
 
@@ -56,7 +53,6 @@ def set_weight_decay(model, skip_list=(), skip_keywords=()):
         if len(param.shape) == 1 or name.endswith(".bias") or (name in skip_list) or \
                 check_keywords_in_name(name, skip_keywords):
             no_decay.append(param)
-            # print(f"{name} has no weight decay")
         else:
             has_decay.append(param)
     return [{'params': has_decay},

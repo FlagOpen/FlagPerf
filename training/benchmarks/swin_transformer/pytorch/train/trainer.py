@@ -83,8 +83,6 @@ class Trainer:
             end = time.time()
 
             state.loss = loss_meter.val
-            # state.loss, state.acc1, state.acc5 = total.tolist()
-            # driver.event(Event.EPOCH_END, state.loss)
             if idx % config.print_freq == 0 and config.local_rank == 0:
                 lr = optimizer.param_groups[0]['lr']
                 wd = optimizer.param_groups[0]['weight_decay']
@@ -105,9 +103,6 @@ class Trainer:
         config = self.config
         if state.eval_acc1 >= config.target_acc1:
             state.converged_success()
-
-        # if state.num_trained_samples > config.max_samples_termination:
-        #     state.end_training = True
 
         return state.end_training
 

@@ -15,8 +15,6 @@ try:
 
     kernel_path = os.path.abspath(os.path.join(''))
     sys.path.append(kernel_path)
-    print("--------------kernel_path-------:",kernel_path)
-    # from kernels.window_process.window_process import WindowProcess, WindowProcessReverse
     from iluvatar.swin_transformer.csrc.window_process import WindowProcess, WindowProcessReverse
 
 except:
