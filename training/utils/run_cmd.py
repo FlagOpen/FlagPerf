@@ -25,5 +25,5 @@ def run_cmd_wait(cmd, timeout, retouts=True):
     print(f"{cmd} stderr: {output[1]}")
 
     if retouts:
-        return [process.returncode, output]
-    return process.returncode
+        return process.returncode, output
+    return process.returncode, None
