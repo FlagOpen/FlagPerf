@@ -100,10 +100,10 @@ def build_dataset(is_train, config):
         if config.data_zip_mode:
             ann_file = prefix + "_map.txt"
             prefix = prefix + ".zip@/"
-            dataset = CachedImageFolder(config.train_data_path, ann_file, prefix, transform,
+            dataset = CachedImageFolder(config.data_dir, ann_file, prefix, transform,
                                         cache_mode=config.data_cache_mode if is_train else 'part')
         else:
-            root = os.path.join(config.train_data_path, prefix)
+            root = os.path.join(config.data_dir, prefix)
             dataset = datasets.ImageFolder(root, transform=transform)
         nb_classes = 1000
     else:

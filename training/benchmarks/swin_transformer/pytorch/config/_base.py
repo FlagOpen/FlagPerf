@@ -20,16 +20,17 @@ device: str = None
 n_device: int = 1
 dist_backend: str = 'nccl'
 gradient_accumulation_steps = 1
-data_dir:str = "/mnt/data/imagenet/"
 train_data:str = "train"
 eval_data:str = "val"
 init_checkpoint: str = ""
+
 # -----------------------------------------------------------------------------
 # Data settings
 # -----------------------------------------------------------------------------
 # Batch size for a single GPU, could be overwritten by command line argument
 train_batch_size = 64
 # Path to dataset, could be overwritten by command line argument
+data_dir = '/mnt/data/imagenet/'
 train_data_path = ''
 # Dataset name
 data_dataset = 'imagenet'

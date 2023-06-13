@@ -1,28 +1,17 @@
 import torch
 from torch.types import Device
-import torch.distributed as dist
 import os
 import sys
 import time
-import math
 import datetime
 
-from models import create_model
-from schedulers import create_scheduler
-
-from train.evaluator import Evaluator
 from train.training_state import TrainingState
 
-import config
-from utils.logger import create_logger
-from timm.utils import accuracy, AverageMeter
-from utils.utils import load_checkpoint, load_pretrained, save_checkpoint, NativeScalerWithGradNormCount, auto_resume_helper, \
-    reduce_tensor
+from timm.utils import AverageMeter
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch
-
+from driver import Driver
 
 class Trainer:
 
@@ -33,7 +22,6 @@ class Trainer:
         self.device = device
         self.config = config
 
-    # 接入perf的日志体系，dirver events
     def train_one_epoch(self, model, criterion, dataloader, optimizer, epoch, mixup_fn, lr_scheduler,
                         loss_scaler):
         config = self.config
