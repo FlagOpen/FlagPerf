@@ -78,7 +78,8 @@ class ImageManager():
               self.tag + "\""
         print(cmd)
         print(rcw(cmd, 10, retouts=False))
-        if rcw(cmd, 10, retouts=False) != 0:
+        ret, _ = rcw(cmd, 10, retouts=False)
+        if ret != 0:
             return 1
         return 0
 
@@ -89,7 +90,8 @@ class ImageManager():
             1  - rm image failed
         '''
         cmd = "sudo docker rmi " + self.repository + ":" + self.tag
-        if rcw(cmd, 60, retouts=False) != 0:
+        ret, _ = rcw(cmd, 60, retouts=False)
+        if ret != 0:
             return 1
         return 0
 
@@ -106,7 +108,9 @@ class ImageManager():
         tmp_image_name = "tmp_" + self.repository + ":" + self.tag
         build_cmd = "cd " + image_dir + " && docker build -t " \
                     + tmp_image_name + " ./"
-        if rcw(build_cmd, 600, retouts=False) != 0:
+
+        ret, _ = rcw(build_cmd, 600, retouts=False)
+        if ret != 0:
             print("docker build failed. " + tmp_image_name)
             return 1
 
