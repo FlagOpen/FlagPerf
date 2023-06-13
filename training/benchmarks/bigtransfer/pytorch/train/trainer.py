@@ -93,8 +93,8 @@ class Trainer:
                 )
 
             # Update params
-            update_step = step % config.gradient_accumulation_steps == 0
-            if update_step:
+            need_update = step % config.gradient_accumulation_steps == 0
+            if need_update:
                 optimizer.step()
                 optimizer.zero_grad()
             # Sample new mixup ratio for next batch
