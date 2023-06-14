@@ -150,7 +150,8 @@ def activate(base_config,
         params[mutable_param] = getattr(base_config, mutable_param)
     if path and not config_file:
         raise "Config file's location was not specified."
-
+    print(path)
+    print(config_file)
     ext_config = os.path.join(os.path.abspath(path), config_file)
 
     parsed_params = parse_from_args_and_config(params, known_args, unknown_args, ext_config,
