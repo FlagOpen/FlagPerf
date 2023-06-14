@@ -77,8 +77,8 @@ class ImageManager():
         cmd = "sudo docker images|grep -w \"" + self.repository + "\"|grep -w \"" + \
               self.tag + "\""
         print(cmd)
-        ret, output = rcw(cmd, 10)
-        print(ret, output)
+        ret, _ = rcw(cmd, 10)
+        print(ret)
         if ret != 0:
             return 1
         return 0
