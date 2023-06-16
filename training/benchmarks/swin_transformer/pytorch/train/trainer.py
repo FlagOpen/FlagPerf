@@ -1,17 +1,16 @@
-import torch
-from torch.types import Device
 import os
 import sys
 import time
 import datetime
 
-from train.training_state import TrainingState
-
-from timm.utils import AverageMeter
+import torch
+from torch.types import Device
+from timm.utils import accuracy, AverageMeter
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver
+from driver import Driver, Event, dist_pytorch
+from train.training_state import TrainingState
 
 class Trainer:
 
@@ -39,7 +38,9 @@ class Trainer:
 
         start = time.time()
         end = time.time()
+        step_start_time = time.time()
         for idx, (samples, targets) in enumerate(dataloader):
+            state.global_steps += 1
             samples = samples.cuda(non_blocking=True)
             targets = targets.cuda(non_blocking=True)
 
@@ -69,19 +70,28 @@ class Trainer:
             scaler_meter.update(loss_scale_value)
             batch_time.update(time.time() - end)
             end = time.time()
-
             state.loss = loss_meter.val
-            if idx % config.print_freq == 0 and config.local_rank == 0:
-                lr = optimizer.param_groups[0]['lr']
-                wd = optimizer.param_groups[0]['weight_decay']
-                etas = batch_time.avg * (num_steps - idx)
-                print(
-                    f'Train: [{epoch}/{config.train_epochs}][{idx}/{num_steps}]\t'
-                    f'eta {datetime.timedelta(seconds=int(etas))} lr {lr:.6f}\t wd {wd:.4f}\t'
-                    f'time {batch_time.val:.4f} ({batch_time.avg:.4f})\t'
-                    f'loss {loss_meter.val:.4f} ({loss_meter.avg:.4f})\t'
-                    f'grad_norm {norm_meter.val:.4f} ({norm_meter.avg:.4f})\t'
-                    f'loss_scale {scaler_meter.val:.4f} ({scaler_meter.avg:.4f})\t')
+            
+            other_state = dict()
+            if state.global_steps % self.config.gradient_accumulation_steps == 0:
+                step_end_time = time.time()
+                step_total_time = step_end_time - step_start_time
+                step_start_time = step_end_time
+                images_per_second = (
+                    dist_pytorch.global_batch_size(self.config) *
+                    self.config.gradient_accumulation_steps) / step_total_time
+                other_state["img/s"] = images_per_second
+        
+            other_state['loss_scale'] = scaler_meter.val
+            other_state['lr'] = optimizer.param_groups[0]['lr']
+            other_state['weight_decay'] = optimizer.param_groups[0]['weight_decay']
+            
+            step_info = state.to_dict(**other_state)
+            driver.event(Event.STEP_END,
+                         message=step_info,
+                         step=state.global_steps,
+                         loss=state.loss)         
+            
         epoch_time = time.time() - start
         if config.local_rank == 0:
             print("EPOCH {} training takes {}".format(epoch, datetime.timedelta(seconds=int(epoch_time))))
@@ -94,8 +104,3 @@ class Trainer:
 
         return state.end_training
 
-
-    def process_batch(self, batch, device):
-        """Process batch and produce inputs for the model."""
-        batch = tuple(t.to(device, non_blocking=True) for t in batch)
-        return batch

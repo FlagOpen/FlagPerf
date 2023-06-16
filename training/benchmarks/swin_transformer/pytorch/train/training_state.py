@@ -9,8 +9,6 @@ class TrainingState:
     _status = 'aborted'  # later set to 'success' if termination criteria met
 
     global_steps = 0
-    skipped_steps = 0
-    iter_dataloader_idx = 0
 
     loss: float = 0.0
     acc1: float = 0.0
@@ -55,13 +53,9 @@ class TrainingState:
             if not var_name.startswith("_") and self._is_property(value):
                 state_dict[var_name] = value
 
-        lr = self._trainer.lr_scheduler.get_last_lr()
-        if isinstance(lr, (tuple, list)):
-            lr = lr[0]
-        state_dict["learning_rate"] = lr
         exclude = [
-            "eval_loss", "eval_acc1", "eval_acc5", "skipped_steps",
-            "converged", "init_time", "raw_train_time"
+            "eval_loss", "acc1", "acc5", "max_accuracy", "eval_acc1", "eval_acc5", "skipped_steps",
+            "converged", "init_time", "raw_train_time", "batch_time"
         ]
         for exkey in exclude:
             if exkey in state_dict:

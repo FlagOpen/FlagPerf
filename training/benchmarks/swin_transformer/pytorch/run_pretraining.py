@@ -6,6 +6,7 @@ import time
 from typing import Any, Tuple
 
 import torch
+from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
@@ -20,10 +21,7 @@ from dataloaders import build_loader
 from models import create_model
 from train.trainer_adapter import create_optimizer
 from schedulers import create_scheduler
-
-from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
-from utils.utils import load_checkpoint, load_pretrained, save_checkpoint, NativeScalerWithGradNormCount, auto_resume_helper, \
-    reduce_tensor
+from utils.utils import NativeScalerWithGradNormCount
 
 logger = None
 
@@ -84,15 +82,12 @@ def main() -> Tuple[Any, Any]:
 
     epoch = -1
     max_accuracy = 0.0
-
+    
     for epoch in range(config.train_start_epoch, config.train_epochs):
         training_state.epoch = epoch
         data_loader_train.sampler.set_epoch(epoch)
         trainer.train_one_epoch(model, criterion, data_loader_train, optimizer, epoch, mixup_fn, lr_scheduler,
                         loss_scaler)
-        # if dist.get_rank() == 0 and (epoch % config.save_freq == 0 or epoch == (config.train_epochs - 1)):
-        #     save_checkpoint(config, epoch, model_without_ddp, max_accuracy, optimizer, lr_scheduler, loss_scaler,
-        #                     logger)
         acc1, acc5, loss = evaluator.evaluate(config, model)
         max_accuracy = max(max_accuracy, acc1)
         
@@ -104,8 +99,8 @@ def main() -> Tuple[Any, Any]:
                     eval_acc5=training_state.eval_acc5,
                     max_accuracy=training_state.max_accuracy)
         trainer.driver.event(Event.EVALUATE, eval_result)
-        
-
+    
+    end_training_state = trainer.detect_training_status(training_state)
     model_driver.event(Event.TRAIN_END)
     raw_train_end_time = logger.previous_log_time
 

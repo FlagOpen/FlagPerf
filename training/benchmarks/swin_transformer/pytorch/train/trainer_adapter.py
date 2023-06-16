@@ -1,10 +1,9 @@
-import torch.distributed as dist
-import config
-
 from torch import nn
-from driver.dist_pytorch import main_proc_print
-from torch.nn.parallel import DistributedDataParallel as DDP
+from torch import distributed as dist
 from torch import optim as optim
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+import config
 
 def convert_model(model: nn.Module) -> nn.Module:
     return model
@@ -65,15 +64,6 @@ def check_keywords_in_name(name, keywords=()):
         if keyword in name:
             isin = True
     return isin
-
-
-
-def model_to_fp16(model):
-    # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
-    if config.fp16:
-        main_proc_print(" > use fp16...")
-        model.half()
-    return model
 
 
 def model_to_ddp(model: nn.Module) -> nn.Module:
