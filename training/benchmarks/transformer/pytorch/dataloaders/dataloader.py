@@ -43,10 +43,10 @@ def build_valid_dataloader(datasets, args):
     return valid_dataset
 
 
-def build_eval_dataloader(datasets, args):
-    """eval dataloaders."""
-    dist_pytorch.main_proc_print('building eval dataloaders ...')
-    eval_dataset = data.EpochBatchIterator(
+def build_test_dataloader(datasets, args):
+    """test dataloaders."""
+    dist_pytorch.main_proc_print('building test dataloaders ...')
+    test_dataset = data.EpochBatchIterator(
         dataset=datasets[args.gen_subset],
         max_tokens=None,
         max_sentences=max(8, min(math.ceil(1024 / args.distributed_world_size), 128)),
@@ -56,7 +56,7 @@ def build_eval_dataloader(datasets, args):
         shard_id=args.distributed_rank,
     )
 
-    return eval_dataset
+    return test_dataset
 
 
 def build_dataloader(args):
@@ -66,5 +66,5 @@ def build_dataloader(args):
     # 初始化dataloader
     train = build_train_dataloader(datasets, args)
     valid = build_valid_dataloader(datasets, args)
-    eval = build_eval_dataloader(datasets, args)
+    eval = build_test_dataloader(datasets, args)
     return train, valid, eval

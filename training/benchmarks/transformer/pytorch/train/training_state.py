@@ -11,7 +11,7 @@ class TrainingState:
     loss: float = 0.0
 
     valid_loss: float = None
-    eval_bleu: float = None
+    test_bleu: float = None
 
     epoch: int = 0
 
@@ -54,7 +54,7 @@ class TrainingState:
 
         state_dict["learning_rate"] = self.lr
         exclude = [
-            "valid_loss", "end_training", "eval_bleu", "total_tokens",
+            "valid_loss", "end_training", "test_bleu", "total_tokens",
             "converged", "init_time", "raw_train_time"
         ]
         for exkey in exclude:

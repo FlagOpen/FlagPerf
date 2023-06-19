@@ -39,12 +39,12 @@ def main():
     init_helper.set_seed(config.seed, config.vendor)
 
     # 加载数据
-    train_dataloader, valid_dataloader, eval_dataloader = build_dataloader(config)
+    train_dataloader, valid_dataloader, test_dataloader = build_dataloader(config)
 
     # 初始化 训练状态
     training_state = TrainingState()
     # 验证器
-    evaluator = Evaluator(config, eval_dataloader)
+    evaluator = Evaluator(config, test_dataloader)
     # 训练器
     trainer = Trainer(driver=model_driver,
                       adapter=None,
@@ -100,7 +100,7 @@ if __name__ == "__main__":
             "training_tokens_per_second": training_perf,
             "converged": state.converged,
             "final_loss": state.valid_loss,
-            "final_acc": state.eval_bleu,
+            "final_acc": state.test_bleu,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }

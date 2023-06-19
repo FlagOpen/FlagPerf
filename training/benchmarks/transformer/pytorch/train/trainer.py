@@ -88,17 +88,17 @@ class Trainer(DDPTrainer):
 
         state.total_tokens += self.throughput_meter.n
         if epoch_itr.epoch % args.validate_interval == 0:
-            eval_start = time.time()
             state.valid_loss = self.validate(valid_dataloader)
-            state.eval_bleu = self.evaluator.evaluate(trainer)
-            if state.eval_bleu >= args.target_bleu:
-                state.converged_success()
+            eval_start = time.time()
+            state.test_bleu = self.evaluator.evaluate(trainer)
             eval_end = time.time()
             eval_result = dict(global_steps=state.global_steps,
                                valid_loss=state.valid_loss,
-                               eval_acc=state.eval_bleu,
+                               eval_acc=state.test_bleu,
                                time=eval_end - eval_start)
             driver.event(Event.EVALUATE, eval_result)
+            if state.test_bleu >= args.target_bleu:
+                state.converged_success()
 
         trainer.lr_step(epoch_itr.epoch, state.valid_loss)
         save_checkpoint(args, trainer, epoch_itr, state.valid_loss)
