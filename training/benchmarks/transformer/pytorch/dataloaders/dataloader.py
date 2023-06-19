@@ -66,5 +66,5 @@ def build_dataloader(args):
     # 初始化dataloader
     train = build_train_dataloader(datasets, args)
     valid = build_valid_dataloader(datasets, args)
-    eval = build_test_dataloader(datasets, args)
-    return train, valid, eval
+    test = build_test_dataloader(datasets, args)
+    return train, valid, test
