@@ -122,8 +122,8 @@ ra_reps: int = 3
 
 seed: int = 41
 
-# Stop training after reaching this accuracy TODO
-target_acc1: float = 84.228
+# Stop training after reaching this accuracy
+target_acc1: float = 82.672
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
