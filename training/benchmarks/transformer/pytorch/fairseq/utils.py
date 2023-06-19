@@ -60,7 +60,7 @@ def save_state(filename, args, model, criterion, optimizer, lr_scheduler,
     if extra_state is None:
         extra_state = {}
     state_dict = {
-        'args': args,
+        # 'args': args,
         'model': convert_state_dict_type(model.state_dict()),
         'optimizer_history': optim_history + [
             {

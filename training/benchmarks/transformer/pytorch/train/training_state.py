@@ -10,20 +10,22 @@ class TrainingState:
 
     loss: float = 0.0
 
-    eval_loss: float = None
+    valid_loss: float = None
+    eval_bleu: float = None
 
     epoch: int = 0
-    
+
     end_training: bool = False
     converged: bool = False
 
-    init_time = 0
-    raw_train_time = 0
-    
-    global_steps = 0
-    
+    init_time: float = 0
+    raw_train_time: float = 0
+
+    global_steps: int = 0
+    total_tokens: int = 0
+
     lr: float = None
-    
+
 
     def status(self):
         if self.converged:
@@ -52,7 +54,7 @@ class TrainingState:
 
         state_dict["learning_rate"] = self.lr
         exclude = [
-            "eval_loss", "end_training",
+            "valid_loss", "end_training", "eval_bleu", "total_tokens",
             "converged", "init_time", "raw_train_time"
         ]
         for exkey in exclude:

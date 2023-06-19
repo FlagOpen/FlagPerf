@@ -31,3 +31,4 @@ python preprocess.py \
 
 cp $TEXT/code $DATASET_DIR/code
 cp $TEXT/tmp/valid.raw.de $DATASET_DIR/valid.raw.de
+sacrebleu -t wmt14/full -l en-de --echo ref > $DATASET_DIR/test.raw.de

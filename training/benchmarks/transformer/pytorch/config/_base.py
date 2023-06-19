@@ -35,7 +35,7 @@ seed = 1
 # =========================================================
 # train && evaluate
 # =========================================================
-log_freq: int = 5
+log_freq: int = 50
 
 gradient_accumulation_steps = 1
 dist_backend: str = 'nccl'

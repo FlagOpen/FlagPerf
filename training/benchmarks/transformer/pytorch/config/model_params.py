@@ -41,7 +41,7 @@ clip_norm = 0.0
 
 raw_text = False
 relu_dropout = 0.1
-remove_bpe = "@@"
+remove_bpe = "@@ "
 replace_unk = None
 
 nbest = 1

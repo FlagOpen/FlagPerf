@@ -12,9 +12,7 @@ Transformer是一种神经机器翻译（NMT）模型，它使用注意力机制
 
 - 模型代码来源
 
-https://github.com/NVIDIA/DeepLearningExamples.git
-
-目录：DeepLearningExamples/PyTorch/Translation/Transformer
+https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Translation/Transformer
 
 
 

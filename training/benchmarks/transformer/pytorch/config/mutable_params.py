@@ -5,5 +5,5 @@ mutable_params = [
 mutable_params += [
     'source_lang', 'target_lang', 'raw_text', 'left_pad_source', 'left_pad_target',
     'max_source_positions', 'max_target_positions', 'save_dir', 'restore_file',
-    'target_loss', 'max_tokens', 'max_sentences'
+    'target_loss', 'target_bleu', 'max_tokens', 'max_sentences'
 ]

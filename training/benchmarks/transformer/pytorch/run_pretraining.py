@@ -39,7 +39,7 @@ def main():
     init_helper.set_seed(config.seed, config.vendor)
 
     # 加载数据
-    train_dataloader, eval_dataloader = build_dataloader(config)
+    train_dataloader, valid_dataloader, eval_dataloader = build_dataloader(config)
 
     # 初始化 训练状态
     training_state = TrainingState()
@@ -52,9 +52,10 @@ def main():
                       training_state=training_state,
                       device=config.device,
                       config=config)
+    trainer.init(train_dataloader)
     # 验证原始参数
     init_evaluation_start = time.time()
-    training_state.eval_loss = evaluator.evaluate(trainer)
+    training_state.valid_loss = trainer.validate(valid_dataloader)
     init_evaluation_end = time.time()
 
     init_end_time = logger.previous_log_time
@@ -73,30 +74,33 @@ def main():
     model_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time
     while training_state.epoch < config.epochs and not training_state.end_training:
-        trainer.train_one_epoch(train_dataloader)
+        trainer.train_one_epoch(train_dataloader, valid_dataloader)
         training_state.epoch += 1
 
     model_driver.event(Event.TRAIN_END)
     raw_train_end_time = logger.previous_log_time
     training_state.raw_train_time = (raw_train_end_time - raw_train_start_time) / 1e+3
 
-    return training_state
+    return config, training_state
 
 
 if __name__ == "__main__":
     start = time.time()
-    state = main()
+    config_update, state = main()
     if not dist_pytorch.is_main_process():
         sys.exit(0)
 
     e2e_time = time.time() - start
     finished_info = {"e2e_time": e2e_time}
-
+    training_perf = state.total_tokens / state.raw_train_time
     if config.do_train:
         finished_info = {
+            "global_steps": state.global_steps,
             "e2e_time": e2e_time,
+            "training_tokens_per_second": training_perf,
             "converged": state.converged,
-            "final_loss": state.eval_loss,
+            "final_loss": state.valid_loss,
+            "final_acc": state.eval_bleu,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }
