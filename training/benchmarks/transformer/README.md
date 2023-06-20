@@ -34,8 +34,8 @@ bash scripts/run_preprocessing.sh
 
 |              | *Pytorch* | *Paddle* | *TensorFlow2* |
 | ------------ | --------- | -------- | ------------- |
-| *Nvidia GPU* | *✅*       | *N/A*      | *N/A*         |
-| *Kunlunxin XPU* | *✅*       | *N/A*    | *N/A*         |
+| *Nvidia GPU* |    *✅*   | *N/A*    | *N/A*         |
+| *Kunlunxin XPU* | *N/A*  | *N/A*    | *N/A*         |
 
 
 ## 4. 许可证
