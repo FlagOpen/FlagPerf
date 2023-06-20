@@ -25,10 +25,6 @@
 
 | 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度 | Steps数 | 性能（tokens/s) |
 | -------- | --------------- | ----------- | -------- | -------- | ------- | ---------------- |
-| 单机1卡  | config_A100x1x1 |             |          |          |         |                  |
-| 单机2卡  | config_A100x1x2 |             |          |          |         |                  |
-| 单机4卡  | config_A100x1x4 |             |          |          |         |                  |
 | 单机8卡  | config_A100x1x8 |    4122     |   27.0   |   27.08  |   17487 |     312422       |
-| 两机8卡  | config_A100x2x8 |             |          |          |         |                  |
 
 [官方精度](https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Translation/Transformer#training-performance-nvidia-dgx-a100-8x-a100-40gb)为6.81，按照[官方配置](https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Translation/Transformer#training-performance-nvidia-dgx-a100-8x-a100-40gb)，训完得到的精度为7.244，后续排期优化

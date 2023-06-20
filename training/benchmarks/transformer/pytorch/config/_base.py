@@ -4,7 +4,7 @@ from .model_params import *
 vendor: str = "nvidia"
 # model name
 name: str = "Transformer"
-data_dir: str = "/home/datasets_ckpt/transformer/train/data/wmt14_en_de_joined_dict/"
+data_dir: str = None
 
 do_train = True
 fp16 = False
