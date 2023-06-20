@@ -7,7 +7,7 @@
 [RetinaNet](https://arxiv.org/abs/1708.02002v2) 
 
 - 模型代码来源
-  This case includes code from the BSD3.0 protocol open source project [torchvision] at https://github.com/pytorch/vision/tree/release/0.9/references/detection
+  This case includes code from the BSD 3-Clause License open source project [torchvision] at https://github.com/pytorch/vision/tree/release/0.9/references/detection
   
   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
