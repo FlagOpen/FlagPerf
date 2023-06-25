@@ -38,8 +38,10 @@ def parse_args():
 
 def install_requriements(vendor, model, framework, pipsource):
     '''Install required python packages in vendor's path.'''
+    # framework: DL framework, may include version info. e.g. pytorch_1.13
+    framework_name = framework.split("_")[0]
     vend_path = os.path.abspath(os.path.join(CURR_PATH, "../" + vendor))
-    vend_model_path = os.path.join(vend_path, model + "-" + framework)
+    vend_model_path = os.path.join(vend_path, model + "-" + framework_name)
     model_config_path = os.path.join(vend_model_path, "config/")
     req_file = os.path.join(model_config_path, "requirements.txt")
     env_file = os.path.join(model_config_path, "environment_variables.sh")
@@ -58,7 +60,9 @@ def install_requriements(vendor, model, framework, pipsource):
 def install_extensions(vendor, model, framework):
     '''Install vendor's extensions with setup.py script.'''
     vend_path = os.path.abspath(os.path.join(CURR_PATH, "../" + vendor))
-    vend_model_path = os.path.join(vend_path, model + "-" + framework)
+    # framework: DL framework, may include version info. e.g. pytorch_1.13
+    framework_name = framework.split("_")[0]
+    vend_model_path = os.path.join(vend_path, model + "-" + framework_name)
     source_path = os.path.join(vend_model_path, "csrc")
     model_config_path = os.path.join(vend_model_path, "config/")
     env_file = os.path.join(model_config_path, "environment_variables.sh")
