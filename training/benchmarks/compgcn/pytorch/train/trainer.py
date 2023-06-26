@@ -67,14 +67,15 @@ class Trainer:
         t0 = time()
 
         for step, batch in enumerate(data_iter["train"]):
+            state.global_steps += 1
             triple, label = batch[0].to(device), batch[1].to(device)
-
             sub, rel, obj, label = (
                 triple[:, 0],
                 triple[:, 1],
                 triple[:, 2],
                 label,
             )
+            
             logits = model(graph, sub, rel)
 
             # compute loss

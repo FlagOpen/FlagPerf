@@ -17,9 +17,9 @@ max_epochs: int = 500
 l2: float = 0.0
 
 # Starting Learning Rate
-lr: float = 0.001
+lr: float = 0.02
 # Batch size
-batch_size: int = 1024
+batch_size: int = 20480
 # Label Smoothing
 lbl_smooth: float = 0.1
 

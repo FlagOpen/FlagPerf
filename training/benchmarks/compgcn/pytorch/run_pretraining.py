@@ -4,6 +4,8 @@ import sys
 import time
 from typing import Any, Tuple
 
+import torch
+
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
@@ -38,16 +40,11 @@ def main() -> Tuple[Any, Any]:
     init_start_time = logger.previous_log_time
 
     seed = config.seed
-
     init_helper.set_seed(seed, model_driver.config.vendor)
 
     # construct graph, split in/out edges and prepare train/validation/test data_loader
     data = Data(config, config.dataset, config.lbl_smooth, config.num_workers,
                 config.batch_size)
-
-    print(
-        f"data.num_ent:{data.num_ent} data.num_rel:{data.num_rel} data.num_workers:{data.num_workers}"
-    )
 
     # 根据 eval_dataloader 构建evaluator
     evaluator = Evaluator(config)
@@ -97,6 +94,25 @@ def main() -> Tuple[Any, Any]:
     training_state.raw_train_time = (raw_train_end_time -
                                      raw_train_start_time) / 1e+3
 
+    # test use the best model
+    model = trainer.model
+    model.eval()
+    model.load_state_dict(torch.load("comp_link" + "_" + config.dataset))
+    test_results = trainer.evaluator.evaluate(model,
+                                              trainer.graph,
+                                              config.device,
+                                              data.data_iter,
+                                              split="test")
+    print(
+        "Test MRR: {:.5}\n, MR: {:.10}\n, H@10: {:.5}\n, H@3: {:.5}\n, H@1: {:.5}\n"
+        .format(
+            test_results["mrr"],
+            test_results["mr"],
+            test_results["hits@10"],
+            test_results["hits@3"],
+            test_results["hits@1"],
+        ))
+
     return config, training_state
 
 
@@ -113,7 +129,7 @@ if __name__ == "__main__":
                      state.global_steps) / state.raw_train_time
     finished_info = {
         "e2e_time": e2e_time,
-        "training_images_per_second": training_perf,
+        "training_samples_per_second": training_perf,
         "converged": state.converged,
         "final_eval_MRR": state.eval_MRR,
         "final_eval_Hit1": state.eval_Hit1,
