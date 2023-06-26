@@ -34,7 +34,6 @@ distributed: bool = True
 # =========================================================
 seed: int = 0
 dist_backend: str = 'nccl'
-num_workers: int = 8
 device: str = None
 
 # =========================================================
