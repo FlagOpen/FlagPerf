@@ -80,7 +80,9 @@ def install_extensions(vendor, model, framework):
           + sandbox_dir + "; " + sys.executable + " " + source_path \
           + "/setup.py install; " + " rm -rf " + sandbox_dir
     print(cmd)
-    return run_cmd.run_cmd_wait(cmd, 1200)
+    ret, outs = run_cmd.run_cmd_wait(cmd, 1200)
+    print(ret, outs[0])
+    return ret
 
 
 def main():
