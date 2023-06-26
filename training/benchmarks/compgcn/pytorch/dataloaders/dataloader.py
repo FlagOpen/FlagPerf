@@ -6,6 +6,9 @@ from ordered_set import OrderedSet
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
+from torch.utils.data.distributed import DistributedSampler
+
+from driver import dist_pytorch
 
 
 class TrainDataset(Dataset):
@@ -252,24 +255,34 @@ class Data(object):
 
         self.triples = dict(self.triples)
 
-        def get_train_data_loader(split, batch_size, shuffle=True):
+        def get_dist_sampler(dataset):
+            sampler = DistributedSampler(
+                dataset,
+                num_replicas=dist_pytorch.get_world_size(),
+                rank=dist_pytorch.get_rank(),
+            )
+            return sampler
+
+        def get_train_data_loader(split, batch_size, shuffle=False):
+            trainset = TrainDataset(self.triples[split], self.num_ent,
+                                    self.lbl_smooth)
             return DataLoader(
-                TrainDataset(self.triples[split], self.num_ent,
-                             self.lbl_smooth),
+                trainset,
                 batch_size=batch_size,
                 shuffle=shuffle,
                 num_workers=max(0, self.num_workers),
                 collate_fn=TrainDataset.collate_fn,
+                sampler=get_dist_sampler(trainset),
             )
 
-        def get_test_data_loader(split, batch_size, shuffle=True):
-            return DataLoader(
-                TestDataset(self.triples[split], self.num_ent),
-                batch_size=batch_size,
-                shuffle=shuffle,
-                num_workers=max(0, self.num_workers),
-                collate_fn=TestDataset.collate_fn,
-            )
+        def get_test_data_loader(split, batch_size, shuffle=False):
+            testset = TestDataset(self.triples[split], self.num_ent)
+            return DataLoader(testset,
+                              batch_size=batch_size,
+                              shuffle=shuffle,
+                              num_workers=max(0, self.num_workers),
+                              collate_fn=TestDataset.collate_fn,
+                              sampler=get_dist_sampler(testset))
 
         # train/valid/test dataloaders
         self.data_iter = {

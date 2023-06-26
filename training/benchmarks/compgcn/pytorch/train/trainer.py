@@ -3,6 +3,7 @@ from time import time
 import torch
 import torch.utils.data
 from torch.types import Device
+import torch.distributed as dist
 import numpy as np
 
 from dataloaders.dataloader import Data
@@ -89,6 +90,9 @@ class Trainer:
 
         train_loss = np.sum(train_loss)
 
+        # 同步所有进程的模型参数
+        # for param in model.parameters():
+        #     dist.all_reduce(param.data, op=dist.ReduceOp.SUM)
         t1 = time()
         val_results = self.evaluator.evaluate(model,
                                               graph,

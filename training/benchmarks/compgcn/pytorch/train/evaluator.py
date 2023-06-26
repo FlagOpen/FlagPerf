@@ -1,5 +1,6 @@
 import torch as th
 
+from utils.tensor import reduce_tensor
 
 class Evaluator:
 
@@ -42,6 +43,9 @@ class Evaluator:
                     descending=False,
                 )[b_range, obj])
                 ranks = ranks.float()
+
+                # rt = reduce_tensor(ranks)
+
                 results["count"] = th.numel(ranks) + results.get("count", 0.0)
                 results["mr"] = th.sum(ranks).item() + results.get("mr", 0.0)
                 results["mrr"] = th.sum(1.0 / ranks).item() + results.get(
