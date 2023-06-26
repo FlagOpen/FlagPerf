@@ -12,8 +12,12 @@ Transformer是一种神经机器翻译（NMT）模型，它使用注意力机制
 
 - 模型代码来源
 
-https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Translation/Transformer
+This case includes code from the BSD License open source project at https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/Translation/Transformer/
 
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 
 ## 2. 数据集
@@ -36,13 +40,3 @@ bash scripts/run_preprocessing.sh
 | ------------ | --------- | -------- | ------------- |
 | *Nvidia GPU* |    *✅*   | *N/A*    | *N/A*         |
 | *Kunlunxin XPU* | *N/A*  | *N/A*    | *N/A*         |
-
-
-## 4. 许可证
-
-This case includes code from the BSD License open source project at https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/Translation/Transformer/
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.

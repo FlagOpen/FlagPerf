@@ -24,6 +24,10 @@
 from setuptools import setup, find_packages
 from torch.utils.cpp_extension import BuildExtension, CppExtension
 import sys
+import os
+
+
+this_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 if sys.version_info < (3,):
@@ -32,7 +36,7 @@ if sys.version_info < (3,):
 
 batch_utils = CppExtension(
                         name='fairseq.data.batch_C',
-                        sources=['make_batches.cpp'],
+                        sources=[os.path.join(this_dir, 'make_batches.cpp')],
                         extra_compile_args={
                                 'cxx': ['-O2',],
                         }
