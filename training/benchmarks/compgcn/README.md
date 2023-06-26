@@ -18,11 +18,6 @@ Some of the files in this directory were modified by BAAI in 2023 to support Fla
   - wn18rr数据集(WordNet-18 RR)
   下载地址：https://dgl-data.s3.cn-north-1.amazonaws.com.cn/dataset/wn18rr.zip
 
-  - FB15k-237数据集
-  下载地址：https://dgl-data.s3.cn-north-1.amazonaws.com.cn/dataset/FB15k-237.zip
-
-
-
 #### 预处理
 - FB15k-237数据集
 unzip FB15k-237.zip
