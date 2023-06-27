@@ -370,13 +370,6 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 > pwr_monitor.log：训练过程中的电源监控日志。格式：采样时间点，整机功率
 
 ----------
-### 教程（TODO）
-
-
-- BERT-Large
-- GLM-Large
-- CPM-1-medium
-
 ### 贡献代码
 
 本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle与昆仑芯共同建设中。
@@ -385,7 +378,5 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 
 flagperf@baai.ac.cn
 ### 许可证
-
-本项目基于Apache 2.0 license。
-本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。
-关于各模型测试Case的情况，请参考各模型测试Case目录。
+本项目基于Apache 2.0 license。 
+<br>本项目的代码来源于不同的代码仓库，关于各模型测试Case的情况，请参考各模型测试Case目录的文档。

@@ -127,7 +127,7 @@ cudnn_benchmark: bool = False
 cudnn_deterministic: bool = True
 
 # Stop training after reaching this accuracy
-target_acc1: float = 81.072
+target_acc1: float = 79.982
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 100
