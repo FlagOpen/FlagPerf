@@ -33,7 +33,6 @@ class Trainer:
         self.graph = in_out_norm(graph)
 
     def init(self):
-        device = torch.device(self.config.device)
         dist_pytorch.main_proc_print("Init progress:")
         self.model = create_model(self.config, self.data)
         self.model.to(self.device)
@@ -76,7 +75,7 @@ class Trainer:
                 triple[:, 2],
                 label,
             )
-            
+
             logits = model(graph, sub, rel)
 
             # compute loss
@@ -88,11 +87,12 @@ class Trainer:
             tr_loss.backward()
             optimizer.step()
 
+        # # 同步所有进程的模型参数
+        # for param in model.parameters():
+        #     dist.all_reduce(param.data, op=dist.ReduceOp.SUM)    
+
         train_loss = np.sum(train_loss)
 
-        # 同步所有进程的模型参数
-        # for param in model.parameters():
-        #     dist.all_reduce(param.data, op=dist.ReduceOp.SUM)
         t1 = time()
         val_results = self.evaluator.evaluate(model,
                                               graph,
@@ -118,7 +118,7 @@ class Trainer:
                 return
         print(
             "In epoch {}, Train Loss: {:.4f}, Valid MRR: {:.5},  Valid Hits@1: {:.5}, Train time: {}, Valid time: {}"
-            .format(epoch, train_loss, val_results["mrr"], state.eval_Hit1,
+            .format(epoch, train_loss, state.eval_MRR, state.eval_Hit1,
                     t1 - t0, t2 - t1))
 
         if state.eval_MRR >= config.target_MRR and state.eval_Hit1 >= config.target_Hit1:
