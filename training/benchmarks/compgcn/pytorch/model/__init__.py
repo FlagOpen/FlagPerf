@@ -6,7 +6,6 @@ from utils.utils import in_out_norm
 
 
 def create_model(args, data:Data):
-    # construct graph, split in/out edges and prepare train/validation/test data_loader
     graph = data.g.to(args.device)
     num_rel = torch.max(graph.edata["etype"]).item() + 1
 
