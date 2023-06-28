@@ -38,6 +38,8 @@ from fairseq.optim import lr_scheduler
 from fairseq.meters import TimeMeter, AverageMeter
 from fairseq.criterions import CRITERION_REGISTRY
 
+import dllogger as DLLogger
+
 
 class DDPTrainer():
     """Main class for data parallel training.
@@ -181,6 +183,7 @@ class DDPTrainer():
                 'grad_denom': grad_denom,
                 'updates': 1
             }
+
 
             self.clear_buffered_stats()
 

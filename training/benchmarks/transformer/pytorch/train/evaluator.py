@@ -4,7 +4,7 @@ import torch
 from fairseq.data import data_utils
 from fairseq.sequence_generator import SequenceGenerator
 from fairseq.meters import StopwatchMeter
-from fairseq import data, distributed_utils, options, utils, tokenizer
+from fairseq import data, distributed_utils, utils, tokenizer
 
 
 class Evaluator:

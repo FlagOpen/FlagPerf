@@ -120,7 +120,7 @@ def load_dataset(args, datasets, split, src_dict, tgt_dict, combine=False):
     """Load a dataset split."""
 
     def split_exists(split, src, tgt, lang):
-        filename = os.path.join(args.data_dir, '{}.{}-{}.{}'.format(split, src, tgt, lang))
+        filename = os.path.join(args.data, '{}.{}-{}.{}'.format(split, src, tgt, lang))
         if args.raw_text and IndexedRawTextDataset.exists(filename):
             return True
         elif not args.raw_text and IndexedInMemoryDataset.exists(filename):
@@ -143,19 +143,19 @@ def load_dataset(args, datasets, split, src_dict, tgt_dict, combine=False):
         # infer langcode
         src, tgt = args.source_lang, args.target_lang
         if split_exists(split_k, src, tgt, src):
-            prefix = os.path.join(args.data_dir, '{}.{}-{}.'.format(split_k, src, tgt))
+            prefix = os.path.join(args.data, '{}.{}-{}.'.format(split_k, src, tgt))
         elif split_exists(split_k, tgt, src, src):
-            prefix = os.path.join(args.data_dir, '{}.{}-{}.'.format(split_k, tgt, src))
+            prefix = os.path.join(args.data, '{}.{}-{}.'.format(split_k, tgt, src))
         else:
             if k > 0:
                 break
             else:
-                raise FileNotFoundError('Dataset not found: {} ({})'.format(split, args.data_dir))
+                raise FileNotFoundError('Dataset not found: {} ({})'.format(split, args.data))
 
         src_datasets.append(indexed_dataset(prefix + src, src_dict))
         tgt_datasets.append(indexed_dataset(prefix + tgt, tgt_dict))
 
-        print('| {} {} {} examples'.format(args.data_dir, split_k, len(src_datasets[-1])))
+        print('| {} {} {} examples'.format(args.data, split_k, len(src_datasets[-1])))
 
         if not combine:
             break

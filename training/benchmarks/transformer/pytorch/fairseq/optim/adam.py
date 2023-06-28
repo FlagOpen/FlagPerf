@@ -23,6 +23,7 @@
 from . import FairseqOptimizer, register_optimizer
 from apex.optimizers.fused_adam import FusedAdam
 
+
 @register_optimizer('adam')
 class FairseqAdam(FairseqOptimizer):
     def __init__(self, args, params):

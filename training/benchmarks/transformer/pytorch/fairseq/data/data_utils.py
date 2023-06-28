@@ -44,13 +44,13 @@ def infer_language_pair(path):
 
 def load_dictionaries(args):
     if args.source_lang is None or args.target_lang is None:
-        args.source_lang, args.target_lang = infer_language_pair(args.data_dir)
+        args.source_lang, args.target_lang = infer_language_pair(args.data)
     if args.source_lang is None or args.target_lang is None:
         raise Exception('Could not infer language pair, please provide it explicitly')
 
     # load dictionaries
-    src_dict = Dictionary.load(os.path.join(args.data_dir, 'dict.{}.txt'.format(args.source_lang)))
-    tgt_dict = Dictionary.load(os.path.join(args.data_dir, 'dict.{}.txt'.format(args.target_lang)))
+    src_dict = Dictionary.load(os.path.join(args.data, 'dict.{}.txt'.format(args.source_lang)))
+    tgt_dict = Dictionary.load(os.path.join(args.data, 'dict.{}.txt'.format(args.target_lang)))
     assert src_dict.pad() == tgt_dict.pad()
     assert src_dict.eos() == tgt_dict.eos()
     assert src_dict.unk() == tgt_dict.unk()
