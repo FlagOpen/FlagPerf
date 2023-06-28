@@ -80,8 +80,3 @@ python run_pretraining.py
 | 单机4卡  | config_A100x1x4 | 1715.28     | 0.67     | 0.6809   | 6250    | 180.07           |
 | 单机8卡  | config_A100x1x8 | 1315.42     | 0.67     | 0.6818   | 4689    | 355.63           |
 
-### 许可证
-
-本项目基于Apache 2.0 license。
-
-本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA/benchmarks/ 实现。
