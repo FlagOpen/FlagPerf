@@ -26,7 +26,3 @@
 
 [官方精度](https://github.com/pytorch/vision/blob/main/torchvision/models/efficientnet.py#L669)为84.228，按照[官方配置](https://github.com/pytorch/vision/blob/main/references/classification/README.md)，训完得到的精度为82.672，后续排期优化
 
-### 许可证
-
-
-本项目基于Apache 2.0 license。

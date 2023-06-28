@@ -4,7 +4,10 @@ This repository provides an optimized implementation of the wav2vec 2.0 model, a
 
 ### 代码来源
 
-https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/SpeechRecognition/wav2vec2/
+This repository includes software from https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechRecognition/wav2vec2
+licensed under the Apache License, Version 2.0
+
+Some of the files in this directory were modified by BAAI in 2023 to support FlagPerf.
 
 
 ### 数据集下载地址(global proxy)
