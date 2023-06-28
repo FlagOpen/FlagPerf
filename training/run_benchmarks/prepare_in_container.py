@@ -84,6 +84,7 @@ def install_extensions(vendor, model, framework):
     print(ret, outs[0])
     return ret
 
+
 def main():
     '''Main process of preparing environment.'''
     args = parse_args()
