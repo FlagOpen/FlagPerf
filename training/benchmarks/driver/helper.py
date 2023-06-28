@@ -6,7 +6,6 @@ import os
 import random
 import numpy as np
 import torch
-import driver
 from driver import perf_logger, Driver, check
 
 
@@ -17,18 +16,19 @@ class InitHelper:
 
     def __init__(self, config: object) -> None:
         self.config = config
-        self.update_local_rank()
 
-    def init_driver(self, global_module, local_module) -> Driver:
+    def init_driver(self, global_module, local_module, parser=None) -> Driver:
         """
         params:
             name: model name
         """
         config = self.config
         model_driver = Driver(config, config.mutable_params)
-        model_driver.setup_config(argparse.ArgumentParser(config.name))
+        parser = argparse.ArgumentParser(config.name) if parser is None else parser
+        model_driver.setup_config(parser)
         model_driver.setup_modules(global_module, local_module)
         check.check_config(model_driver.config)
+        self.update_local_rank()
         return model_driver
 
     def get_logger(self) -> perf_logger.PerfLogger:
@@ -38,8 +38,7 @@ class InitHelper:
 
     def update_local_rank(self) -> int:
         """set local rank"""
-        if 'LOCAL_RANK' in os.environ:
-            self.config.local_rank = int(os.environ['LOCAL_RANK'])
+        self.config.local_rank = int(os.getenv("LOCAL_RANK", 0))
 
     def set_seed(self, seed: int, vendor: str):
         """set seed"""

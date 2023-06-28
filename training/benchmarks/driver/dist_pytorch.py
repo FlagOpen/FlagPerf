@@ -227,6 +227,14 @@ def format_step(step):
     return s
 
 
+def is_dist_avail_and_initialized():
+    if not torch.distributed.is_available():
+        return False
+    if not torch.distributed.is_initialized():
+        return False
+    return True
+
+
 class PyTorchDistributedDataParallel(DDP):
 
     def named_parameters(self, prefix: str = '', recurse: bool = True):

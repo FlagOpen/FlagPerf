@@ -4,6 +4,8 @@
 > - 文档面向人群：芯片厂商开发人员
 > - 文档目的：给出厂商适配标准Case的规范，降低厂商适配成本，提升共建项目的可维护性。
 
+## 0. 准备工作
+  配置集群各服务器间root帐号的ssh信任关系和sudo免密
 ## 1. 厂商适配Case的代码和配置文件目录结构说明
 
 厂商基于标准case做硬件上的适配，适配原则：
@@ -11,32 +13,49 @@
 2. 接受对模型做合理优化以此来提升模型的性能表现，如bs调整等，建议底层优化，暂不接受torch接口层优化, 具体可case by case讨论。
 3. 对于标准case中厂商不支持的算子，可有合理替代方案，具体可讨论。
 
-标准Case实现路径在training/benchmarks/&lt;model&gt;/&lt;framework&gt;/下，厂商可以通过扩展模型实现的接口来适配自己的芯片。代码放在training/&lt;vendor&gt;/下，主要包括以下几部分(以Nvidia, glm, pytorch为例）：
+标准Case实现路径在training/benchmarks/&lt;model&gt;/&lt;framework&gt;/下，厂商可以通过扩展模型实现的接口来适配自己的芯片。厂商修改的代码放在training/\<vendor\>/glm-pytorch下，主要包括以下几部分(以kunlunxin, glm, pytorch为例）：
 
 ```Bash
-training/nvidia/ #厂商代码主目录
-├── docker_image # 构建docker镜像所需文件
-│   ├── pytorch # pytorch框架构建Docker镜像所需文件
-│   │   ├── Dockerfile # 构建Docker镜像的Dockerfile
-│   │   ├── packages # 如果有需要额外下载的安装包，下载至这里，并在pytorch_install.sh安装
-│   │   └── pytorch_install.sh # 根据Dockerfile构建的镜像后会临时拉起镜像，运行pytorch_install.sh后commit保存镜像
-├── glm-pytorch # Case适配代码和配置，目录名称格式为：<model>-<framework>
-│   ├── config # 配置文件存放目录
-│   │   ├── config_A100x1x2.py # 配置文件，文件名格式为：config_<卡型>X_<机器数>X<单机卡数>.py
-│   │   ├── config_A100x2x8.example # 配置文件样例
-│   │   ├── environment_variables.sh # 运行该Case前source该文件以配置环境
-│   │   └── requirements.txt # 运行该Case前会在容器内pip安装requirements
-│   ├── csrc # 算子源码目录，例如，nvidia将cuda代码放在这里，FlagPerf在运行Case前会在容器环境准备的环节调用这里的setup.py来编译安装
-│   │   ├── setup.py # 算子编译安装脚本
-│   └── extern # Case适配代码，可以根据基准case代码training/benchmarks/<model>/<framework>进行适配和扩展
-│       ├── converter.py
-│       ├── layers
-│       │   ├── __init__.py
-│       │   ├── layernorm.py
-│       │   ├── transformer.py
-│       │   └── transformer_block.py
-│       └── trainer_adapter.py
-├── nvidia_monitor.py # 监控脚本，在Case运行前被FlagPerf自动启动，结束后自动停止。监控脚本输出在指定的日志目录。
+.training/
+├── benchmarks
+│   ├── bert
+│   ├── cpm
+│   ├── driver
+│   ├── glm  # Case适配代码和配置，目录名称格式为：<model>-<framework>
+│   ├── mobilenetv2
+│   ├── resnet50
+│   └── wav2vec2
+├── iluvatar #天数在适配时候做的改动都放在此处
+│   ├── README.md
+│   ├── cpm-pytorch
+│   ├── docker_image # 构建docker镜像所需文件
+│   ├── glm-pytorch
+│   └── iluvatar_monitor.py # 天数监控脚本，在Case运行前被FlagPerf自动启动，结束后自动停止。监控脚本输出在指定的日志目录。
+├── kunlunxin #昆仑芯在适配时候做的改动都放在此处
+│   ├── bert-pytorch
+│   ├── docker_image
+│   ├── glm-pytorch
+│   ├── kunlunxin_monitor.py # kunlunxin监控脚本，在Case运行前被FlagPerf自动启动，结束后自动停止。监控脚本输出在指定的日志目录。
+│   └── mobilenetv2-pytorch
+├── nvidia # #NV上的标准case
+│   ├── README.md
+│   ├── bert-paddle
+│   ├── bert-pytorch
+│   ├── cpm-pytorch
+│   ├── docker_image
+│   ├── glm-pytorch
+│   ├── mobilenetv2-pytorch
+│   ├── nvidia_monitor.py. #NV监控脚本，在Case运行前被FlagPerf自动启动，结束后自动停止。监控脚本输出在指定的日志目录。
+│   ├── resnet50-tensorflow2
+│   └── wav2vec2-pytorch
+├── run_benchmarks #不同框架的启动入口
+│   ├── config
+│   ├── paddle
+│   ├── prepare_in_container.py
+│   ├── pytorch
+│   ├── run.py
+│   └── tensorflow2
+└── utils
 ```
 
 ## 2. 初次适配需提供环境构建和监控程序
@@ -138,9 +157,10 @@ ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
     - 模型的初始Checkpoint
 
 ### 3）测试达标要求
-- 以Perf方式训练1x1、1X8、2X8模型收敛达到目标精度(标准case中的target acc)
-- 单个case的收敛时间在2-5h内
+- 遵循控制变量法则，仅做适配芯片的必要修改
+- 调优配置至能体现厂商性能的最优配置
 - 多机/多卡吞吐量加速比符合预期
+- 以Perf方式训练1x1、1X8、2X8模型收敛达到目标精度(标准case中的target acc)
 - 支持硬件监控指标采样（必选：时间戳、使用率、显存使用率，可选：功耗、温度等，建议都有）
 
 ### 4）文档规范

@@ -40,13 +40,19 @@ Please refer to this paper for a detailed description of Deep Residual network:
 
 
 ## Model source code
+Pytorch case:
+This case includes code from the BSD 3-Clause License open source project at https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py
 
-| model url                                                                | commit_id | date      |
-| ------------------------------------------------------------------------ | --------- | --------- |
-| https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py | 7dc5e5b   | 2023-1-11 |
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
+Tensorflow2 case:
+This repository includes software from https://github.com/tensorflow/models/tree/master/official/legacy/image_classification/resnet
+licensed under the Apache License 2.0.
 
-
+Some of the files in this directory were modified by BAAI in 2023 to support FlagPerf.
 
 ## Dataset
 
