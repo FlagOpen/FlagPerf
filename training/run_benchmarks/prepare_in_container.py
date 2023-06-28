@@ -76,10 +76,7 @@ def install_extensions(vendor, model, framework):
           + sandbox_dir + "; " + sys.executable + " " + source_path \
           + "/setup.py install; " + " rm -rf " + sandbox_dir
     print(cmd)
-    ret, outs = run_cmd.run_cmd_wait(cmd, 1200)
-    print(ret, outs[0])
-    return ret
-
+    return run_cmd.run_cmd_wait(cmd, 1200)
 
 def main():
     '''Main process of preparing environment.'''

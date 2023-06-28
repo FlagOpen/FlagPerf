@@ -11,7 +11,7 @@ name: str = "swin_transformer"
 # Batch size for a single GPU, could be overwritten by command line argument
 train_batch_size = 256
 # Path to dataset, could be overwritten by command line argument
-data_dir = '/mnt/data/imagenet/'
+data_dir = ''
 train_data_path = ''
 train_data = "train"
 eval_data = "val"

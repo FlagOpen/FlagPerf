@@ -7,8 +7,6 @@ import torch
 from torch.types import Device
 from timm.utils import accuracy, AverageMeter
 
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
 from train.training_state import TrainingState
 
