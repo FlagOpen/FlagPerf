@@ -75,7 +75,7 @@ class Daemon:
 
         def npu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "npu-smi"
+            cmd = "npu-smi info"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,
