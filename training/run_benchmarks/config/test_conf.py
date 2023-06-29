@@ -53,9 +53,11 @@ CLEAR_CACHES = True
     "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
-    "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
-    "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
-    "cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
+    "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+    "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
     "resnet50:pytorch:A100:1:8:1": "/home/datasets_ckpt/resnet50/train/",
     "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
+
+    # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 }
