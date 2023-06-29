@@ -5,7 +5,6 @@ import argparse
 import os
 import random
 import numpy as np
-import torch
 from driver import perf_logger, Driver, check
 
 
@@ -53,6 +52,7 @@ class InitHelper:
         lower_vendor = config.vendor.lower()
 
         if lower_vendor == "nvidia":
+            import torch
             torch.manual_seed(seed)
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
@@ -60,13 +60,18 @@ class InitHelper:
             torch.backends.cudnn.deterministic = getattr(
                 config, "cudnn_deterministic")
         elif lower_vendor == "iluvatar":
+            import torch
             torch.manual_seed(seed)
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
             torch.backends.cudnn.benchmark = True
             torch.backends.cudnn.deterministic = False
         elif lower_vendor == "kunlunxin":
+            import torch
             torch.manual_seed(seed)
+        elif lower_vendor == "ascend":
+            import mindspore
+            mindspore.set_seed(seed)
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass

@@ -458,7 +458,7 @@ def get_config_from_case(case):
 
 
 def get_valid_cases():
-    '''Cehck case config in test_conf, return valid cases list.'''
+    '''Check case config in test_conf, return valid cases list.'''
     if not isinstance(tc.CASES, dict):
         RUN_LOGGER.error(
             "No valid cases found in test_conf because test_config.CASES is not a dict...[EXIT]"
