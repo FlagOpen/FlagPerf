@@ -39,7 +39,7 @@ fp16 = True
 # frequency of logging loss. If not positive, no logging is provided for training loss
 log_freq: int = 10
 # Stop training after reaching this accuracy
-target_acc1: float = 80.00
+target_acc1: float = 81.00
 # Whether to read local rank from ENVVAR
 use_env: bool = True
 # device
