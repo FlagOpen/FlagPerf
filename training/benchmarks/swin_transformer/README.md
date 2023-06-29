@@ -34,6 +34,6 @@ copies or substantial portions of the Software.
 |  ----  | ----  |  ----  | ----  |
 | Nvidia GPU | ✅ |N/A  |N/A|
 | 昆仑芯 XPU | N/A |N/A  |N/A|
-| 天数智芯GPU | N/A |N/A  |N/A|
+| 天数智芯GPU | ✅  |N/A  |N/A|
 
 
