@@ -77,8 +77,9 @@ class ImageManager():
         cmd = "sudo docker images|grep -w \"" + self.repository + "\"|grep -w \"" + \
               self.tag + "\""
         print(cmd)
-        print(rcw(cmd, 10, retouts=False))
-        if rcw(cmd, 10, retouts=False) != 0:
+        ret, _ = rcw(cmd, 10)
+        print(ret)
+        if ret != 0:
             return 1
         return 0
 
@@ -89,7 +90,8 @@ class ImageManager():
             1  - rm image failed
         '''
         cmd = "sudo docker rmi " + self.repository + ":" + self.tag
-        if rcw(cmd, 60, retouts=False) != 0:
+        ret, _ = rcw(cmd, 60)
+        if ret != 0:
             return 1
         return 0
 
@@ -97,7 +99,7 @@ class ImageManager():
         '''remove temp container and temp image.'''
         clean_tmp_cmd = "docker rmi -f " + tmp_image_name
         cont_mgr.remove()
-        rcw(clean_tmp_cmd, 30, retouts=False)
+        rcw(clean_tmp_cmd, 30)
 
     def build_image(self, image_dir, framework):
         '''Build docker image in vendor's path.
@@ -106,7 +108,9 @@ class ImageManager():
         tmp_image_name = "tmp_" + self.repository + ":" + self.tag
         build_cmd = "cd " + image_dir + " && docker build -t " \
                     + tmp_image_name + " ./"
-        if rcw(build_cmd, 600, retouts=False) != 0:
+
+        ret, _ = rcw(build_cmd, 600)
+        if ret != 0:
             print("docker build failed. " + tmp_image_name)
             return 1
 
