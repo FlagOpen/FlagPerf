@@ -56,8 +56,22 @@ CASES = {
     "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
     "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
     "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
-    "resnet50:pytorch:A100:1:8:1": "/home/datasets_ckpt/resnet50/train/",
-    "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
 
+    # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "efficientnet:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
+    # "faster_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/fasterrcnn/coco2017/",
+    # "bigtransfer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
+    # "tacotron2:pytorch_1.8:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    # "resnet50:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "mask_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
+    
+    # "wav2vec2:pytorch_1.13:A100:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
+    # "WaveGlow:pytorch_1.13:A100:1:8:1": "/raid/dataset/LJSpeech/",
+
+    
+    # "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 }
