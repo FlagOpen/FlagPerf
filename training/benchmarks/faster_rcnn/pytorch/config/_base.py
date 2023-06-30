@@ -50,6 +50,11 @@ warmup = 0.1
 # utils
 # =========================================================
 seed: int = 0
+# torch.backends.cudnn.benchmark
+cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
+
 dist_backend: str = 'nccl'
 num_workers: int = 4
 device: str = None

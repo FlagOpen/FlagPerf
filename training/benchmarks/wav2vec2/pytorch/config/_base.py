@@ -12,6 +12,10 @@ n_device: int = 1
 log_freq = 1
 local_rank: int = -1
 seed: int = 1
+# torch.backends.cudnn.benchmark
+cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
 
 #important set
 resume = False  #[bool], default False, if True, read last_checkpoint from ckpt saved path

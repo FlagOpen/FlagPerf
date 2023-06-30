@@ -3,7 +3,10 @@ vendor: str = None
 
 # random seed
 seed: int = 1234
-
+# torch.backends.cudnn.benchmark
+cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
 # model args
 name: str = "resnet50"
 
