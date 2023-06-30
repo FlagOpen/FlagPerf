@@ -56,6 +56,7 @@ CASES = {
     "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
     "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
     "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
+<<<<<<< HEAD
 
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -73,5 +74,10 @@ CASES = {
 
     
     # "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
+=======
+    "resnet50:pytorch:A100:1:8:1": "/home/datasets_ckpt/resnet50/train/",
+    "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
+>>>>>>> resolve conflicts
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    "compgcn:pytorch_1.13:A100:1:8:1": "/raid/dataset/comp_gcn",
 }
