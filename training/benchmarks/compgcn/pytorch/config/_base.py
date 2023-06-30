@@ -6,6 +6,11 @@ vendor: str = "nvidia"
 data_dir: str = None
 name: str = "compgcn"
 
+# torch.backends.cudnn.benchmark
+cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
+
 # Optional paramters
 
 # =========================================================
