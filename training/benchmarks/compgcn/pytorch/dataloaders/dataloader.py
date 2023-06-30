@@ -263,7 +263,7 @@ class Data(object):
             )
             return sampler
 
-        def get_train_data_loader(split, batch_size, shuffle=False):
+        def get_train_data_loader(split, batch_size, shuffle=True):
             trainset = TrainDataset(self.triples[split], self.num_ent,
                                     self.lbl_smooth)
             return DataLoader(
@@ -272,17 +272,19 @@ class Data(object):
                 shuffle=shuffle,
                 num_workers=max(0, self.num_workers),
                 collate_fn=TrainDataset.collate_fn,
-                sampler=get_dist_sampler(trainset),
+                # sampler=get_dist_sampler(trainset),
             )
 
-        def get_test_data_loader(split, batch_size, shuffle=False):
+        def get_test_data_loader(split, batch_size, shuffle=True):
             testset = TestDataset(self.triples[split], self.num_ent)
-            return DataLoader(testset,
-                              batch_size=batch_size,
-                              shuffle=shuffle,
-                              num_workers=max(0, self.num_workers),
-                              collate_fn=TestDataset.collate_fn,
-                              sampler=get_dist_sampler(testset))
+            return DataLoader(
+                testset,
+                batch_size=batch_size,
+                shuffle=shuffle,
+                num_workers=max(0, self.num_workers),
+                collate_fn=TestDataset.collate_fn,
+                # sampler=get_dist_sampler(testset))
+            )
 
         # train/valid/test dataloaders
         self.data_iter = {
