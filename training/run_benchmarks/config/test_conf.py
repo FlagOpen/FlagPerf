@@ -34,7 +34,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/FlagPerf/training"
+FLAGPERF_PATH = "/home/zhouyu/workspace/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -53,10 +53,9 @@ CLEAR_CACHES = True
     "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
-    "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
-    "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
-    "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
-<<<<<<< HEAD
+    # "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
+    # "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+    # "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
 
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -74,10 +73,6 @@ CASES = {
 
     
     # "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
-=======
-    "resnet50:pytorch:A100:1:8:1": "/home/datasets_ckpt/resnet50/train/",
-    "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
->>>>>>> resolve conflicts
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-    "compgcn:pytorch_1.13:A100:1:8:1": "/raid/dataset/comp_gcn",
+    "compgcn:pytorch_1.13:A100:1:1:1": "/raid/dataset/comp_gcn",
 }
