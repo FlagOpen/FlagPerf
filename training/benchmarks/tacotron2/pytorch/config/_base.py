@@ -3,9 +3,9 @@ vendor: str = None
 
 # random seed
 seed: int = 1234
+
 """model args"""
 name: str = "tacotron2"
-
 """Training parameters"""
 # frequency of logging loss. If not positive, no logging is provided for training loss
 log_freq: int = 1
@@ -13,7 +13,6 @@ log_freq: int = 1
 max_epochs: int = 1501
 # disable uniform initialization of batchnorm layer weight
 disable_uniform_initialize_bn_weight: bool = False
-
 """ lr_scheduler parameters"""
 # initial learning rate
 learning_rate: float = 0.1
@@ -21,7 +20,6 @@ learning_rate: float = 0.1
 lr_anneal_steps: list = [500, 1000, 1500]
 # Factor for annealing learning rate
 lr_anneal_factor: float = 0.3
-
 """optimizer args"""
 # weight decay coefficient for L2 regularization
 weight_decay: float = 1e-6
@@ -74,8 +72,10 @@ device: str = None
 n_device: int = 1
 # Enable cudnn
 cudnn_enabled: bool = True
-# Run cudnn benchmark
+# torch.backends.cudnn.benchmark
 cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
 """Dataset parameters"""
 # Loads mel spectrograms from disk instead of computing them on the fly
 load_mel_from_disk: bool = True

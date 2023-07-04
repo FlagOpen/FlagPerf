@@ -13,6 +13,8 @@ mutable_params = [
     "min_scale",
     "num_workers",
     "vendor",
+    'cudnn_benchmark',
+    'cudnn_deterministic'
 ]
 
 mutable_params += ["local_rank", "do_train", "data_dir", "log_freq"]

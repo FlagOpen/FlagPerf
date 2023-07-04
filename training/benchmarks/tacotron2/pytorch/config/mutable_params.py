@@ -14,6 +14,8 @@ mutable_params = [
     "distributed",
     "init_checkpoint",
     "vendor",
+    'cudnn_benchmark',
+    'cudnn_deterministic'
 ]
 
 mutable_params += ["local_rank", "do_train", "data_dir"]
