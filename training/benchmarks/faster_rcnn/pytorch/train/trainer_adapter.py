@@ -1,3 +1,6 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 import os
 import sys
 import torch
@@ -39,9 +42,3 @@ def create_grad_scaler():
     scaler = torch.cuda.amp.GradScaler() if config.amp else None
     return scaler
 
-
-def backward(loss: Tensor, optimizer: Optimizer):
-    """backward pass"""
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
