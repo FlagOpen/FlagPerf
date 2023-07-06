@@ -3,6 +3,7 @@ import pycuda.driver as cuda
 import pycuda.autoinit
 import torch
 import os
+import subprocess
 from loguru import logger
 import numpy as np
 
@@ -14,33 +15,21 @@ def build_engine(config):
     dir_trt_path = os.path.dirname(trt_path)
     os.makedirs(dir_trt_path, exist_ok=True)
 
+    trtexec_cmd = "trtexec --onnx=" + onnx_path + " --saveEngine=" + trt_path
+    if config.fp16:
+        trtexec_cmd += " --fp16"
+    if config.has_dynamic_axis:
+        trtexec_cmd += " --minShapes=" + config.minShapes
+        trtexec_cmd += " --optShapes=" + config.optShapes
+        trtexec_cmd += " --maxShapes=" + config.maxShapes
+
+    subprocess.run(trtexec_cmd).wait()
+
     trtlogger = trt.Logger()
 
-    if os.path.exists(trt_path):
-        logger.debug("Using exist " + trt_path)
-        with open(trt_path, "rb") as f, trt.Runtime(trtlogger) as runtime:
-            return runtime.deserialize_cuda_engine(f.read())
-
-    builder = trt.Builder(trtlogger)
-    _config = builder.create_builder_config()
-    _config.max_workspace_size = 1 << 32
-    if config.fp16:
-        _config.set_flag(trt.BuilderFlag.FP16)
-    network = builder.create_network(
-        flags=1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-    parser = trt.OnnxParser(network, trtlogger)
-
-    with open(onnx_path, "rb") as f:
-        parser.parse(f.read())
-
-    plan = builder.build_serialized_network(network, _config)
-    with trt.Runtime(trtlogger) as runtime:
-        engine = runtime.deserialize_cuda_engine(plan)
-
-    with open(trt_path, "wb") as f:
-        f.write(engine.serialize())
-
-    return engine
+    logger.debug("Using exist " + trt_path)
+    with open(trt_path, "rb") as f, trt.Runtime(trtlogger) as runtime:
+        return runtime.deserialize_cuda_engine(f.read())
 
 
 def get_inference_toolkits(config):

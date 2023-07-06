@@ -35,7 +35,7 @@ def main(config):
     start = time.time()
 
     evaluator = benchmark_module.evaluator
-    
+
     model_forward_result = benchmark_module.model_forward(
         model, dataloader, evaluator, config)
 
@@ -80,50 +80,31 @@ def main(config):
 def parse_args():
     parser = ArgumentParser(description=" ")
 
-    parser.add_argument("--perf_dir",
-                        type=str,
-                        default="",
-                        help=".")
-    
-    parser.add_argument("--data_dir",
-                        type=str,
-                        default="",
-                        help=".")
+    parser.add_argument("--perf_dir", type=str, default="", help=".")
 
-    parser.add_argument("--log_dir",
-                        type=str,
-                        default="",
-                        help=".")
-    
-    parser.add_argument("--loglevel",
-                        type=str,
-                        default='DEBUG',
-                        help=".")
-    
-    parser.add_argument("--case",
-                        type=str,
-                        default="",
-                        help=".")
+    parser.add_argument("--data_dir", type=str, default="", help=".")
 
-    parser.add_argument("--vendor",
-                        type=str,
-                        default="",
-                        help=".")
-    
-    parser.add_argument("--framework",
-                        type=str,
-                        default="",
-                        help=".")
+    parser.add_argument("--log_dir", type=str, default="", help=".")
+
+    parser.add_argument("--loglevel", type=str, default='DEBUG', help=".")
+
+    parser.add_argument("--case", type=str, default="", help=".")
+
+    parser.add_argument("--vendor", type=str, default="", help=".")
+
+    parser.add_argument("--framework", type=str, default="", help=".")
 
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
 
+
 if __name__ == "__main__":
     # fake, just for test
     config_from_args = parse_args()
-    
+
     config_from_args.framework = config_from_args.framework.split('_')[0]
     print("config_from_args", config_from_args)
+    os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 
     main(config_from_args)
