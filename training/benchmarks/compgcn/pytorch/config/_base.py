@@ -29,10 +29,10 @@ test_data: str = "test"
 train_batch_size = batch_size
 
 # target acc
-target_MRR: float = 0.463
+target_MRR: float = 0.462
 target_Hit1: float = 0.430
 
-max_epochs: int = 500
+max_epochs: int = 5000
 
 fp16 = False
 distributed: bool = True

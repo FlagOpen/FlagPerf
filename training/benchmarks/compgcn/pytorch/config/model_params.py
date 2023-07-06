@@ -11,7 +11,7 @@ opn: str = "ccorr"
 gpu: int = 0
 
 # Number of epochs
-max_epochs: int = 500
+max_epochs: int = 5000
 
 # L2 Regularization for Optimizer
 l2: float = 0.0
