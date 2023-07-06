@@ -71,7 +71,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
       <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/resnet50/tensorflow2" style="text-decoration:none" target="_parent">MindSpore</a></td>
+    <td class="xl69" x:str>MindSpore</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
@@ -421,7 +421,7 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 ----------
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思mindspore共同建设中。
+本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore共同建设中。
 诚邀各框架、芯片团队与个人参与！
 ### 联系我们
 
