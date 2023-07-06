@@ -8,8 +8,11 @@
 import os
 import sys
 import time
+import yaml
+from munch import Munch, DefaultMunch
 import getpass
 from loguru import logger
+from collections import namedtuple
 
 from utils import cluster_manager, image_manager
 
@@ -631,25 +634,10 @@ def main(config):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         usage()
-    # fake, just for test
-    config = lambda: None
-    config.FLAGPERF_PATH = "/home/shihonghao/tmp/FlagPerf/inference"
-    config.FLAGPERF_LOG_PATH = "result"
-    config.VENDOR = "nvidia"
-    config.MODEL = "resnet50"
-    config.FLAGPERF_LOG_LEVEL = "INFO"
-    config.HOSTS = ["10.1.2.158"]
-    config.SSH_PORT = "22"
-    config.HOSTS_PORTS = ["2222"]
-    config.MASTER_PORT = "29501"
-    config.SHM_SIZE = "32G"
-    config.ACCE_CONTAINER_OPT = " --gpus all"
-    config.PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
-    config.CLEAR_CACHES = True
-    config.ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
-    config.CASES = {
-        "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val",
-    }
+    CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+    yaml_path = os.path.join(CURR_PATH, "configs/host.yaml")
+    data = yaml.safe_load(open(yaml_path))
+
+    config = DefaultMunch.fromDict(data)
 
     main(config)
-    # logger.stop()

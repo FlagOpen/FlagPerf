@@ -6,6 +6,7 @@ import os
 import subprocess
 from loguru import logger
 import numpy as np
+import time
 
 
 def build_engine(config):
@@ -15,6 +16,8 @@ def build_engine(config):
     dir_trt_path = os.path.dirname(trt_path)
     os.makedirs(dir_trt_path, exist_ok=True)
 
+    time.sleep(10)
+
     trtexec_cmd = "trtexec --onnx=" + onnx_path + " --saveEngine=" + trt_path
     if config.fp16:
         trtexec_cmd += " --fp16"
@@ -23,7 +26,7 @@ def build_engine(config):
         trtexec_cmd += " --optShapes=" + config.optShapes
         trtexec_cmd += " --maxShapes=" + config.maxShapes
 
-    subprocess.run(trtexec_cmd).wait()
+    subprocess.run(trtexec_cmd, shell=True).wait()
 
     trtlogger = trt.Logger()
 

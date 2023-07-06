@@ -22,3 +22,5 @@ def init_logger(config):
     logdir = config.log_dir
     logfile = logdir + "/run_inference.out.log"
     logger.add(logfile, level=config.loglevel)
+
+    logger.add(sys.stdout, level=config.loglevel)

@@ -68,17 +68,19 @@ def engine_forward(toolkits, dataloader, evaluator, config):
                 logger.debug("Step: " + str(step) + " / " +
                              str(len(dataloader)))
             trt_input = x.numpy()
-            core_time_start = time.time()
+
             inputs[0].host = trt_input.reshape(-1)
             output_shape = (trt_input.shape[0], 1000)
 
+            core_time_start = time.time()
             trt_outputs = inference(context,
                                     bindings=bindings,
                                     inputs=inputs,
                                     outputs=outputs,
                                     stream=stream)
-            feat = postprocess_the_outputs(trt_outputs[0], output_shape)
             core_time += time.time() - core_time_start
+            feat = postprocess_the_outputs(trt_outputs[0], output_shape)
+
             pred = torch.from_numpy(feat).float()
 
             top1 = evaluator(pred, y)
