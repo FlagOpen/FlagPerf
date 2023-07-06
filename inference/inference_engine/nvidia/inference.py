@@ -26,7 +26,8 @@ def build_engine(config):
         trtexec_cmd += " --optShapes=" + config.optShapes
         trtexec_cmd += " --maxShapes=" + config.maxShapes
 
-    subprocess.run(trtexec_cmd, shell=True).wait()
+    p = subprocess.Popen(trtexec_cmd, shell=True)
+    p.wait()
 
     trtlogger = trt.Logger()
 
