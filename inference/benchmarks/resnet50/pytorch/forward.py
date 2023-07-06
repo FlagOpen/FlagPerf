@@ -51,7 +51,7 @@ def model_forward(model, dataloader, evaluator, config):
 def engine_forward(toolkits, dataloader, evaluator, config):
     (engine, allocate_buffers, inference, postprocess_the_outputs) = toolkits
     context = engine.create_execution_context()
-    inputs, outputs, bindings, stream = allocate_buffers(engine)
+    inputs, outputs, bindings, stream = allocate_buffers(engine, context)
 
     start = time.time()
     core_time = 0.0

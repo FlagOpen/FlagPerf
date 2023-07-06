@@ -57,12 +57,13 @@ class HostDeviceMem(object):
         return self.__str__()
 
 
-def allocate_buffers(engine):
-    inputs, outputs, bindings = [], [], []
+def allocate_buffers(engine, context):
+    inputs = []
+    outputs = []
+    bindings = []
     stream = cuda.Stream()
-    for binding in engine:
-        size = trt.volume(engine.get_binding_shape(binding))
-        size = abs(size)
+    for i, binding in enumerate(engine):
+        size = trt.volume(context.get_binding_shape(i))
         dtype = trt.nptype(engine.get_binding_dtype(binding))
         host_mem = cuda.pagelocked_empty(size, dtype)
         device_mem = cuda.mem_alloc(host_mem.nbytes)
