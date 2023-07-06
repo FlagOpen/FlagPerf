@@ -18,7 +18,7 @@ import config
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
 
-# TODO 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
+# 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
@@ -122,10 +122,10 @@ if __name__ == "__main__":
             "train_time": state.traintime,
             "train_no_eval_time": state.noevaltime,
             "pure_training_computing_time": state.purecomputetime,
-            "throuhgput(ips)_raw": state.num_trained_samples / state.traintime,
-            "throuhgput(ips)_no_eval":
+            "throughput(ips)_raw": state.num_trained_samples / state.traintime,
+            "throughput(ips)_no_eval":
             state.num_trained_samples / state.noevaltime,
-            "throuhgput(ips)_pure_compute":
+            "throughput(ips)_pure_compute":
             state.num_trained_samples / state.purecomputetime,
             "converged": state.converged,
             "final_acc1": state.acc1,
