@@ -105,6 +105,5 @@ if __name__ == "__main__":
 
     config_from_args.framework = config_from_args.framework.split('_')[0]
     print("config_from_args", config_from_args)
-    os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 
     main(config_from_args)

@@ -1,9 +1,9 @@
-FLAGPERF_PATH: "/home/shihonghao/tmp/FlagPerf/inference"
+FLAGPERF_PATH: "/home/FlagPerf/inference"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
 MODEL: "resnet50"
 FLAGPERF_LOG_LEVEL: "DEBUG"
-HOSTS: ["10.1.2.158"]
+HOSTS: ["127.0.0.1"]
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
