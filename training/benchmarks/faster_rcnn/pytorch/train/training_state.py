@@ -26,7 +26,6 @@ class TrainingState:
     noevaltime = 0.0
     purecomputetime = 0.0
 
-
     def status(self):
         """get status"""
         if self.converged:

@@ -41,4 +41,3 @@ def create_grad_scaler():
     """create_grad_scaler for mixed precision training"""
     scaler = torch.cuda.amp.GradScaler() if config.amp else None
     return scaler
-

@@ -90,15 +90,15 @@ class Trainer:
             optimizer.zero_grad()
             losses.backward()
             optimizer.step()
-            
+
             self.training_state.purecomputetime += time.time(
-                ) - pure_start_time
+            ) - pure_start_time
 
             if warmup_lr_scheduler is not None:
                 warmup_lr_scheduler.step()
 
             metric_logger.update(loss=losses, **loss_dict)
-            metric_logger.update(lr=optimizer.param_groups[0]["lr"])            
+            metric_logger.update(lr=optimizer.param_groups[0]["lr"])
 
         self.lr_scheduler.step()
         self.training_state.noevaltime += time.time() - noeval_start_time
