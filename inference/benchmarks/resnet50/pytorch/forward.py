@@ -17,21 +17,23 @@ def model_forward(model, dataloader, evaluator, config):
 
         all_top1 = []
         for step, (x, y) in enumerate(dataloader):
+            core_time_start = time.time()
 
             if step % config.log_freq == 0:
                 logger.debug("Step: " + str(step) + " / " +
                              str(len(dataloader)))
 
             with torch.no_grad():
-                core_time_start = time.time()
+                
                 x = x.cuda()
                 y = y.cuda()
                 pred = model(x)
-                core_time += time.time() - core_time_start
+                
 
                 top1 = evaluator(pred, y)
 
                 all_top1.extend(top1.cpu())
+            core_time += time.time() - core_time_start
 
         acc.append(np.mean(all_top1))
 
@@ -64,6 +66,7 @@ def engine_forward(toolkits, dataloader, evaluator, config):
 
         all_top1 = []
         for step, (x, y) in enumerate(dataloader):
+            core_time_start = time.time()
             if step % config.log_freq == 0:
                 logger.debug("Step: " + str(step) + " / " +
                              str(len(dataloader)))
@@ -72,13 +75,13 @@ def engine_forward(toolkits, dataloader, evaluator, config):
             inputs[0].host = trt_input.reshape(-1)
             output_shape = (trt_input.shape[0], 1000)
 
-            core_time_start = time.time()
+            
             trt_outputs = inference(context,
                                     bindings=bindings,
                                     inputs=inputs,
                                     outputs=outputs,
                                     stream=stream)
-            core_time += time.time() - core_time_start
+            
             feat = postprocess_the_outputs(trt_outputs[0], output_shape)
 
             pred = torch.from_numpy(feat).float()
@@ -86,6 +89,7 @@ def engine_forward(toolkits, dataloader, evaluator, config):
             top1 = evaluator(pred, y)
 
             all_top1.extend(top1.cpu())
+            core_time += time.time() - core_time_start
 
         acc.append(np.mean(all_top1))
 
