@@ -19,7 +19,7 @@ from driver import Event, dist_pytorch
 from driver.helper import InitHelper
 from dataloaders.dataloader import get_coco_api_from_dataset
 
-# TODO 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
+# 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
@@ -76,11 +76,8 @@ def main() -> Tuple[Any, Any]:
 
     # evaluation统计
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
-
     trainer.evaluate(trainer.model, eval_dataloader, device=trainer.device)
-
     init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
-
     init_evaluation_info = dict(time=init_evaluation_end -
                                 init_evaluation_start)
 
@@ -97,7 +94,7 @@ def main() -> Tuple[Any, Any]:
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time  # 训练起始时间，单位为ms
+    train_start_time = time.time()
 
     # 训练过程
     epoch = 0
@@ -107,12 +104,8 @@ def main() -> Tuple[Any, Any]:
         epoch += 1
 
     # TRAIN_END事件
+    training_state.traintime = time.time() - train_start_time
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time  # 训练结束时间，单位为ms
-
-    # 训练时长，单位为秒
-    training_state.raw_train_time = (raw_train_end_time -
-                                     raw_train_start_time) / 1e+3
 
     return config, training_state
 
@@ -127,10 +120,16 @@ if __name__ == "__main__":
     e2e_time = time.time() - start
     if config_update.do_train:
 
-        training_perf = state.num_trained_samples / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
-            "training_samples_per_second": training_perf,
+            "train_time": state.train_time,
+            "train_no_eval_time": state.no_eval_time,
+            "pure_training_computing_time": state.pure_compute_time,
+            "throughput(ips)_raw": state.num_trained_samples / state.traintime,
+            "throughput(ips)_no_eval":
+            state.num_trained_samples / state.no_eval_time,
+            "throughput(ips)_pure_compute":
+            state.num_trained_samples / state.pure_compute_time,
             "converged": state.converged,
             "final_mAP": state.eval_mAP,
             "raw_train_time": state.raw_train_time,

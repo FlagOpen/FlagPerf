@@ -4,6 +4,8 @@
 vendor: str = "nvidia"
 data_dir: str = None
 name: str = "retinanet"
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
 
 # Optional parameters
 
