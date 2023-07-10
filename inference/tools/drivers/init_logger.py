@@ -7,6 +7,7 @@ def init_logger(config):
     """
     define "EVENTS", using logger.log("EVENT",msg) to log
     #21 means just important than info(#20), less than warning(#30)
+    Finish Info is more important than error(#40)
     """
     logger.level("Init Begin", no=21)
     logger.level("Init End", no=21)
@@ -18,6 +19,7 @@ def init_logger(config):
     logger.level("Vendor Compile End", no=21)
     logger.level("Vendor Inference Begin", no=21)
     logger.level("Vendor Inference End", no=21)
+    logger.level("Finish Info", no=50)
 
     logdir = config.log_dir
     logfile = logdir + "/run_inference.out.log"

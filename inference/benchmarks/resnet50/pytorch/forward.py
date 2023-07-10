@@ -24,11 +24,10 @@ def model_forward(model, dataloader, evaluator, config):
                              str(len(dataloader)))
 
             with torch.no_grad():
-                
+
                 x = x.cuda()
                 y = y.cuda()
                 pred = model(x)
-                
 
                 top1 = evaluator(pred, y)
 
@@ -36,6 +35,8 @@ def model_forward(model, dataloader, evaluator, config):
             core_time += time.time() - core_time_start
 
         acc.append(np.mean(all_top1))
+
+    logger.info("Top1 Acc: " + str(acc))
 
     duration = time.time() - start
     model_forward_perf = config.repeat * len(
@@ -47,7 +48,7 @@ def model_forward(model, dataloader, evaluator, config):
     logger.info("Model Forward(" + config.framework + ") core Perf: " +
                 str(model_forward_core_perf) + " ips")
 
-    return acc
+    return model_forward_perf, model_forward_core_perf
 
 
 def engine_forward(toolkits, dataloader, evaluator, config):
@@ -75,13 +76,12 @@ def engine_forward(toolkits, dataloader, evaluator, config):
             inputs[0].host = trt_input.reshape(-1)
             output_shape = (trt_input.shape[0], 1000)
 
-            
             trt_outputs = inference(context,
                                     bindings=bindings,
                                     inputs=inputs,
                                     outputs=outputs,
                                     stream=stream)
-            
+
             feat = postprocess_the_outputs(trt_outputs[0], output_shape)
 
             pred = torch.from_numpy(feat).float()
@@ -93,6 +93,8 @@ def engine_forward(toolkits, dataloader, evaluator, config):
 
         acc.append(np.mean(all_top1))
 
+    logger.info("Top1 Acc: " + str(acc))
+
     duration = time.time() - start
     model_forward_perf = config.repeat * len(
         dataloader) * config.batch_size / duration
@@ -103,4 +105,4 @@ def engine_forward(toolkits, dataloader, evaluator, config):
     logger.info("Vendor Inference(" + config.vendor + ") core Perf: " +
                 str(model_forward_core_perf) + " ips")
 
-    return acc
+    return model_forward_perf, model_forward_core_perf

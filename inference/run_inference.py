@@ -36,10 +36,8 @@ def main(config):
 
     evaluator = benchmark_module.evaluator
 
-    model_forward_result = benchmark_module.model_forward(
+    p_forward, p_forward_core = benchmark_module.model_forward(
         model, dataloader, evaluator, config)
-
-    logger.info(model_forward_result)
 
     logger.log("Model Forward End", "")
     """
@@ -70,11 +68,12 @@ def main(config):
     logger.log("Vendor Inference Begin", "")
     start = time.time()
 
-    infer_info = benchmark_module.engine_forward(toolkits, dataloader,
-                                                 evaluator, config)
-    logger.info(infer_info)
+    p_infer, p_infer_core = benchmark_module.engine_forward(
+        toolkits, dataloader, evaluator, config)
 
     logger.log("Vendor Inference End", "")
+
+    return config, p_forward, p_infer, p_forward_core, p_infer_core
 
 
 def parse_args():
@@ -100,10 +99,23 @@ def parse_args():
 
 
 if __name__ == "__main__":
-    # fake, just for test
     config_from_args = parse_args()
-
     config_from_args.framework = config_from_args.framework.split('_')[0]
-    print("config_from_args", config_from_args)
 
-    main(config_from_args)
+    e2e_start = time.time()
+
+    config, p_forward, p_infer, p_forward_core, p_infer_core = main(config_from_args)
+
+    e2e_time = time.time() - e2e_start
+
+    infer_info = {
+        "Vendor": config.vendor,
+        "precision": "fp16" if config.fp16 else "fp32",
+        "e2e_time(second)": e2e_time,
+        "p_validation_whole(items per second)": p_forward,
+        "p_validation_core(items per second)": p_forward_core,
+        "p_inference_whole(items per second)": p_infer,
+        "p_inference_core(items per second)": p_infer_core,
+        "inference_latency(milliseconds per item)": round(1000.0 / p_infer_core, 3)
+    }
+    logger.log("Finish Info", infer_info)
