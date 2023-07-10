@@ -1,18 +1,13 @@
 # Copyright (c) 2023 BAAI. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
-import os
-import sys
 import torch
-
 import torch.distributed as dist
 from torch.optim import Optimizer
 from torch import nn, Tensor
 from torch.nn.parallel import DistributedDataParallel as DDP
-import config
 
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+import config
 from driver.dist_pytorch import main_proc_print
 
 

@@ -5,9 +5,7 @@ import math
 import time
 import torch
 import torch.utils.data
-import torchvision
 from torch.types import Device
-import os
 import sys
 
 from model import create_model
@@ -15,14 +13,10 @@ from optimizers import create_optimizer
 from schedulers import create_scheduler
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
-
 from dataloaders.dataloader import get_coco_api_from_dataset
-
 import utils.utils
 
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch
+from driver import Driver, dist_pytorch
 
 
 class Trainer:
@@ -129,8 +123,6 @@ class Trainer:
 
         if epoch >= config.max_epoch:
             state.end_training = True
-
-        
 
     @torch.no_grad()
     def evaluate(self, model, data_loader, device):
