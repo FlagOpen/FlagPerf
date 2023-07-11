@@ -4,6 +4,16 @@ import numpy as np
 import time
 
 
+def cal_perf(config, dataloader_len, duration, core_time, str_prefix):
+    model_forward_perf = config.repeat * dataloader_len * config.batch_size / duration
+    logger.info(str_prefix + "(" + config.framework + ") Perf: " +
+                str(model_forward_perf) + " ips")
+    model_forward_core_perf = config.repeat * dataloader_len * config.batch_size / core_time
+    logger.info(str_prefix + "(" + config.framework + ") core Perf: " +
+                str(model_forward_core_perf) + " ips")
+    return model_forward_perf, model_forward_core_perf
+
+
 def model_forward(model, dataloader, evaluator, config):
     start = time.time()
 
@@ -47,6 +57,8 @@ def model_forward(model, dataloader, evaluator, config):
         dataloader) * config.batch_size / core_time
     logger.info("Model Forward(" + config.framework + ") core Perf: " +
                 str(model_forward_core_perf) + " ips")
+    model_forward_perf, model_forward_core_perf = cal_perf(
+        config, len(dataloader), duration, core_time, "Validation")
 
     return model_forward_perf, model_forward_core_perf, np.mean(acc)
 
@@ -96,13 +108,7 @@ def engine_forward(toolkits, dataloader, evaluator, config):
     logger.info("Top1 Acc: " + str(acc))
 
     duration = time.time() - start
-    model_forward_perf = config.repeat * len(
-        dataloader) * config.batch_size / duration
-    logger.info("Vendor Inference(" + config.vendor + ") Perf: " +
-                str(model_forward_perf) + " ips")
-    model_forward_core_perf = config.repeat * len(
-        dataloader) * config.batch_size / core_time
-    logger.info("Vendor Inference(" + config.vendor + ") core Perf: " +
-                str(model_forward_core_perf) + " ips")
+    model_forward_perf, model_forward_core_perf = cal_perf(
+        config, len(dataloader), duration, core_time, "Inference")
 
     return model_forward_perf, model_forward_core_perf, np.mean(acc)

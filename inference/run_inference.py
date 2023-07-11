@@ -9,7 +9,7 @@ from loguru import logger
 import time
 import os
 import sys
-from tools.drivers import init_logger, merge_config
+from tools import init_logger, merge_config
 from argparse import ArgumentParser
 
 
