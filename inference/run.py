@@ -7,8 +7,10 @@
 
 import os
 import sys
+import ast
 import time
 import yaml
+import importlib
 from munch import DefaultMunch
 import getpass
 from loguru import logger
@@ -423,17 +425,30 @@ def clean_containers_env_cluster(dp_path, container_name, nnodes):
 def compilation_result(case_log_path, config):
     '''Scp logs from hosts in the cluster to temp dir, and then merge all.
     '''
-    case_perf_info = os.path.join(case_log_path, "container.out.log")
-    vendor_usage_info = os.path.join(case_log_path, config.vendor,
-                                     "_monitor.log")
-    case_file = open(case_perf_info)
-    for line in case_file.readlines():
-        print(line)
+    case_perf_path = os.path.join(case_log_path, "container.out.log")
+    vendor_usage_path = os.path.join(case_log_path,
+                                     config.VENDOR + "_monitor.log")
 
-    vendor_file = open(vendor_usage_info)
-    for line in vendor_file.readlines():
-        print(line)
-        break
+    case_perf = None
+    case_file = open(case_perf_path)
+
+    for line in case_file.readlines():
+        if "Finish Info" in line:
+            case_perf_str = "{" + line.split("{")[1]
+            case_perf = ast.literal_eval(case_perf_str)
+            break
+
+    if case_perf is None:
+        logger.error("Case Run Failed, Please Check Log!")
+        return
+            
+    vendor_module = importlib.import_module("docker_images." + config.VENDOR +
+                                            "." + config.VENDOR + "_analysis")
+    vendor_usage, vendor_maxmem = vendor_module.analysis_log(vendor_usage_path)
+
+    case_perf["vendor_usage(GiB)"] = vendor_usage
+    case_perf["vendor_max_mem(GiB)"] = vendor_maxmem
+    logger.info(case_perf)
 
 
 def get_config_from_case(case, config):

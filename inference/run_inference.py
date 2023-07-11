@@ -51,6 +51,7 @@ def main(config):
 
     duration = time.time() - start
     logger.log("Export End", str(duration) + " seconds")
+    model.cpu()
     del model
     """
     Compiling backend(like tensorRT)
@@ -110,8 +111,9 @@ if __name__ == "__main__":
     e2e_time = time.time() - e2e_start
 
     infer_info = {
-        "Vendor": config.vendor,
+        "vendor": config.vendor,
         "precision": "fp16" if config.fp16 else "fp32",
+        "batchsize": config.batch_size,
         "e2e_time(second)": e2e_time,
         "p_validation_whole(items per second)": p_forward,
         "p_validation_core(items per second)": p_forward_core,
