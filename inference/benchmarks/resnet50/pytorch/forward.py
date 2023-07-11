@@ -48,7 +48,7 @@ def model_forward(model, dataloader, evaluator, config):
     logger.info("Model Forward(" + config.framework + ") core Perf: " +
                 str(model_forward_core_perf) + " ips")
 
-    return model_forward_perf, model_forward_core_perf
+    return model_forward_perf, model_forward_core_perf, np.mean(acc)
 
 
 def engine_forward(toolkits, dataloader, evaluator, config):
@@ -105,4 +105,4 @@ def engine_forward(toolkits, dataloader, evaluator, config):
     logger.info("Vendor Inference(" + config.vendor + ") core Perf: " +
                 str(model_forward_core_perf) + " ips")
 
-    return model_forward_perf, model_forward_core_perf
+    return model_forward_perf, model_forward_core_perf, np.mean(acc)
