@@ -3,4 +3,4 @@ fp16: true
 use_engine: true
 num_workers: 8
 log_freq: 30
-repeat: 2
+repeat: 5
