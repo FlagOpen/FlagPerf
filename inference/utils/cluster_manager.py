@@ -42,10 +42,10 @@ class ClusterManager():
         ''' Run cmd on host with ssh.
             Return exit code of cmd and stdout/stderr messages.
         '''
-        # ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
+        ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
         logger.debug("Run cmd on host with ssh. ssh cmd=" + cmd + " host=" +
                      host + " timeout=" + str(timeout))
-        ret, outs = run_cmd.run_cmd_wait(cmd, timeout)
+        ret, outs = run_cmd.run_cmd_wait(ssh_run_cmd, timeout)
         return ret, outs
 
     def healthcheck(self):
