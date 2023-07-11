@@ -448,7 +448,11 @@ def compilation_result(case_log_path, config):
 
     case_perf["vendor_usage(GiB)"] = vendor_usage
     case_perf["vendor_max_mem(GiB)"] = vendor_maxmem
-    logger.info(case_perf)
+
+    for key in case_perf.keys():
+        padding_str = str(key).ljust(43) + " : " + str(
+            case_perf[key]).ljust(23)
+        logger.info(padding_str)
 
 
 def get_config_from_case(case, config):
