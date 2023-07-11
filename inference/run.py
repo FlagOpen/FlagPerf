@@ -441,7 +441,7 @@ def compilation_result(case_log_path, config):
     if case_perf is None:
         logger.error("Case Run Failed, Please Check Log!")
         return
-            
+
     vendor_module = importlib.import_module("docker_images." + config.VENDOR +
                                             "." + config.VENDOR + "_analysis")
     vendor_usage, vendor_maxmem = vendor_module.analysis_log(vendor_usage_path)
