@@ -47,9 +47,10 @@ def merge_config(config):
     merged_data["log_dir"] = config.log_dir
     merged_data["vendor"] = config.vendor
     merged_data["case"] = config.case
+    merged_data["framework"] = config.framework
 
     filename = config.case + "_bs" + str(configuration["batch_size"])
-    filename = filename + "_" + str(configuration["framework"])
+    filename = filename + "_" + str(config.framework)
     filename = filename + "_fp16" + str(configuration["fp16"])
     filename = "onnxs/" + filename + ".onnx"
     merged_data["onnx_path"] = filename

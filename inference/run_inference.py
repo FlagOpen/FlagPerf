@@ -9,7 +9,7 @@ from loguru import logger
 import time
 import os
 import sys
-from tools.drivers import init_logger, merge_config
+from tools import init_logger, merge_config
 from argparse import ArgumentParser
 
 
@@ -42,7 +42,7 @@ def main(config):
 
     evaluator = benchmark_module.evaluator
 
-    p_forward, p_forward_core = benchmark_module.model_forward(
+    p_forward, p_forward_core, val_acc = benchmark_module.model_forward(
         model, dataloader, evaluator, config)
 
     logger.log("Model Forward End", "")
@@ -75,12 +75,12 @@ def main(config):
     logger.log("Vendor Inference Begin", "")
     start = time.time()
 
-    p_infer, p_infer_core = benchmark_module.engine_forward(
+    p_infer, p_infer_core, infer_acc = benchmark_module.engine_forward(
         toolkits, dataloader, evaluator, config)
 
     logger.log("Vendor Inference End", "")
 
-    return config, p_forward, p_infer, p_forward_core, p_infer_core
+    return config, p_forward, p_infer, p_forward_core, p_infer_core, val_acc, infer_acc
 
 
 def parse_args():
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     e2e_start = time.time()
 
-    config, p_forward, p_infer, p_forward_core, p_infer_core = main(
+    config, p_forward, p_infer, p_forward_core, p_infer_core, val_acc, infer_acc = main(
         config_from_args)
 
     e2e_time = time.time() - e2e_start
@@ -126,6 +126,8 @@ if __name__ == "__main__":
         "p_inference_whole(items per second)": p_infer,
         "p_inference_core(items per second)": p_infer_core,
         "inference_latency(milliseconds per item)":
-        round(1000.0 / p_infer_core, 3)
+        round(1000.0 / p_infer_core, 3),
+        "val_average_acc": val_acc,
+        "infer_average_acc": infer_acc
     }
     logger.log("Finish Info", infer_info)

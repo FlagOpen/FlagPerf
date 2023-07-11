@@ -1,7 +1,6 @@
 batch_size: 256
-framework: pytorch
-fp16: false
+fp16: true
 use_engine: true
 num_workers: 8
 log_freq: 30
-repeat: 1
+repeat: 5
