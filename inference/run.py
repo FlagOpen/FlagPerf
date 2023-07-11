@@ -46,7 +46,7 @@ def init_logger(config):
 
     timestamp_log_dir = "run" + time.strftime("%Y%m%d%H%M%S", time.localtime())
     curr_log_path = config.FLAGPERF_PATH + "/" + config.FLAGPERF_LOG_PATH + "/" + timestamp_log_dir
-    logfile = curr_log_path + "/run_contrainer.out.log"
+    logfile = curr_log_path + "/host.out.log"
 
     logger.remove()
 
@@ -54,8 +54,12 @@ def init_logger(config):
         logger.add(logfile, level=config.FLAGPERF_LOG_LEVEL)
         logger.add(sys.stdout, level=config.FLAGPERF_LOG_LEVEL)
     else:
-        logger.add(logfile, level=config.FLAGPERF_LOG_LEVEL, format="{time} - {level} - {message}")
-        logger.add(sys.stdout, level=config.FLAGPERF_LOG_LEVEL, format="{time} - {level} - {message}")
+        logger.add(logfile,
+                   level=config.FLAGPERF_LOG_LEVEL,
+                   format="{time} - {level} - {message}")
+        logger.add(sys.stdout,
+                   level=config.FLAGPERF_LOG_LEVEL,
+                   format="{time} - {level} - {message}")
     return curr_log_path
 
 
@@ -247,6 +251,7 @@ def clear_caches_cluster(clear, nnodes):
                        ",".join(failed_hosts.keys()) + ". Continue.")
     logger.info("Clear system caches if it set......[SUCCESS]")
 
+
 def start_monitors_in_cluster(dp_path, case_log_dir, nnodes):
     '''Start sytem and vendor's monitors.'''
     start_mon_cmd = "cd " + dp_path + " && " + sys.executable \
@@ -292,17 +297,17 @@ def stop_monitors_in_cluster(dp_path, nnodes):
                                 config.VENDOR + "_monitor.py")
     stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
                    + " " + ven_mon_path + " -o stop"
-    logger.debug("Run cmd in the cluster to start vendor's monitors: " +
+    logger.debug("Run cmd in the cluster to stop vendor's monitors: " +
                  stop_mon_cmd)
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(stop_mon_cmd, nnodes,
                                                    timeout)
     if len(bad_hosts) != 0:
-        logger.error("Hosts that can't start vendor's monitors: " +
+        logger.error("Hosts that can't stop vendor's monitors: " +
                      ",".join(bad_hosts.keys()))
 
 
-def start_tasks_in_cluster(dp_path, container_name, case_config, count,
-                           curr_log_path, config):
+def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
+                           config):
     '''Start tasks in cluster, and NOT wait.'''
     nnodes = case_config["nnodes"]
     env_file = os.path.join(
@@ -320,23 +325,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, count,
     for cfg in must_configs:
         new_case_config[cfg] = getattr(config, cfg)
 
-    #TODO
-    if (os.path.isfile(env_file)):
-        start_cmd = "cd " + dp_path + " && " + sys.executable \
-                + " utils/container_manager.py -o runcmdin -c " \
-                + container_name + " -d -r \"source " + env_file \
-                + " > " + curr_log_path + "/source_env.log.txt " \
-                + "2>&1 && " \
-                + f"python3 run_inference.py" \
-                + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
-                + f" --loglevel " + getattr(config, "FLAGPERF_LOG_LEVEL") \
-                + f" --vendor " + getattr(config, "VENDOR") \
-                + f" --case " + getattr(config, "MODEL")  \
-                + f" --data_dir " + case_config["data_dir_container"] \
-                + f" --framework " + case_config["framework"] \
-                + f" --log_dir " + curr_log_path + "\""
-    else:
-        start_cmd = "cd " + dp_path + " && " + sys.executable \
+    start_cmd = "cd " + dp_path + " && " + sys.executable \
                 + " utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -r \"" \
                 + f"python3 run_inference.py" \
@@ -346,11 +335,14 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, count,
                 + f" --case " + getattr(config, "MODEL")  \
                 + f" --data_dir " + case_config["data_dir_container"] \
                 + f" --framework " + case_config["framework"] \
-                + f" --log_dir " + curr_log_path + "\""
+                + f" --log_dir " + curr_log_path  + " 2>&1 | tee "+curr_log_path+"/stdout_err.out.log" + "\""
     logger.debug("Run cmd in the cluster to start tasks, cmd: " + start_cmd)
 
     logger.info("3) Waiting for tasks end in the cluster...")
-    logger.info("Check task log in real time from container: " + curr_log_path + "/run_inference.out.log")
+    logger.info("Check task log in real time from container: " +
+                curr_log_path + "/container.out.log")
+    logger.info("Check task stderr & stdout in real time from container: " +
+                curr_log_path + "/stdout_err.out.log")
     CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
     # Wait a moment for starting tasks.
     time.sleep(10)
@@ -370,14 +362,14 @@ def wait_for_finish(dp_path, container_name, pid_file_path, nnodes):
         bad_hosts = CLUSTER_MGR.run_command_some_hosts(check_cmd,
                                                        nnodes,
                                                        no_log=True)
-        
+
         if len(bad_hosts) == nnodes:
             break
         time.sleep(10)
 
 
-def prepare_containers_env_cluster(dp_path, case_log_dir, config, container_name, image_name,
-                                   case_config):
+def prepare_containers_env_cluster(dp_path, case_log_dir, config,
+                                   container_name, image_name, case_config):
     '''Prepare containers environments in the cluster. It will start
        containers, setup environments, start monitors, and clear caches.'''
     nnodes = case_config["nnodes"]
@@ -428,38 +420,20 @@ def clean_containers_env_cluster(dp_path, container_name, nnodes):
     stop_monitors_in_cluster(dp_path, nnodes)
 
 
-def collect_and_merge_logs(curr_log_path, cases):
+def compilation_result(case_log_path, config):
     '''Scp logs from hosts in the cluster to temp dir, and then merge all.
     '''
-    get_all = True
-    logger.info("Collect logs in cluster.")
-    for case in cases:
-        rets, case_config = get_config_from_case(case, config)
-        repeat = case_config["repeat"]
-        for i in range(1, repeat + 1):
-            case_log_dir = os.path.join(curr_log_path, case, "round" + str(i))
-            logger.debug("Case " + case + ", round " + str(i) + ", log dir: " +
-                         case_log_dir)
-            nnodes = case_config["nnodes"]
-            failed_hosts = CLUSTER_MGR.collect_files_some_hosts(curr_log_path,
-                                                                curr_log_path,
-                                                                nnodes,
-                                                                timeout=600)
-            if len(failed_hosts) != 0:
-                logger.error("Case " + case + ", round " + str(i) +
-                             ", log dir: " + case_log_dir +
-                             " collect log failed on hosts: " +
-                             ",".join(failed_hosts))
-                get_all = False
-            else:
-                logger.info("Case " + case + ", round " + str(i) +
-                            ", get all logs in dir: " + case_log_dir)
+    case_perf_info = os.path.join(case_log_path, "container.out.log")
+    vendor_usage_info = os.path.join(case_log_path, config.vendor,
+                                     "_monitor.log")
+    case_file = open(case_perf_info)
+    for line in case_file.readlines():
+        print(line)
 
-    if get_all:
-        logger.info("Congrats! See all logs in " + curr_log_path)
-    else:
-        logger.warning("Sorry! Not all logs have been collected in " +
-                       curr_log_path)
+    vendor_file = open(vendor_usage_info)
+    for line in vendor_file.readlines():
+        print(line)
+        break
 
 
 def get_config_from_case(case, config):
@@ -483,7 +457,6 @@ def get_config_from_case(case, config):
     case_config["data_dir_host"] = config.CASES[case]
     case_config["data_dir_container"] = config.CASES[case]
     case_config['nnodes'] = 1
-    case_config["repeat"] = 1
 
     return True, case_config
 
@@ -553,12 +526,11 @@ def log_test_configs(cases, curr_log_path, dp_path):
 def main(config):
     '''Main process to run all the testcases'''
 
-    curr_log_path = init_logger(config)
+    curr_log_whole = init_logger(config)
 
     print_welcome_msg()
 
-    logger.info(
-        "======== Step 1: Check key configs. ========")
+    logger.info("======== Step 1: Check key configs. ========")
 
     check_test_host_config(config)
 
@@ -569,11 +541,9 @@ def main(config):
     check_cluster_deploy_path(dp_path)
 
     cases = get_valid_cases(config)
-    log_test_configs(cases, curr_log_path, dp_path)
+    log_test_configs(cases, curr_log_whole, dp_path)
 
-    logger.info(
-        "========= Step 2: Prepare and Run test cases. ========="
-    )
+    logger.info("========= Step 2: Prepare and Run test cases. =========")
 
     for case in cases:
         logger.info("======= Testcase: " + case + " =======")
@@ -585,8 +555,7 @@ def main(config):
             case_config["framework"], "t_" + VERSION)
         image_name = image_mgr.repository + ":" + image_mgr.tag
         nnodes = case_config["nnodes"]
-        logger.info("=== 2.1 Prepare docker image:" +
-            image_name + " ===")
+        logger.info("=== 2.1 Prepare docker image:" + image_name + " ===")
         if not prepare_docker_image_cluster(
                 dp_path, image_mgr, case_config["framework"], nnodes, config):
             logger.error("=== 2.1 Prepare docker image...[FAILED] " +
@@ -599,32 +568,31 @@ def main(config):
 
         logger.info("=== 2.2 Setup container and run testcases. ===")
 
-        for count in range(1, case_config["repeat"] + 1):
-            logger.info("-== Testcase " + case + " Round " + str(count) +
-                        " starts ==-")
-            logger.info("1) Prepare container environments in cluster...")
-            case_log_dir = os.path.join(curr_log_path, case,
-                                        "round" + str(count))
-            if not prepare_containers_env_cluster(
-                    dp_path, case_log_dir, config, container_name, image_name, case_config):
-                logger.error("1) Prepare container environments in cluster"
-                             "...[FAILED]. Ignore case " + case + " round " +
-                             str(count))
-                continue
-            logger.info("2) Start tasks in the cluster...")
+        logger.info("-== Testcase " + case + " starts ==-")
+        logger.info("1) Prepare container environments in cluster...")
+        case_log_dir = os.path.join(curr_log_whole, case)
+        curr_log_path = os.path.join(case_log_dir,
+                                     config.HOSTS[0] + "_noderank0")
 
-            start_tasks_in_cluster(dp_path, container_name, case_config, count,
-                                   curr_log_path, config)
+        if not prepare_containers_env_cluster(dp_path, case_log_dir, config,
+                                              container_name, image_name,
+                                              case_config):
+            logger.error("1) Prepare container environments in cluster"
+                         "...[FAILED]. Ignore case " + case)
+            continue
+        logger.info("2) Start tasks in the cluster...")
 
-            logger.info("3) Training tasks end in the cluster...")
-            logger.info("4) Clean container environments in cluster...")
-            clean_containers_env_cluster(dp_path, container_name, nnodes)
-            logger.info("-== Testcase " + case + " Round " + str(count) +
-                        " finished ==-")
-        logger.info("=== 2.3 Setup container and run testcases finished."
+        start_tasks_in_cluster(dp_path, container_name, case_config,
+                               curr_log_path, config)
+
+        logger.info("3) Training tasks end in the cluster...")
+        logger.info("4) Clean container environments in cluster...")
+        clean_containers_env_cluster(dp_path, container_name, nnodes)
+        logger.info("-== Testcase " + case + " finished ==-")
+        logger.info("=== 2.2 Setup container and run testcases finished."
                     " ===")
-    logger.info(
-        "========= Step 3: Collect logs in the cluster. =========")
+        logger.info("=== 2.3 Compilation Case Performance ===")
+        compilation_result(curr_log_path, config)
 
 
 if __name__ == '__main__':

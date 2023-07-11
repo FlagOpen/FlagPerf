@@ -104,7 +104,8 @@ if __name__ == "__main__":
 
     e2e_start = time.time()
 
-    config, p_forward, p_infer, p_forward_core, p_infer_core = main(config_from_args)
+    config, p_forward, p_infer, p_forward_core, p_infer_core = main(
+        config_from_args)
 
     e2e_time = time.time() - e2e_start
 
@@ -116,6 +117,7 @@ if __name__ == "__main__":
         "p_validation_core(items per second)": p_forward_core,
         "p_inference_whole(items per second)": p_infer,
         "p_inference_core(items per second)": p_infer_core,
-        "inference_latency(milliseconds per item)": round(1000.0 / p_infer_core, 3)
+        "inference_latency(milliseconds per item)":
+        round(1000.0 / p_infer_core, 3)
     }
     logger.log("Finish Info", infer_info)

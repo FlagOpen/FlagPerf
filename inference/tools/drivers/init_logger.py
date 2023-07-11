@@ -22,7 +22,7 @@ def init_logger(config):
     logger.level("Finish Info", no=50)
 
     logdir = config.log_dir
-    logfile = logdir + "/run_inference.out.log"
+    logfile = logdir + "/container.out.log"
     logger.add(logfile, level=config.loglevel)
 
     logger.add(sys.stdout, level=config.loglevel)
