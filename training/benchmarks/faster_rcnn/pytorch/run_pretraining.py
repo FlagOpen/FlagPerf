@@ -41,6 +41,7 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.INIT_START)
+    config.distributed = dist_pytorch.get_world_size() > 1
 
     # logger
     logger = model_driver.logger
