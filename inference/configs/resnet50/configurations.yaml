@@ -1,6 +1,8 @@
 batch_size: 256
+# 3*224*224(1 item in x)
+input_size: 150528
 fp16: true
-use_engine: true
+use_engine: tensorRT
 num_workers: 8
 log_freq: 30
 repeat: 5

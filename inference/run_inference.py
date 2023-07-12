@@ -46,6 +46,8 @@ def main(config):
         model, dataloader, evaluator, config)
 
     logger.log("Model Forward End", "")
+    if config.use_engine is None:
+        return config, p_forward, None, p_forward_core, None, val_acc, None
     """
     Convert model into onnx
     """
@@ -86,19 +88,40 @@ def main(config):
 def parse_args():
     parser = ArgumentParser(description=" ")
 
-    parser.add_argument("--perf_dir", type=str, default="", help=".")
+    parser.add_argument("--perf_dir",
+                        type=str,
+                        required=True,
+                        help="abs dir of FlagPerf/inference/")
 
-    parser.add_argument("--data_dir", type=str, default="", help=".")
+    parser.add_argument("--data_dir",
+                        type=str,
+                        required=True,
+                        help="abs dir of data used in dataloader")
 
-    parser.add_argument("--log_dir", type=str, default="", help=".")
+    parser.add_argument("--log_dir",
+                        type=str,
+                        required=True,
+                        help="abs dir to write log")
 
-    parser.add_argument("--loglevel", type=str, default='DEBUG', help=".")
+    parser.add_argument("--loglevel",
+                        type=str,
+                        required=True,
+                        help="DEBUG/INFO/WARNING/ERROR")
 
-    parser.add_argument("--case", type=str, default="", help=".")
+    parser.add_argument("--case",
+                        type=str,
+                        required=True,
+                        help="case name like resnet50")
 
-    parser.add_argument("--vendor", type=str, default="", help=".")
+    parser.add_argument("--vendor",
+                        type=str,
+                        required=True,
+                        help="vendor name like nvidia")
 
-    parser.add_argument("--framework", type=str, default="", help=".")
+    parser.add_argument("--framework",
+                        type=str,
+                        required=True,
+                        help="validation framework name like pytorch")
 
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
@@ -115,19 +138,36 @@ if __name__ == "__main__":
         config_from_args)
 
     e2e_time = time.time() - e2e_start
+    e2e_time = round(float(e2e_time), 3)
+
+    input_byte = 2 if config.fp16 else 4
+    batch_input_byte = config.batch_size * config.input_size * input_byte
+    batch_input_byte = int(batch_input_byte)
 
     infer_info = {
-        "vendor": config.vendor,
-        "precision": "fp16" if config.fp16 else "fp32",
-        "batchsize": config.batch_size,
-        "e2e_time(second)": e2e_time,
-        "p_validation_whole(items per second)": p_forward,
-        "p_validation_core(items per second)": p_forward_core,
-        "p_inference_whole(items per second)": p_infer,
-        "p_inference_core(items per second)": p_infer_core,
+        "vendor":
+        config.vendor,
+        "precision":
+        "fp16" if config.fp16 else "fp32",
+        "batchsize":
+        config.batch_size,
+        "byte_per_batch":
+        batch_input_byte,
+        "e2e_time(second)":
+        e2e_time,
+        "p_validation_whole(items per second)":
+        p_forward,
+        "p_validation_core(items per second)":
+        p_forward_core,
+        "p_inference_whole(items per second)":
+        p_infer,
+        "p_inference_core(items per second)":
+        p_infer_core,
         "inference_latency(milliseconds per item)":
-        round(1000.0 / p_infer_core, 3),
-        "val_average_acc": val_acc,
-        "infer_average_acc": infer_acc
+        None if p_infer_core is None else round(1000.0 / p_infer_core, 3),
+        "val_average_acc":
+        val_acc,
+        "infer_average_acc":
+        infer_acc
     }
     logger.log("Finish Info", infer_info)

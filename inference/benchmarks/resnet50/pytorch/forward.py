@@ -12,7 +12,7 @@ def cal_perf(config, dataloader_len, duration, core_time, str_prefix):
     model_forward_core_perf = config.repeat * dataloader_len * config.batch_size / core_time
     logger.info(str_prefix + "(" + config.framework + ") core Perf: " +
                 str(model_forward_core_perf) + " ips")
-    return model_forward_perf, model_forward_core_perf
+    return round(model_forward_perf, 3), round(model_forward_core_perf, 3)
 
 
 def model_forward(model, dataloader, evaluator, config):
@@ -55,7 +55,8 @@ def model_forward(model, dataloader, evaluator, config):
     model_forward_perf, model_forward_core_perf = cal_perf(
         config, len(dataloader), duration, core_time, "Validation")
 
-    return model_forward_perf, model_forward_core_perf, np.mean(acc)
+    return model_forward_perf, model_forward_core_perf, round(
+        float(np.mean(acc)), 3)
 
 
 def engine_forward(toolkits, dataloader, evaluator, config):
@@ -108,4 +109,5 @@ def engine_forward(toolkits, dataloader, evaluator, config):
     model_forward_perf, model_forward_core_perf = cal_perf(
         config, len(dataloader), duration, core_time, "Inference")
 
-    return model_forward_perf, model_forward_core_perf, np.mean(acc)
+    return model_forward_perf, model_forward_core_perf, round(
+        float(np.mean(acc)), 3)
