@@ -1,7 +1,7 @@
 dist_backend = "xccl"
 
 target_mlm_accuracy = 0.67
-gradient_accumulation_steps = 1
+gradient_accumulation_steps = 2
 max_steps = 10000
 start_warmup_step = 0
 warmup_proportion = 0
