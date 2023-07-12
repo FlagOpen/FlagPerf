@@ -51,9 +51,11 @@
 - 加速卡使用信息采集项说明
 
 |监控项| 日志文件 |
+    ```bash
 |---|---|---|
 |Temp(C) | ascend_monitor.log |
 |AICore(%) |ascend_monitor.log |
 |Memory-Usage(MB) |ascend_monitor.log |
 |Hugepages-Usage(page) |ascend_monitor.log |
 |Power(W) |ascend_monitor.log |
+    ```
