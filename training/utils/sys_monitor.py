@@ -81,7 +81,7 @@ class Daemon:
         def cpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "mpstat -P ALL 1 1|grep -v Average|grep all|awk '{print (100-$NF)/100}'"
-            res, out = rcw(cmd, 10, retouts=True)
+            res, out = rcw(cmd, 10)
             if res:
                 result = "error"
             result = TIMESTAMP + "\t" + out[0]
@@ -91,7 +91,7 @@ class Daemon:
         def mem_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "free -g|grep -i mem|awk '{print $3/$2}'"
-            res, out = rcw(cmd, 10, retouts=True)
+            res, out = rcw(cmd, 10)
             if res:
                 result = "error"
             result = TIMESTAMP + "\t" + out[0]
@@ -102,7 +102,7 @@ class Daemon:
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "ipmitool sdr list|grep -i Watts|awk 'BEGIN{FS = \"|\"}{for (f=1; f <= NF; f+=1) {if ($f ~ /Watts/)" \
                   " {print $f}}}'|awk '{print $1}'|sort -n -r|head -n1"
-            res, out = rcw(cmd, 10, retouts=True)
+            res, out = rcw(cmd, 10)
             if res:
                 result = "error"
             result = TIMESTAMP + "\t" + out[0]
