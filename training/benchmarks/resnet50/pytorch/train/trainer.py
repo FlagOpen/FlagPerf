@@ -138,7 +138,10 @@ class Trainer:
             acc1_total += acc1
             steps += 1
         acc1 = torch.tensor([acc1_total], dtype=torch.float32, device=device)
-        dist.all_reduce(acc1, dist.ReduceOp.SUM)
-        acc1 = acc1 / (steps * dist.get_world_size())
+        world_size = 1
+        if self.config.distributed:
+            dist.all_reduce(acc1, dist.ReduceOp.SUM)
+            world_size = dist.get_world_size()
+        acc1 = acc1 / (steps * world_size)
         print("Eval Acc1: " + str(float(acc1)) + "%")
         return float(acc1)
