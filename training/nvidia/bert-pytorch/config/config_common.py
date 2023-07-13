@@ -46,7 +46,7 @@ use_cuda_graph: bool = False
 ddp_type: str = "apex"
 
 # Bypass AMP unscaling and inf/nan checks for SOL measurements.
-bypass_amp: bool = True
+bypass_amp: bool = False
 
 # Whether to use distributed lamb.
 distributed_lamb: bool = False

@@ -3,15 +3,15 @@ from torch.cuda.amp import GradScaler
 import os
 
 grad_scaler = GradScaler(init_scale=float(os.getenv("INIT_LOSS_SCALE", 2**20)),
-                         growth_interval=2000, enabled=False)
+                         growth_interval=2000, enabled=True)
 
-fp16 = False
-ddp_type = "native"
+fp16 = True
+ddp_type = "apex"
 dist_backend = "nccl"
 
 #train_batch_size = 56 if get_gpu_mem() > 75 else 27
-train_batch_size = 8
-max_steps = 25000
+train_batch_size = 14
+max_steps = 30000
 
 fused_gelu_bias = True
 fused_mha = True

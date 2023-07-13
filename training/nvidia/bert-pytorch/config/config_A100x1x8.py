@@ -1,6 +1,6 @@
 from config_Ampere_common import *
 
-gradient_accumulation_steps = 56
+gradient_accumulation_steps = 4
 start_warmup_step = 0
 warmup_proportion = 0
 warmup_steps = 0
