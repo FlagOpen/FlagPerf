@@ -103,7 +103,7 @@ function node_common_train()
         # if bindcore add taskset
         [ $bindcore == "true" ] && train_run_cmd="taskset -c $cmdopt $train_run_cmd"
         # call cmd
-        eval $train_run_cmd | tee -a $RUN_PATH/train.log 2>&1 || { logger_Warn "train failed rank $index, device $DEVICE_ID failed:$?"; rm -rf $retvalfile; }
+        eval $train_run_cmd | tee -a $RESULT_PATH/rank$index.log 2>&1 || { logger_Warn "train failed rank $index, device $DEVICE_ID failed:$?"; rm -rf $retvalfile; }
     } &
     done
     logger_Info "Waiting for the training process of SERVER_ID:${SERVER_ID} to finish"

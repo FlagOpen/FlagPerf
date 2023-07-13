@@ -1,14 +1,48 @@
 #!/bin/bash
-. $WORK_PATH/common/common.sh
-. $WORK_PATH/common/log_util.sh
-. $WORK_PATH/common/node_common.sh
 
-# ��ȡѵ������
+CUR_PATH=$(dirname $(readlink -f "$0"))
+export CODE_PATH=$CUR_PATH
+export BASE_PATH=$(cd "$CUR_PATH/../";pwd)
+
+. $CODE_PATH/common/common.sh
+. $CODE_PATH/common/log_util.sh
+. $CODE_PATH/common/cluster_common.sh
+. $CODE_PATH/common/node_common.sh
+
+LONGOPTS="log_dir:,data_dir:,nproc:"
+PARSED=$(getopt --options=hi:o: --longoptions="$LONGOPTS" --name "$0" -- "$@")
+eval set -- "$PARSED"
+while true; do
+    case "$1" in
+        -l|--log_dir)
+            LOG_DIR="$2"
+            shift 2
+            ;;
+        -d|--data_dir)
+            DATA_DIR="$2"
+            shift 2
+            ;;
+        -n|--nproc)
+            NPROC="$2"
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit
+            ;;
+    esac
+done
+
+
 function get_train_cmd()
 {
     [[ $RANK_SIZE -gt 1 ]] && DISTRUTE_ENABLE="True" || DISTRUTE_ENABLE="False"
     # 基准代码r2.0.0版本中训练配置文件resnet50_imagenet2012_Boost_config.yaml中，将训练参数output_path改为output_dir
-    CONFIG_PATH=$WORK_PATH/code/config/resnet50_imagenet2012_Boost_config.yaml
+    CONFIG_PATH=$WORK_PATH/config/resnet50_imagenet2012_Boost_config.yaml
     isexisted=`cat $CONFIG_PATH |grep "output_dir" |grep -v grep |awk -F= 'NR==1{print $NF}'`
     if [ ! -n "$isexisted" ]; then
         OUTPUT_PARA_NAME="output_path"
@@ -36,7 +70,7 @@ function get_eval_cmd()
 {
     eval_run_cmd="${PYTHON_COMMAND} -u $WORK_PATH/code/eval.py \
          --data_path=${EVAL_DATA_PATH} \
-         --config_path=$WORK_PATH/code/config/resnet50_imagenet2012_Boost_config.yaml \
+         --config_path=$WORK_PATH/config/resnet50_imagenet2012_Boost_config.yaml \
          --checkpoint_file_path=${CHECKPOINT_PATH}"
     return 0
 }
@@ -87,18 +121,14 @@ function node_eval()
 
 main()
 {
-    type="$1"
-    shift
-    node_init $type || { logger_Warn "init failed"; return 1; }
-    if [ "$type" == "train" ];then
-        node_train "$@" || { logger_Warn "run_node_train failed"; return 1; }
-    elif [ "$type" == "eval" ];then
-        node_eval "$@" || { logger_Warn "run_node_eval failed"; return 1; }
-    elif [ "$type" == "check" ];then
-        node_check "$@" || { logger_Warn "run_node_check failed"; return 1; }
-    else
-        { logger_Warn "invalid argument '${type}'"; return 1; }
-    fi
+    export RANK_SIZE=$NPROC
+    export DEVICE_NUM=$NPROC
+    export WORK_PATH=$CUR_PATH
+    export TRAIN_DATA_PATH=${DATA_DIR}/train/
+    cd $WORK_PATH
+    export RESULT_PATH=${LOG_DIR}/
+    source ./config/config.sh
+    node_train "$@" || { logger_Warn "run_node_train failed"; return 1; }
 }
 
 main "$@"

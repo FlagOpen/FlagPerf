@@ -125,6 +125,7 @@ def _set_common_ddp_envs(task_args):
 
 def _get_basic_train_script_args(task_args):
     '''Generate basic train script args according to the script options.'''
+    task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
     config_dir, config_file = helper.get_config_dir_file(task_args)
     if config_dir is None or config_file is None:
         START_LOGGER.error(
@@ -140,7 +141,9 @@ def _get_basic_train_script_args(task_args):
     basic_train_script_args = " --extern_config_dir " + config_dir \
                               + " --extern_config_file " + config_file \
                               + " --vendor " + task_args.vendor \
-                              + " --data_dir " + task_args.data_dir
+                              + " --data_dir " + task_args.data_dir \
+                              + " --log_dir " + task_log_dir \
+                              + " --nproc "+ str(task_args.nproc)
     if task_args.enable_extern_config:
         basic_train_script_args += " --enable_extern_config " \
                                    + "--extern_module_dir " + extern_module_dir
@@ -153,7 +156,6 @@ def main():
     task_args = parse_args()
     task_args.framework = "mindspore"
 
-    task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
     helper.write_pid_file(task_args.log_dir, "start_mindspore_task.pid")
 
     # Check and get train script & its basic args.
@@ -163,7 +165,7 @@ def main():
         sys.exit(3)
 
     train_script_path = helper._get_model_path(task_args.model_name, task_args.framework)
-    train_script_path += "/cluster_offline_run.sh"
+    train_script_path += "/run_pretraining.sh"
     if train_script_path is None:
         START_LOGGER.error("Can't find path of train script.")
         sys.exit(4)
@@ -172,7 +174,7 @@ def main():
 
     # start all processes in container
 
-    start_cmd = "bash" + " -x " + train_script_path + " " \
+    start_cmd = "bash " + train_script_path + " " \
                 + basic_train_script_args
 
     # Start all the processes, TODO debug multi proc, stdout, stderr
