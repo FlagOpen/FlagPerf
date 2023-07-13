@@ -165,7 +165,7 @@ def main():
         sys.exit(3)
 
     train_script_path = helper._get_model_path(task_args.model_name, task_args.framework)
-    train_script_path += "/cluster_offline_run.sh"
+    train_script_path += "/run_pretraining.sh"
     if train_script_path is None:
         START_LOGGER.error("Can't find path of train script.")
         sys.exit(4)
@@ -174,7 +174,7 @@ def main():
 
     # start all processes in container
 
-    start_cmd = "bash" + " -x " + train_script_path + " " \
+    start_cmd = "bash " + train_script_path + " " \
                 + basic_train_script_args
 
     # Start all the processes, TODO debug multi proc, stdout, stderr

@@ -32,8 +32,7 @@ ResNet的总体网络架构如下：
     ├── resnet50_imagenet2012_Boost_config.yaml     # 高性能版本：性能提高超过10%而精度下降少于1%
   ├── common                                        # 公共函数文件
   ├── code                                          # 训练代码
-  ├── cluster_offline_run.sh                        # 入口函数
-  └── run_node.sh                                   # 训练网络
+  └── run_pretraining.sh                            # 训练网络
 ```
 
 ## 脚本参数
