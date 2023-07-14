@@ -121,6 +121,7 @@ function node_eval()
 
 main()
 {
+    node_init eval || { logger_Warn "init failed"; return 1; }
     export RANK_SIZE=$NPROC
     export DEVICE_NUM=$NPROC
     export WORK_PATH=$CUR_PATH
@@ -129,6 +130,7 @@ main()
     export RESULT_PATH=${LOG_DIR}/
     source ./config/config.sh
     node_train "$@" || { logger_Warn "run_node_train failed"; return 1; }
+    node_eval "$@" || { logger_Warn "run_node_eval failed"; return 1; }
 }
 
 main "$@"
