@@ -28,6 +28,7 @@
 | 单机8卡  | config_R300x1x8 |        |  0.83  |  0.81648   |      |        |
 
 
+loss曲线：
 
 
 ![loss](loss.png)
