@@ -1,9 +1,0 @@
-h5py==3.7.0
-six==1.16.0
-absl-py==1.2.0
-paddle-bfloat==0.1.7
-paddle2onnx==1.0.0
-paddlefsl==1.1.0
-paddlenlp==2.4.0
-astor==0.8.1
-torch==1.8.1
