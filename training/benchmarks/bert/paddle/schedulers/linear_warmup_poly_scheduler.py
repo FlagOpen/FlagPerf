@@ -1,48 +1,34 @@
-import torch
-from .base import LRScheduler
 
+import sys
+from paddle.optimizer.lr import LRScheduler
 
 class LinearWarmupPolyDecayScheduler(LRScheduler):
-    """
-    Applies a warm up period to the learning rate.
-    """
-
     def __init__(self,
-                 optimizer,
-                 start_warmup_steps,
+                 startup_warmup_steps,
                  warmup_steps,
                  total_steps,
-                 end_learning_rate=0.0,
+                 base_lr,
+                 end_lr=0.0,
                  degree=1.0,
                  last_epoch=-1):
-        self.num_warmup_updates = warmup_steps
-        self.start_warmup_steps = start_warmup_steps
+        self.startup_warmup_steps = startup_warmup_steps
+        self.offset_step = int(startup_warmup_steps == 0)
+        self.warmup_steps = warmup_steps
         self.total_steps = total_steps
-        self.end_learning_rate = end_learning_rate
+        self.base_lr = base_lr
+        self.end_lr = end_lr
         self.degree = degree
-        super(LinearWarmupPolyDecayScheduler,
-              self).__init__(optimizer, last_epoch)
-
-        if self.last_epoch <= 0:
-            self.last_epoch = 0
-
-    def step(self, epoch=None):
-        param_group = self.optimizer.param_groups[0]
-        if 'step' in param_group:
-            self.last_epoch = param_group['step'] + 1
-        else:
-            self.last_epoch += 1
-
-        for param_group, lr in zip(self.optimizer.param_groups, self.get_lr()):
-            param_group['lr'] = lr
+        super(LinearWarmupPolyDecayScheduler, self).__init__(
+            learning_rate=base_lr, last_epoch=last_epoch)
 
     def get_lr(self):
-        mod_step = self.last_epoch - self.start_warmup_steps
-        if mod_step < self.num_warmup_updates:
-            progress = mod_step / self.num_warmup_updates
-            return [(base_lr * progress) for base_lr in self.base_lrs]
+        step = self.last_epoch + 1
+        mod_step = step - self.offset_step - self.startup_warmup_steps
+        if mod_step < self.warmup_steps:
+            p = mod_step / (self.warmup_steps + 1e-6)
+            lr = self.base_lr * p
         else:
-            progress = min(self.last_epoch / self.total_steps, 1.0)
-            return [(base_lr - self.end_learning_rate) *
-                    (1 - progress)**self.degree + self.end_learning_rate
-                    for base_lr in self.base_lrs]
+            p = min(1, (step - self.offset_step) / self.total_steps)
+            lr = (self.base_lr - self.end_lr) * (1 - p
+                                                 )**self.degree + self.end_lr
+        return lr
