@@ -43,7 +43,7 @@ class ClusterManager():
         ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
         self.logger.debug("Run cmd on host with ssh. ssh cmd=" + ssh_run_cmd +
                           " host=" + host + " timeout=" + str(timeout))
-        ret, outs = run_cmd.run_cmd_wait(ssh_run_cmd, timeout, retouts=True)
+        ret, outs = run_cmd.run_cmd_wait(ssh_run_cmd, timeout)
         return ret, outs
 
     def healthcheck(self):
@@ -145,7 +145,7 @@ class ClusterManager():
         scp_cmd = self.scp_cmd_head + " " + local_file + " " + self.user \
                                     + "@" + host + ":" + remote_dir + "/"
         self.logger.debug("scp command:" + scp_cmd)
-        ret, outs = run_cmd.run_cmd_wait(scp_cmd, timeout, retouts=True)
+        ret, outs = run_cmd.run_cmd_wait(scp_cmd, timeout)
         return ret, outs
 
     def sync_file_to_some_hosts(self,
@@ -184,7 +184,7 @@ class ClusterManager():
         scp_cmd = self.scp_cmd_head + " -r " + self.user + "@" + host + ":" \
                                     + remote_dir + "/* " + local_dir + "/"
         self.logger.debug("scp command:" + scp_cmd)
-        ret, outs = run_cmd.run_cmd_wait(scp_cmd, timeout, retouts=True)
+        ret, outs = run_cmd.run_cmd_wait(scp_cmd, timeout)
         return ret, outs
 
     def collect_files_some_hosts(self,

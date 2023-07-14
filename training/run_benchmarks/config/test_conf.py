@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon and kunlunxin.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin and ascend.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -15,12 +15,17 @@ VENDOR = "nvidia"
 #       " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
 #   nvidia:
 #       " --gpus all"
+#   ascend:
+#       "--device=/dev/davinciX --device=/dev/davinci_manager + \
+#        --device=/dev/devmm_svm --device=/dev/hisi_hdc + \
+#        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
 #   MLU_VISIBLE_DEVICES for cambricon
 #   XPU_VISIBLE_DEVICES for kunlunxin
+#   ASCEND_VISIBLE_DEVICES for ascend
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
@@ -48,8 +53,25 @@ CLEAR_CACHES = True
     "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
-    "bert:pytorch:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
-    "glm:pytorch:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
-    "cpm:pytorch:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
-    "resnet50:pytorch:A100:1:8:1": "/home/datasets_ckpt/resnet50/train/",
+    "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
+    "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
+    "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
+
+    # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "efficientnet:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
+    # "faster_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/fasterrcnn/coco2017/",
+    # "bigtransfer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
+    # "tacotron2:pytorch_1.8:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    # "resnet50:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "mask_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
+    
+    # "wav2vec2:pytorch_1.13:A100:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
+    # "WaveGlow:pytorch_1.13:A100:1:8:1": "/raid/dataset/LJSpeech/",
+
+    
+    # "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
+    # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 }

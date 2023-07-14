@@ -7,7 +7,13 @@
 [Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions](https://arxiv.org/abs/1712.05884) 
 
 - 模型代码来源
-[NVIDIA DeepLearningExamples](https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2) 
+This case includes code from the BSD 3-Clause License open source project at https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
 
 ### 数据集
 #### 数据集下载地址
@@ -33,7 +39,7 @@
 #### 预处理
 1. 进入tacotron2数据集路径  cd  <YOUR_TACOTRON2_DATASET_PATH>
 2. 下载数据集 wget https://data.keithito.com/data/speech/LJSpeech-1.1.tar.bz2
-3. 解压缩  tar zjvf LJSpeech-1.1.tar.bz2
+3. 解压缩  tar xvf LJSpeech-1.1.tar.bz2
 4. git clone https://github.com/NVIDIA/DeepLearningExamples
 5. 拷贝filelists目录到数据集路径。 cp -R DeepLearningExamples/PyTorch/SpeechSynthesis/Tacotron2/filelists <YOUR_TACOTRON2_DATASET_PATH>
 6. 将tacotron2/scripts/prepare_mels.sh脚本拷贝到  <YOUR_TACOTRON2_DATASET_PATH>
@@ -73,4 +79,4 @@
 | ---------- | ------- |
 | Nvidia GPU | ✅       |
 | 昆仑芯 XPU | N/A     |
-| 天数智芯   | N/A     |
+| 天数智芯   |  ✅    |

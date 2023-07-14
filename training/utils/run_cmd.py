@@ -6,7 +6,7 @@
 import subprocess
 
 
-def run_cmd_wait(cmd, timeout, retouts=True):
+def run_cmd_wait(cmd, timeout):
     '''Run a shell command and wait <timeout> second(s).'''
     process = subprocess.Popen(cmd,
                                shell=True,
@@ -24,6 +24,4 @@ def run_cmd_wait(cmd, timeout, retouts=True):
     print(f"{cmd} stdout: {output[0]}")
     print(f"{cmd} stderr: {output[1]}")
 
-    if retouts:
-        return [process.returncode, output]
-    return process.returncode
+    return process.returncode, output

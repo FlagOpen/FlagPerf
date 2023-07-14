@@ -55,6 +55,8 @@ seed: int = 0
 dist_backend: str = 'nccl'
 num_workers: int = 4
 device: str = None
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
 
 # =========================================================
 # for driver

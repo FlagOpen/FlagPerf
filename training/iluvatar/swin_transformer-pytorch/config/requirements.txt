@@ -1,0 +1,2 @@
+timm==0.4.12
+opencv-python==4.4.0.46

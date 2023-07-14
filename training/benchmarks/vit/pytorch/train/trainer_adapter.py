@@ -88,17 +88,20 @@ def create_grad_scaler(args):
 
 def backward(args, step: int, epoch: int, loss: torch.Tensor, model: nn.Module,
              optimizer: Optimizer, scaler):
-    optimizer.zero_grad()
     if scaler is not None:
         scaler.scale(loss).backward()
-        if args.clip_grad_norm is not None:
-            # we should unscale the gradients of optimizer's assigned params if do gradient clipping
-            scaler.unscale_(optimizer)
-            nn.utils.clip_grad_norm_(model.parameters(), args.clip_grad_norm)
-        scaler.step(optimizer)
-        scaler.update()
+        if step % args.gradient_accumulation_steps == 0:
+            if args.clip_grad_norm is not None:
+                # we should unscale the gradients of optimizer's assigned params if do gradient clipping
+                scaler.unscale_(optimizer)
+                nn.utils.clip_grad_norm_(model.parameters(), args.clip_grad_norm)
+            scaler.step(optimizer)
+            optimizer.zero_grad()
+            scaler.update()
     else:
         loss.backward()
-        if args.clip_grad_norm is not None:
-            nn.utils.clip_grad_norm_(model.parameters(), args.clip_grad_norm)
-        optimizer.step()
+        if step % args.gradient_accumulation_steps == 0:
+            if args.clip_grad_norm is not None:
+                nn.utils.clip_grad_norm_(model.parameters(), args.clip_grad_norm)
+            optimizer.step()
+            optimizer.zero_grad()

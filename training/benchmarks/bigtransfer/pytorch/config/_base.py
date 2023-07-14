@@ -47,6 +47,11 @@ distributed: bool = True
 # utils
 # =========================================================
 seed: int = 0
+# torch.backends.cudnn.benchmark
+cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
+
 dist_backend: str = 'nccl'
 num_workers: int = 8
 device: str = None

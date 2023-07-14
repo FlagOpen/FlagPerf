@@ -5,7 +5,6 @@ import argparse
 import os
 import random
 import numpy as np
-import torch
 from driver import perf_logger, Driver, check
 
 
@@ -24,7 +23,8 @@ class InitHelper:
         """
         config = self.config
         model_driver = Driver(config, config.mutable_params)
-        parser = argparse.ArgumentParser(config.name) if parser is None else parser
+        parser = argparse.ArgumentParser(
+            config.name) if parser is None else parser
         model_driver.setup_config(parser)
         model_driver.setup_modules(global_module, local_module)
         check.check_config(model_driver.config)
@@ -40,25 +40,38 @@ class InitHelper:
         """set local rank"""
         self.config.local_rank = int(os.getenv("LOCAL_RANK", 0))
 
-    def set_seed(self, seed: int, vendor: str):
+    def set_seed(self, seed: int, vendor: str = None):
         """set seed"""
         random.seed(seed)
         np.random.seed(seed)
-        lower_vendor = vendor.lower()
+
+        config = self.config
+        if not hasattr(config, "vendor"):
+            raise ValueError("vendor was missing for config")
+
+        lower_vendor = config.vendor.lower()
+
         if lower_vendor == "nvidia":
+            import torch
             torch.manual_seed(seed)
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
-            torch.backends.cudnn.benchmark = False
-            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = getattr(config, "cudnn_benchmark")
+            torch.backends.cudnn.deterministic = getattr(
+                config, "cudnn_deterministic")
         elif lower_vendor == "iluvatar":
+            import torch
             torch.manual_seed(seed)
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
             torch.backends.cudnn.benchmark = True
             torch.backends.cudnn.deterministic = False
         elif lower_vendor == "kunlunxin":
+            import torch
             torch.manual_seed(seed)
+        elif lower_vendor == "ascend":
+            import mindspore
+            mindspore.set_seed(seed)
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass

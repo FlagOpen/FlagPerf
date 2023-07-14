@@ -26,10 +26,3 @@
 注：
 训练精度来源：https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2#results，根据官方仓库中的脚本，训练1500epoch得到val_loss=0.4852.
 tacotron2官网仓库的训练日志见PR附件。
-
-
-### 许可证
-
-本项目基于Apache 2.0 license。
-
-本项目部分代码基于NVIDIA开源库 https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2 实现。
