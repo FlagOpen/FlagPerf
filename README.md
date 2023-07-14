@@ -350,7 +350,7 @@ seed = 9031
 ```
 ==============================================
           Welcome to FlagPerf!
-      See more at https://baai.ac.cn/ 
+      See more at https://github.com/FlagOpen/FlagPerf 
 ==============================================
 2022-11-21 19:19:24,013	[INFO]	[run.py,500]======== Step 1: Check environment and configs. ========
 2022-11-21 19:19:24,014	[INFO]	[run.py,501]Initialize logger with log path: /home/FlagPerf/training/result/run20221121191924......[SUCCESS]

@@ -487,7 +487,9 @@ def print_welcome_msg():
     '''Print colorful welcome message to console.'''
     print("\033[1;34;40m==============================================\033[0m")
     print("\033[1;36;40m          Welcome to FlagPerf!\033[0m")
-    print("\033[1;36;40m      See more at https://baai.ac.cn/ \033[0m")
+    print(
+        "\033[1;36;40m      See more at https://github.com/FlagOpen/FlagPerf \033[0m"
+    )
     print("\033[1;34;40m==============================================\033[0m")
 
 
@@ -621,8 +623,8 @@ def main():
             # Wait until start_xxx_task.py finished.
             RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
             pid_file_path = os.path.join(
-                log_dir_container,
-                "start_" + case_config["framework"].split("_")[0] + "_task.pid")
+                log_dir_container, "start_" +
+                case_config["framework"].split("_")[0] + "_task.pid")
             wait_for_finish(dp_path, container_name, pid_file_path, nnodes)
             RUN_LOGGER.info("3) Training tasks end in the cluster...")
             RUN_LOGGER.info("4) Clean container environments in cluster...")
