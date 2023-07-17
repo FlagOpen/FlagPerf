@@ -21,9 +21,9 @@ torchvision.models.resnet.__dict__['model_urls'][
 - ##### 软件环境
    - OS版本：Ubuntu 20.04
    - OS kernel版本:  4.15.0-156-generic x86_64    
-   - 加速卡驱动版本：3.0.0
+   - 加速卡驱动版本：3.1.0
    - Docker 版本：20.10.8
-   - 训练框架版本：torch-1.10.2+corex.3.0.0
+   - 训练框架版本：torch-1.13.1+corex.3.1.0
    - 依赖软件版本：无
 
 
@@ -38,7 +38,7 @@ torchvision.models.resnet.__dict__['model_urls'][
 | 数据集         | coco2017                |                                       |
 | 数据精度       | precision,见“性能指标”  | 可选fp32/amp/fp16                     |
 | 超参修改       | fix_hp,见“性能指标”     | 跑满硬件设备评测吞吐量所需特殊超参          |
-| 硬件设备简称   | nvidia A100             |                                       |
+| 硬件设备简称   | BI-V100             |                                       |
 | 硬件存储使用   | mem,见“性能指标”        | 通常称为“显存”,单位为GiB              |
 | 端到端时间     | e2e_time,见“性能指标”   | 总时间+Perf初始化等时间               |
 | 总吞吐量       | p_whole,见“性能指标”    | 实际训练图片数除以总时间(performance_whole) |
