@@ -53,6 +53,5 @@ torchvision.models.resnet.__dict__['model_urls'][
 | 配置               | precision | fix_hp | e2e_time | p_whole | p_train | p_core | map | mem |
 | ------------------ | --------- | ---- | ---- | ---- | ---- | ---- |  ---- | ---- |
 | BI-V100单机1卡（1x1） | fp32 | / |  |      |  |  |  |  |
-| BI-V100单机8卡（1x8） | fp32 | bs=8,lr=0.08 |  | 64 |  66   | 69 | 36.7% | 14.0/32.0 |
-| BI-V100单机8卡（1x1） | fp32 | bs=8,lr=0.08 |  |  |     |  |  |  |
+| BI-V100单机8卡（1x8） | fp32 | bs=8,lr=0.08 |  |  |     |  |  |  |
 | BI-V100两机8卡（2x8） | fp32 | bs=8,lr=0.08 |  |  |     |  |  |  |
