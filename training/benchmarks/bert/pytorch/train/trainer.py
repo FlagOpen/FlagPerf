@@ -150,9 +150,7 @@ class Trainer():
         do_eval = all([
             config.eval_dir is not None,
             state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps %
-            math.ceil(config.eval_interval_samples /
-                      utils.global_batch_size(config)) == 0,
+            state.global_steps % config.eval_step == 0,
             config.eval_interval_samples > 0,
             state.global_steps > 1,
         ])

@@ -16,4 +16,6 @@ mutable_params = [
     'dist_backend',
     'num_workers',
     'device',
+    'cudnn_benchmark',
+    'cudnn_deterministic'
 ]

@@ -100,8 +100,9 @@ def check_case_config(case, case_config, vendor):
                            ",".join(must_configs))
         return False
 
-    model_path = CURR_PATH + "/../benchmarks/" + case_config["model"] + \
-                 "/" + case_config["framework"]
+    framework = case_config["framework"].split("_")[0]
+    model_path = CURR_PATH + "/../benchmarks/" + case_config["model"] \
+        + "/" + framework
     model_path = os.path.abspath(model_path)
     if not os.path.exists(model_path):
         RUN_LOGGER.warning("Case " + case + ": deploy path doesn't exist: " +
@@ -109,7 +110,7 @@ def check_case_config(case, case_config, vendor):
         return False
 
     config_path = CURR_PATH + "/../" + vendor + "/" + case_config["model"] + \
-        "-" + case_config["framework"] + "/config/" + \
+        "-" + framework + "/config/" + \
         case_config["config"] + ".py"
     if not os.path.isfile(config_path):
         RUN_LOGGER.warning("Case " + case + ": config file doesn't exist: " +
@@ -136,7 +137,7 @@ def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes):
         CURR_PATH, "../" + vendor + "/docker_image/" + framework)
     image_name = image_mgr.repository + ":" + image_mgr.tag
     RUN_LOGGER.debug("Prepare docker image in cluster. image_name=" +
-                     image_name + "image_vendor_dir=" + image_vendor_dir)
+                     image_name + " image_vendor_dir=" + image_vendor_dir)
     prepare_image_cmd = "cd " + dp_path + " && " + sys.executable \
                         + " utils/image_manager.py -o build -i " \
                         + image_mgr.repository + " -t " + image_mgr.tag \
@@ -307,7 +308,7 @@ def stop_monitors_in_cluster(dp_path, nnodes):
 def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
                            count, stdout, nullout, curr_log_path):
     '''Start tasks in cluster, and NOT wait.'''
-    framework = case_config["framework"]
+    framework = case_config["framework"].split("_")[0]
     nnodes = case_config["nnodes"]
     env_file = os.path.join(
         tc.FLAGPERF_PATH, tc.VENDOR,
@@ -535,7 +536,9 @@ def print_welcome_msg():
     '''Print colorful welcome message to console.'''
     print("\033[1;34;40m==============================================\033[0m")
     print("\033[1;36;40m          Welcome to FlagPerf!\033[0m")
-    print("\033[1;36;40m      See more at https://baai.ac.cn/ \033[0m")
+    print(
+        "\033[1;36;40m      See more at https://github.com/FlagOpen/FlagPerf \033[0m"
+    )
     print("\033[1;34;40m==============================================\033[0m")
 
 
@@ -547,7 +550,7 @@ def prepare_case_config_cluster(dp_path, case_config, case):
         RUN_LOGGER.info(config_item + ":\t" + str(case_config[config_item]))
     RUN_LOGGER.info("--------------------------------------------------")
     model = case_config["model"]
-    framework = case_config["framework"]
+    framework = case_config["framework"].split("_")[0]
     config_file = case_config["config"] + ".py"
     nnodes = case_config["nnodes"]
     case_config_dir = os.path.join(dp_path, tc.VENDOR, model + "-" + framework,
@@ -587,7 +590,6 @@ def main(stdout, nullout):
                     tc.FLAGPERF_LOG_LEVEL,
                     "file",
                     log_caller=True)
-
     RUN_LOGGER.info("======== Step 1: Check environment and configs. ========")
     RUN_LOGGER.info("Initialize logger with log path: " + curr_log_path +
                     "......[SUCCESS]")

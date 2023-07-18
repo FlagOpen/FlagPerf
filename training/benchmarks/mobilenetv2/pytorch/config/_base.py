@@ -35,6 +35,10 @@ momentum: float = 0.9
 
 max_steps: int = 5005 * 300  # 300 epoch
 seed: int = 41
+# torch.backends.cudnn.benchmark
+cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
 
 # Stop training after reaching this accuracy
 target_acc1: float = 70.634

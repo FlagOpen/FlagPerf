@@ -22,16 +22,10 @@
 
 
 ### 运行情况
-| 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(mAP) | 性能（samples/s） |
+| 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度(top1) | 性能（samples/s） |
 | -------- | --------------- | ----------- | -------- | ------------- | ----------------- |
 | 单机8卡  | config_A100x1x8 | 5771.27 | 0.83  | 0.8411     | 222.02       |
 
 训练精度来源：https://paperswithcode.com/paper/large-scale-learning-of-general-visual
 
 训练精度未对齐(84.11 VS 85.39)原因：没有采用x4迁移权重。后者在40GB显卡上，不使用FSDP优化无法训练batchsize=16，显存不足。
-
-### 许可证
-
-本项目基于Apache 2.0 license。
-
-本项目部分代码基于论文原作者开源库 https://github.com/google-research/big_transfer 实现。

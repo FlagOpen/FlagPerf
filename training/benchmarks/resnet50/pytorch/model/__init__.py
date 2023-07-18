@@ -1,1 +1,5 @@
-from .modeling import create_model
+from torchvision.models import resnet50
+
+
+def create_model():
+    return resnet50()
