@@ -20,4 +20,5 @@ def export_model(model, config):
                       verbose=False,
                       input_names=["input"],
                       output_names=["output"],
+                      training=torch.onnx.TrainingMode.EVAL,
                       do_constant_folding=True)
