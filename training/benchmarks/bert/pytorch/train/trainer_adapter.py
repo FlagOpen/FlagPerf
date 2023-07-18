@@ -23,8 +23,10 @@ from .distributed_fused_lamb import _pipeline_block_reductions_patched, _pipelin
 
 BERT_MODEL = torch.nn.Module
 
+
 def convert_model(model: BERT_MODEL) -> BERT_MODEL:
     return model
+
 
 def create_optimizer(model: BERT_MODEL) -> Optimizer:
     param_optimizer = list(model.named_parameters())
