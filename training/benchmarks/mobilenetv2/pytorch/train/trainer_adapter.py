@@ -1,27 +1,20 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 import torch
-import torch.distributed as dist
-from torch.optim import Optimizer
-import config
 
-from torch import nn, Tensor
-from driver.dist_pytorch import main_proc_print
-from typing import Tuple
+import torch.distributed as dist
+from torch import nn
 from torch.nn.parallel import DistributedDataParallel as DDP
+import config
+from driver.dist_pytorch import main_proc_print
 
 
 def convert_model(model: nn.Module) -> nn.Module:
     return model
 
 
-def create_optimizer(model, args):
-    optimizer = torch.optim.SGD(model.parameters(),
-                                lr=args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
-    return optimizer
-
-
-def model_to_fp16(model):
+def model_to_fp16(model: nn.Module) -> nn.Module:
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if config.fp16:
         main_proc_print(" > use fp16...")
@@ -36,12 +29,6 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
 
 
 def create_grad_scaler():
-    return None
-
-
-def backward(step: int, loss: torch.Tensor, optimizer: Optimizer):
-    loss.backward()
-    update_step = step % config.gradient_accumulation_steps == 0
-    if update_step:
-        optimizer.step()
-        optimizer.zero_grad()
+    """create_grad_scaler for mixed precision training"""
+    scaler = torch.cuda.amp.GradScaler() if config.amp else None
+    return scaler
