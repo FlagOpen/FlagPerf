@@ -26,7 +26,7 @@ eval_iter_start_samples: int = 0
 # If set to -1, disable eval, else evaluate every eval_iter_samples during training
 eval_iter_samples: int = 40000
 
-eval_step: int = 5000
+eval_step: int = 2000
 
 # number of eval examples to run eval on
 num_eval_examples: int = 10000
@@ -104,7 +104,7 @@ fp16: bool = False
 loss_scale: float = 0.0
 
 # frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 1
+log_freq: int = 100
 
 # Whether to use gradient checkpointing
 checkpoint_activations: bool = False
