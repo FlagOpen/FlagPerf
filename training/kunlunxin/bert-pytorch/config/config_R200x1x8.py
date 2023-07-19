@@ -17,7 +17,7 @@ opt_lamb_beta_2 = 0.999
 
 eval_batch_size = train_batch_size
 max_samples_termination = 45000000
-cache_eval_data = True
+cache_eval_data = False
 
 fused_gelu_bias = False
 fused_mha = False
