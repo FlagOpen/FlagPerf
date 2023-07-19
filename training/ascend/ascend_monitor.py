@@ -82,7 +82,7 @@ class Daemon:
                                        stderr=subprocess.STDOUT,
                                        encoding='utf-8')
             try:
-                out = process.communicate(timeout=10)
+                out = process.communicate(timeout=100)
             except subprocess.TimeoutExpired:
                 process.kill()
                 out = process.communicate()

@@ -121,7 +121,7 @@ function node_eval()
 
 main()
 {
-    start_time=$(data +%s)
+    start_time=$(date +%s)
     node_init eval || { logger_Warn "init failed"; return 1; }
     export ALL_DATA_SIZE=0
     export CONVERGED=True
@@ -134,15 +134,14 @@ main()
     export RESULT_PATH=${LOG_DIR}/
     source ./config/config.sh
     node_train "$@" || { logger_Warn "run_node_train failed"; return 1; }
-    train_end_time=$(data +%s)
+    train_end_time=$(date +%s)
     node_eval "$@" || { logger_Warn "run_node_eval failed"; return 1; }
-    e2e_end_time=$(data +%s)
+    e2e_end_time=$(date +%s)
 
-    train_time=$((train_end_time-start_time))
-    e2e_time=$((e2e_end_time-start_time))
-    echo "e2e time taken: $e2e_time seconds." >> ${RESULT_PATH}/info.log
-    echo "train time without eval taken: $train_time seconds." >> ${RESULT_PATH}/info.log
-    echo "throughput(ips)_raw: $(($ALL_DATA_SIZE/train_time))." >> ${RESULT_PATH}/info.log
+    train_time_no_eval=$((train_end_time-start_time))
+    echo "e2e time taken: $((e2e_end_time-start_time)) seconds." >> ${RESULT_PATH}/info.log
+    echo "train time without eval taken: ${train_time_no_eval} seconds." >> ${RESULT_PATH}/info.log
+    echo "throughput without eval: $(($ALL_DATA_SIZE/$train_time_no_eval))." >> ${RESULT_PATH}/info.log
     echo "converged: ${CONVERGED}." >> ${RESULT_PATH}/info.log
 }
 
