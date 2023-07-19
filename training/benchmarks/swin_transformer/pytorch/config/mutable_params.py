@@ -11,7 +11,7 @@ mutable_params = [
     "train_optimizer_name",
     "train_lr_scheduler_name",
     "train_lr_scheduler_decay_rate",
-    "num_workers",
+    "data_num_workers",
     "device",
     "local_rank",
     "do_train",

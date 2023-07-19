@@ -536,7 +536,9 @@ def print_welcome_msg():
     '''Print colorful welcome message to console.'''
     print("\033[1;34;40m==============================================\033[0m")
     print("\033[1;36;40m          Welcome to FlagPerf!\033[0m")
-    print("\033[1;36;40m      See more at https://baai.ac.cn/ \033[0m")
+    print(
+        "\033[1;36;40m      See more at https://github.com/FlagOpen/FlagPerf \033[0m"
+    )
     print("\033[1;34;40m==============================================\033[0m")
 
 
