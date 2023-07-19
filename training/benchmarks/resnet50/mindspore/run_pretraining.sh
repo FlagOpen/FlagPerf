@@ -123,8 +123,6 @@ main()
 {
     start_time=$(date +%s)
     node_init eval || { logger_Warn "init failed"; return 1; }
-    export ALL_DATA_SIZE=0
-    export CONVERGED=True
     export RANK_SIZE=$NPROC
     export DEVICE_NUM=$NPROC
     export WORK_PATH=$CUR_PATH
@@ -139,10 +137,10 @@ main()
     e2e_end_time=$(date +%s)
 
     train_time_no_eval=$((train_end_time-start_time))
+    all_data_size=$(cat $RESULT_PATH/all_data_size)
     echo "e2e time taken: $((e2e_end_time-start_time)) seconds." >> ${RESULT_PATH}/info.log
     echo "train time without eval taken: ${train_time_no_eval} seconds." >> ${RESULT_PATH}/info.log
-    echo "throughput without eval: $(($ALL_DATA_SIZE/$train_time_no_eval))." >> ${RESULT_PATH}/info.log
-    echo "converged: ${CONVERGED}." >> ${RESULT_PATH}/info.log
+    echo "throughput without eval: $(($all_data_size/$train_time_no_eval))." >> ${RESULT_PATH}/info.log
 }
 
 main "$@"

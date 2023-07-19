@@ -390,7 +390,6 @@ def train_net():
         end_time = time.time()
         throughput_rate = all_data_sum/(end_time - start_time)
 
-    os.environ['ALL_DATA_SIZE'] = all_data_sum
     rank_id = int(os.getenv('RANK_ID'))
     THROUGHPUT_DIR = os.getenv("RESULT_PATH")
     if THROUGHPUT_DIR is None:
@@ -398,9 +397,9 @@ def train_net():
     elif not os.path.isdir(THROUGHPUT_DIR):
         print("Warning: The environment variable 'RESULT_PATH' is not a valid directory. ")
     else:
-        THROUGHPUT_LOG = os.path.join(THROUGHPUT_DIR, "rank{}.log".format(rank_id))
-        with open(THROUGHPUT_LOG, 'a') as f:
-            f.write("rank{}: train_throughput_rate (without IO):{} Train time (without IO):{}".format(rank_id, throughput_rate, end_time - start_time))
+        THROUGHPUT_LOG = os.path.join(THROUGHPUT_DIR, "all_data_size")
+        with open(THROUGHPUT_LOG, 'w') as f:
+            f.write("{}".format(all_data_sum))
 
     if config.run_eval and config.enable_cache:
         print("Remember to shut down the cache server via \"cache_admin --stop\"")
