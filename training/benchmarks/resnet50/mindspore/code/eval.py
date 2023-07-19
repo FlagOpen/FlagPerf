@@ -88,8 +88,8 @@ def eval_net():
     elif not os.path.isdir(ACC_DIR):
         print("Warning: The environment variable 'RESULT_PATH' is not a valid directory. ")
     else:
-        ACC_LOG = os.path.join(ACC_DIR, "eval_acc.log")
-        with open(ACC_LOG, 'w') as f:
+        ACC_LOG = os.path.join(ACC_DIR, "info.log")
+        with open(ACC_LOG, 'a') as f:
             f.write("{}".format(res['top_1_accuracy']))
 
 if __name__ == '__main__':

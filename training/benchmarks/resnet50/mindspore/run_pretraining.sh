@@ -121,6 +121,7 @@ function node_eval()
 
 main()
 {
+    start_time=$(data +%s)
     node_init eval || { logger_Warn "init failed"; return 1; }
     export RANK_SIZE=$NPROC
     export DEVICE_NUM=$NPROC
@@ -131,6 +132,8 @@ main()
     source ./config/config.sh
     node_train "$@" || { logger_Warn "run_node_train failed"; return 1; }
     node_eval "$@" || { logger_Warn "run_node_eval failed"; return 1; }
+    end_time=$(data +%s)
+    echo "e2e time taken: $((end_time-start_time)) seconds." >> ${RESULT_PATH}/info.log
 }
 
 main "$@"

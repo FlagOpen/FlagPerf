@@ -397,9 +397,9 @@ def train_net():
     elif not os.path.isdir(THROUGHPUT_DIR):
         print("Warning: The environment variable 'RESULT_PATH' is not a valid directory. ")
     else:
-        THROUGHPUT_LOG = os.path.join(THROUGHPUT_DIR, "throughput_rank_{}".format(rank_id))
-        with open(THROUGHPUT_LOG, 'w') as f:
-            f.write("{}".format(throughput_rate))
+        THROUGHPUT_LOG = os.path.join(THROUGHPUT_DIR, "rank{}.log".format(rank_id))
+        with open(THROUGHPUT_LOG, 'a') as f:
+            f.write("throughput_rate:{} epoch_time:{}".format(throughput_rate, end_time - start_time))
 
     if config.run_eval and config.enable_cache:
         print("Remember to shut down the cache server via \"cache_admin --stop\"")
