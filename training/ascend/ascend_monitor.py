@@ -75,7 +75,7 @@ class Daemon:
 
         def npu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "npu-smi  info -m | egrep -v 'ID' | awk '{print $1" "$2" "$3}'| xargs"
+            cmd = "npu-smi  info"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,
