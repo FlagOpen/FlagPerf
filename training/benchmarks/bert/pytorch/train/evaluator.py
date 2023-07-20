@@ -83,9 +83,6 @@ class Evaluator:
                 total_masked += num_masked
                 #torch.cuda.synchronize()
                 dist_pytorch.barrier(config.vendor)
-                if config.vendor == 'kunlunxin':
-                    import torch_xmlir.core.xpu_model as xm
-                    xm.mark_step()
         trainer.model.train()
 
         if torch.distributed.is_initialized():
