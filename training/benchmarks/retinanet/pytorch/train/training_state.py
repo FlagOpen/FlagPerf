@@ -8,7 +8,6 @@ import torch
 
 @dataclass
 class TrainingState:
-    """TrainingState dataclass"""
     _trainer = None
     _status = 'aborted'  # later set to 'success' if termination criteria met
 
@@ -19,11 +18,18 @@ class TrainingState:
 
     epoch: int = 1
     num_trained_samples = 0
+
+    # state related
     end_training: bool = False
     converged: bool = False
 
+    # time related
     init_time = 0
     raw_train_time = 0
+
+    train_time = 0
+    no_eval_time = 0
+    pure_compute_time = 0.0
 
     train_start_timestamp = 0
 
