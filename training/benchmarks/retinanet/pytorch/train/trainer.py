@@ -34,7 +34,7 @@ class Trainer:
         torch.set_num_threads(1)
         device = torch.device(self.config.device)
         dist_pytorch.main_proc_print("Init progress:")
-        self.model = create_model(self.config)
+        self.model = create_model()
         self.model.to(self.device)
 
         self.model = self.adapter.convert_model(self.model)
