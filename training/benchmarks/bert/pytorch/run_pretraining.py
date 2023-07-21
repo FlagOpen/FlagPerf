@@ -42,6 +42,7 @@ def main():
     bert_driver = Driver(config, config.mutable_params)
     bert_driver.setup_config(argparse.ArgumentParser("Bert"))
     bert_driver.setup_modules(driver, globals(), locals())
+    config.distributed = dist_pytorch.get_world_size() > 1
 
     logger = bert_driver.logger
 
