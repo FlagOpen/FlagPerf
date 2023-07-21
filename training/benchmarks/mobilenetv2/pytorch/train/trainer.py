@@ -1,39 +1,18 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+import time
 import torch
+import torch.utils.data
 from torch.types import Device
 import torch.distributed as dist
-import os
-import sys
-import time
-import math
 
 from model import create_model
+from optimizers import create_optimizer
 from schedulers import create_scheduler
-
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
-
-import config
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch
-
-
-def accuracy(output, target, topk=(1, )):
-    """Computes the accuracy over the k top predictions for the specified values of k"""
-    with torch.no_grad():
-        maxk = max(topk)
-        batch_size = target.size(0)
-
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-        res = []
-        for k in topk:
-            correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size))
-        return res
+from driver import Driver, dist_pytorch
 
 
 class Trainer:
@@ -44,157 +23,118 @@ class Trainer:
         self.driver = driver
         self.adapter = adapter
         self.training_state = training_state
-        self.grad_scaler = None
-
         self.device = device
-        self.optimizer = None
         self.config = config
-        self.model = None
         self.evaluator = evaluator
-        self.lr_scheduler = None
-        self.global_batch_size = None
-        self.overflow_buf = None
 
     def init(self):
-        self.model = create_model(config)
-        self.model = self._init_model(self.model, self.config, self.device)
+        torch.set_num_threads(1)
+        device = torch.device(self.config.device)
+        dist_pytorch.main_proc_print("Init progress:")
+        self.model = create_model()
+        self.model.to(self.device)
+
         self.model = self.adapter.convert_model(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
-        self.optimizer = self.adapter.create_optimizer(self.model, self.config)
         self.model = self.adapter.model_to_ddp(self.model)
+
+        self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, self.config)
-        self.grad_scaler = self.adapter.create_grad_scaler()
 
-    def _init_model(self, model, args, device):
-        checkpoint_name = config.init_checkpoint
-        if os.path.isfile(checkpoint_name):
-            print('checkpoint_name', checkpoint_name)
-            print('global rank {} is loading pretrained model {}'.format(
-                dist_pytorch.get_rank(), checkpoint_name))
-            # Load the checkpoint.
-            checkpoint = torch.load(checkpoint_name, map_location='cpu')
-            model.load_state_dict(checkpoint['state_dict'])
+        self.scaler = self.adapter.create_grad_scaler()
 
-        model = model.to(device)
-        return model
-
-    def train_one_epoch(self, dataloader):
-        state = self.training_state
-        driver = self.driver
-        driver.event(Event.EPOCH_BEGIN, state.epoch)
-
-        step_start_time = time.time()
-        epoch_start_num_sample = state.num_trained_samples
-
-        for batch_idx, batch in enumerate(dataloader):
-
-            state.global_steps += 1
-            # TODO: Maybe we should update num_trained_samples after all epochs.
-            state.num_trained_samples = state.global_steps * \
-                dist_pytorch.global_batch_size(self.config)
-
-            driver.event(Event.STEP_BEGIN, step=state.global_steps)
-            self.train_one_step(batch)
-
-            other_state = dict()
-            if state.global_steps % self.config.gradient_accumulation_steps == 0:
-                step_end_time = time.time()
-                step_total_time = step_end_time - step_start_time
-                step_start_time = step_end_time
-                images_per_second = (
-                    dist_pytorch.global_batch_size(self.config) *
-                    self.config.gradient_accumulation_steps) / step_total_time
-                other_state["img/s"] = images_per_second
-            if hasattr(self.optimizer, 'loss_scaler'):
-                loss_scale = self.optimizer.loss_scaler.loss_scale
-                other_state['loss_scale'] = loss_scale
-
-            eval_result = None
-            if self.can_do_eval(state):
-                eval_start = time.time()
-                state.eval_loss, state.eval_acc1, state.eval_acc5 = self.evaluator.evaluate(
-                    self)
-                eval_end = time.time()
-                eval_result = dict(global_steps=state.global_steps,
-                                   eval_loss=state.eval_loss,
-                                   eval_acc1=state.eval_acc1,
-                                   eval_acc5=state.eval_acc5,
-                                   time=eval_end - eval_start)
-
-            end_training = self.detect_training_status(state)
-            step_info = state.to_dict(**other_state)
-            driver.event(Event.STEP_END,
-                         message=step_info,
-                         step=state.global_steps,
-                         loss=state.loss)
-
-            if eval_result is not None:
-                driver.event(Event.EVALUATE, eval_result)
-
-            if end_training:
-                break
-
-        epoch_start_num_sample += len(dataloader.dataset)
-        state.num_trained_samples = epoch_start_num_sample
-
-        self.lr_scheduler.step()
-        driver.event(Event.EPOCH_END, state.epoch)
-
-    def train_one_step(self, batch):
-        # move data to the same device as model
-        batch = self.process_batch(batch, self.config.device)
-        state = self.training_state
-        self.model.train()
-        state.loss, state.acc1, state.acc5 = self.forward(batch)
-        self.adapter.backward(state.global_steps, state.loss, self.optimizer)
-        if dist.is_available() and dist.is_initialized():
-            total = torch.tensor([state.loss, state.acc1, state.acc5],
-                                 dtype=torch.float32,
-                                 device=self.config.device)
-            dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
-            total = total / dist.get_world_size()
-            state.loss, state.acc1, state.acc5 = total.tolist()
-        self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
-                          self.optimizer, self.grad_scaler)
-
-    def detect_training_status(self, state):
-        config = self.config
-        if state.eval_acc1 >= config.target_acc1:
-            state.converged_success()
-
-        if state.num_trained_samples > config.max_samples_termination:
-            state.end_training = True
-
-        return state.end_training
-
-    def can_do_eval(self, state):
-        config = self.config
-        do_eval = all([
-            config.eval_data is not None,
-            state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps %
-            math.ceil(config.eval_interval_samples /
-                      dist_pytorch.global_batch_size(config)) == 0,
-            config.eval_interval_samples > 0,
-            state.global_steps > 1,
-        ])
-
-        return do_eval or state.num_trained_samples >= config.max_samples_termination
-
-    def forward(self, batch):
-        images, target = batch
-        output = self.model(images)
-        criterion = torch.nn.CrossEntropyLoss()
-        loss = criterion(output, target)
-        acc1, acc5 = accuracy(output, target, topk=(1, 5))
-        return loss, acc1, acc5
-
-    def inference(self, batch):
-        self.model.eval()
-        output = self.forward(batch)
-        return output
-
-    def process_batch(self, batch, device):
+    def process_batch(self, batch, device: Device):
         """Process batch and produce inputs for the model."""
         batch = tuple(t.to(device, non_blocking=True) for t in batch)
         return batch
+
+    def train_one_epoch(self, train_dataloader, eval_dataloader):
+
+        model = self.model
+        optimizer = self.optimizer
+        data_loader = train_dataloader
+        device = self.device
+        epoch = self.training_state.epoch
+        scaler = self.scaler
+        print("Epoch " + str(epoch + 1))
+        if self.config.distributed:
+            train_dataloader.batch_sampler.sampler.set_epoch(epoch)
+
+        model.train()
+        noeval_start_time = time.time()
+
+        lr_scheduler = None
+
+        for step, batch in enumerate(data_loader):
+
+            batch = self.process_batch(batch, device)
+
+            pure_start_time = time.time()
+            optimizer.zero_grad()
+
+            images, target = batch
+            if scaler is not None:
+                with torch.cuda.amp.autocast(enabled=True):
+                    output = model(images)
+
+                    criterion = torch.nn.CrossEntropyLoss()
+                    loss = criterion(output, target)
+
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                output = model(images)
+
+                criterion = torch.nn.CrossEntropyLoss()
+                loss = criterion(output, target)
+                loss.backward()
+                optimizer.step()
+
+            if step % self.config.log_freq == 0:
+                print("Train Step " + str(step) + "/" + str(len(data_loader)) +
+                      ", Loss : " + str(float(loss)))
+
+            self.training_state.purecomputetime += time.time(
+            ) - pure_start_time
+
+        self.lr_scheduler.step()
+        self.training_state.noevaltime += time.time() - noeval_start_time
+
+        acc1 = self.evaluate(self.model, eval_dataloader, device=self.device)
+
+        state = self.training_state
+        config = self.config
+
+        state.acc1 = acc1
+        if state.acc1 >= config.target_acc1:
+            dist_pytorch.main_proc_print(
+                f"converged_success. eval_mAP: {state.acc1}, target_mAP: {config.target_acc1}"
+            )
+            state.converged_success()
+
+        if epoch + 1 >= config.max_epoch:
+            state.end_training = True
+        state.num_trained_samples += len(data_loader.dataset)
+
+    @torch.no_grad()
+    def evaluate(self, model, data_loader, device):
+        acc1_total = 0.0
+        steps = 0
+        for step, batch in enumerate(data_loader):
+            if step % self.config.log_freq == 0:
+                print("Eval Step " + str(step) + "/" + str(len(data_loader)))
+            batch = self.process_batch(batch, device)
+            images, target = batch
+            output = model(images)
+            acc1, acc5 = self.evaluator.accuracy(output, target, (1, 5))
+            acc1_total += acc1
+            steps += 1
+        acc1 = torch.tensor([acc1_total], dtype=torch.float32, device=device)
+        world_size = 1 
+        if self.config.distributed:
+            dist.all_reduce(acc1, dist.ReduceOp.SUM)
+            world_size = dist.get_world_size()
+        acc1 = acc1 / (steps * world_size)
+        print("Eval Acc1: " + str(float(acc1)) + "%")
+        return float(acc1)
