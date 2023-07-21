@@ -39,12 +39,15 @@ def parse_args():
 def install_requriements(vendor, model, framework, pipsource):
     '''Install required python packages in vendor's path.'''
     # framework: DL framework, may include version info. e.g. pytorch_1.13
+    root_path = os.path.abspath(os.path.join(CURR_PATH, "../"))
+    benchmark_path = os.path.join(root_path, "benchmarks/")
+    case_path = os.path.join(benchmark_path, model)
     framework_name = framework.split("_")[0]
-    vend_path = os.path.abspath(os.path.join(CURR_PATH, "../" + vendor))
-    vend_model_path = os.path.join(vend_path, model + "-" + framework_name)
-    model_config_path = os.path.join(vend_model_path, "config/")
-    req_file = os.path.join(model_config_path, "requirements.txt")
-    env_file = os.path.join(model_config_path, "environment_variables.sh")
+    framework_path = os.path.join(case_path, framework_name)
+
+    req_file = os.path.join(framework_path, "requirements.txt")
+    print(req_file)
+    env_file = os.path.join(framework_path, "environment_variables.sh")
     if not os.path.isfile(req_file):
         print("requirenments file ", req_file, " doesn't exist. Do nothing.")
         return 0

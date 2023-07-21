@@ -1,0 +1,2 @@
+trt_tmp_path: nvidia_tmp/bert.trt
+has_dynamic_axis: false

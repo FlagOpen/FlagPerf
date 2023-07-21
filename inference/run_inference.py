@@ -51,36 +51,45 @@ def main(config):
     """
     Convert model into onnx
     """
-    logger.log("Export Begin",
-               "Export " + config.framework + " model into .onnx")
-    start = time.time()
-
-    benchmark_module.export_model(model, config)
-
-    duration = time.time() - start
-    logger.log("Export End", str(duration) + " seconds")
-    model.cpu()
-    del model
-    """
-    Compiling backend(like tensorRT)
-    """
-    logger.log("Vendor Compile Begin", "Compiling With " + config.vendor)
-    start = time.time()
-
-    toolkits = vendor_module.get_inference_toolkits(config)
-
-    duration = time.time() - start
-    logger.log("Vendor Compile End", str(duration) + " seconds")
-    """
-    inference using engine
-    """
-    logger.log("Vendor Inference Begin", "")
-    start = time.time()
-
-    p_infer, p_infer_core, infer_acc = benchmark_module.engine_forward(
-        toolkits, dataloader, evaluator, config)
-
-    logger.log("Vendor Inference End", "")
+    if config.framework not in config.use_engine:
+        logger.log("Export Begin",
+                   "Export " + config.framework + " model into .onnx")
+        start = time.time()
+    
+        benchmark_module.export_model(model, config)
+    
+        duration = time.time() - start
+        logger.log("Export End", str(duration) + " seconds")
+        model.cpu()
+        del model
+        """
+        Compiling backend(like tensorRT)
+        """
+        logger.log("Vendor Compile Begin", "Compiling With " + config.vendor)
+        start = time.time()
+    
+        toolkits = vendor_module.get_inference_toolkits(config)
+    
+        duration = time.time() - start
+        logger.log("Vendor Compile End", str(duration) + " seconds")
+        """
+        inference using engine
+        """
+        logger.log("Vendor Inference Begin", "")
+        start = time.time()
+    
+        p_infer, p_infer_core, infer_acc = benchmark_module.engine_forward(
+            toolkits, dataloader, evaluator, config)
+    
+        logger.log("Vendor Inference End", "")
+    else:
+        logger.log("Vendor Inference Begin", "")
+        start = time.time()
+    
+        p_infer, p_infer_core, infer_acc = benchmark_module.engine_forward(
+            model, dataloader, evaluator, config)
+    
+        logger.log("Vendor Inference End", "")
 
     return config, p_forward, p_infer, p_forward_core, p_infer_core, val_acc, infer_acc
 
@@ -157,13 +166,13 @@ if __name__ == "__main__":
         e2e_time,
         "p_validation_whole(items per second)":
         p_forward,
-        "p_validation_core(items per second)":
+        "p_validation_core*(items per second)":
         p_forward_core,
         "p_inference_whole(items per second)":
         p_infer,
-        "p_inference_core(items per second)":
+        "p_inference_core*(items per second)":
         p_infer_core,
-        "inference_latency(milliseconds per item)":
+        "inference_time(milliseconds per item)":
         None if p_infer_core is None else round(1000.0 / p_infer_core, 3),
         "val_average_acc":
         val_acc,
