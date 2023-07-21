@@ -1,6 +1,6 @@
 batch_size: 32
 # 512 length seq(1 item in x)
-input_size: 512
+input_size: 128
 fp16: true
 use_engine: pytorch_tensorRT
 num_workers: 4
