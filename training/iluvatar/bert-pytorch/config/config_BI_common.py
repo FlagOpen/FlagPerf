@@ -9,8 +9,7 @@ fp16 = True
 ddp_type = "apex"
 dist_backend = "nccl"
 
-train_batch_size = 14
-max_steps = 30000
+train_batch_size = 20
 
 fused_gelu_bias = True
 fused_mha = True

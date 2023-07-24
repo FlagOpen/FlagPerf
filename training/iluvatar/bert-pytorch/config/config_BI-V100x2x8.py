@@ -14,6 +14,6 @@ opt_lamb_beta_2 = 0.999
 eval_batch_size = train_batch_size
 max_samples_termination = 4500000
 cache_eval_data = True
-max_steps = 30000
+max_steps = 20000
 
 seed = 9031
