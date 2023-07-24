@@ -35,18 +35,17 @@ if sys.version_info < (3,):
 
 
 batch_utils = CppExtension(
-                        name='fairseq.data.batch_C',
+                        name='fairseq_data.batch_C',
                         sources=[os.path.join(this_dir, 'make_batches.cpp')],
                         extra_compile_args={
                                 'cxx': ['-O2',],
                         }
 )
 setup(
-    name='fairseq',
+    name='fairseq_data',
     version='0.5.0',
     description='Facebook AI Research Sequence-to-Sequence Toolkit',
     packages=find_packages(),
-    package_dir={"fairseq.data": "../../../benchmarks/transformer/pytorch/fairseq/data"},
     ext_modules=[batch_utils],
     cmdclass={
                 'build_ext': BuildExtension.with_options(use_ninja=False)
