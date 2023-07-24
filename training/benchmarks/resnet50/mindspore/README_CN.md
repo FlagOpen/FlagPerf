@@ -29,7 +29,7 @@ ResNet的总体网络架构如下：
   ├── README.md
   ├── config                                        # 参数配置
     ├── config.sh                                   # 配置文件
-    ├── resnet50_imagenet2012_Boost_config.yaml     # 高性能版本：性能提高超过10%而精度下降少于1%
+    ├── resnet50_imagenet2012_config.yaml     # 高性能版本：性能提高超过10%而精度下降少于1%
   ├── common                                        # 公共函数文件
   ├── code                                          # 训练代码
   └── run_pretraining.sh                            # 训练网络
@@ -77,5 +77,5 @@ ResNet的总体网络架构如下：
 运行时需配置config.sh
 EPOCH_SIZE        # 训练的EPOCH_SIZE默认为90
 RANK_TABLE_FILE   # 分布式训练需要，单机需注释掉
-CONFIG_FILE       # 参数配置文件 例如resnet50_imagenet2012_Boost_config.yaml
+CONFIG_FILE       # 参数配置文件 例如resnet50_imagenet2012_config.yaml
 
