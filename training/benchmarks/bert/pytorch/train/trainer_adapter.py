@@ -3,15 +3,18 @@ from typing import Tuple
 
 import torch
 import torch.distributed as dist
+try:
+    import amp_C
+    import apex_C
+    from apex import amp
+    from apex.amp import _amp_state
+    from apex.contrib.optimizers.distributed_fused_lamb import DistributedFusedLAMB
+    from apex.optimizers import FusedLAMB
+    from apex.parallel import DistributedDataParallel as APEX_DDP
+    from apex.parallel.distributed import flat_dist_call
+except ImportError:
+    print("import apex error")
 
-import amp_C
-import apex_C
-from apex import amp
-from apex.amp import _amp_state
-from apex.contrib.optimizers.distributed_fused_lamb import DistributedFusedLAMB
-from apex.optimizers import FusedLAMB
-from apex.parallel import DistributedDataParallel as APEX_DDP
-from apex.parallel.distributed import flat_dist_call
 from torch.cuda.amp import GradScaler
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
 from torch.optim import Optimizer
@@ -19,14 +22,12 @@ from torch.optim import Optimizer
 import utils
 import config
 #from converter import convert_model
-from .distributed_fused_lamb import _pipeline_block_reductions_patched, _pipeline_step_patched
+
 
 BERT_MODEL = torch.nn.Module
 
-
 def convert_model(model: BERT_MODEL) -> BERT_MODEL:
     return model
-
 
 def create_optimizer(model: BERT_MODEL) -> Optimizer:
     param_optimizer = list(model.named_parameters())
@@ -46,6 +47,7 @@ def create_optimizer(model: BERT_MODEL) -> Optimizer:
     }]
 
     if config.distributed_lamb:
+        from .distributed_fused_lamb import _pipeline_block_reductions_patched, _pipeline_step_patched
         DistributedFusedLAMB._pipeline_block_reductions = _pipeline_block_reductions_patched
         DistributedFusedLAMB._pipeline_step = _pipeline_step_patched
         optimizer = DistributedFusedLAMB(
