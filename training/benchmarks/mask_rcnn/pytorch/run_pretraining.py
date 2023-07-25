@@ -129,7 +129,7 @@ if __name__ == "__main__":
             "train_time": state.raw_train_time,
             "train_no_eval_time": state.no_eval_time,
             "pure_training_computing_time": state.pure_compute_time,
-            "throughput(ips)_raw": state.num_trained_samples / state.traintime,
+            "throughput(ips)_raw": state.num_trained_samples / state.raw_train_time,
             "throughput(ips)_no_eval":
             state.num_trained_samples / state.no_eval_time,
             "throughput(ips)_pure_compute":

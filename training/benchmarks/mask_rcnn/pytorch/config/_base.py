@@ -41,7 +41,7 @@ eval_batch_size: int = 16
 target_map_bbox: float = 0.38
 target_map_segm: float = 0.34
 
-max_epoch: int = 1
+max_epoch: int = 26
 
 do_train = True
 fp16 = False

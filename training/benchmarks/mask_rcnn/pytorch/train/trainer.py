@@ -100,7 +100,7 @@ class Trainer:
             metric_logger.update(loss=losses_reduced, **loss_dict_reduced)
             metric_logger.update(lr=optimizer.param_groups[0]["lr"])
 
-            self.training_state.purecomputetime += time.time(
+            self.training_state.pure_compute_time += time.time(
             ) - pure_compute_start_time
 
         self.lr_scheduler.step()
