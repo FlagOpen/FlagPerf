@@ -9,6 +9,62 @@ import torchvision
 from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 
+from utils.group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
+import utils.presets
+
+
+def build_train_dataset(config):
+    dataset = get_coco(config.data_dir,
+                       image_set="train",
+                       transforms=utils.presets.DetectionPresetTrain())
+    return dataset
+
+
+def build_eval_dataset(config):
+    dataset = get_coco(config.data_dir,
+                       image_set="val",
+                       transforms=utils.presets.DetectionPresetEval())
+    return dataset
+
+
+def build_train_dataloader(dataset, config):
+    if config.distributed:
+        train_sampler = torch.utils.data.distributed.DistributedSampler(
+            dataset)
+    else:
+        train_sampler = torch.utils.data.RandomSampler(dataset)
+
+    if config.aspect_ratio_group_factor >= 0:
+        group_ids = create_aspect_ratio_groups(
+            dataset, k=config.aspect_ratio_group_factor)
+        train_batch_sampler = GroupedBatchSampler(train_sampler, group_ids,
+                                                  config.train_batch_size)
+    else:
+        train_batch_sampler = torch.utils.data.BatchSampler(
+            train_sampler, config.train_batch_size, drop_last=True)
+
+    data_loader = torch.utils.data.DataLoader(
+        dataset,
+        batch_sampler=train_batch_sampler,
+        num_workers=config.num_workers,
+        collate_fn=utils.utils.collate_fn)
+    return data_loader
+
+
+def build_eval_dataloader(dataset, config):
+    if config.distributed:
+        test_sampler = torch.utils.data.distributed.DistributedSampler(dataset)
+    else:
+        test_sampler = torch.utils.data.SequentialSampler(dataset)
+
+    data_loader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=config.eval_batch_size,
+        sampler=test_sampler,
+        num_workers=config.num_workers,
+        collate_fn=utils.utils.collate_fn)
+    return data_loader
+
 
 class FilterAndRemapCocoCategories(object):
 

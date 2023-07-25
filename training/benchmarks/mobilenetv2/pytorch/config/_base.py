@@ -1,80 +1,61 @@
-from typing import ClassVar
-#from train.event.base import BaseTrainingEventInterface
+# DO NOT MODIFY THESE REQUIRED PARAMETERS
 
-# case info
-# chip vendor: nvidia, kunlunxin,  iluvatar, cambricon etc. key vendor is required.
+# Required parameters
 vendor: str = None
-# model name
-name: str = "MobileNetV2"
+data_dir: str = None
+name: str = "mobilenetv2"
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
 
-do_train = True
-fp16 = True
+# Optional parameters
+
 # =========================================================
 # data
 # =========================================================
-data_dir: str = None
 train_data: str = "train"
 eval_data: str = "val"
-output_dir: str = ""
-init_checkpoint: str = ""
+
+# =========================================================
+# loss scale
+# =========================================================
+lr: float = 0.045
+weight_decay: float = 0.00004
+momentum: float = 0.9
+lr_steps: list = 1
+lr_gamma: float = 0.98
 
 # =========================================================
 # train && evaluate
 # =========================================================
 train_batch_size: int = 8
 eval_batch_size: int = 8
-dist_backend: str = 'nccl'
 
-lr: float = 0.045
-lr_step_size: int = 1
-lr_gamma: float = 0.98
+# https://github.com/pytorch/vision/blob/main/torchvision/models/mobilenetv2.py#L193
+target_acc1: float = 68.6
+# https://github.com/pytorch/vision/tree/main/references/classification
+max_epoch: int = 300
 
-weight_decay: float = 0.00004
-gradient_accumulation_steps: int = 1
-momentum: float = 0.9
 
-max_steps: int = 5005 * 300  # 300 epoch
+do_train = True
+fp16 = False
+amp: bool = False
+distributed: bool = True
+
+# =========================================================
+# utils
+# =========================================================
 seed: int = 41
-# torch.backends.cudnn.benchmark
-cudnn_benchmark: bool = False
-# torch.backends.cudnn.deterministic
-cudnn_deterministic: bool = True
-
-# Stop training after reaching this accuracy
-target_acc1: float = 70.634
-
-# Sample to begin performing eval.
-eval_iter_start_samples: int = 100
-
-# If set to -1, disable eval, else evaluate every eval_iter_samples during training
-eval_interval_samples: int = 5005 * 256 * 1  # 1 epoch
-
-# Total number of training samples to run.
-max_samples_termination: float = 5005 * 256 * 300  # 300 epoch
-
-# number workers for dataloader
+dist_backend: str = 'nccl'
 num_workers: int = 16
-
-# local_rank for distributed training on gpus
-local_rank: int = 0
-# Whether to read local rank from ENVVAR
-use_env: bool = True
-
-# Number of epochs to plan seeds for. Same set across all workers.
-num_epochs_to_generate_seeds_for: int = 2
-
-# frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 10
-
-# Whether to resume training from checkpoint.
-# If set, precedes init_checkpoint/init_tf_checkpoint
-resume_from_checkpoint: bool = False
-
-# A object to provide some core components in training
-#training_event: ClassVar[BaseTrainingEventInterface] = None
-
-#training_event_instance: BaseTrainingEventInterface = None
-
-# device
 device: str = None
+
+# =========================================================
+# for driver
+# =========================================================
+local_rank: int = -1
+use_env: bool = True
+log_freq: int = 100
+print_freq: int = 100
 n_device: int = 1
+sync_bn: bool = False
+gradient_accumulation_steps: int = 1
