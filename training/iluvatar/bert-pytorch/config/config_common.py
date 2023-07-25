@@ -1,7 +1,5 @@
 import torch
 
-vendor: str = "iluvatar"
-
 # 'segmented' or 'full_iteration' options for CUDA graph capture.
 # 'segmented' option: Pytorch Autograd orchestrates execution of backward ops every iteration.
 # 'full_iteration' option: CUDA graph orchestrates execution of bwd ops every iteration without Autograd involvement (has composability limitations but could be more performant allowing optimizer                              and collectives capture).
