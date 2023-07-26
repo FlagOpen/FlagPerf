@@ -2,7 +2,6 @@ import config
 
 from .linear_warmup_poly_scheduler import LinearWarmupPolyDecayScheduler
 from .linear_warmup_scheduler import LinearWarmUpScheduler
-from paddlenlp.transformers import PolyDecayWithWarmup, CosineDecayWithWarmup
 
 
 def create_scheduler(optimizer, scheduler="poly"):
@@ -30,9 +29,4 @@ def create_scheduler(optimizer, scheduler="poly"):
         #                            total_steps=config.max_steps,
         #                            lr_end=0.0,
         #                            power=1.0)
-    if scheduler == "cos":
-        print("++++++++++++++++++++++cos+++++++++++++++++++++")
-        return CosineDecayWithWarmup(config.learning_rate,
-                                     config.max_steps,
-                                     warmup_steps)
     raise ValueError(f"Not found scheduler {scheduler}.")
