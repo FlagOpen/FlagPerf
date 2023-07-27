@@ -58,7 +58,6 @@ python -u  -m paddle.distributed.launch --xpus=${XPU_VISIBLE_DEVICES} run_pretra
   - Docker镜像和版本：registry.baidubce.com/paddlepaddle/paddle:2.3.2
   - 训练框架版本：paddlepaddle+f6161d1
   - 依赖软件版本：pytorch-1.8.1
-  - 
 
 
 
