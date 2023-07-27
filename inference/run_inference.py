@@ -20,9 +20,6 @@ def main(config):
     # e.g. import funcs from benchmarks/resnet50/pytorch/__init__.py
     benchmark_module = importlib.import_module(
         "benchmarks." + config.case + "." + config.framework, __package__)
-    # e.g. import funcs from inference_engine/nvidia/inference.py
-    vendor_module = importlib.import_module("inference_engine." +
-                                            config.vendor + ".inference")
     """
     Init
     """
@@ -46,7 +43,7 @@ def main(config):
         model, dataloader, evaluator, config)
 
     logger.log("Model Forward End", "")
-    if config.use_engine is None:
+    if config.compiler is None:
         return config, p_forward, None, p_forward_core, None, val_acc, None
     """
     Convert model into onnx
@@ -55,19 +52,22 @@ def main(config):
                "Export " + config.framework + " model into .onnx")
     start = time.time()
 
-    benchmark_module.export_model(model, config)
+    onnx_path = benchmark_module.export_model(model, config)
 
     duration = time.time() - start
     logger.log("Export End", str(duration) + " seconds")
-    model.cpu()
-    del model
+    # e.g. import funcs from inference_engine/nvidia/inference.py
+    vendor_module = importlib.import_module("inference_engine." +
+                                            config.vendor + "." +
+                                            config.compiler)
     """
     Compiling backend(like tensorRT)
     """
-    logger.log("Vendor Compile Begin", "Compiling With " + config.vendor)
+    logger.log("Vendor Compile Begin",
+               "Compiling With " + config.vendor + "." + config.compiler)
     start = time.time()
 
-    toolkits = vendor_module.get_inference_toolkits(config)
+    compile_model = vendor_module.InferModel(config, onnx_path, model)
 
     duration = time.time() - start
     logger.log("Vendor Compile End", str(duration) + " seconds")
@@ -78,7 +78,7 @@ def main(config):
     start = time.time()
 
     p_infer, p_infer_core, infer_acc = benchmark_module.engine_forward(
-        toolkits, dataloader, evaluator, config)
+        compile_model, dataloader, evaluator, config)
 
     logger.log("Vendor Inference End", "")
 
@@ -145,29 +145,17 @@ if __name__ == "__main__":
     batch_input_byte = int(batch_input_byte)
 
     infer_info = {
-        "vendor":
-        config.vendor,
-        "precision":
-        "fp16" if config.fp16 else "fp32",
-        "batchsize":
-        config.batch_size,
-        "byte_per_batch":
-        batch_input_byte,
-        "e2e_time(second)":
-        e2e_time,
-        "p_validation_whole(items per second)":
-        p_forward,
-        "p_validation_core(items per second)":
-        p_forward_core,
-        "p_inference_whole(items per second)":
-        p_infer,
-        "p_inference_core(items per second)":
-        p_infer_core,
-        "inference_latency(milliseconds per item)":
-        None if p_infer_core is None else round(1000.0 / p_infer_core, 3),
-        "val_average_acc":
-        val_acc,
-        "infer_average_acc":
-        infer_acc
+        "vendor": config.vendor,
+        "compiler": config.compiler,
+        "precision": "fp16" if config.fp16 else "fp32",
+        "batchsize": config.batch_size,
+        "byte_per_batch": batch_input_byte,
+        "e2e_time(second)": e2e_time,
+        "p_validation_whole(items per second)": p_forward,
+        "*p_validation_core(items per second)": p_forward_core,
+        "p_inference_whole(items per second)": p_infer,
+        "*p_inference_core(items per second)": p_infer_core,
+        "val_average_acc": val_acc,
+        "infer_average_acc": infer_acc
     }
     logger.log("Finish Info", infer_info)

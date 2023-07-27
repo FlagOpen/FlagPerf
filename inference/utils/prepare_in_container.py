@@ -39,12 +39,15 @@ def parse_args():
 def install_requriements(vendor, model, framework, pipsource):
     '''Install required python packages in vendor's path.'''
     # framework: DL framework, may include version info. e.g. pytorch_1.13
+    root_path = os.path.abspath(os.path.join(CURR_PATH, "../"))
+    benchmark_path = os.path.join(root_path, "benchmarks/")
+    case_path = os.path.join(benchmark_path, model)
     framework_name = framework.split("_")[0]
-    vend_path = os.path.abspath(os.path.join(CURR_PATH, "../" + vendor))
-    vend_model_path = os.path.join(vend_path, model + "-" + framework_name)
-    model_config_path = os.path.join(vend_model_path, "config/")
-    req_file = os.path.join(model_config_path, "requirements.txt")
-    env_file = os.path.join(model_config_path, "environment_variables.sh")
+    framework_path = os.path.join(case_path, framework_name)
+
+    req_file = os.path.join(framework_path, "requirements.txt")
+    print(req_file)
+    env_file = os.path.join(framework_path, "environment_variables.sh")
     if not os.path.isfile(req_file):
         print("requirenments file ", req_file, " doesn't exist. Do nothing.")
         return 0
@@ -59,19 +62,17 @@ def install_requriements(vendor, model, framework, pipsource):
 
 def install_extensions(vendor, model, framework):
     '''Install vendor's extensions with setup.py script.'''
-    vend_path = os.path.abspath(os.path.join(CURR_PATH, "../" + vendor))
-    # framework: DL framework, may include version info. e.g. pytorch_1.13
-    framework_name = framework.split("_")[0]
-    vend_model_path = os.path.join(vend_path, model + "-" + framework_name)
-    source_path = os.path.join(vend_model_path, "csrc")
-    model_config_path = os.path.join(vend_model_path, "config/")
-    env_file = os.path.join(model_config_path, "environment_variables.sh")
+    root_path = os.path.abspath(os.path.join(CURR_PATH, "../"))
+    vendor_path = os.path.join(root_path, "inference_engine/")
+    vendor_path = os.path.join(vendor_path, vendor)
+    source_path = os.path.join(vendor_path, "csrc")
+    env_file = os.path.join(vendor_path, "environment_variables.sh")
 
     if not os.path.isdir(source_path):
         print("extensioin code ", source_path, " doesn't exist. Do nothing.")
         return 0
 
-    sandbox_dir = os.path.join(vend_path, 'sandbox', "extension")
+    sandbox_dir = os.path.join(vendor_path, 'sandbox', "extension")
     if os.path.exists(sandbox_dir):
         shutil.rmtree(sandbox_dir)
 

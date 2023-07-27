@@ -49,12 +49,6 @@ def merge_config(config):
     merged_data["case"] = config.case
     merged_data["framework"] = config.framework
 
-    filename = config.case + "_bs" + str(configuration["batch_size"])
-    filename = filename + "_" + str(config.framework)
-    filename = filename + "_fp16" + str(configuration["fp16"])
-    filename = "onnxs/" + filename + ".onnx"
-    merged_data["onnx_path"] = filename
-
     if not check_dup_cfg_parm(configuration, parameter):
         logger.error(
             "Duplicated terms in configurations.yaml and parameters.yaml")

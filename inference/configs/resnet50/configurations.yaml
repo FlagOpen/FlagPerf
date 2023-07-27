@@ -2,7 +2,11 @@ batch_size: 256
 # 3*224*224(1 item in x)
 input_size: 150528
 fp16: true
-use_engine: tensorRT
+compiler: torchtrt
 num_workers: 8
 log_freq: 30
 repeat: 5
+# set a real onnx_path to use exist, or set it to anything but null to avoid export onnx manually(like torch-tensorrt)
+exist_onnx_path: foo_path_for_torchtrt
+# set a exist path of engine file like resnet50.trt/resnet50.plan/resnet50.engine
+exist_compiler_path: null
