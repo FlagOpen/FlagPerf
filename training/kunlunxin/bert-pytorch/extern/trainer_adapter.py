@@ -7,8 +7,9 @@ import torch.distributed as dist
 from torch.cuda.amp import GradScaler
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.optim import Optimizer
-from torch_xmlir.optimizer import FusedLAMB
 
+import torch_xmlir
+from torch_xmlir.optimizer import FusedLAMB
 import torch_xmlir.core.xpu_model as xm
 
 import utils
@@ -62,7 +63,7 @@ def backward(step: int,
              optimizer: Optimizer,
              grad_scaler: GradScaler = None):
     loss.backward()
-
+    torch_xmlir.xpu.xpu_synchronize()
     update_step = step % config.gradient_accumulation_steps == 0
     if update_step:
         update_model_params(loss, optimizer, grad_scaler)
