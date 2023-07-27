@@ -1,8 +1,9 @@
-
 import sys
 from paddle.optimizer.lr import LRScheduler
 
+
 class LinearWarmupPolyDecayScheduler(LRScheduler):
+
     def __init__(self,
                  startup_warmup_steps,
                  warmup_steps,
@@ -18,8 +19,8 @@ class LinearWarmupPolyDecayScheduler(LRScheduler):
         self.base_lr = base_lr
         self.end_lr = end_lr
         self.degree = degree
-        super(LinearWarmupPolyDecayScheduler, self).__init__(
-            learning_rate=base_lr, last_epoch=last_epoch)
+        super(LinearWarmupPolyDecayScheduler,
+              self).__init__(learning_rate=base_lr, last_epoch=last_epoch)
 
     def get_lr(self):
         step = self.last_epoch + 1
@@ -29,6 +30,6 @@ class LinearWarmupPolyDecayScheduler(LRScheduler):
             lr = self.base_lr * p
         else:
             p = min(1, (step - self.offset_step) / self.total_steps)
-            lr = (self.base_lr - self.end_lr) * (1 - p
-                                                 )**self.degree + self.end_lr
+            lr = (self.base_lr - self.end_lr) * (1 -
+                                                 p)**self.degree + self.end_lr
         return lr
