@@ -97,7 +97,6 @@ def main():
                                 time=init_evaluation_end -
                                 init_evaluation_start)
     driver.event(Event.INIT_EVALUATION, init_evaluation_info)
-    print("******************** ******************** eval_loss, eval_mlm_acc", eval_loss, eval_mlm_acc  )
 
     if not config.do_train:
         return config, training_state
@@ -155,10 +154,4 @@ if __name__ == "__main__":
         }
     else:
         finished_info = {"e2e_time": e2e_time}
-    print("********************** e2e_time", e2e_time, "training_sequences_per_second", training_perf, "converged", state.converged)
-    print("********************  final_loss", state.eval_loss,
-            "final_mlm_accuracy", state.eval_mlm_accuracy,
-            "raw_train_time", state.raw_train_time,
-            "init_time", state.init_time)
-    
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
