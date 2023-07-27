@@ -59,6 +59,7 @@ def model_forward(model, dataloader, evaluator, config):
 def engine_forward(model, dataloader, evaluator, config):
     start = time.time()
     core_time = 0.0
+    foo_time = 0.0
     acc = []
 
     for times in range(config.repeat):
@@ -78,7 +79,9 @@ def engine_forward(model, dataloader, evaluator, config):
 
                 x = x.cuda()
                 y = y.cuda()
-                pred = model([x])[0]
+                outputs = model([x])
+                pred = outputs[0][0]
+                foo_time += outputs[1]
                 pred = pred.float().cuda()
                 torch_sync(config)
 
@@ -90,9 +93,9 @@ def engine_forward(model, dataloader, evaluator, config):
 
     logger.info("Top1 Acc: " + str(acc))
 
-    duration = time.time() - start
+    duration = time.time() - start - foo_time
     model_forward_perf, model_forward_core_perf = cal_perf(
-        config, len(dataloader), duration, core_time, "Inference")
+        config, len(dataloader), duration, core_time - foo_time, "Inference")
 
     return model_forward_perf, model_forward_core_perf, round(
         float(np.mean(acc)), 3)

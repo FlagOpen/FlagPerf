@@ -126,4 +126,4 @@ class InferModel:
         return [
             torch.from_numpy(out.host.reshape(batch_size, -1))
             for out in self.outputs
-        ]
+        ], 0

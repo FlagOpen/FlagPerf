@@ -1,6 +1,7 @@
 import os
 import torch
 import torch_tensorrt as torchtrt
+import time
 
 
 class InferModel:
@@ -13,7 +14,9 @@ class InferModel:
         self.full_compile = config.torchtrt_full_compile
 
     def __call__(self, model_inputs: list):
-        if self.traced_model is None:
+        start = time.time()
+        
+        if self.traced_model is None:            
             self.traced_model = torch.jit.trace(self.origin_model,
                                                 model_inputs)
             self.trt_model = torchtrt.compile(
@@ -23,5 +26,7 @@ class InferModel:
                 enabled_precisions={torch.float32, torch.float16},
                 require_full_compilation=self.full_compile)
 
+        compile_foo_time = time.time() - start
+        
         model_outputs = self.trt_model(*model_inputs)
-        return [model_outputs]
+        return [model_outputs], compile_foo_time
