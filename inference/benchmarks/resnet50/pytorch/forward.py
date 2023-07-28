@@ -16,6 +16,8 @@ def cal_perf(config, dataloader_len, duration, core_time, str_prefix):
 
 
 def model_forward(model, dataloader, evaluator, config):
+    if config.no_validation:
+        return None, None, None
     start = time.time()
     core_time = 0.0
     acc = []
