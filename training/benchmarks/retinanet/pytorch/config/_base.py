@@ -4,6 +4,8 @@
 vendor: str = "nvidia"
 data_dir: str = None
 name: str = "retinanet"
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
 
 # Optional parameters
 
@@ -67,3 +69,5 @@ gradient_accumulation_steps: int = 1
 
 cudnn_benchmark: bool = True
 cudnn_deterministic: bool = False
+
+pretrained_path = "resnet50-0676ba61.pth"

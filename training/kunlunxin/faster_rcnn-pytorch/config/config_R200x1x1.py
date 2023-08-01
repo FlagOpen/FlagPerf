@@ -1,4 +1,4 @@
-vendor: str = "iluvatar"
+vendor: str = "kunlunxin"
 train_batch_size = 8
 eval_batch_size = 8
-lr = 0.0025
+lr = 0.16
