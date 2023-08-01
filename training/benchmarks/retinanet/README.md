@@ -61,6 +61,6 @@ torchvision.models.resnet.__dict__['model_urls'][
 | ---------- | ------- |
 | Nvidia GPU | ✅       |
 | 昆仑芯 XPU | N/A     |
-| 天数智芯   | N/A     |
+| 天数智芯   |  ✅    |
 
 

@@ -67,5 +67,7 @@ amp: bool = False
 sync_bn: bool = False
 gradient_accumulation_steps: int = 1
 
+cudnn_benchmark: bool = True
+cudnn_deterministic: bool = False
 
 pretrained_path = "resnet50-0676ba61.pth"

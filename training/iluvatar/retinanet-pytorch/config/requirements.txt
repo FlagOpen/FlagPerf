@@ -1,0 +1,3 @@
+opencv-python>=4.1.1
+opencv-python-headless==4.1.2.30
+pycocotools>=2.0
