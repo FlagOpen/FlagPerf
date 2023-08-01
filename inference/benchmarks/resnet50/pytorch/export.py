@@ -21,13 +21,14 @@ def export_model(model, config):
     dir_onnx_path = os.path.dirname(onnx_path)
     os.makedirs(dir_onnx_path, exist_ok=True)
 
-    torch.onnx.export(model,
-                      dummy_input,
-                      onnx_path,
-                      verbose=False,
-                      input_names=["input"],
-                      output_names=["output"],
-                      training=torch.onnx.TrainingMode.EVAL,
-                      do_constant_folding=True)
+    with torch.no_grad():
+        torch.onnx.export(model,
+                          dummy_input,
+                          onnx_path,
+                          verbose=False,
+                          input_names=["input"],
+                          output_names=["output"],
+                          training=torch.onnx.TrainingMode.EVAL,
+                          do_constant_folding=True)
 
     return onnx_path

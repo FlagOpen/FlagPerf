@@ -41,11 +41,12 @@ def model_forward(model, dataloader, evaluator, config):
                 y = y.cuda()
                 pred = model(x)
                 torch_sync(config)
+                core_time += time.time() - core_time_start
 
                 top1 = evaluator(pred, y)
 
                 all_top1.extend(top1.cpu())
-            core_time += time.time() - core_time_start
+
         acc.append(np.mean(all_top1))
 
     logger.info("Top1 Acc: " + str(acc))
@@ -79,18 +80,17 @@ def engine_forward(model, dataloader, evaluator, config):
 
             with torch.no_grad():
 
-                x = x.cuda()
-                y = y.cuda()
                 outputs = model([x])
                 pred = outputs[0][0]
                 foo_time += outputs[1]
-                pred = pred.float().cuda()
+                pred = pred.float()
                 torch_sync(config)
+                core_time += time.time() - core_time_start
 
                 top1 = evaluator(pred, y)
 
                 all_top1.extend(top1.cpu())
-            core_time += time.time() - core_time_start
+
         acc.append(np.mean(all_top1))
 
     logger.info("Top1 Acc: " + str(acc))
