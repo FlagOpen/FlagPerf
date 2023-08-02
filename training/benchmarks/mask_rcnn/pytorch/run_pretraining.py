@@ -134,8 +134,8 @@ if __name__ == "__main__":
             state.num_trained_samples / state.no_eval_time,
             "throughput(ips)_pure_compute":
             state.num_trained_samples / state.pure_compute_time,
-            "final_eval_map_bbox": state.eval_map_bbox,
-            "final_eval_map_segm": state.eval_map_segm,
+            "final_map_bbox": state.map_bbox,
+            "final_map_segm": state.map_segm,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

@@ -110,18 +110,16 @@ class Trainer:
         state = self.training_state
         config = self.config
 
-        state.eval_map_bbox = self.evaluator.coco_eval['bbox'].stats.tolist(
-        )[0]
-        state.eval_map_segm = self.evaluator.coco_eval['segm'].stats.tolist(
-        )[0]
+        state.map_bbox = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
+        state.map_segm = self.evaluator.coco_eval['segm'].stats.tolist()[0]
 
         dist_pytorch.main_proc_print(
-            f"epoch: {state.epoch} state.eval_map_bbox:{state.eval_map_bbox}  state.eval_map_bbox:{state.eval_map_segm}"
+            f"epoch: {state.epoch} state.map_bbox:{state.map_bbox}  state.map_bbox:{state.map_segm}"
         )
 
-        if state.eval_map_bbox >= config.target_map_bbox and state.eval_map_segm >= config.target_map_segm:
+        if state.map_bbox >= config.target_map_bbox and state.map_segm >= config.target_map_segm:
             dist_pytorch.main_proc_print(
-                f"converged_success. eval_map_bbox: {state.eval_map_bbox}, eval_map_segm:{state.eval_map_segm} \
+                f"converged_success. map_bbox: {state.map_bbox}, map_segm:{state.map_segm} \
                     target_map_bbox: {config.target_map_bbox}. target_map_segm:{config.target_map_segm}"
             )
             state.converged_success()
