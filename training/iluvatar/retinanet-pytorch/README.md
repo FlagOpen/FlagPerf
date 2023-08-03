@@ -33,3 +33,37 @@ torchvision.models.resnet.__dict__['model_urls'][
 | 单机8卡  | config_BI-V100x1x8  |              |    0.35      |   0.348      |         |                  |
 
 训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.retinanet_resnet50_fpn)
+
+
+* 通用指标
+
+| 指标名称       | 指标值                  | 特殊说明                                    |
+| -------------- | ----------------------- | ------------------------------------------- |
+| 任务类别       | 图像分类                |                                             |
+| 模型           | retinanet               |                                             |
+| 数据集         | COCO2017                |                                             |
+| 数据精度       | precision,见“性能指标”  | 可选fp32/amp/fp16                           |
+| 单卡批尺寸     | bs,见“性能指标”         | 即local batch_size                          |
+| 模型           | resnet50                |                                             |
+| 数据集         | ImageNet2012            |                                             |
+| 数据精度       | precision,见“性能指标”  | 可选fp32/amp/fp16                           |
+| 超参修改       | fix_hp,见“性能指标”     | 跑满硬件设备评测吞吐量所需特殊超参          |
+| 硬件设备简称   | BI-V100        |                                             |
+| 硬件存储使用   | mem,见“性能指标”        | 通常称为“显存”,单位为GiB                    |
+| 端到端时间     | e2e_time,见“性能指标”   | 总时间+Perf初始化等时间                     |
+| 总吞吐量       | p_whole,见“性能指标”    | 实际训练图片数除以总时间(performance_whole) |
+| 训练吞吐量     | p_train,见“性能指标”    | 不包含每个epoch末尾的评估部分耗时           |
+| **计算吞吐量** | **p_core,见“性能指标”** | 不包含数据IO部分的耗时(p3>p2>p1)            |
+| 训练结果       | acc,见“性能指标”        | 单位为top1分类准确率(acc1)                  |
+| 额外修改项     | 无                      |                                             |
+
+* 性能指标
+
+| 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | acc    | mem       |
+| ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
+| BI-V100单机8卡（1x8）  | fp32      | bs=16,lr=0.04 |    |      |      |     |  |  |
+| BI-V100单机单卡（1x1） | fp32     | bs=8,lr=0.02 |         |         |      |        |   |       |
+| BI-V100两机8卡（2x8）  | fp32      | bs=8,lr=0.02 |      |       |         |        |        |         |
+
+
+训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.retinanet_resnet50_fpn)
