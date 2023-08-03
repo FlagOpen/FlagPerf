@@ -75,7 +75,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>支持中</td>
+      <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/144" style="text-decoration:none" target="_parent">under review</a></td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2" style="text-decoration:none" target="_parent">MobileNetV2</a></td>
@@ -90,14 +90,14 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/vit-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/vit-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/vit-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
       <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn" style="text-decoration:none" target="_parent">FasterRCNN</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
       <td class="xl69" x:str>N/A</td>
    </tr>
@@ -105,8 +105,8 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer" style="text-decoration:none" target="_parent">BigTransfer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bigtransfer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/97" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bigtransfer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/bigtransfer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
@@ -122,7 +122,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/efficientnet/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/efficientnet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/efficientnet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/efficientnet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
@@ -138,7 +138,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
@@ -162,7 +162,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69"><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
@@ -174,6 +174,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
+
 
 
 
