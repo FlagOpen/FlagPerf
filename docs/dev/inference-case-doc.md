@@ -306,7 +306,7 @@ exist_compiler_path: null
 
 2. \_\_call\_\_
 
-   该方法会在2.2.3节“f. 编译器运行时推理”步骤，每个batch被调用1次。每次调用将传入一个list，为该case各个输入。每个输入均为CPU上的torch.Tensor。该方法需要返回这组输入对应的推理结果，返回一个list，为该case的各个输出。每个输出均为CPU上的torch.Tensor。
+   该方法会在2.2.3节“f. 编译器运行时推理”步骤，每个batch被调用1次。每次调用将传入一个list，为该case各个输入。每个输入均为CPU上的torch.Tensor。该方法需要返回这组输入对应的推理结果，返回一个list，为该case的各个输出。每个输出均为可运行torch.cpu()设备上的torch.Tensor。
 
    某些编译器（如torchtrt）无法使用onnx，而是需要一组输入来确定输入尺寸，因此只能在\_\_call\_\_环节进行编译。因此，编译器类\_\_call\_\_方法的实际输出为result,foo_time。result为各个输出组成的list，foo_time为此阶段与推理无关的时间。原则上foo_time需为0.0。如某编译器的foo_time不为0.0，则此部分会重点review。
 
