@@ -151,10 +151,10 @@ if __name__ == "__main__":
         "batchsize": config.batch_size,
         "byte_per_batch": batch_input_byte,
         "e2e_time(second)": e2e_time,
-        "p_validation_whole(items per second)": p_forward,
-        "*p_validation_core(items per second)": p_forward_core,
-        "p_inference_whole(items per second)": p_infer,
-        "*p_inference_core(items per second)": p_infer_core,
+        "p_validation_whole(qps)": p_forward,
+        "*p_validation_core(qps)": p_forward_core,
+        "p_inference_whole(qps)": p_infer,
+        "*p_inference_core(qps)": p_infer_core,
         "val_average_acc": val_acc,
         "infer_average_acc": infer_acc
     }

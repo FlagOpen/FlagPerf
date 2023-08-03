@@ -1,0 +1,14 @@
+batch_size: 32
+# 512 length seq(1 item in x)
+input_size: 512
+fp16: true
+compiler: tensorrt
+num_workers: 8
+log_freq: 100
+repeat: 1
+# skip validation(will also skip create_model, export onnx). Assert exist_onnx_path != null
+no_validation: false
+# set a real onnx_path to use exist, or set it to anything but null to avoid export onnx manually(like torch-tensorrt)
+exist_onnx_path: null
+# set a exist path of engine file like resnet50.trt/resnet50.plan/resnet50.engine
+exist_compiler_path: null
