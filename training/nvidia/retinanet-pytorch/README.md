@@ -33,7 +33,7 @@ torchvision.models.resnet.__dict__['model_urls'][
 
 | 指标名称       | 指标值                  | 特殊说明                                    |
 | -------------- | ----------------------- | ------------------------------------------- |
-| 任务类别       | 图像分类                |                                             |
+| 任务类别       | 目标检测                |                                             |
 | 模型           | retinanet               |                                             |
 | 数据集         | COCO2017                |                                             |
 | 数据精度       | precision,见“性能指标”  | 可选fp32/amp/fp16                           |
@@ -48,12 +48,12 @@ torchvision.models.resnet.__dict__['model_urls'][
 | 总吞吐量       | p_whole,见“性能指标”    | 实际训练图片数除以总时间(performance_whole) |
 | 训练吞吐量     | p_train,见“性能指标”    | 不包含每个epoch末尾的评估部分耗时           |
 | **计算吞吐量** | **p_core,见“性能指标”** | 不包含数据IO部分的耗时(p3>p2>p1)            |
-| 训练结果       | acc,见“性能指标”        | 单位为top1分类准确率(acc1)                  |
+| 训练结果       | mAP,见“性能指标”        | 所有类别的 Average Precision（平均精度）的均值                  |
 | 额外修改项     | 无                      |                                             |
 
 * 性能指标
 
-| 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | acc    | mem       |
+| 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | mAP    | mem       |
 | ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
 | A100单机8卡（1x8）  | fp32      | bs=16,lr=0.08 | 15253    | 138     | 152     | 164    | 0.3529 | 38.8/40.0 |
 | A100单机单卡（1x1） | fp32      | bs=16,lr=0.08 |          |         |         |        |        |           |
