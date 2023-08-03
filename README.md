@@ -35,7 +35,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert/paddle" style="text-decoration:none" target="_parent">Paddle</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert-paddle" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bert-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</td>
    </tr>
@@ -174,6 +174,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
    <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
+
 
 
 
