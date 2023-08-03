@@ -38,9 +38,6 @@ torchvision.models.resnet.__dict__['model_urls'][
 | 数据集         | COCO2017                |                                             |
 | 数据精度       | precision,见“性能指标”  | 可选fp32/amp/fp16                           |
 | 单卡批尺寸     | bs,见“性能指标”         | 即local batch_size                          |
-| 模型           | resnet50                |                                             |
-| 数据集         | ImageNet2012            |                                             |
-| 数据精度       | precision,见“性能指标”  | 可选fp32/amp/fp16                           |
 | 超参修改       | fix_hp,见“性能指标”     | 跑满硬件设备评测吞吐量所需特殊超参          |
 | 硬件设备简称   | nvidia A100             |                                             |
 | 硬件存储使用   | mem,见“性能指标”        | 通常称为“显存”,单位为GiB                    |
