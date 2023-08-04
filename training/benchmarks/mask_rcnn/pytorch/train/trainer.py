@@ -1,14 +1,13 @@
 # Copyright © 2022 BAAI. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
-
+import sys
 import math
 import time
+
 import torch
 import torch.utils.data
 from torch.types import Device
-import os
-import sys
 
 from model import create_model
 from optimizers import create_optimizer
@@ -17,9 +16,6 @@ from train.evaluator import Evaluator
 from train.training_state import TrainingState
 from dataloaders.dataloader import get_coco_api_from_dataset
 import utils.utils
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_pytorch
 
 
@@ -58,6 +54,7 @@ class Trainer:
             train_dataloader.batch_sampler.sampler.set_epoch(epoch)
 
         model.train()
+        noeval_start_time = time.time()
         metric_logger = utils.utils.MetricLogger(delimiter="  ")
         metric_logger.add_meter(
             'lr', utils.utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
@@ -77,6 +74,8 @@ class Trainer:
             images = list(image.to(device) for image in images)
             targets = [{k: v.to(device)
                         for k, v in t.items()} for t in targets]
+
+            pure_compute_start_time = time.time()
 
             loss_dict = model(images, targets)
 
@@ -101,28 +100,32 @@ class Trainer:
             metric_logger.update(loss=losses_reduced, **loss_dict_reduced)
             metric_logger.update(lr=optimizer.param_groups[0]["lr"])
 
+            self.training_state.pure_compute_time += time.time() - pure_compute_start_time
+
         self.lr_scheduler.step()
+        self.training_state.no_eval_time += time.time() - noeval_start_time
 
         self.evaluate(self.model, eval_dataloader, device=self.device)
 
         state = self.training_state
         config = self.config
 
-        state.eval_map_bbox = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
-        state.eval_map_segm = self.evaluator.coco_eval['segm'].stats.tolist()[0]
+        state.map_bbox = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
+        state.map_segm = self.evaluator.coco_eval['segm'].stats.tolist()[0]
 
-        
-        dist_pytorch.main_proc_print(f"epoch: {state.epoch} state.eval_map_bbox:{state.eval_map_bbox}  state.eval_map_bbox:{state.eval_map_segm}")
+        dist_pytorch.main_proc_print(
+            f"epoch: {state.epoch} state.map_bbox:{state.map_bbox}  state.map_bbox:{state.map_segm}"
+        )
 
-        if state.eval_map_bbox >= config.target_map_bbox and state.eval_map_segm >= config.target_map_segm:
+        if state.map_bbox >= config.target_map_bbox and state.map_segm >= config.target_map_segm:
             dist_pytorch.main_proc_print(
-                f"converged_success. eval_map_bbox: {state.eval_map_bbox}, eval_map_segm:{state.eval_map_segm} \
-                    target_map_bbox: {config.target_map_bbox}. target_map_segm:{config.target_map_segm}")
+                f"converged_success. map_bbox: {state.map_bbox}, map_segm:{state.map_segm} \
+                    target_map_bbox: {config.target_map_bbox}. target_map_segm:{config.target_map_segm}"
+            )
             state.converged_success()
 
-        
         state.num_trained_samples += len(data_loader.dataset)
-        
+
         if epoch >= config.max_epoch:
             state.end_training = True
 
