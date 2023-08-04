@@ -124,8 +124,10 @@ CASES:
 
 ```Bash
 batch_size: 256
-# 3*224*224(1 item in x)
-input_size: 150528
+# 1 item(like 1 sequence, 1 image) flops
+# Attention! For transformer decoder like bert, 1 token cause 2*param flops, so we need 2*length*params like 2*512*0.33B here
+# format: a_1*a*2*...*a_nea_0,like 2*512*0.33e9(bert) or 4.12e9(resnet50)
+flops: 4.12e9
 fp16: true
 compiler: tensorrt
 num_workers: 8
@@ -213,8 +215,8 @@ exist_compiler_path: null
 
    batch_size可根据case情况进行调整
 
-   input_size为每个输入包含的元素数量。例如resnet50case中，1个输入为1张3\*224\*224的图片，因此input_size为150528
-
+   flops为每个输入包含的元素数量。例如resnet50case中，1个输入为1张3\*224\*224的图片，对应flops为4.12G=4.12e9
+   
    fp16原则上为true，不支持fp16的模型或因过多layernorm等算子导致fp16精度下降严重的可选fp16=false
 
    num_workers通常为4或8
@@ -225,11 +227,11 @@ exist_compiler_path: null
 
    对于标准case，compiler、no_validation、exist_onnx_path、exist_compiler_path依次为tensorrt、false、null、null
 
-2. parameters.yaml
+3. parameters.yaml
 
    此文件放置大量使用因此需要参数化，但不包含在上述configurations.yaml中的项，每个case不同。例如BERT中的max_seq_length, stable diffusion中的guidance_scale，原则上与硬件无关，各厂商适配case均不可修改
 
-3. vendor_config/nvidia_configurations.yaml此配置项为实现该case时可进行的覆盖性配置，具有如下几条原则：
+4. vendor_config/nvidia_configurations.yaml此配置项为实现该case时可进行的覆盖性配置，具有如下几条原则：
 
    a. 项名不可与host.yaml，当前case对应的parameters.yaml存在任何重复
 
