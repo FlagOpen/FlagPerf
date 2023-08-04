@@ -294,7 +294,7 @@ exist_compiler_path: null
 
 3. 监视器结果分析
 
-   上述监视器类在运行时的输出会重定向到文件中，监视器结果分析函数（docker_images/VENDOR/VENDOR_analysis.py 中的analysis_log）函数将接受且仅接受这一重定向文件路径作为参数，需要依次返回运行时最大占用存储、计算卡总存储两个指标
+   上述监视器类在运行时的输出会重定向到文件中，监视器结果分析函数（docker_images/VENDOR/VENDOR_analysis.py 中的analysis_log）函数将接受且仅接受这一重定向文件路径作为参数，需要依次返回运行时最大占用存储、计算卡总存储，计算卡fp32(或tf32)理论算力、fp16理论算力四个指标
 
 ##### 4.1.2 编译器类
 
