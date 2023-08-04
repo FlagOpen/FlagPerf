@@ -247,7 +247,7 @@ exist_compiler_path: null
 
    根据传入参数config，构造该标准case的dataloader。通常可继承或直接使用torch.utils.data.DataLoader实现
 
-2. build_dataloader
+2. create_model
 
    根据传入参数config，构造该标准case的model。通常为torch.nn.Module及其子类(如transformers.BertForMaskedLM)
 
