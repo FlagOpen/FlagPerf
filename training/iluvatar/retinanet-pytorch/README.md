@@ -27,14 +27,6 @@ torchvision.models.resnet.__dict__['model_urls'][
    - 依赖软件版本：无
 
 
-### 运行情况
-| 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度 | Steps数 | 性能（samples/s) |
-| -------- | --------------- | ----------- | -------- | -------- | ------- | ---------------- |
-| 单机8卡  | config_BI-V100x1x8  |              |    0.35      |   0.348      |         |                  |
-
-训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.retinanet_resnet50_fpn)
-
-
 * 通用指标
 
 | 指标名称       | 指标值                  | 特殊说明                                    |
@@ -59,7 +51,7 @@ torchvision.models.resnet.__dict__['model_urls'][
 
 | 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | mAP    | mem       |
 | ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
-| BI-V100单机8卡（1x8）  | fp32      | bs=16,lr=0.04 |    |      |      |     |  |  |
+| BI-V100单机8卡（1x8）  | fp32      | bs=16,lr=0.04 |    |      |      |     | 0.349 | 30.9/ 32.0 |
 | BI-V100单机单卡（1x1） | fp32     | bs=8,lr=0.02 |         |         |      |        |   |       |
 | BI-V100两机8卡（2x8）  | fp32      | bs=8,lr=0.02 |      |       |         |        |        |         |
 
