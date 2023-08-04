@@ -140,19 +140,17 @@ if __name__ == "__main__":
     e2e_time = time.time() - e2e_start
     e2e_time = round(float(e2e_time), 3)
 
-    input_byte = 2 if config.fp16 else 4
-    batch_input_byte = config.batch_size * config.input_size * input_byte
-    batch_input_byte = int(batch_input_byte)
+    flops = eval(config.flops) * p_infer_core
 
     infer_info = {
         "vendor": config.vendor,
         "compiler": config.compiler,
         "precision": "fp16" if config.fp16 else "fp32",
         "batchsize": config.batch_size,
-        "byte_per_batch": batch_input_byte,
+        "flops": flops,
         "e2e_time(second)": e2e_time,
         "p_validation_whole(qps)": p_forward,
-        "*p_validation_core(qps)": p_forward_core,
+        "p_validation_core(qps)": p_forward_core,
         "p_inference_whole(qps)": p_infer,
         "*p_inference_core(qps)": p_infer_core,
         "val_average_acc": val_acc,

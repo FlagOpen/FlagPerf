@@ -1,6 +1,8 @@
 batch_size: 32
-# 512 length seq(1 item in x)
-input_size: 512
+# 1 item(like 1 sequence, 1 image) flops
+# Attention! For transformer decoder like bert, 1 token cause 2*param flops, so we need 2*length*params like 2*512*0.33B here
+# format: a_1*a*2*...*a_nea_0,like 2*512*0.33e9(bert) or 4.12e9(resnet50)
+flops: 2*512*0.33e9
 fp16: true
 compiler: tensorrt
 num_workers: 8
