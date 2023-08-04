@@ -1,7 +1,5 @@
 import math
 import time
-import os
-import sys
 
 import torch
 from torch.types import Device
@@ -13,9 +11,6 @@ from train.metrics import average_corpus_level
 from train.training_state import TrainingState
 from model.losses.cross_entropy import cross_entropy
 from model.fp16 import FP16_Module
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import Driver, Event, dist_pytorch
 
 
@@ -66,22 +61,22 @@ class Trainer():
     def train_one_epoch(self, dataloader):
         state = self.training_state
         driver = self.driver
-        #training_event = self.training_event
         driver.event(Event.EPOCH_BEGIN, state.epoch)
-        #training_event.on_epoch_begin(state.epoch)
 
         step_start_time = time.time()
+
         for _, data in enumerate(dataloader):
+            no_eval_start_time = time.time()
             batch, no_model_batch = data[0], data[1]
 
             state.global_steps += 1
             state.num_trained_samples = state.global_steps * dist_pytorch.global_batch_size(
                 self.config)
 
-            #self.training_event.on_step_begin(state.global_steps)
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
             self.train_one_step(batch, no_model_batch)
-
+            self.training_state.no_eval_time += time.time(
+            ) - no_eval_start_time
             other_state = dict()
             if state.global_steps % self.config.gradient_accumulation_steps == 0:
                 step_end_time = time.time()
@@ -107,20 +102,17 @@ class Trainer():
             end_training = self.detect_training_status(state)
 
             step_info = state.to_dict(**other_state)
-            #self.training_event.on_step_end(state.global_steps, result=step_info)
             driver.event(Event.STEP_END,
                          message=step_info,
                          step=state.global_steps,
                          loss=state.loss)
 
             if eval_result is not None:
-                #self.training_event.on_evaluate(eval_result)
                 driver.event(Event.EVALUATE, eval_result)
 
             if end_training:
                 break
 
-        #training_event.on_epoch_end(state.epoch)
         driver.event(Event.EPOCH_END, state.epoch)
 
     def train_one_step(self, batch, no_model_batch):
@@ -129,6 +121,7 @@ class Trainer():
         for k in no_model_batch:
             no_model_batch[k] = no_model_batch[k].to(self.device)
 
+        pure_compute_start_time = time.time()
         state = self.training_state
         self.model.train()
 
@@ -142,6 +135,12 @@ class Trainer():
         loss = torch.sum(losses.view(-1) * loss_mask) / loss_mask.sum()
         state.loss = loss
 
+        self.adapter.backward(self.config, state.global_steps, state.loss,
+                              self.optimizer)
+        self.training_state.pure_compute_time += time.time(
+        ) - pure_compute_start_time
+
+        # calculate output
         preds = torch.argmax(output, -1)
         if isinstance(self.model.module, FP16_Module):
             embeddings = self.model.module.module.word_embeddings.weight
@@ -155,11 +154,7 @@ class Trainer():
             embeddings.cpu().detach(),
             no_model_batch["loss_mask"].cpu().detach())
         state.embedding_average = float(embedding_average.mean)
-        #loss.backward()
-        #self.optimizer.step()
-        self.adapter.backward(self.config, state.global_steps, state.loss,
-                              self.optimizer)
-        #self.training_event.on_backward(state.global_steps, state.loss, self.optimizer)
+
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
                           self.optimizer)
         self.lr_scheduler.step()
