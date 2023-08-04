@@ -75,7 +75,7 @@ class Daemon:
 
         def gpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "export PATH=/usr/local/corex/bin:$PATH; export LD_LIBRARY_PATH=/usr/local/corex/lib; ixsmi |grep 'Default'|awk '{print $3,$5,$9,$11,$13}'"
+            cmd = "nvidia-smi |grep 'Default'|awk '{print $3,$5,$9,$11,$13}'"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,
@@ -223,10 +223,10 @@ def main():
     operation = args.o
     log_path = args.l
     pid_fn = str('/tmp/gpu_monitor.pid')
-    log_fn = str(log_path + '/iluvatar_monitor.log')
-    err_fn = str(log_path + '/iluvatar_monitor.err')
+    log_fn = str(log_path + '/nvidia_monitor.log')
+    err_fn = str(log_path + '/nvidia_monitor.err')
     # result for gpu
-    gpu_fn = str(log_path + '/iluvatar_monitor.log')
+    gpu_fn = str(log_path + '/nvidia_monitor.log')
 
     subdaemon = Daemon(pid_fn,
                        log_fn,

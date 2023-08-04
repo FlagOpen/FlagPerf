@@ -1,0 +1,17 @@
+FLAGPERF_PATH: "/home/FlagPerf/inference"
+FLAGPERF_LOG_PATH: "result"
+VENDOR: "nvidia"
+MODEL: "resnet50"
+FLAGPERF_LOG_LEVEL: "INFO"
+LOG_CALL_INFORMATION: True
+HOSTS: ["127.0.0.1"]
+SSH_PORT: "22"
+HOSTS_PORTS: ["2222"]
+MASTER_PORT: "29501"
+SHM_SIZE: "32G"
+ACCE_CONTAINER_OPT: " --gpus all"
+PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
+CLEAR_CACHES: True
+ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
+CASES: 
+    "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
