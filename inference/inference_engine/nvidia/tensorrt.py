@@ -27,6 +27,7 @@ class InferModel:
             return self.__str__()
 
     def __init__(self, config, onnx_path, model):
+        self.config = config
         self.logger = trt.Logger(trt.Logger.WARNING)
         self.runtime = trt.Runtime(self.logger)
 
@@ -48,6 +49,19 @@ class InferModel:
             np.float64: torch.float64,
             np.complex64: torch.complex64,
             np.complex128: torch.complex128,
+        }
+        self.str_to_torch_dtype_dict = {
+            "bool": torch.bool,
+            "uint8": torch.uint8,
+            "int8": torch.int8,
+            "int16": torch.int16,
+            "int32": torch.int32,
+            "int64": torch.int64,
+            "float16": torch.float16,
+            "float32": torch.float32,
+            "float64": torch.float64,
+            "complex64": torch.complex64,
+            "complex128": torch.complex128,
         }
 
     def build_engine(self, config, onnx_path):
@@ -99,15 +113,10 @@ class InferModel:
 
     def __call__(self, model_inputs: list):
 
-        batch_size = np.unique(np.array([i.size(dim=0) for i in model_inputs]))
-        batch_size = batch_size[0]
+        batch_size = self.config.batch_size
 
         for i, model_input in enumerate(model_inputs):
-            binding_name = self.engine[i]
-            binding_dtype = trt.nptype(
-                self.engine.get_binding_dtype(binding_name))
-            model_input = model_input.to(
-                self.numpy_to_torch_dtype_dict[binding_dtype])
+            model_input = model_input.cuda()
 
             cuda.memcpy_dtod_async(
                 self.inputs[i].device,
@@ -118,12 +127,17 @@ class InferModel:
 
         self.context.execute_async_v2(bindings=self.bindings,
                                       stream_handle=self.stream.handle)
+        result = []
         for out in self.outputs:
-            cuda.memcpy_dtoh_async(out.host, out.device, self.stream)
+            out_tensor = torch.empty(out.host.shape, device="cuda").to(
+                self.str_to_torch_dtype_dict[str(out.host.dtype)])
+            cuda.memcpy_dtod_async(
+                out_tensor.data_ptr(),
+                out.device,
+                out_tensor.element_size() * out_tensor.nelement(),
+                self.stream,
+            )
+            result.append(out_tensor)
 
         self.stream.synchronize()
-
-        return [
-            torch.from_numpy(out.host.reshape(batch_size, -1))
-            for out in self.outputs
-        ], 0
+        return result, 0

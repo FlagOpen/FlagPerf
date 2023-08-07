@@ -4,5 +4,6 @@ mutable_params = [
     'do_train', 'fp16', 'distributed', 'warmup', 'dist_backend', 'num_workers',
     'device',
     'cudnn_benchmark',
-    'cudnn_deterministic'
+    'cudnn_deterministic',
+    'local_rank'
 ]

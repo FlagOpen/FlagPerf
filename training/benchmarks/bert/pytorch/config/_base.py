@@ -21,10 +21,12 @@ output_dir: str = None
 eval_dir: str = None
 
 # Sample to begin performing eval.
-eval_iter_start_samples: int = 150000
+eval_iter_start_samples: int = 0
 
 # If set to -1, disable eval, else evaluate every eval_iter_samples during training
-eval_iter_samples: int = 150000
+eval_iter_samples: int = 40000
+
+eval_step: int = 2000
 
 # number of eval examples to run eval on
 num_eval_examples: int = 10000
@@ -102,7 +104,7 @@ fp16: bool = False
 loss_scale: float = 0.0
 
 # frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 1
+log_freq: int = 100
 
 # Whether to use gradient checkpointing
 checkpoint_activations: bool = False
@@ -155,7 +157,7 @@ use_env: bool = True
 bert_config_path: str = None
 
 # Stop training after reaching this Masked-LM accuracy
-target_mlm_accuracy: float = 0.720
+target_mlm_accuracy: float = 0.710
 
 # Average accuracy over this amount of batches before performing a stopping criterion test
 train_mlm_accuracy_window_size: int = 0

@@ -42,6 +42,7 @@ def main():
     bert_driver = Driver(config, config.mutable_params)
     bert_driver.setup_config(argparse.ArgumentParser("Bert"))
     bert_driver.setup_modules(driver, globals(), locals())
+    config.distributed = dist_pytorch.get_world_size() > 1
 
     logger = bert_driver.logger
 
@@ -142,20 +143,26 @@ if __name__ == "__main__":
 
     gpu_count = config.n_gpu
     e2e_time = time.time() - now
-    training_perf = (dist_pytorch.global_batch_size(config) *
-                     state.global_steps) / state.raw_train_time
+    trained_samples = dist_pytorch.get_world_size() * state.num_trained_samples
     if config.do_train:
+
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": training_perf,
+            "train_time": state.raw_train_time,
+            "train_no_eval_time": state.no_eval_time,
+            "pure_training_computing_time": state.pure_compute_time,
+            "throughput(sps)_raw":
+            trained_samples / state.raw_train_time,
+            "throughput(sps)_no_eval":
+            trained_samples / state.no_eval_time,
+            "throughput(sps)_pure_compute":
+            trained_samples / state.pure_compute_time,
             "converged": state.converged,
-            "final_loss": state.eval_loss,
             "final_mlm_accuracy": state.eval_mlm_accuracy,
-            "raw_train_time": state.raw_train_time,
-            "init_time": state.init_time,
         }
     else:
         finished_info = {"e2e_time": e2e_time}
+
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
 
     if np.isnan(float(state.eval_loss)):

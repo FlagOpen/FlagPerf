@@ -1,7 +1,5 @@
-import torch
-import torchvision
+from torchvision.models import mobilenet_v2
 
 
-def create_model(config):
-    model = torchvision.models.mobilenet_v2()
-    return model
+def create_model():
+    return mobilenet_v2()

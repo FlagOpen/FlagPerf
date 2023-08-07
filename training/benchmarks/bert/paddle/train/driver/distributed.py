@@ -92,13 +92,10 @@ def setup_seeds(master_seed, epochs, device):
 
 def barrier():
     """
-    Works as a temporary distributed barrier, currently pytorch
-    doesn't implement barrier for NCCL backend.
-    Calls all_reduce on dummy tensor and synchronizes with GPU.
+    Calls dist.barrier.
     """
     if dist.is_initialized():
-        dist.all_reduce(paddle.to_tensor(1))
-        paddle.device.cuda.synchronize()
+        dist.barrier()
 
 
 def get_rank(default=0):

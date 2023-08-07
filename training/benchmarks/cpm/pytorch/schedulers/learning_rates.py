@@ -14,7 +14,6 @@
 # limitations under the License.
 """PyTorch DataLoader for TFRecords"""
 
-import torch
 from torch.optim.lr_scheduler import _LRScheduler
 import math
 

@@ -9,7 +9,7 @@ gradient_accumulation_steps = 1
 
 train_batch_size = 32
 eval_batch_size = train_batch_size
-max_steps = 4000000
+max_steps = 60000
 max_samples_termination = 439126000
 
 warmup = 0.2
