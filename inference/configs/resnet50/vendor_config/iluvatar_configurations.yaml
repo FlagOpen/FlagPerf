@@ -1,0 +1,7 @@
+ixrt_tmp_path: iluvatar_tmp/resnet50-fp16.engine
+has_dynamic_axis: false
+repeat: 1
+image_size: 224
+batch_size: 128
+exist_onnx_path: onnxs/resnet50.onnx
+# exist_compiler_path: resnet50-fp16.engine
