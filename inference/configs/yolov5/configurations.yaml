@@ -1,0 +1,14 @@
+batch_size: 1
+# 3*224*224(1 item in x)
+input_size: 409600
+fp16: False
+compiler: tensorrt
+num_workers: 8
+log_freq: 30
+repeat: 1
+# skip validation(will also skip create_model, export onnx). Assert exist_onnx_path != null
+no_validation: True
+# set a real onnx_path to use exist, or set it to anything but null to avoid export onnx manually(like torch-tensorrt)
+exist_onnx_path: True
+# set a exist path of engine file like resnet50.trt/resnet50.plan/resnet50.engine
+exist_compiler_path: /workspace/inference/yolov5l-cor.engine
