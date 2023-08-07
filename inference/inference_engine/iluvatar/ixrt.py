@@ -44,8 +44,8 @@ class InferModel:
             "nhwc",
             use_gpu=True,
             pipeline_sync=True,
-            input_types={"input": "float32"},
-            output_types={"output": "float32"},
+            input_types=config.input_types,
+            output_types=config.output_types,
             input_device="gpu",
             output_device="gpu",
         )

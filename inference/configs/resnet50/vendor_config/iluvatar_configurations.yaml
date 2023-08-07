@@ -5,3 +5,5 @@ image_size: 224
 batch_size: 128
 exist_onnx_path: onnxs/resnet50.onnx
 # exist_compiler_path: resnet50-fp16.engine
+output_types: {"output":"float32"}
+input_types: {"input": "float32"}
