@@ -34,9 +34,9 @@ find ./val -name "*JPEG" | wc -l
 ### 2. 模型与权重
 
 * 模型实现
-  * pytorch：transformers.ViTForImageClassification
+  * pytorch：transformers.ViTForImageClassification（hugging face）
 * 权重下载
-  * pytorch：from_pretrained("google/vit-large-patch16-224")
+  * pytorch：from_pretrained("google/vit-large-patch16-224")（hugging face）
 
 ### 2. 软硬件配置与运行信息参考
 
