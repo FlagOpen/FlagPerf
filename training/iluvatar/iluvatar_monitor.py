@@ -75,7 +75,7 @@ class Daemon:
 
         def gpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "ixsmi |grep 'Default'|awk '{print $3,$5,$9,$11,$13}'"
+            cmd = "export PATH=/usr/local/corex/bin:$PATH; export LD_LIBRARY_PATH=/usr/local/corex/lib; ixsmi |grep 'Default'|awk '{print $3,$5,$9,$11,$13}'"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,

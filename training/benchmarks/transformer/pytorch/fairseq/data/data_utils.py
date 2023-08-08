@@ -27,7 +27,7 @@ import os
 import numpy as np
 import torch
 
-import fairseq.data.batch_C
+import fairseq_data.batch_C
 import sys
 from .dictionary import Dictionary
 
@@ -251,7 +251,7 @@ class EpochBatchIterator(object):
             max_tokens = max_tokens if max_tokens is not None else sys.maxsize
             #Following line is workaround due to the fact we cannot pass None object as argument
             tgt_sizes = self.dataset.tgt_sizes if self.dataset.tgt_sizes is not None else self.dataset.src_sizes
-            batches = fairseq.data.batch_C.make_batches(
+            batches = fairseq_data.batch_C.make_batches(
                 self.dataset.src_sizes, tgt_sizes, indices, max_tokens,
                 max_sentences, self.bsz_mult, max_positions_num)
             self.frozen_batches = tuple(batches)

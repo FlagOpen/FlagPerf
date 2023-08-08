@@ -64,6 +64,10 @@ class Evaluator:
         trainer.model.train()
 
         if dist.is_initialized():
+            total_eval_mlm_acc = paddle.cast(total_eval_mlm_acc, 'float32')
+            total_eval_loss = paddle.cast(total_eval_loss, 'float32')
+            total_masked = paddle.cast(total_masked, 'float32')
+            
             dist.all_reduce(total_eval_mlm_acc, op=dist.ReduceOp.SUM)
             dist.all_reduce(total_eval_loss, op=dist.ReduceOp.SUM)
             dist.all_reduce(total_masked, op=dist.ReduceOp.SUM)

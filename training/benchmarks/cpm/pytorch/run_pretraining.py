@@ -1,18 +1,9 @@
 """CPM Pretraining"""
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-import argparse
 import os
-import random
 import sys
 import time
 
-import numpy as np
-import torch
-
+import config
 from dataloaders.tokenization_gpt2 import GPT2Tokenizer
 from dataloaders.dataloader import load_data
 from train.evaluator import Evaluator
@@ -22,38 +13,27 @@ from train import trainer_adapter
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch, check
+from driver import Event, dist_pytorch
+from driver.helper import InitHelper
 
 logger = None
 
 
 def main():
-    import config
-    from config import mutable_params
     global logger
+    global config
 
     if config.use_env and 'LOCAL_RANK' in os.environ:
         config.local_rank = int(os.environ['LOCAL_RANK'])
 
-    cpm_driver = Driver(config, config.mutable_params)
-    cpm_driver.setup_config(argparse.ArgumentParser("CPM"))
-    cpm_driver.setup_modules(globals(), locals())
-
+    init_helper = InitHelper(config)
+    cpm_driver = init_helper.init_driver(globals(), locals())
     logger = cpm_driver.logger
     dist_pytorch.init_dist_training_env(config)
-
-    check.check_config(config)
-
     dist_pytorch.barrier(config.vendor)
     cpm_driver.event(Event.INIT_START)
     init_start_time = logger.previous_log_time
-
-    random.seed(config.seed)
-    np.random.seed(config.seed)
-    torch.manual_seed(config.seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed(config.seed)
-
+    init_helper.set_seed(config.seed, config.vendor)
     # get the tokenizer
     base_path = os.path.abspath(os.path.dirname(__file__))
     tokenizer = GPT2Tokenizer(
@@ -70,7 +50,6 @@ def main():
 
     evaluator = Evaluator(config, eval_dataloader)
     training_state = TrainingState()
-    # trainer = Trainer(config, training_event, evaluator, training_state, device=device)
     trainer = Trainer(driver=cpm_driver,
                       adapter=trainer_adapter,
                       evaluator=evaluator,
@@ -92,53 +71,56 @@ def main():
         eval_loss=training_state.eval_avg_loss,
         eval_embedding_average=training_state.eval_embedding_average,
         time=init_evaluation_end - init_evaluation_start)
-    # training_event.on_init_evaluate(init_evaluation_info)
     cpm_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     if not config.do_train:
         return config, training_state
 
-    # training_event.on_init_end()
     cpm_driver.event(Event.INIT_END)
     init_end_time = logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
     dist_pytorch.barrier(config.vendor)
-    epoch = -1
-    # training_event.on_train_begin()
+
     cpm_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time
+    train_start_time = time.time()
+    epoch = 0
     while training_state.global_steps < config.max_steps and not training_state.end_training:
-        epoch += 1
         training_state.epoch = epoch
         trainer.train_one_epoch(train_dataloader)
-    # training_event.on_train_end()
+        epoch += 1
     cpm_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time
-    training_state.raw_train_time = (raw_train_end_time -
-                                     raw_train_start_time) / 1e+3
+    training_state.raw_train_time = time.time() - train_start_time
     return config, training_state
 
 
 if __name__ == "__main__":
     now = time.time()
-    config, state = main()
+    config_updated, state = main()
 
     if not dist_pytorch.is_main_process():
         exit()
 
     e2e_time = time.time() - now
-    training_perf = (dist_pytorch.global_batch_size(config) *
+    training_perf = (dist_pytorch.global_batch_size(config_updated) *
                      state.global_steps) / state.raw_train_time
-    if config.do_train:
+    if config_updated.do_train:
         finished_info = {
             "e2e_time": e2e_time,
             "training_sequences_per_second": training_perf,
             "converged": state.converged,
             "final_loss": state.eval_avg_loss,
             "final_mlm_accuracy": state.eval_embedding_average,
-            "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
+            "raw_train_time": state.raw_train_time,
+            "train_no_eval_time": state.no_eval_time,
+            "pure_training_computing_time": state.pure_compute_time,
+            "throughput(ips)_raw":
+            state.num_trained_samples / state.raw_train_time,
+            "throughput(ips)_no_eval":
+            state.num_trained_samples / state.no_eval_time,
+            "throughput(ips)_pure_compute":
+            state.num_trained_samples / state.pure_compute_time,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

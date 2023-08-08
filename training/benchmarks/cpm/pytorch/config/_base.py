@@ -1,6 +1,11 @@
+# required parameters
 vendor: str = None
 # model name
 name: str = "CPM"
+# Training data dir
+data_dir: str = None
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
 
 # random seed
 seed: int = 1234
@@ -91,8 +96,6 @@ no_save_optim: bool = False
 no_save_rng: bool = False
 
 ## data args
-# Training data dir
-data_dir: str = "/mnt/data/cpm/train/"
 
 # path used to save/load sentencepiece tokenization models
 tokenizer_path: str = "bpe_3w_new/"

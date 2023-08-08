@@ -24,9 +24,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > 无需预处理 
 
 #### 模型checkpoint 
-[下载页](https://model.baai.ac.cn/model-detail/100017)
-文件及版本tab页下，pytorch_model.bin
-参数数：2.6B
+[下载页](https://model.baai.ac.cn/model-detail/100105)
+文件及版本tab页下，cpm_model_states_medium.pt
+参数数：0.33B
 
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|

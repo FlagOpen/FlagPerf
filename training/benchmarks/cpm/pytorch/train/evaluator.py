@@ -1,16 +1,9 @@
-import os
-import sys
-import imp
 import torch
 
 import numpy as np
 from train.metrics import average_corpus_level
 from model.losses.cross_entropy import cross_entropy
-from torch.nn import CrossEntropyLoss
 from model.fp16 import FP16_Module
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import dist_pytorch
 
 

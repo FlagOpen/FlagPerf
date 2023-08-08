@@ -5,9 +5,7 @@ import math
 import time
 import torch
 import torch.utils.data
-import torchvision
 from torch.types import Device
-import os
 import sys
 
 from model import create_model
@@ -15,14 +13,9 @@ from optimizers import create_optimizer
 from schedulers import create_scheduler
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
-
 from dataloaders.dataloader import get_coco_api_from_dataset
-
 import utils.utils
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch
+from driver import Driver, dist_pytorch
 
 
 class Trainer:
@@ -56,11 +49,15 @@ class Trainer:
         optimizer = self.optimizer
         data_loader = train_dataloader
         device = self.device
-        epoch = self.training_state.epoch
+        state = self.training_state
+        config = self.config
+        epoch = state.epoch
+
         if self.config.distributed:
             train_dataloader.batch_sampler.sampler.set_epoch(epoch)
 
         model.train()
+        noeval_start_time = time.time()
         metric_logger = utils.utils.MetricLogger(delimiter="  ")
         metric_logger.add_meter(
             'lr', utils.utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
@@ -81,6 +78,7 @@ class Trainer:
             targets = [{k: v.to(device)
                         for k, v in t.items()} for t in targets]
 
+            pure_compute_start_time = time.time()
             loss_dict = model(images, targets)
 
             losses = sum(loss for loss in loss_dict.values())
@@ -104,12 +102,15 @@ class Trainer:
             metric_logger.update(loss=losses_reduced, **loss_dict_reduced)
             metric_logger.update(lr=optimizer.param_groups[0]["lr"])
 
+            self.training_state.pure_compute_time += time.time(
+            ) - pure_compute_start_time
+
         self.lr_scheduler.step()
+        state.num_trained_samples += len(data_loader.dataset)
+        self.training_state.no_eval_time += time.time() - noeval_start_time
 
+        # evaluate
         self.evaluate(self.model, eval_dataloader, device=self.device)
-
-        state = self.training_state
-        config = self.config
 
         state.eval_mAP = self.evaluator.coco_eval['bbox'].stats.tolist()[0]
         print(state.eval_mAP)
@@ -121,7 +122,6 @@ class Trainer:
 
         if epoch >= config.max_epoch:
             state.end_training = True
-        state.num_trained_samples += len(data_loader.dataset)
 
     @torch.no_grad()
     def evaluate(self, model, data_loader, device):

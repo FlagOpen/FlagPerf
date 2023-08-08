@@ -70,8 +70,9 @@ class Trainer():
         driver = self.driver
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
-        step_start_time = time.time()
+        no_eval_start = time.time()
         for dataloader_idx, batch_idx, batch in dataloader.iter_batchs():
+            pure_compute_start = time.time()
 
             state.num_trained_samples = state.global_steps * utils.global_batch_size(
                 config)
@@ -80,16 +81,10 @@ class Trainer():
             state.iter_dataloader_idx = dataloader_idx
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
             self.train_one_step(batch_idx, batch)
+            
+            state.pure_compute_time += time.time() - pure_compute_start
+            state.no_eval_time += time.time() - no_eval_start
 
-            other_state = dict()
-            if state.global_steps % config.gradient_accumulation_steps == 0:
-                step_end_time = time.time()
-                step_total_time = step_end_time - step_start_time
-                step_start_time = step_end_time
-                sequences_per_second = (
-                    utils.global_batch_size(config) *
-                    config.gradient_accumulation_steps) / step_total_time
-                other_state["seq/s"] = sequences_per_second
 
             eval_result = None
             if self.can_do_eval(state):
@@ -104,10 +99,8 @@ class Trainer():
 
             end_training = self.detect_training_status(state)
 
-            step_info = state.to_dict(**other_state)
-
             driver.event(Event.STEP_END,
-                         message=step_info,
+                         message={"loss":float(state.loss)},
                          step=state.global_steps,
                          loss=state.loss)
 
@@ -116,6 +109,7 @@ class Trainer():
 
             if end_training:
                 break
+            no_eval_start = time.time()
         driver.event(Event.EPOCH_END, state.epoch)
         #adapter.on_epoch_end(state.epoch)
 
@@ -150,9 +144,7 @@ class Trainer():
         do_eval = all([
             config.eval_dir is not None,
             state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps %
-            math.ceil(config.eval_interval_samples /
-                      utils.global_batch_size(config)) == 0,
+            state.global_steps % config.eval_step == 0,
             config.eval_interval_samples > 0,
             state.global_steps > 1,
         ])

@@ -55,6 +55,8 @@ def create_grad_scaler():
 
 def backward(step: int, loss, optimizer, **kwarg):
     loss.backward()
-    optimizer.step()
-    optimizer.clear_grad()
+    need_update = step % config.gradient_accumulation_steps == 0
+    if need_update:
+        optimizer.step()
+        optimizer.clear_grad()
     return
