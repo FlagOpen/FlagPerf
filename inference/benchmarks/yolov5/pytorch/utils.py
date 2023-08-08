@@ -297,7 +297,6 @@ def save_on_master(*args, **kwargs):
         torch.save(*args, **kwargs)
 
 
-
 def scale_boxes(img1_shape, boxes, img0_shape, ratio_pad=None):
     # Rescale boxes (xyxy) from img1_shape to img0_shape
     if ratio_pad is None:  # calculate from img0_shape
@@ -312,6 +311,7 @@ def scale_boxes(img1_shape, boxes, img0_shape, ratio_pad=None):
     boxes[..., :4] /= gain
     clip_boxes(boxes, img0_shape)
     return boxes
+
 
 def clip_boxes(boxes, shape):
     # Clip boxes (xyxy) to image shape (height, width)
@@ -370,10 +370,8 @@ def non_max_suppression(
     output = [torch.zeros((0, 6 + nm), device=prediction.device)] * bs
     for xi, x in enumerate(prediction):  # image index, image inference
         # Apply constraints
-        # x[((x[..., 2:4] < min_wh) | (x[..., 2:4] > max_wh)).any(1), 4] = 0  # width-height
         x = x[xc[xi]]  # confidence
 
-        # Cat apriori labels if autolabelling
         if labels and len(labels[xi]):
             lb = labels[xi]
             v = torch.zeros((len(lb), nc + nm + 5), device=x.device)
@@ -382,10 +380,8 @@ def non_max_suppression(
             v[range(len(lb)), lb[:, 0].long() + 5] = 1.0  # cls
             x = torch.cat((x, v), 0)
 
-        # If none remain process next image
         if not x.shape[0]:
             continue
-
         # Compute conf
         x[:, 5:] *= x[:, 4:5]  # conf = obj_conf * cls_conf
 
@@ -393,7 +389,6 @@ def non_max_suppression(
         box = xywh2xyxy(x[:, :4])  # center_x, center_y, width, height) to (x1, y1, x2, y2)
         mask = x[:, mi:]  # zero columns if no masks
 
-        # Detections matrix nx6 (xyxy, conf, cls)
         if multi_label:
             i, j = (x[:, 5:mi] > conf_thres).nonzero(as_tuple=False).T
             x = torch.cat((box[i], x[i, 5 + j, None], j[:, None].float(), mask[i]), 1)
@@ -405,12 +400,8 @@ def non_max_suppression(
         if classes is not None:
             x = x[(x[:, 5:6] == torch.tensor(classes, device=x.device)).any(1)]
 
-        # Apply finite constraint
-        # if not torch.isfinite(x).all():
-        #     x = x[torch.isfinite(x).all(1)]
-
-        # Check shape
         n = x.shape[0]  # number of boxes
+
         if not n:  # no boxes
             continue
         x = x[x[:, 4].argsort(descending=True)[:max_nms]]  # sort by confidence and remove excess boxes
@@ -436,7 +427,6 @@ def non_max_suppression(
             break  # time limit exceeded
 
     return output
-
 
 
 def xywh2xyxy(x):

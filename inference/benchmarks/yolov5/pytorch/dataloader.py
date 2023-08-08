@@ -23,7 +23,7 @@ def build_dataloader(config):
                 shuffle=False,
                 drop_last=True,
                 num_workers=config.num_workers,
-                # collate_fn=lambda x:tuple(zip(*x)),
+                collate_fn=lambda x:tuple(zip(*x)),
                 pin_memory=True)
 
     return loader
@@ -271,9 +271,9 @@ class CocoDetection(torchvision.datasets.CocoDetection):
 
 
 
-    def __len__(self):
-        return 1# number of files
-    
+    # def __len__(self):
+    #     return 128# number of files
+
 class Compose(object):
 
     def __init__(self, transforms):

@@ -1,6 +1,3 @@
-import torch
-import os
-
-
 def export_model(model, config):
-    pass
+    if config.exist_onnx_path is not None:
+        return config.exist_onnx_path
