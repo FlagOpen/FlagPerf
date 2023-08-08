@@ -120,7 +120,7 @@ class Trainer:
             state.global_steps += 1
             # TODO: Maybe we should update num_trained_samples after all epochs.
             state.num_trained_samples = state.global_steps * \
-            dist_pytorch.global_batch_size(self.config)
+                dist_pytorch.global_batch_size(self.config)
 
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
             self.train_one_step(batch)
