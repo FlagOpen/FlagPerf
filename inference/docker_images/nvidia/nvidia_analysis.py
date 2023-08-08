@@ -11,4 +11,5 @@ def analysis_log(logpath):
             max_mem = line.split(" ")[3]
             max_mem = float(max_mem[:-3])
 
-    return round(max_usage / 1024.0, 2), round(max_mem / 1024.0, 2)
+    return round(max_usage / 1024.0,
+                 2), round(max_mem / 1024.0, 2), eval("156e12"), eval("312e12")
