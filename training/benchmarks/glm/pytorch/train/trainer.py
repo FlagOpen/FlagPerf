@@ -1,27 +1,23 @@
-import torch
-from torch.types import Device
-import os
-import sys
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 import time
 import math
 
-from model import create_model
-from schedulers import create_scheduler
-
-from train.evaluator import Evaluator
-from train.training_state import TrainingState
+import torch
+from torch.types import Device
 
 import config
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+from model import create_model
+from schedulers import create_scheduler
+from train.evaluator import Evaluator
+from train.training_state import TrainingState
 from driver import Driver, Event, dist_pytorch
 
 
 def process_batch(batch, device):
     """Process batch and produce inputs for the model."""
     batch = {t: batch[t].to(device) for t in batch if t != 'answer_idx'}
-
     return batch
 
 
@@ -63,8 +59,6 @@ class Trainer:
             dist_pytorch.get_rank(), checkpoint_name))
         # Load the checkpoint.
         sd = torch.load(checkpoint_name, map_location='cpu')
-
-        # model = model.module
 
         # Model.
         def extend_embedding_weights(state_weights, model_weights):
@@ -111,20 +105,27 @@ class Trainer:
     def train_one_epoch(self, dataloader):
         state = self.training_state
         driver = self.driver
+        dataloader.sampler.set_epoch(state.epoch)
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
         step_start_time = time.time()
-        epoch_start_num_sample = state.num_trained_samples
+
+        no_eval_start_time = time.time()
+        iter_end_time = no_eval_start_time
 
         for batch_idx, batch in enumerate(dataloader):
+            iter_start_time = time.time()
+            dataload_time = iter_start_time - iter_end_time
 
             state.global_steps += 1
             # TODO: Maybe we should update num_trained_samples after all epochs.
             state.num_trained_samples = state.global_steps * \
-                dist_pytorch.global_batch_size(self.config)
+            dist_pytorch.global_batch_size(self.config)
 
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
             self.train_one_step(batch)
+            self.training_state.no_eval_time += (
+                time.time() - iter_start_time) + dataload_time
 
             other_state = dict()
             if state.global_steps % self.config.gradient_accumulation_steps == 0:
@@ -159,11 +160,10 @@ class Trainer:
             if eval_result is not None:
                 driver.event(Event.EVALUATE, eval_result)
 
+            iter_end_time = time.time()
+
             if end_training:
                 break
-
-        epoch_start_num_sample += len(dataloader.dataset)
-        state.num_trained_samples = epoch_start_num_sample
 
         driver.event(Event.EPOCH_END, state.epoch)
 
@@ -171,31 +171,25 @@ class Trainer:
         data = process_batch(batch, self.config.device)
         state = self.training_state
 
-        # self.training_event.on_step_begin(state.global_steps)
         self.model.train()
+        pure_compute_start_time = time.time()
 
         lm_loss, _ = self.forward(data)
         lm_loss /= self.config.gradient_accumulation_steps
         reduced_loss = lm_loss.detach().clone().view(1)
-        if torch.distributed.is_available(
-        ) and torch.distributed.is_initialized():
+        if dist_pytorch.is_dist_avail_and_initialized():
             torch.distributed.all_reduce(reduced_loss.data)
         reduced_loss.data = reduced_loss.data / (dist_pytorch.get_world_size())
 
         state.loss = lm_loss
-        #lm_loss.backward()
-        #self.optimizer.step()
         self.adapter.backward(state.global_steps, lm_loss, reduced_loss,
                               self.optimizer, self.lr_scheduler, self.model)
-        #self.adapter.backward(state.global_steps, state.loss, self.optimizer)
-        #self.adapter.backward(state.global_steps, reduced_loss, self.optimizer)
-        #self.adapter.backward(state.global_steps, reduced_loss, self.optimizer, self.lr_scheduler)
-        # self.training_event.on_backward(
-        #     state.global_steps, lm_loss, reduced_loss, self.optimizer, self.lr_scheduler)
-        #self.lr_scheduler.step()
+
+        self.training_state.pure_compute_time += time.time(
+        ) - pure_compute_start_time
+
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
                           self.optimizer, self.grad_scaler)
-        #self.lr_scheduler.step()
 
     def detect_training_status(self, state):
         config = self.config
