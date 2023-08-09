@@ -1,17 +1,12 @@
-from loguru import logger
-import torch
-import numpy as np
 import time
+
+import torch
 from tools import torch_sync
 from loguru import logger
-import torch
-import numpy as np
-import time
+
 from tools import torch_sync
-from loguru import logger
 from .dataloader import get_coco_api_from_dataset
 from .utils import non_max_suppression, scale_boxes, index_list
-
 
 
 def cal_perf(config, dataloader_len, duration, core_time, str_prefix):

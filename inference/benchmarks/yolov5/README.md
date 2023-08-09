@@ -4,14 +4,10 @@
 We use ImageNet2012 Validation Images:
 | Dataset                       | FileName               | Size  | Checksum                              |
 | ----------------------------- | ---------------------- | ----- | ------------------------------------- |
-| Validation images (all tasks) | ILSVRC2012_img_val.tar | 6.3GB | MD5: 29b22e2961454d5413ddabcf34fc5622 |
+| Validation images (all tasks) | coco2017 | 1GB | / |
 Dataset format conversion：
 https://github.com/pytorch/examples/blob/main/imagenet/extract_ILSVRC.sh
 
-make sure ILSVRC2012_img_train.tar & ILSVRC2012_img_val.tar are in the same directory with extract_ILSVRC.sh.
-```bash
-sh extract_ILSVRC.sh
-```
 
 preview directory structures of decompressed dataset.
 
@@ -20,23 +16,23 @@ tree -d -L 1
 ```
 
 ```
-.
-├── train
-└── val
+├── annotations
+├── train2017
+└── val2017
 ```
 dataset samples size
 
 ```bash
 find ./val -name "*JPEG" | wc -l
-50000
+5000
 ```
 
 ### 2. 模型与权重
 
 * 模型实现
-  * pytorch：torchvision.models.resnet50
+  * pytorch：yolov5l-bs64.onnx
 * 权重下载
-  * pytorch：https://download.pytorch.org/models/resnet50-0676ba61.pth
+  * pytorch：https://model.baai.ac.cn/model-detail/100097
 
 ### 2. 软硬件配置与运行信息参考
 
@@ -82,5 +78,3 @@ find ./val -name "*JPEG" | wc -l
 | ----------- | --------- | ---- | -------- | ----------- | ---------- | ------------- | ------------ | ----------- | ---------- |
 | tensorrt | fp16      | 256  | 613.4 | 1358.9   | 4263.3 | 1391.4   | 11483.0 | 76.2/76.2 | 19.7/40.0 |
 | tensorrt | fp32   | 256  | 474.4    | 1487.3      | 2653.2     | 1560.3        | 6091.6  | 76.2/76.2 | 28.86/40.0 |
-| torchtrt | fp16     | 256  | 716.4 | 1370.4 | 4282.6 | 1320.0 | 4723.0 | 76.2/76.2 | 9.42/40.0 |
-

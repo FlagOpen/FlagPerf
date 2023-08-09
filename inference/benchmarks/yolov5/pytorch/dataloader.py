@@ -270,10 +270,6 @@ class CocoDetection(torchvision.datasets.CocoDetection):
         return im, target, im0
 
 
-
-    # def __len__(self):
-    #     return 128# number of files
-
 class Compose(object):
 
     def __init__(self, transforms):

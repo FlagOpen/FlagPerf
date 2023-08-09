@@ -46,6 +46,7 @@ def model_forward(model, dataloader, evaluator, config):
                 top1 = evaluator(pred, y)
 
                 all_top1.extend(top1.cpu())
+
         acc.append(np.mean(all_top1))
 
     logger.info("Top1 Acc: " + str(acc))
@@ -92,6 +93,7 @@ def engine_forward(model, dataloader, evaluator, config):
                 top1 = evaluator(pred, y)
 
                 all_top1.extend(top1.cpu())
+
         acc.append(np.mean(all_top1))
 
     logger.info("Top1 Acc: " + str(acc))

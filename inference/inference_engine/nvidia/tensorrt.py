@@ -28,6 +28,7 @@ class InferModel:
 
     def __init__(self, config, onnx_path, model):
         self.config = config
+
         self.logger = trt.Logger(trt.Logger.WARNING)
         self.runtime = trt.Runtime(self.logger)
 
