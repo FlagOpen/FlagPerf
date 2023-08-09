@@ -1,4 +1,4 @@
-batch_size: 128
+batch_size: 64
 fp16: False
 # 1 item(like 1 sequence, 1 image) flops
 # Attention! For transformer decoder like bert, 1 token cause 2*param flops, so we need 2*length*params like 2*512*0.33B here

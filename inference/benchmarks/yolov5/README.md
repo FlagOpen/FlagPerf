@@ -1,5 +1,5 @@
 ### 1. 推理数据集
-> Download website：https://image-net.org/
+> Download website：https://cocodataset.org/
 
 We use ImageNet2012 Validation Images:
 | Dataset                       | FileName               | Size  | Checksum                              |
@@ -32,7 +32,7 @@ find ./val -name "*JPEG" | wc -l
 * 模型实现
   * pytorch：yolov5l-bs96.onnx
 * 权重下载
-  * pytorch：https://model.baai.ac.cn/model-detail/100097
+  * pytorch：
 
 ### 2. 软硬件配置与运行信息参考
 
@@ -67,13 +67,13 @@ find ./val -name "*JPEG" | wc -l
 | 硬件存储使用       | mem              | 通常称为“显存”,单位为GiB                     |
 | 端到端时间         | e2e_time         | 总时间+Perf初始化等时间                      |
 | 验证总吞吐量       | p_val_whole      | 实际验证图片数除以总验证时间                 |
-| 验证计算吞吐量     | \*p_val_core       | 不包含IO部分耗时                             |
+| 验证计算吞吐量     | p_val_core       | 不包含IO部分耗时                             |
 | 推理总吞吐量       | p_infer_whole    | 实际推理图片数除以总推理时间                 |
 | **推理计算吞吐量** | **\*p_infer_core** | 不包含IO部分耗时                             |
 | 推理结果           | acc(推理/验证)   | 单位为top1分类准确率(acc1)                   |
 
 * 指标值
 
-| 推理工具  | precision | bs   | e2e_time | p_val_whole | \*p_val_core | p_infer_whole | \*p_infer_core | acc         | mem        |
-| ----------- | --------- | ---- | -------- | ----------- | ---------- | ------------- | ------------ | ----------- | ---------- |
-| tensorrt | fp32   | 96  | 733.8    |    /   | /    | 53.8       | 361.4 | 0.45 | 35.44/40.0 |
+| 推理工具  | precision | bs   | e2e_time | p_val_whole | \*p_val_core | p_infer_whole | \*p_infer_core |\*MFU| acc         | mem        |
+| ----------- | --------- | ---- | -------- | ----------- | ---------- | ------------- | ------------ |  ------------ |----------- | ---------- |
+| tensorrt | fp32   | 96  | 733.8    |    /   | /    | 53.8       | 361.4 |12.6%| 0.45 | 35.44/40.0 |
