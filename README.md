@@ -11,7 +11,7 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
 
 你可以点击**模型或训练框架**来跳转到**对应case的训练脚本**，✅来跳转到**对应厂商的运行配置**。
 
-under review表示对应case的支持已开发完毕，在review中；In Coming表示正在添加或计划添加中；N/A表示不支持或尚无计划添加
+under review表示对应case的支持已开发完毕，在review中；Incoming表示正在添加或计划添加中；N/A表示不支持或尚无计划添加
 
 #### 训练列表
 
@@ -51,7 +51,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>In Coming</a></td>
+      <td class="xl69" x:str>Incoming</a></td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/cpm" style="text-decoration:none" target="_parent">CPM</a></td>
@@ -104,7 +104,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>In Coming</a></td>
+      <td class="xl69" x:str>Incoming</a></td>
    </tr>   
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
@@ -127,7 +127,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>In Coming</a></td>
+      <td class="xl69" x:str>Incoming</a></td>
    </tr>    
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer" style="text-decoration:none" target="_parent">BigTransfer</a></td>
@@ -207,11 +207,11 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>In Coming</a></td>
+      <td class="xl69" x:str>Incoming</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -222,11 +222,11 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>In Coming</a></td>
+      <td class="xl69" x:str>Incoming</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -237,7 +237,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>In Coming</a></td>
+      <td class="xl69" x:str>Incoming</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GLM(13B)</td>
@@ -245,12 +245,12 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>In Coming</a></td>
+      <td class="xl69" x:str>Incoming</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>chatGLM(6B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -258,7 +258,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Bloom(7B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -266,7 +266,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(6.7B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -274,7 +274,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(13B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -282,72 +282,72 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>yolov5_large</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>T5_small</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT2</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>TransformerXL</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>whisper</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DistilBERT</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Roberta</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DETR</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Longformer</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
@@ -367,110 +367,111 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl65" x:str>模型</td> 
     <td class="xl65" x:str>精度</td>
     <td class="xl65" x:str>英伟达tensorrt</td>
-    <td class="xl65" x:str>昆仑芯tvm</td>
-    <td class="xl65" x:str>天数智芯tvm</td>
+    <td class="xl65" x:str>昆仑芯xtcl</td>
+    <td class="xl65" x:str>天数智芯ixrt</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/resnet50" style="text-decoration:none" target="_parent">resnet50</a></td>
     <td class="xl69" x:str>float32</td>
     <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
     <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/bertLarge" style="text-decoration:none" target="_parent">BertLarge</a></td>
     <td class="xl69" x:str>float32</td>
     <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
     <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/186" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
     <td class="xl69" x:str>float32</td>
     <td class="xl69" x:str>Under Review</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
     <td class="xl69" x:str>Under Review</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/190" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
     <td class="xl69" x:str>float32</td>
     <td class="xl69" x:str>Under Review</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
     <td class="xl69" x:str>Under Review</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/191" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
     <td class="xl69" x:str>float32</td>
     <td class="xl69" x:str>Under Review</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
     <td class="xl69" x:str>Under Review</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr> 
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>SwinTransformer</td>
     <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>FasterRCNN</td>
     <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>SAM(segment anything)</td>
     <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama2-7B</td>
     <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Aquila-7B</td>
     <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
-    <td class="xl69" x:str>In Coming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Incoming</td>
    </tr>
 </table>
+
 
 
 ### 训练部署及启动说明
