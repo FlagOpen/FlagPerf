@@ -70,7 +70,7 @@ find ./val -name "*JPEG" | wc -l
    - OS版本：Ubuntu 20.04
    - OS kernel版本: 5.15.0-56-generic
    - 加速卡驱动版本：4.0
-   - Docker 版本：20.10.16
+   - Docker 版本：20.10.21
    - 依赖软件版本：
      - pytorch: 1.13.0+cpu
      - onnx: 1.14.0
