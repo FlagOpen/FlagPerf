@@ -1,4 +1,4 @@
-![FlagAI](assets/logo.png)
+![FlagAI](assets/imgs/logo.png)
 ----------
 ### FlagPerf
 [![Lint Code Base](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml/badge.svg)](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml)
@@ -486,6 +486,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 
 本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore共同建设中。
 诚邀各框架、芯片、编译器团队与个人参与！
+![kunlunxin](assets/imgs/kunlunxin.png)
 
 ### 联系我们
 
