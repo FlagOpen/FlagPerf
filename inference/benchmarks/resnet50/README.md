@@ -37,6 +37,7 @@ find ./val -name "*JPEG" | wc -l
   * pytorch：torchvision.models.resnet50
 * 权重下载
   * pytorch：https://download.pytorch.org/models/resnet50-0676ba61.pth
+  * kunlunxin_onnx: https://baidu-kunlun-public.su.bcebos.com/XTCL/kunlunxin_flagperf_resnet50.tar.gz
 
 ### 2. 软硬件配置与运行信息参考
 
