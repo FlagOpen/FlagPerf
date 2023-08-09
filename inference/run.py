@@ -446,10 +446,15 @@ def compilation_result(case_log_path, config):
 
     vendor_module = importlib.import_module("docker_images." + config.VENDOR +
                                             "." + config.VENDOR + "_analysis")
-    vendor_usage, vendor_maxmem = vendor_module.analysis_log(vendor_usage_path)
+    vendor_usage, vendor_maxmem, fp32, fp16 = vendor_module.analysis_log(
+        vendor_usage_path)
 
     case_perf["vendor_usage(GiB)"] = vendor_usage
     case_perf["vendor_max_mem(GiB)"] = vendor_maxmem
+
+    theory = fp32 if case_perf["precision"] == "fp32" else fp16
+    mfu = case_perf["flops"] / theory
+    case_perf["*MFU"] = str(round(mfu * 100, 1)) + "%"
 
     for key in case_perf.keys():
         padding_str = str(key).ljust(43) + " : " + str(
