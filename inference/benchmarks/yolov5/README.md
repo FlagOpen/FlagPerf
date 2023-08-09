@@ -30,7 +30,7 @@ find ./val -name "*JPEG" | wc -l
 ### 2. 模型与权重
 
 * 模型实现
-  * pytorch：yolov5l-bs64.onnx
+  * pytorch：yolov5l-bs96.onnx
 * 权重下载
   * pytorch：https://model.baai.ac.cn/model-detail/100097
 
@@ -76,5 +76,4 @@ find ./val -name "*JPEG" | wc -l
 
 | 推理工具  | precision | bs   | e2e_time | p_val_whole | \*p_val_core | p_infer_whole | \*p_infer_core | acc         | mem        |
 | ----------- | --------- | ---- | -------- | ----------- | ---------- | ------------- | ------------ | ----------- | ---------- |
-| tensorrt | fp16      | 256  | 613.4 | 1358.9   | 4263.3 | 1391.4   | 11483.0 | 76.2/76.2 | 19.7/40.0 |
-| tensorrt | fp32   | 256  | 474.4    | 1487.3      | 2653.2     | 1560.3        | 6091.6  | 76.2/76.2 | 28.86/40.0 |
+| tensorrt | fp32   | 96  | 733.8    |    /   | /    | 53.8       | 361.4 | 0.45 | 35.44/40.0 |
