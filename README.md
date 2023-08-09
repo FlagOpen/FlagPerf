@@ -1,4 +1,4 @@
-![FlagAI](logo.png)
+![FlagAI](assets/logo.png)
 ----------
 ### FlagPerf
 [![Lint Code Base](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml/badge.svg)](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml)
