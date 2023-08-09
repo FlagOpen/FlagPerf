@@ -248,22 +248,6 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
       <td class="xl69" x:str>Incoming</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>chatGLM(6B)</td>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Bloom(7B)</td>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(6.7B)</td>
     <td class="xl69" x:str>Paddle</td>
     <td class="xl69" x:str>Incoming</td>
