@@ -3,6 +3,7 @@ import tvm
 import tvm.relay as relay
 from tvm.contrib.download import download_testdata
 from tvm.relay import param_dict
+from tvm.contrib import xpu_config
 import torch
 import os
 import subprocess
@@ -26,12 +27,27 @@ class InferModel:
             input_name = input.name #'inputs:0'
             self.input_names.append(input_name)
             shape_dict[input_name] = input_shape
-        #os.environ['XTCL_BUILD_DEBUG'] = '1'
+        
         mod, params = relay.frontend.from_onnx(onnx_model, shape_dict)
 
         target_host = f'llvm -acc=xpu{os.environ.get("XPUSIM_DEVICE_MODEL", "KUNLUN1")[-1]}'
         ctx = tvm.device("xpu", 0)
-        with relay.build_config(opt_level=3):
+        build_config = {}
+        if config.fp16 == True:
+            os.environ["XTCL_USE_NEW_ALTER_PASS"] = '1'
+            input_fp16 = { name:"float16" for name in self.input_names}
+            build_config["XPUOutDtypeConfig"] = xpu_config.XPUOutDtypeConfig(
+                                                 default_precision="float16",
+                                                 config_last_node=True,
+                                                 config_map={
+                                                 },
+                                                 config_var_dtype_map=input_fp16,
+                                                 ).value()
+        else: ## fp32
+            os.environ['XTCL_USE_FP16'] = '0'
+            os.environ['XTCL_QUANTIZE_WEIGHT'] = '0'
+
+        with tvm.transform.PassContext(opt_level=3, config=build_config):
             vm_exec = relay.backend.vm.compile(mod,
                                              target=target_host,
                                              target_host=target_host,
