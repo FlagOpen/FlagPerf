@@ -1,3 +1,0 @@
-trt_tmp_path: nvidia_tmp/vit.trt
-has_dynamic_axis: false
-torchtrt_full_compile: true

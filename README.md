@@ -443,7 +443,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
     <td class="xl69" x:str>In Coming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Transformer</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>FasterRCNN</td>
     <td class="xl69" x:str>float32</td>
     <td class="xl69" x:str>In Coming</td>
     <td class="xl69" x:str>In Coming</td>
@@ -472,13 +472,14 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
    </tr>
 </table>
 
+
 ### 训练部署及启动说明
 
-https://github.com/FlagOpen/FlagPerf/tree/main/training/README.md
+[训练文档](https://github.com/FlagOpen/FlagPerf/tree/main/training/README.md)
 
 ### 推理部署及启动说明
 
-https://github.com/shh2000/FlagPerf/blob/infer_doc/docs/dev/inference-case-doc.md
+[推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/dev/inference-case-doc.md)
 
 ### 贡献代码
 
