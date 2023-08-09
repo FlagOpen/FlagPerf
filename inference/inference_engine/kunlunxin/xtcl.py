@@ -27,6 +27,7 @@ class InferModel:
             input_name = input.name #'inputs:0'
             self.input_names.append(input_name)
             shape_dict[input_name] = input_shape
+        
         mod, params = relay.frontend.from_onnx(onnx_model, shape_dict)
 
         target_host = f'llvm -acc=xpu{os.environ.get("XPUSIM_DEVICE_MODEL", "KUNLUN1")[-1]}'
