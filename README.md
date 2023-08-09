@@ -486,7 +486,14 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 
 本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore共同建设中。
 诚邀各框架、芯片、编译器团队与个人参与！
+
+![torch](assets/imgs/pytorch.png)
+![tf](assets/imgs/tf.png)
+![iluvatar](assets/imgs/iluvatar.png)
+![paddle](assets/imgs/paddle.png)
 ![kunlunxin](assets/imgs/kunlunxin.png)
+![ascend](assets/imgs/ascend.png)
+![mindspore](assets/imgs/mindspore.png)
 
 ### 联系我们
 
