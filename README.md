@@ -202,6 +202,22 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr> 
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RNNT</td>
+    <td class="xl69" x:str>PyTorch</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr> 
+<tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama(7B)</td>
     <td class="xl69" x:str>MindSpore</td>
     <td class="xl69" x:str>N/A</td>
@@ -337,6 +353,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    </tr> 
   </table>
 
+
 #### 推理列表
 
 <table width="960" border="0" cellpadding="0" cellspacing="0" style='width:960pt;border-collapse:collapse;table-layout:fixed;'>
@@ -427,18 +444,25 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>FasterRCNN</td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-   </tr>
-    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>SAM(segment anything)</td>
     <td class="xl69" x:str>float32</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
+   </tr>
+        <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
+    <td class="xl69" x:str>float32</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+   </tr>
+        <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RNNT</td>
+    <td class="xl69" x:str>float32</td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama2-7B</td>
@@ -455,6 +479,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>Incoming</td>
    </tr>
 </table>
+
 
 
 
