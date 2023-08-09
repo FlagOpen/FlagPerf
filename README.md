@@ -288,7 +288,7 @@ under review表示对应case的支持已开发完毕，在review中；In Coming�
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>T5_large</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>T5_small</td>
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str>In Coming</td>
     <td class="xl69" x:str>In Coming</td>
