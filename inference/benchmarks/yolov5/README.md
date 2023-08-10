@@ -1,13 +1,10 @@
 ### 1. 推理数据集
 > Download website：https://cocodataset.org/
 
-We use ImageNet2012 Validation Images:
+We use COCO2017 Validation Images:
 | Dataset                       | FileName               | Size  | Checksum                              |
 | ----------------------------- | ---------------------- | ----- | ------------------------------------- |
 | Validation images (all tasks) | coco2017 | 1GB | / |
-Dataset format conversion：
-https://github.com/pytorch/examples/blob/main/imagenet/extract_ILSVRC.sh
-
 
 preview directory structures of decompressed dataset.
 
