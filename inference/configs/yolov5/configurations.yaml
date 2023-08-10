@@ -7,7 +7,7 @@ flops: 5.45e10
 compiler: tensorrt
 num_workers: 8
 log_freq: 30
-repeat: 1
+repeat: 5
 # skip validation(will also skip create_model, export onnx). Assert exist_onnx_path != null
 no_validation: True
 # set a real onnx_path to use exist, or set it to anything but null to avoid export onnx manually(like torch-tensorrt)
