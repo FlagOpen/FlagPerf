@@ -60,6 +60,11 @@ class InferModel:
         for index, input_name in enumerate(self.input_names):
             self.engine.set_one_input("main",input_name, tvm.nd.array(model_inputs[index]))
         self.engine.run()
-        return [torch.from_numpy(self.engine.get_output(i).asnumpy()) for i in range(self.engine.get_num_outputs())], 0
+        output_list = [self.engine.get_output(i) for i in range(self.engine.get_num_outputs())]
+        foo_time_start = time.time()
+        # d2h
+        output_list = [torch.from_numpy(output.asnumpy()) for output in output_list]
+        foo_time = time.time() - foo_time_start
+        return output_list, foo_time
 
 
