@@ -16,13 +16,17 @@ class InferModel:
             self.device = device_mem
 
         def __str__(self):
-            return "Host:\n" + str(self.host) + "\nDevice:\n" + str(
-                self.device)
+            return "Host:\n" + str(self.host) + "\nDevice:\n" + str(self.device)
 
         def __repr__(self):
             return self.__str__()
 
     def __init__(self, config, onnx_path, model):
+        self.str_to_numpy_dict = {
+            "int32": np.int32,
+            "float16": np.float16,
+            "float32": np.float32,
+        }
         self.engine = self.build_engine(config, onnx_path)
         self.outputs = self.allocate_buffers(self.engine)
 
@@ -31,12 +35,12 @@ class InferModel:
 
         runtime_config = RuntimeConfig()
 
-        input_shapes = [config.batch_size, 3, config.image_size, config.image_size]    
+        input_shapes = [config.batch_size, 3, config.image_size, config.image_size]
         runtime_config.input_shapes = [("input", input_shapes)]
         runtime_config.device_idx = 0
 
         precision = "float16"
-        if precision=="int8":
+        if precision == "int8":
             assert quant_file, "Quant file must provided for int8 inferencing."
 
         runtime_config.runtime_context = RuntimeContext(
@@ -77,25 +81,20 @@ class InferModel:
 
     def allocate_buffers(self, engine):
         output_map = engine.GetOutputShape()
-        output_io_buffers = []   
+        output_io_buffers = []
         output_types = {}
         config = engine.GetConfig()
         for key, val in config.runtime_context.output_types.items():
             output_types[key] = str(val)
         for name, shape in output_map.items():
             # 1. apply memory buffer for output of the shape
-            if output_types[name] =="float32":
-                buffer = np.zeros(shape.dims, dtype=np.float32)
-            elif output_types[name] =="int32":
-                buffer = np.zeros(shape.dims, dtype=np.int32)
-            elif output_types[name] =="float16":
-                buffer = np.zeros(shape.dims, dtype=np.float16)
-            else:
-                raise RuntimeError("need to add a {} datatype of output".format(output_types[name]))
+            buffer = np.zeros(
+                shape.dims, dtype=self.str_to_numpy_dict[output_types[name]]
+            )
             buffer = torch.tensor(buffer).cuda()
             # 2. put the buffer to a list
             output_io_buffers.append([name, buffer, shape])
-        
+
         engine.BindIOBuffers(output_io_buffers)
         return output_io_buffers
 
@@ -125,6 +124,6 @@ class InferModel:
         gpu_io_buffers = []
         for buffer in self.outputs:
             # gpu_io_buffers.append([buffer[0], buffer[1], buffer[2]])
-            gpu_io_buffers.append(buffer[1].cpu())
+            gpu_io_buffers.append(buffer[1])
 
         return gpu_io_buffers, 0
