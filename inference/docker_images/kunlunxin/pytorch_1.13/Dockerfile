@@ -52,6 +52,8 @@ RUN /root/miniconda/envs/python38/bin/pip install torch==1.13.0+cpu torchvision=
 
 RUN cd /root && wget https://baidu-kunlun-public.su.bcebos.com/XTCL/XTCL-2.1/XTCL-ubuntu_x86_64.tar.gz && tar -xzf XTCL-ubuntu_x86_64.tar.gz
 
+RUN cd /root && wget https://klx-sdk-release-public.su.bcebos.com/xre/release/4.0.18.1/xre-ubuntu_2004_x86_64.tar.gz && tar -xzf xre-ubuntu_2004_x86_64.tar.gz
+
 ENV LD_LIBRARY_PATH=/root/XTCL-ubuntu_x86_64/3rdparty/lib:/root/XTCL-ubuntu_x86_64/runtime/shlib:/root/XTCL-ubuntu_x86_64/shlib
 ENV KERNEL_INCLUDE=/root/XTCL-ubuntu_x86_64/xpu/kernels
 ENV XTCL_L3_SIZE=67104768
@@ -70,5 +72,6 @@ ENV TVM_DIR=/root/XTCL-ubuntu_x86_64
 
 
 
+ENV PATH /root/xre-ubuntu_2004_x86_64/bin:$PATH
 ENV PATH /root/miniconda/envs/python38/bin:$PATH
 
