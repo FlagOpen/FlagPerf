@@ -1,13 +1,10 @@
 ### 1. 推理数据集
 > Download website：https://cocodataset.org/
 
-We use ImageNet2012 Validation Images:
+We use COCO2017 Validation Images:
 | Dataset                       | FileName               | Size  | Checksum                              |
 | ----------------------------- | ---------------------- | ----- | ------------------------------------- |
 | Validation images (all tasks) | coco2017 | 1GB | / |
-Dataset format conversion：
-https://github.com/pytorch/examples/blob/main/imagenet/extract_ILSVRC.sh
-
 
 preview directory structures of decompressed dataset.
 
@@ -77,3 +74,4 @@ find ./val -name "*JPEG" | wc -l
 | 推理工具  | precision | bs   | e2e_time | p_val_whole | \*p_val_core | p_infer_whole | \*p_infer_core |\*MFU| acc         | mem        |
 | ----------- | --------- | ---- | -------- | ----------- | ---------- | ------------- | ------------ |  ------------ |----------- | ---------- |
 | tensorrt | fp32   | 96  | 733.8    |    /   | /    | 53.8       | 361.4 |12.6%| 0.45 | 35.44/40.0 |
+| tensorrt | fp16   | 96  | 1665.8    |    /   | /    | 58.6     | 859 |15.0%| 0.45 | 26.15/40.0 |

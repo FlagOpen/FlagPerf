@@ -45,7 +45,10 @@ def engine_forward(model, dataloader, evaluator, config):
                 images = torch.stack(images, dim=0)
                 images = images.float()
                 images /= 255  # 0 - 255 to 0.0 - 1.0
-
+                
+                if config.fp16:
+                    images = images.half()
+                    
                 torch_sync(config)
                 core_time_start = time.time()
 
