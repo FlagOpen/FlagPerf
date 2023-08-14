@@ -7,12 +7,12 @@ set +ex
 # 2. distributed training is started on the master server.
 
 # 需要填写的信息
-ip_list=("x.x.x.x")       # 填写多机训练的ip列表，不包含 master-server
+ip_list=("x.x.x.x")        # 填写多机训练的ip列表，不包含 master-server
 username="<YOUR_USERNAME>" # 当前用户
 dataset_dir=$1             # 数据集路径
 
 # FlagPerf的父级目录
-source_directory=$( cd "$(dirname "$0")" && cd ./../../.. && pwd )
+source_directory=$(cd "$(dirname "$0")" && cd ./../../.. && pwd)
 echo "source_directory: ${source_directory}"
 
 app_name="FlagPerf"
@@ -23,12 +23,10 @@ echo "timestamp: ${timestamp}"
 echo "datset_dir: ${dataset_dir}"
 sleep 2s
 
-if echo "$username" | grep -qi "YOUR_USERNAME";
-then 
+if echo "$username" | grep -qi "YOUR_USERNAME"; then
     echo "Please replace username with you real username"
     exit 255
 fi
-
 
 local_zip=$source_directory/$zip_filename
 cd $source_directory && rm -fv $local_zip
