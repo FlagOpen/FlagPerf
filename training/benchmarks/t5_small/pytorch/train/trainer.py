@@ -8,6 +8,7 @@ from torch.types import Device
 import os
 import sys
 import torch.distributed as dist
+from accelerate import Accelerator
 
 from model import create_model
 from optimizers import create_optimizer
@@ -31,7 +32,7 @@ class Trainer:
         self.config = config
         self.evaluator = evaluator
 
-    def init(self, train_dataloader):
+    def init(self, train_dataloader, eval_dataloader):
         device = torch.device(self.config.device)
         dist_pytorch.main_proc_print("Init progress:")
         self.model, self.model_config, self.tokenizer = create_model(
@@ -39,11 +40,17 @@ class Trainer:
         self.model.to(self.device)
 
         self.model = self.adapter.convert_model(self.model)
-        self.model = self.adapter.model_to_ddp(self.model)
 
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, train_dataloader,
                                              self.config)
+
+        self.accelerator = Accelerator()
+        self.model, self.optimizer, train_dataloader, eval_dataloader, self.lr_scheduler = self.accelerator.prepare(
+            self.model, self.optimizer, train_dataloader, eval_dataloader,
+            self.lr_scheduler)
+
+        return train_dataloader, eval_dataloader
 
     def process_batch(self, batch, device: Device):
         """Process batch and produce inputs for the model."""
@@ -59,8 +66,6 @@ class Trainer:
         device = self.device
         epoch = self.training_state.epoch
         print("Epoch " + str(epoch + 1))
-        if self.config.distributed:
-            train_dataloader.batch_sampler.sampler.set_epoch(epoch)
 
         model.train()
         noeval_start_time = time.time()
@@ -73,7 +78,7 @@ class Trainer:
             outputs = model(**batch)
             loss = outputs.loss
 
-            loss.backward()
+            self.accelerator.backward(loss)
             optimizer.step()
             self.lr_scheduler.step()
             optimizer.zero_grad()
@@ -94,7 +99,8 @@ class Trainer:
         state = self.training_state
         config = self.config
 
-        state.rouge1, state.rouge2, state.rougeL, state.rougeLsum = eval_result
+        state.rouge1, state.rouge2, state.rougeL, state.rougeLsum = eval_result.values(
+        )
         if state.rouge1 >= config.target_rouge1:
             dist_pytorch.main_proc_print(
                 f"converged_success. eval_rouge1: {state.rouge1}, target_rouge1: {config.target_rouge1}"
@@ -105,8 +111,8 @@ class Trainer:
             state.end_training = True
         state.num_trained_samples += len(data_loader.dataset)
 
-    @torch.no_grad()
     def evaluate(self, model, data_loader, device):
+        self.model.eval()
         self.evaluator.reset()
         for step, batch in enumerate(data_loader):
             if step % self.config.log_freq == 0:

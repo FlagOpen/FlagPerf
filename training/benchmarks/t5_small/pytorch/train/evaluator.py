@@ -51,10 +51,12 @@ class Evaluator:
     def __init__(self, config):
         self.config = config
         nltk.data.path.append(os.path.join(config.data_dir, 'nltk_data'))
+        self.metric_path = os.path.join(config.data_dir, 'metrics', 'rouge',
+                                        'rouge.py')
         self.reset()
 
     def reset(self):
-        self.metric = evaluate.load("rouge")
+        self.metric = evaluate.load(self.metric_path)
 
     def add_batch(self, tokenizer, preds, labels):
         preds, labels = pad_across_processes(self.config, preds, labels,

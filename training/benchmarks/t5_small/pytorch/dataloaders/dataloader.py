@@ -55,19 +55,11 @@ def build_train_dataloader(config):
     train_dataset = T5Dataset(
         os.path.join(config.data_dir, 'dataset', 'train_dataset.npz'))
 
-    if config.distributed:
-        train_sampler = torch.utils.data.distributed.DistributedSampler(
-            train_dataset)
-    else:
-        train_sampler = torch.utils.data.RandomSampler(train_dataset)
-
     data_loader = torch.utils.data.DataLoader(
         train_dataset,
+        shuffle=True, 
         batch_size=config.train_batch_size,
-        sampler=train_sampler,
-        collate_fn=my_collate,
-        num_workers=config.num_workers,
-        pin_memory=True)
+        collate_fn=my_collate)
     return data_loader
 
 
@@ -75,29 +67,17 @@ def build_eval_dataloader(config):
     eval_dataset = T5Dataset(
         os.path.join(config.data_dir, 'dataset', 'eval_dataset.npz'))
 
-    if config.distributed:
-        eval_sampler = torch.utils.data.distributed.DistributedSampler(
-            eval_dataset)
-    else:
-        eval_sampler = torch.utils.data.SequentialSampler(eval_dataset)
-
     data_loader = torch.utils.data.DataLoader(
-        eval_dataset,
-        batch_size=config.eval_batch_size,
-        sampler=eval_sampler,
-        collate_fn=my_collate,
-        num_workers=config.num_workers,
-        pin_memory=True)
+        eval_dataset, batch_size=config.eval_batch_size, collate_fn=my_collate)
     return data_loader
 
 
 if __name__ == '__main__':
     from collections import namedtuple
-    Config = namedtuple('Config', [
-        'data_dir', 'distributed', 'train_batch_size', 'eval_batch_size',
-        'num_workers'
-    ])
-    config = Config('t5_small_train/dataset', False, 4, 4, 0)
+    Config = namedtuple(
+        'Config',
+        ['data_dir', 'distributed', 'train_batch_size', 'eval_batch_size'])
+    config = Config('t5_small_train/dataset', False, 4, 4)
     eval_dataloader = build_eval_dataloader(config)
     for i, batch in enumerate(eval_dataloader):
         break

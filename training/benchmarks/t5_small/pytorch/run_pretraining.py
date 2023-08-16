@@ -66,7 +66,8 @@ def main() -> Tuple[Any, Any]:
 
     # 设置分布式环境, trainer init()
     dist_pytorch.barrier(config.vendor)
-    trainer.init(train_dataloader)
+    train_dataloader, eval_dataloader = trainer.init(train_dataloader,
+                                                     eval_dataloader)
     dist_pytorch.barrier(config.vendor)
 
     # evaluation统计

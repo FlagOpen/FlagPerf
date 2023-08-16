@@ -32,7 +32,6 @@ distributed: bool = True
 # =========================================================
 seed: int = 0
 dist_backend: str = 'nccl'
-num_workers: int = 32
 device: str = None
 
 # =========================================================
@@ -40,8 +39,8 @@ device: str = None
 # =========================================================
 local_rank: int = -1
 use_env: bool = True
-log_freq: int = 1
-print_freq: int = 1
+log_freq: int = 500
+print_freq: int = 500
 n_device: int = 1
 sync_bn: bool = False
 gradient_accumulation_steps: int = 1
