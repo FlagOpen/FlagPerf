@@ -17,10 +17,12 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 from utils import cluster_manager
 from utils import flagperf_logger
 from utils import image_manager
+from utils import hardware_manager
 
 VERSION = "v0.1"
 RUN_LOGGER = flagperf_logger.FlagPerfLogger()
 CLUSTER_MGR = cluster_manager.ClusterManager()
+HARDWARE_MGR = hardware_manager.HardwareManager()
 
 
 def usage():
@@ -616,6 +618,13 @@ def main():
                                  "...[FAILED]. Ignore case " + case +
                                  " round " + str(count))
                 continue
+            # Write Hardware info
+            RUN_LOGGER.info("1.1) Write Hardware info...")
+            case_dir = os.path.join(curr_log_path, case)
+            HARDWARE_MGR.init(case_dir)
+            HARDWARE_MGR.write_hardware_info(case_dir)
+            RUN_LOGGER.info(f"write_hardware_info succeed: case_log_dir:{case_log_dir}")
+
             RUN_LOGGER.info("2) Start tasks in the cluster...")
             start_tasks_in_cluster(dp_path, container_name, case_config,
                                    base_args, count, curr_log_path)
