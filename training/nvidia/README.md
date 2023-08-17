@@ -9,8 +9,9 @@ NVIDIA 是人工智能计算领域的领导者。率先采用加速计算，以�
 # FlagPerf适配验证环境说明
 ## 环境配置参考
   - 硬件
-    - 机器型号： NVIDIA A100
+    - 机器型号： NVIDIA DGX A100(40G)
     - 加速卡型号: NVIDIA_A100-SXM4-40GB
+    - CPU型号：AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，2x200 Gb/s
   - 软件
     - OS版本：Ubuntu 20.04
