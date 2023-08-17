@@ -20,4 +20,5 @@ def analysis_log(logpath):
 
 
 if __name__ == "__main__":
-    max1, max2, max2,max4 = analysis_log("/home/zangzhan/FlagPerf/inference/result/run20230809192313/vit_l_16:pytorch_1.13/127.0.0.1_noderank0/kunlunxin_monitor.log")
+    max1, max2, max2,max4 = analysis_log("/home/zhoujiamin01/workspace/zjm_flag/FlagPerf/inference/result/run20230809192313/resnet50:pytorch_1.13/127.0.0.1_noderank0/kunlunxin_monitor.log")
+
