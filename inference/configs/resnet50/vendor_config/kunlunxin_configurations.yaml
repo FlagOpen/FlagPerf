@@ -1,0 +1,4 @@
+fp16: false
+compiler: xtcl
+no_validation: true
+exist_onnx_path: onnxs/resnet50_bs256_pytorch_fp16False.onnx 
