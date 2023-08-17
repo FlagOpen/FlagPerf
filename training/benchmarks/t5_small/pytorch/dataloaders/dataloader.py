@@ -57,7 +57,7 @@ def build_train_dataloader(config):
 
     data_loader = torch.utils.data.DataLoader(
         train_dataset,
-        shuffle=True, 
+        shuffle=True,
         batch_size=config.train_batch_size,
         collate_fn=my_collate)
     return data_loader
