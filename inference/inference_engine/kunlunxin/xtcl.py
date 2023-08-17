@@ -28,7 +28,7 @@ class InferModel:
         mod, params = relay.frontend.from_onnx(onnx_model, shape_dict)
 
         target_host = f'llvm -acc=xpu{os.environ.get("XPUSIM_DEVICE_MODEL", "KUNLUN1")[-1]}'
-        ctx = tvm.device("xpu", 1)
+        ctx = tvm.device("xpu", 0)
         with relay.build_config(opt_level=3):
             vm_exec = relay.backend.vm.compile(mod,
                                              target=target_host,
