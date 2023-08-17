@@ -398,41 +398,41 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/186" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/vit_l_16" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
     <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/190" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/yolov5" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
     <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/191" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/stable_diffusion_v1_4" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
     <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>✅</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>Incoming</td>
    </tr> 
@@ -479,9 +479,6 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>Incoming</td>
    </tr>
 </table>
-
-
-
 
 ### 训练部署及启动说明
 

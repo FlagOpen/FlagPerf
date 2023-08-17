@@ -1,0 +1,3 @@
+trt_tmp_path: nvidia_tmp/yolov5.trt
+has_dynamic_axis: false
+batch_size: 96
