@@ -33,19 +33,12 @@ def parse_args():
                         "the IP address or the hostname of node 0, for "
                         "single node multi-proc training, the "
                         "--master_addr can simply be 127.0.0.1")
-    parser.add_argument("--master_port1",
-                        default=12532,
+    parser.add_argument("--master_port",
+                        default=29501,
                         type=int,
                         help="Master node (rank 0)'s free port that needs to "
                         "be used for communication during distributed "
                         "training")
-    parser.add_argument("--master_port2",
-                        default=58759,
-                        type=int,
-                        help="Master node (rank 0)'s free port that needs to "
-                        "be used for communication during distributed "
-                        "training")
-
     parser.add_argument("--nnodes",
                         type=int,
                         required=True,
@@ -182,11 +175,9 @@ def main():
         current_env["FLAGS_selected_accelerators"] = str(local_rank)
         current_env["PADDLE_LOCAL_DEVICE_IDS"] = str(local_rank)
         current_env["PADDLE_CURRENT_ENDPOINT"] = str(task_args.master_addr) \
-                                                 + ':' + str(task_args.master_port1)
+                                                 + ':' + str(task_args.master_port)
         current_env["PADDLE_TRAINER_ENDPOINTS"] = str(task_args.master_addr) \
-                                                 + ':' + str(task_args.master_port1) \
-                                                 + ',' + str(task_args.master_addr) \
-                                                 + ':' + str(task_args.master_port2)
+                                                 + ':' + str(task_args.master_port) # todo 测试bert
 
         start_cmd = sys.executable + " -u " + train_script_path + " " \
                                    + basic_train_script_args + " 2>&1 | tee " \
