@@ -1,6 +1,6 @@
-FLAGPERF_PATH: "/home/zangzhan/flagperf/FlagPerf/inference"
+FLAGPERF_PATH: "/home/FlagPerf/inference"
 FLAGPERF_LOG_PATH: "result"
-VENDOR: "kunlunxin"
+VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "INFO"
 LOG_CALL_INFORMATION: True
 HOSTS: ["127.0.0.1"]
@@ -13,4 +13,4 @@ PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
-    "vit_l_16:pytorch_1.13": "/home/zangzhan/val"
+    "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
