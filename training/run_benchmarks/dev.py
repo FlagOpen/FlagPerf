@@ -167,7 +167,7 @@ def prepare_running_env(dp_path, container_name, case_config, stdout, nullout):
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
                   + tc.VENDOR + " --pipsource " + tc.PIP_SOURCE + "\""
-    pre_env_cmd = "sudo docker exec -i " + container_name + " bash -c \"" + "python3 " \
+    pre_env_cmd = "docker exec -i " + container_name + " bash -c \"" + "python3 " \
                   + tc.FLAGPERF_PATH + "/" \
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
@@ -200,7 +200,7 @@ def start_container_in_cluster(dp_path, run_args, container_name, image_name,
                 + " utils/container_manager.py -o runnew " \
                 + " -c " + container_name + " -i " + image_name + " -a \"" \
                 + run_args + "\""
-    start_container_cmd = "sudo docker run " + run_args + \
+    start_container_cmd = "docker run " + run_args + \
                       " --name=" + container_name + " \"" + image_name + "\" " + \
                       "sleep infinity"
     sys.stdout = stdout
@@ -241,7 +241,7 @@ def clear_caches_cluster(clear, nnodes):
         RUN_LOGGER.info("Caches clear config is NOT set.")
         return
 
-    clear_cmd = "sync && sudo /sbin/sysctl vm.drop_caches=3"
+    clear_cmd = "sync /sbin/sysctl vm.drop_caches=3"
     timeout = 30
     RUN_LOGGER.debug("Run cmd in the cluster to clear the system cache: " +
                      clear_cmd + " timeout=" + str(timeout))
