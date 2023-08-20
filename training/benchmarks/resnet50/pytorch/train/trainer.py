@@ -126,6 +126,7 @@ class Trainer:
 
     @torch.no_grad()
     def evaluate(self, model, data_loader, device):
+        model.eval()
         acc1_total = 0.0
         steps = 0
         for step, batch in enumerate(data_loader):
