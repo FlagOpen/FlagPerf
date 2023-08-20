@@ -1,0 +1,6 @@
+six==1.16.0
+paddle-bfloat==0.1.7
+paddle2onnx==1.0.6
+paddlefsl==1.1.0
+paddlenlp==2.6.0rc0.post0
+astor==0.8.1
