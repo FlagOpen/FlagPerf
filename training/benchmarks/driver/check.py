@@ -20,6 +20,11 @@ def get_config_arg(config, name):
 
 
 def check_config(config):
+    print(
+        "device: {} world_size: {}, distributed training: {}, 16-bits training: {}"
+        .format(config.device, config.world_size, config.local_rank != -1,
+                config.fp16))
+
     data_dir = get_config_arg(config, "data_dir")
     if data_dir is None:
         raise ValueError("Invalid data_dir, should be given a path.")
