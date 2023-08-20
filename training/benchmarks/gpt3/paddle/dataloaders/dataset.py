@@ -20,8 +20,6 @@ import numpy as np
 import paddle
 from paddle.io import DataLoader
 
-from icecream import ic
-
 def construct_samples_and_shuffle_data(
     name, data_prefix, documents, sizes, num_samples, seq_length, seed, build_data_file
 ):

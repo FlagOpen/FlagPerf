@@ -21,7 +21,7 @@ import paddle
 from .dataset import GPTDataset
 from paddlenlp.utils.log import logger
 from paddle.io import DataLoader, DistributedBatchSampler
-from icecream import ic
+
 
 def get_train_data_file(config):
     input_dir = os.path.join(config.base_path, config.data_dir)
