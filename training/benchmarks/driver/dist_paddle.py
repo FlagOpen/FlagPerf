@@ -6,11 +6,6 @@ import os
 from contextlib import contextmanager
 
 
-def setup_seeds(config):
-	paddlenlp.trainer.set_seed(config.seed, config)
-
-
-
 def barrier():
     if dist.is_initialized():
         dist.barrier()
