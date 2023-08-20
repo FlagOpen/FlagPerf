@@ -13,25 +13,35 @@
 # limitations under the License.
 
 # pass
-import paddle
 import paddle.distributed.fleet as fleet
 import paddle.nn as nn
-from paddle.distributed.fleet.meta_parallel import LayerDesc, PipelineLayer
-
-from paddlenlp.transformers import PretrainedModel
-from .modeling import (
-    LlamaConfig,
-    LlamaDecoderLayer,
-    LlamaLMHead,
-    LlamaModel,
-    LlamaPretrainedModel,
-    LlamaPretrainingCriterion,
-    LlamaRMSNorm,
+from paddle.distributed.fleet.meta_parallel import (
+    LayerDesc,
+    PipelineLayer,
+    SharedLayerDesc,
 )
+from paddle.distributed.fleet.utils import recompute
+
+from paddlenlp.transformers import (
+    GPTConfig,
+    GPTDecoderLayer,
+    GPTEmbeddings,
+    GPTPretrainedModel,
+    GPTPretrainingCriterion,
+    PretrainedModel,
+)
+from paddlenlp.transformers.gpt.modeling import parallel_matmul
 
 
 def get_hcg():
     return fleet.get_hybrid_communicate_group()
+
+
+def get_attr(layer, name):
+    if getattr(layer, name, None) is not None:
+        return getattr(layer, name, None)
+    else:
+        return get_attr(layer._layer, name)
 
 
 def parse_args(args):
@@ -67,53 +77,40 @@ def return_args(hidden_states, attention_mask=None, position_ids=None):
     return ret
 
 
-class LlamaEmbeddingPipe(nn.Layer):
-    """Extends LlamaEmbeddings to forward attention_mask through the pipeline."""
+class GPTEmbeddingPipe(GPTEmbeddings):
+    """Extends GPTEmbeddings to forward attention_mask through the pipeline."""
 
-    def __init__(self, config):
-        super(LlamaEmbeddingPipe, self).__init__()
-        if config.tensor_parallel_degree > 1:
-            self.embed_tokens = fleet.meta_parallel.VocabParallelEmbedding(
-                config.vocab_size,
-                config.hidden_size,
-                weight_attr=paddle.ParamAttr(initializer=nn.initializer.XavierNormal()),
-            )
-        else:
-            self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size)
+    @property
+    def embedding_weight(self):
+        return get_attr(self.word_embeddings, "weight")
 
     def forward(self, args):
-        """_summary_
-
-        Args:
-            input (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         input_ids, attention_mask, position_ids = parse_args(args)
-
-        input_embeds = self.embed_tokens(input_ids)
-        batch_size, seq_length = input_ids.shape
-        if attention_mask is not None:
-            attention_mask = LlamaModel._prepare_decoder_attention_mask(
-                attention_mask, (batch_size, seq_length), 0, input_embeds.dtype
-            )
-            attention_mask.stop_gradient = True
-
-        return return_args(input_embeds, attention_mask, position_ids)
+        input_ids.stop_gradient = True
+        embeddings = super().forward(input_ids=input_ids, position_ids=position_ids)
+        return embeddings
 
 
-class LlamaDecoderLayerPipe(LlamaDecoderLayer):
+class GPTDecoderLayerPipe(GPTDecoderLayer):
     def forward(self, args):
         hidden_states, attention_mask, position_ids = parse_args(args)
-        hidden_states = super().forward(hidden_states, attention_mask=attention_mask)
+        # hidden_states = super().forward(hidden_states, tgt_mask=attention_mask)
+        if self.enable_recompute and self.config.recompute_granularity == "full":
+            hidden_states = recompute(super().forward, hidden_states, attention_mask)
+        else:
+            hidden_states = super().forward(hidden_states, tgt_mask=attention_mask)
+
         return return_args(hidden_states, attention_mask, position_ids)
 
 
-class LlamaRMSNormPipe(LlamaRMSNorm):
+class LayerNormPipe(nn.LayerNorm):
+    def __init__(self, config):
+        super(LayerNormPipe, self).__init__(config.hidden_size, epsilon=1e-05)
+
     def forward(self, args):
         hidden_states, attention_mask, position_ids = parse_args(args)
-        return super().forward(hidden_states)
+        hidden_states = super().forward(hidden_states)
+        return return_args(hidden_states, attention_mask, position_ids)
 
 
 class PipelinePretrainedModel(PretrainedModel):
@@ -146,19 +143,49 @@ class PipelinePretrainedModel(PretrainedModel):
             prefixs = self.get_sequential_name_prefixs()
             for k in state_dict_keys:
                 name_splited = k.split(".")
+                # TODO(wawltor) Fix the virtual pipeline
                 if use_virtual_pp_degree:
                     idx = str(int(name_splited[0]) + int(name_splited[1]))
                     single_name = [prefixs[idx]]
                     single_name.extend(name_splited[2:])
                 else:
                     idx = name_splited[0]
-                    single_name = [prefixs[idx]]
-                    single_name.extend(name_splited[1:])
+                    if idx == "shared_layers":
+                        single_name = name_splited[2:]
+                        single_name = ["gpt.embeddings"] + single_name
+                    elif idx.isdigit():
+                        single_name = [prefixs[idx]]
+                        single_name.extend(name_splited[1:])
+                    else:
+                        raise ("The mapping table had bad row, please check parameter name:{}".format(k))
                 mapping[".".join(single_name)] = k
 
             self._pipeline_name_mapping = mapping
 
         return self._pipeline_name_mapping
+
+    def _prepare_pipeline_inputs_func(self, inputs):
+        first_stage_keys = ["input_ids", "attention_mask"]
+        last_stage_keys = ["labels"]
+
+        def get_expected_keys(inputs, keys):
+            ret = tuple([inputs.pop(k) for k in keys if k in inputs])
+            if len(ret) == 1:
+                ret = ret[0]
+            return ret
+
+        if type(inputs) is dict:
+            return [
+                get_expected_keys(inputs, first_stage_keys),
+                get_expected_keys(inputs, last_stage_keys),
+            ]
+
+        keys = list(inputs[0].keys())
+        inputs_batch = {key: [data.pop(key) for data in inputs] for key in keys}
+        return [
+            get_expected_keys(inputs_batch, first_stage_keys),
+            get_expected_keys(inputs_batch, last_stage_keys),
+        ]
 
     def state_dict(self, *args, **kwargs):
         state_dict = super().state_dict(*args, **kwargs)
@@ -189,36 +216,27 @@ class PipelinePretrainedModel(PretrainedModel):
         return ret
 
 
-class LlamaForCausalLMPipe(PipelinePretrainedModel, PipelineLayer):
+class GPTForCausalLMPipe(PipelinePretrainedModel, PipelineLayer):
     """LlamaForPretraining adapted for pipeline parallelism.
 
     The largest change is flattening the LlamaModel class so we can express it as a
     sequence of layers including embedding, transformer layers, and output.
     """
 
-    config_class = LlamaConfig
+    config_class = GPTConfig
 
-    _get_tensor_parallel_mappings = LlamaPretrainedModel._get_tensor_parallel_mappings
-    _init_weights = LlamaPretrainedModel._init_weights
+    _get_tensor_parallel_mappings = GPTPretrainedModel._get_tensor_parallel_mappings
+    _init_weights = GPTPretrainedModel._init_weights
 
     # NO base_model_prefix !!!!
 
     def __init__(
         self,
         config,
-        # use_recompute=None,
-        # scale_qk_by_layer_num=True,
-        # recompute_granularity="full",
-        # virtual_pp_degree=4,
-        # sequence_parallel=False,
-        # no_recompute_layers=None,
         pp_recompute_interval=1,
     ):
         self.config = config
 
-        use_recompute = self.config.use_recompute
-        recompute_granularity = self.config.recompute_granularity
-        # virtual_pp_degree = self.config.virtual_pp_degree
         virtual_pp_degree = getattr(self.config, "virtual_pp_degree", 1)
 
         hcg = get_hcg()
@@ -228,28 +246,46 @@ class LlamaForCausalLMPipe(PipelinePretrainedModel, PipelineLayer):
         config.tensor_parallel_degree = tensor_parallel_degree
         config.tensor_parallel_rank = tensor_parallel_rank
 
-        self.add_sequential_layer(LayerDesc(LlamaEmbeddingPipe, config=config), "llama")
+        self.add_sequential_layer(
+            SharedLayerDesc("gpt", GPTEmbeddingPipe, shared_weight_attr="embedding_weight", config=config), "gpt"
+        )
         for i in range(config.num_hidden_layers):
-            self.add_sequential_layer(LayerDesc(LlamaDecoderLayerPipe, config=config), f"llama.layers.{i}")
+            self.add_sequential_layer(
+                LayerDesc(GPTDecoderLayerPipe, config=config),
+                f"gpt.decoder.layers.{i}",
+            )
 
-        self.add_sequential_layer(LayerDesc(LlamaRMSNormPipe, config=config), "llama.norm")
-        self.add_sequential_layer(LayerDesc(LlamaLMHead, config=config), "lm_head")
+        self.add_sequential_layer(LayerDesc(LayerNormPipe, config=config), "gpt.decoder.norm")
+
+        def _logits_helper(embedding, output):
+            return parallel_matmul(output, embedding.embedding_weight, True)
+
+        self.add_sequential_layer(
+            SharedLayerDesc(
+                "gpt",
+                GPTEmbeddingPipe,
+                forward_func=_logits_helper,
+                shared_weight_attr="embedding_weight",
+                config=config,
+            ),
+            "gpt",
+        )
 
         recompute_interval = 0
-        if use_recompute and recompute_granularity == "full":
-            assert pp_recompute_interval <= config.num_hidden_layers // (
-                virtual_pp_degree * get_hcg().topology().get_dim_size("pipe")
-            ), "pp recompute interval should smaller than num layers of each pp chunk"
-            recompute_interval = pp_recompute_interval
+        # if use_recompute and recompute_granularity == "full":
+        #    assert pp_recompute_interval <= config.num_hidden_layers // (
+        #        virtual_pp_degree * get_hcg().topology().get_dim_size("pipe")
+        #    ), "pp recompute interval should smaller than num layers of each pp chunk"
+        #    recompute_interval = pp_recompute_interval
 
-        seg_method = "layer:LlamaDecoderLayer"
+        seg_method = "layer:GPTDecoderLayer"
         if config.num_hidden_layers % get_hcg().topology().get_dim_size("pipe") != 0:
             seg_method = "uniform"
 
         PipelineLayer.__init__(
             self,
             layers=self.get_sequential_layers(),
-            loss_fn=LlamaPretrainingCriterion(config),
+            loss_fn=GPTPretrainingCriterion(config),
             topology=get_hcg().topology(),
             seg_method=seg_method,
             recompute_interval=recompute_interval,
@@ -261,5 +297,3 @@ class LlamaForCausalLMPipe(PipelinePretrainedModel, PipelineLayer):
             num_virtual_pipeline_stages=virtual_pp_degree,
         )
         self.apply(self._init_weights)
-        # DON'T init PipelinePretrainedModel
-        # PipelinePretrainedModel.__init__(self.super(), config=config)
