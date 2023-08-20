@@ -40,7 +40,7 @@ class InitHelper:
         """set local rank"""
         self.config.local_rank = int(os.getenv("LOCAL_RANK", 0))
 
-    def set_seed(self, seed: int, vendor: str = None):
+    def set_seed(self, seed: int, vendor: str = None, framework: str = None):
         """set seed"""
         random.seed(seed)
         np.random.seed(seed)
@@ -50,15 +50,22 @@ class InitHelper:
             raise ValueError("vendor was missing for config")
 
         lower_vendor = config.vendor.lower()
+        lower_framework = config.framework.lower()
 
         if lower_vendor == "nvidia":
-            import torch
-            torch.manual_seed(seed)
-            torch.cuda.manual_seed(seed)
-            torch.cuda.manual_seed_all(seed)
-            torch.backends.cudnn.benchmark = getattr(config, "cudnn_benchmark")
-            torch.backends.cudnn.deterministic = getattr(
-                config, "cudnn_deterministic")
+            
+            if lower_framework == "pytorch":
+                import torch
+                torch.manual_seed(seed)
+                torch.cuda.manual_seed(seed)
+                torch.cuda.manual_seed_all(seed)
+                torch.backends.cudnn.benchmark = getattr(config, "cudnn_benchmark")
+                torch.backends.cudnn.deterministic = getattr(
+                    config, "cudnn_deterministic")
+            elif lower_framework == "paddle":
+                import paddlenlp
+                paddlenlp.trainer.set_seed(config.seed, config)
+            
         elif lower_vendor == "iluvatar":
             import torch
             torch.manual_seed(seed)
