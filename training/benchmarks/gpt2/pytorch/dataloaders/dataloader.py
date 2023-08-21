@@ -64,7 +64,6 @@ def build_data_loader(dataset, train_batch_size, num_workers, drop_last,
 
     return data_loader
 
-
 class MegatronPretrainingSampler:
 
     def __init__(self, total_samples, consumed_samples, train_batch_size,
@@ -112,4 +111,3 @@ class MegatronPretrainingSampler:
         if len(batch) > 0 and not self.drop_last:
             start_idx, end_idx = self.get_start_end_idx()
             yield batch[start_idx:end_idx]
-

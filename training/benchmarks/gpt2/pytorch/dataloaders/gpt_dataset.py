@@ -8,7 +8,7 @@ import numpy as np
 import torch
 
 from dataloaders.indexed_dataset import make_dataset as make_indexed_dataset
-from dataloaders.data_samplers import build_pretraining_data_loader, build_data_loader
+from dataloaders.dataloader import build_pretraining_data_loader, build_data_loader
 from dataloaders import get_tokenizer
 
 import config

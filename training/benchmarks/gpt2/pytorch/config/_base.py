@@ -1,8 +1,13 @@
+# Required parameters
+
 vendor: str = None
+data_dir: str = None
 name: str = "GPT2"
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
+
 use_env: bool = True
 log_freq: int = 1
-dist_backend: str = None
 device: str = None
 
 # =========================================================
@@ -24,7 +29,6 @@ target_acc: float = 0.70
 # data
 # =========================================================
 
-data_dir: str = None
 train_data_prefix: str = "lambada_train_text_document"
 test_data_prefix: str = "lambada_test.json"
 init_checkpoint: str = "model_optim_rng.pt"
@@ -113,6 +117,7 @@ eod_mask_loss: bool = False
 # distributed parallel
 # =========================================================
 
+dist_backend: str = None
 DDP_impl: str = "native"
 gradient_accumulation_fusion: bool = False
 use_contiguous_buffers_in_local_ddp: bool = False

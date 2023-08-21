@@ -2,9 +2,13 @@ import torch
 
 
 def cross_entropy(outputs, target):
-    #para:   outputs, [b, s, vocab_size]
-    #        target, [b, s]
-    #return: loss, [b, s]
+    """
+    Compute the cross entropy loss of output and target. 
+
+    para:   outputs, [b, s, vocab_size]
+            target, [b, s]
+    return: loss, [b, s]
+    """
 
     logits = outputs.clone()
     # logits = outputs

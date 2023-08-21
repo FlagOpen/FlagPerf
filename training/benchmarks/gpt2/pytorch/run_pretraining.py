@@ -1,8 +1,8 @@
-"""GPT2 Pretraining"""
+# Copyright © 2022 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+"""GPT2 Pretraining"""
 
 import argparse
 import os
@@ -29,7 +29,6 @@ logger = None
 
 def main():
     import config
-    from config import mutable_params
     global logger
 
     if config.use_env and 'LOCAL_RANK' in os.environ:
