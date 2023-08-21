@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import torch.nn.init as init
 from torch.nn.parameter import Parameter
 
-from .utils import divide
+from model.layers.utils import divide
 
 
 def _initialize_affine_weight_cpu(weight, output_size, input_size,

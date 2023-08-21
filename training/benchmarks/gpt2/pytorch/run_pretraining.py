@@ -14,11 +14,11 @@ from functools import partial
 import numpy as np
 import torch
 
-from dataloaders.gpt_dataset import build_train_test_datasets, build_train_test_data_dataloaders
-from train.evaluator import Evaluator
 from train.trainer import Trainer
-from train.training_state import TrainingState
 from train import trainer_adapter
+from train.evaluator import Evaluator
+from train.training_state import TrainingState
+from dataloaders.gpt_dataset import build_train_test_datasets, build_train_test_data_dataloaders
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
@@ -89,27 +89,23 @@ def main():
     init_evaluation_info = dict(
         eval_lambada_acc=training_state.eval_lambada_acc,
         time=init_evaluation_end - init_evaluation_start)
-    # training_event.on_init_evaluate(init_evaluation_info)
     gpt2_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     if not config.do_train:
         return config, training_state
 
-    # training_event.on_init_end()
     gpt2_driver.event(Event.INIT_END)
     init_end_time = logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
     dist_pytorch.barrier(config.vendor)
     epoch = -1
-    # training_event.on_train_begin()
     gpt2_driver.event(Event.TRAIN_START)
     raw_train_start_time = logger.previous_log_time
     while training_state.global_steps < config.max_steps and not training_state.end_training:
         epoch += 1
         training_state.epoch = epoch
         trainer.train_one_epoch(train_dataloader)
-    # training_event.on_train_end()
     gpt2_driver.event(Event.TRAIN_END)
     raw_train_end_time = logger.previous_log_time
     training_state.raw_train_time = (raw_train_end_time -
@@ -119,14 +115,14 @@ def main():
 
 if __name__ == "__main__":
     now = time.time()
-    config, state = main()
+    config_updated, state = main()
 
     if not dist_pytorch.is_main_process():
         exit()
 
     e2e_time = time.time() - now
     trained_samples = state.num_trained_samples
-    if config.do_train:
+    if config_updated.do_train:
         finished_info = {
             "e2e_time": e2e_time,
             "train_samples": trained_samples,

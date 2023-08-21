@@ -2,11 +2,8 @@
 
 """Dataloaders."""
 
-
-import random
 import torch
-import numpy as np
-from torch.utils.data import Dataset
+
 from mpu import get_data_parallel_rank, get_data_parallel_world_size
 import config
 

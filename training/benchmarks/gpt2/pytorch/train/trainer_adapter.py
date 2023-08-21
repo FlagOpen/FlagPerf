@@ -2,20 +2,15 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
 
-import os
 from typing import Tuple
 
 import torch
-import torch.distributed as dist
-from torch.cuda.amp import GradScaler
-from torch.nn.parallel import DistributedDataParallel as NativeDDP
 from torch.optim import Optimizer
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as NativeDDP
+
 import config
-
 from optimizer import get_megatron_optimizer
-
-#from converter import convert_model
-
 
 GPT_MODEL = torch.nn.Module
 
@@ -45,13 +40,6 @@ def model_to_ddp(config, model: GPT_MODEL) -> GPT_MODEL:
             assert False, "Invalid DDP type"
     return model
 
-def grad_fns(tensor):
-    fn_list = []
-    tmp = tensor.grad_fn
-    while tmp is not None:
-        fn_list.append(tmp)
-        tmp = tmp.next_functions[0][0] if len(tmp.next_functions) > 0 else None
-    return fn_list
 
 def backward(step: int,
              loss: torch.Tensor,

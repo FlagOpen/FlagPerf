@@ -1,6 +1,5 @@
 import os
 import sys
-import imp
 import torch
 
 from train.utils import process_batch_eval
@@ -45,4 +44,3 @@ class Evaluator:
         acc = total_output / num_examples
         model.eval()
         return acc.item()
-

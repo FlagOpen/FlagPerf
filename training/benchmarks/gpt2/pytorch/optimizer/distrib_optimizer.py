@@ -1,13 +1,12 @@
 # Copyright (c) 2023, NVIDIA CORPORATION. All rights reserved.
 
 """Megatron distributed optimizer."""
-
-from torch.optim import AdamW as Adam
 import math
+
 import torch
+from torch.optim import AdamW as Adam
 
 from mpu import get_data_parallel_world_size, get_data_parallel_rank
-
 from optimizer.optimizer import MixedPrecisionOptimizer, _zero_grad_group_helper
 import config
 

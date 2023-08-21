@@ -7,7 +7,6 @@ from abc import abstractmethod
 
 import torch
 
-
 class MegatronGradScaler(ABC):
 
     def __init__(self, initial_scale):

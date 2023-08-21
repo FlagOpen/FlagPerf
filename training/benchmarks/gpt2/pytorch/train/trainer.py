@@ -123,9 +123,7 @@ class Trainer():
     def train_one_epoch(self, dataloader):
         state = self.training_state
         driver = self.driver
-        #training_event = self.training_event
         driver.event(Event.EPOCH_BEGIN, state.epoch)
-        #training_event.on_epoch_begin(state.epoch)
 
         no_eval_start = time.time()
         for _, data in enumerate(dataloader):
@@ -137,7 +135,6 @@ class Trainer():
             state.num_trained_samples = state.global_steps * dist_pytorch.global_batch_size(
                 self.config)
 
-            #self.training_event.on_step_begin(state.global_steps)
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
             self.train_one_step(tokens, position_ids, attention_mask, labels, loss_mask)
 
@@ -164,21 +161,18 @@ class Trainer():
             end_training = self.detect_training_status(state)
 
             step_info = state.to_dict(**other_state)
-            #self.training_event.on_step_end(state.global_steps, result=step_info)
             driver.event(Event.STEP_END,
                          message=step_info,
                          step=state.global_steps,
                          loss=state.loss)
 
             if eval_result is not None:
-                #self.training_event.on_evaluate(eval_result)
                 driver.event(Event.EVALUATE, eval_result)
 
             if end_training:
                 break
             no_eval_start = time.time()
 
-        #training_event.on_epoch_end(state.epoch)
         driver.event(Event.EPOCH_END, state.epoch)
 
     def train_one_step(self, tokens, position_ids, attention_mask, labels, loss_mask):

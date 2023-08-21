@@ -6,7 +6,6 @@ from torch.optim import AdamW as Adam
 from optimizer.distrib_optimizer import DistributedOptimizer
 from optimizer.grad_scaler import ConstantGradScaler, DynamicGradScaler
 from optimizer.optimizer import Float16OptimizerWithFloat16Params, FP32Optimizer
-
 import config
 
 def get_param_groups(module,

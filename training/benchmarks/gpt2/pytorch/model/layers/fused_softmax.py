@@ -1,10 +1,9 @@
 # Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
 
-
 import torch
 import torch.nn as nn
-from ..models.enums import AttnMaskType
 
+from model.models.enums import AttnMaskType
 
 class ScaledUpperTriangMaskedSoftmax(torch.autograd.Function):
     """

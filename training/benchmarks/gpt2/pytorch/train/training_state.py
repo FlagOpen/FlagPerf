@@ -7,7 +7,6 @@ from dataclasses import dataclass
 import torch
 import inspect
 
-
 @dataclass
 class TrainingState:
     _trainer = None

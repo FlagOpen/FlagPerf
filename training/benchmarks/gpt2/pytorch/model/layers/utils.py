@@ -3,8 +3,8 @@
 """Utilities for layers."""
 
 import math
-import torch
 
+import torch
 
 def attention_mask_func(attention_scores, attention_mask):
     attention_scores.masked_fill_(attention_mask, -10000.0)

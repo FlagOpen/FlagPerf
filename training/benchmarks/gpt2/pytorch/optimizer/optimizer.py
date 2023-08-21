@@ -4,14 +4,11 @@
 
 from abc import ABC
 from abc import abstractmethod
+
 import torch
-from torch.nn.parallel.distributed import DistributedDataParallel as torchDDP
-from torch._utils import _flatten_dense_tensors, _unflatten_dense_tensors
 
 from model.models.module import param_is_not_shared
-
-from .clip_grads import clip_grad_norm_fp32
-import config
+from optimizer.clip_grads import clip_grad_norm_fp32
 
 def _zero_grad_group_helper(group, set_to_none):
     """Zero out the gradient for a group of parameters.

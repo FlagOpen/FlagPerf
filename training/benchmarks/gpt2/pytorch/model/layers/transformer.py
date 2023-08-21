@@ -1,19 +1,20 @@
 # Copyright (c) 2023, NVIDIA CORPORATION. All rights reserved.
 
 """Transformer."""
-from contextlib import nullcontext
 import math
+from typing import Optional, List
+from contextlib import nullcontext
+
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.nn import LayerNorm
-from typing import Optional, List
 
 from model.models.module import MegatronModule
 from model.layers import layers
-from model.models.enums import AttnMaskType, LayerType, AttnType, ModelType
-from .fused_softmax import FusedScaleMaskSoftmax
-from .fused_bias_gelu import bias_gelu_impl
+from model.models.enums import AttnMaskType, LayerType, AttnType
+from model.layers.fused_softmax import FusedScaleMaskSoftmax
+from model.layers.fused_bias_gelu import bias_gelu_impl
 from model.layers.utils import attention_mask_func
 import config
 
