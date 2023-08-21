@@ -1,4 +1,6 @@
-# coding=utf-8
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 import torch
 
 
@@ -58,14 +60,12 @@ def multichoice_evaluate(model, dataloader, args, segment_length=10):
             total_score += batch_score
 
     model.train()
-    #config.training_event_instance.device_barrier()
     if torch.distributed.is_available() and torch.distributed.is_initialized():
         torch.distributed.all_reduce(total_sample,
                                      op=torch.distributed.ReduceOp.SUM)
         torch.distributed.all_reduce(total_score,
                                      op=torch.distributed.ReduceOp.SUM)
 
-    # print(f"samples:{total_sample}, score:{total_score}")
     score = total_score / total_sample
 
     return score.item()
@@ -77,5 +77,4 @@ def em_evaluate(predictions, labels):
     for pred, true_list in zip(predictions, labels):
         if pred in true_list:
             score += 1
-    # score = 100.0 * score / len(predictions)
     return score
