@@ -5,6 +5,7 @@ We use ImageNet2012 Validation Images:
 | Dataset                       | FileName               | Size  | Checksum                              |
 | ----------------------------- | ---------------------- | ----- | ------------------------------------- |
 | Validation images (all tasks) | ILSVRC2012_img_val.tar | 6.3GB | MD5: 29b22e2961454d5413ddabcf34fc5622 |
+
 Dataset format conversion：
 https://github.com/pytorch/examples/blob/main/imagenet/extract_ILSVRC.sh
 
