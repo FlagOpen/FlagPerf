@@ -17,7 +17,9 @@ torchvision.models.resnet.__dict__['model_urls'][
 #### 环境配置
 
 - ##### 硬件环境
-    - 机器、加速卡型号: NVIDIA_A100-SXM4-40GB
+    - 机器型号: NVIDIA DGX A100(40G) 
+    - 加速卡型号: NVIDIA_A100-SXM4-40GB
+    - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
 
 - ##### 软件环境
@@ -53,8 +55,8 @@ torchvision.models.resnet.__dict__['model_urls'][
 | 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | mAP    | mem       |
 | ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
 | A100单机8卡（1x8）  | fp32      | bs=16,lr=0.08 | 15253    | 138     | 152     | 164    | 0.3529 | 38.8/40.0 |
-| A100单机单卡（1x1） | fp32      | bs=16,lr=0.08 |          |         |         |        |        |           |
-| A100两机8卡（2x8）  | fp32      | bs=16,lr=0.08 |          |         |         |        |        |           |
+| A100单机单卡（1x1） | fp32      | bs=16,lr=0.04 |          | 22.3    | 23.6    | 25.2   |        | 39.5/40.0 |
+| A100两机8卡（2x8）  | fp32      | bs=16,lr=0.08 |          | 258     | 297     | 322    |        | 38.5/40.0 |
 
 
 训练精度来源：[torchvision.models — Torchvision 0.8.1 documentation (pytorch.org)](https://pytorch.org/vision/0.8/models.html?highlight=faster#torchvision.models.detection.retinanet_resnet50_fpn)

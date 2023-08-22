@@ -1,0 +1,5 @@
+seq_length: 512
+mask_ratio: 0.10
+weight_dir: "weights"
+eval_file: "eval.txt"
+random_seed: 0

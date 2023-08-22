@@ -1,7 +1,6 @@
 FLAGPERF_PATH: "/home/FlagPerf/inference"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
-MODEL: "resnet50"
 FLAGPERF_LOG_LEVEL: "INFO"
 LOG_CALL_INFORMATION: True
 HOSTS: ["127.0.0.1"]

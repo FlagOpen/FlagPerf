@@ -81,12 +81,15 @@ def engine_forward(model, dataloader, evaluator, config):
             with torch.no_grad():
 
                 outputs = model([x])
-                pred = outputs[0][0]
+                pred = outputs[0]
                 foo_time += outputs[1]
-                pred = pred.float()
+
                 torch_sync(config)
                 core_time += time.time() - core_time_start
 
+                pred = pred[0].float()
+                pred = pred.reshape(config.batch_size, -1)
+                pred = pred.cpu()
                 top1 = evaluator(pred, y)
 
                 all_top1.extend(top1.cpu())
