@@ -9,7 +9,7 @@ export BASE_PATH=$(cd "$CUR_PATH/../";pwd)
 . $CODE_PATH/common/cluster_common.sh
 . $CODE_PATH/common/node_common.sh
 
-LONGOPTS="log_dir:,data_dir:,nproc:"
+LONGOPTS="log_dir:,data_dir:,nproc:,real_log_dir:"
 PARSED=$(getopt --options=hi:o: --longoptions="$LONGOPTS" --name "$0" -- "$@")
 eval set -- "$PARSED"
 while true; do
@@ -24,6 +24,10 @@ while true; do
             ;;
         -n|--nproc)
             NPROC="$2"
+            shift 2
+            ;;
+        -rl|--real_log_dir)
+            REAL_LOG_DIR="$2"
             shift 2
             ;;
         --)
