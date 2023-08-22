@@ -306,7 +306,7 @@ def train_net():
     train_start_time = time.time()
     real_epoch = config.epoch_size - config.has_trained_epoch
     model.train(real_epoch, dataset, callbacks=cb,
-                sink_size=dataset.get_dataset_size(), dataset_sink_mode=true)
+                sink_size=dataset.get_dataset_size(), dataset_sink_mode=True)
     train_time = time.time() - train_start_time
 
     if config.run_eval and config.enable_cache:

@@ -92,3 +92,33 @@ def create_dataset(dataset_path, do_train, batch_size=32, train_image_size=224, 
     data_set = data_set.batch(batch_size, drop_remainder=True)
 
     return data_set
+
+
+def _get_rank_info(distribute):
+    """
+    get rank size and rank id
+    """
+    if distribute:
+        init()
+        rank_id = get_rank()
+        device_num = get_group_size()
+    else:
+        rank_id = 0
+        device_num = 1
+    return device_num, rank_id
+
+
+def get_num_parallel_workers(num_parallel_workers):
+    """
+    Get num_parallel_workers used in dataset operations.
+    If num_parallel_workers > the real CPU cores number, set num_parallel_workers = the real CPU cores number.
+    """
+    cores = multiprocessing.cpu_count()
+    if isinstance(num_parallel_workers, int):
+        if cores < num_parallel_workers:
+            print("The num_parallel_workers {} is set too large, now set it {}".format(num_parallel_workers, cores))
+            num_parallel_workers = cores
+    else:
+        print("The num_parallel_workers {} is invalid, now set it {}".format(num_parallel_workers, min(cores, 8)))
+        num_parallel_workers = min(cores, 8)
+    return num_parallel_workers

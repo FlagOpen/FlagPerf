@@ -144,7 +144,7 @@ def _get_basic_train_script_args(task_args):
                               + " --data_dir " + task_args.data_dir \
                               + " --log_dir " + task_log_dir \
                               + " --real_log_dir " + task_args.log_dir \
-                              + " --nproc "+ str(task_args.nproc)
+                              + " --nproc " + str(task_args.nproc)
     if task_args.enable_extern_config:
         basic_train_script_args += " --enable_extern_config " \
                                    + "--extern_module_dir " + extern_module_dir
