@@ -1,5 +1,7 @@
-train_batch_size = 8
-eval_batch_size = 8
+train_batch_size = 16
+eval_batch_size = 16
+
+max_samples_termination = 24135
 
 dist_backend = "nccl"
 
