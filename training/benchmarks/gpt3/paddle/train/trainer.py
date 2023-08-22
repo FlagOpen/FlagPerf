@@ -158,16 +158,13 @@ class Trainer:
 
     # @profile(precision=4, stream=open("memory_profiler_train_step.log", "w+"))
     def train_one_step(self, inputs):
-        self.model.eval()
+        self.model.train()
         state = self.training_state
 
         # np.random.seed(10)
         # x = np.random.randint(2500, size=(1,1024))
         # inputs['input_ids'] = paddle.to_tensor(x[:, :-1], dtype="int64")
         # inputs['labels'] = paddle.to_tensor(x[:, 1:], dtype="int64")
-
-        outputs = self.model(**inputs)
-        loss_step = outputs[0]
 
         with self.adapter.autocast_smart_context_manager(self.config):
             #  with paddle.amp.auto_cast(level='O2'):
