@@ -18,7 +18,7 @@ import time
 
 import numpy as np
 import paddle
-from paddle.io import DataLoader
+
 
 def construct_samples_and_shuffle_data(
     name, data_prefix, documents, sizes, num_samples, seq_length, seed, build_data_file
@@ -61,14 +61,20 @@ def construct_samples_and_shuffle_data(
             if num_epochs == 1:
                 separate_last_epoch = False
             else:
-                num_samples_from_epochs_minus_one = ((num_epochs - 1) * tokens_per_epoch - 1) // seq_length
+                num_samples_from_epochs_minus_one = (
+                    (num_epochs - 1) * tokens_per_epoch - 1
+                ) // seq_length
                 last_epoch_num_samples = num_samples - num_samples_from_epochs_minus_one
-                assert last_epoch_num_samples >= 0, "last epoch number of samples should be non-negative."
+                assert (
+                    last_epoch_num_samples >= 0
+                ), "last epoch number of samples should be non-negative."
                 num_samples_per_epoch = (tokens_per_epoch - 1) // seq_length
                 assert last_epoch_num_samples < (
                     num_samples_per_epoch + 1
                 ), "last epoch number of samples exceeded max value."
-                separate_last_epoch = last_epoch_num_samples < int(0.80 * num_samples_per_epoch)
+                separate_last_epoch = last_epoch_num_samples < int(
+                    0.80 * num_samples_per_epoch
+                )
             # Note. len(doc_idx) = num_epochs * len(doc)
             start_time = time.time()
             doc_idx = _build_doc_idx(documents, num_epochs, np_rng, separate_last_epoch)
@@ -84,7 +90,9 @@ def construct_samples_and_shuffle_data(
 
             from tool_helpers import helpers
 
-            sample_idx = helpers.build_sample_idx(sizes, doc_idx, seq_length, num_epochs, tokens_per_epoch)
+            sample_idx = helpers.build_sample_idx(
+                sizes, doc_idx, seq_length, num_epochs, tokens_per_epoch
+            )
             np.save(sample_idx_filename, sample_idx, allow_pickle=True)
             print(
                 " > elasped time to build and save sample-idx mapping "
@@ -100,7 +108,9 @@ def construct_samples_and_shuffle_data(
                 num_samples_ = sample_idx.shape[0] - 1
 
             # Shuffle all seq len data.
-            shuffle_idx = _build_shuffle_idx(num_samples_, sample_idx.shape[0] - 1, np_rng)
+            shuffle_idx = _build_shuffle_idx(
+                num_samples_, sample_idx.shape[0] - 1, np_rng
+            )
             np.save(shuffle_idx_filename, shuffle_idx, allow_pickle=True)
             print(
                 " > elasped time to build and save shuffle-idx mapping"
@@ -120,7 +130,10 @@ def construct_samples_and_shuffle_data(
                     np.load(shuffle_idx_filename, allow_pickle=True, mmap_mode="r")
                     break
                 except Exception:
-                    print("%s file is still writing or damaged, please wait a moment." % shuffle_idx_filename)
+                    print(
+                        "%s file is still writing or damaged, please wait a moment."
+                        % shuffle_idx_filename
+                    )
                     time.sleep(3)
 
     if paddle.distributed.get_world_size() > 1:
@@ -132,6 +145,7 @@ def construct_samples_and_shuffle_data(
     sample_idx = np.load(sample_idx_filename, allow_pickle=True, mmap_mode="r")
     shuffle_idx = np.load(shuffle_idx_filename, allow_pickle=True, mmap_mode="r")
     return doc_idx, sample_idx, shuffle_idx
+
 
 def _num_tokens(documents, lens):
     """Total number of tokens in the dataset."""
@@ -179,11 +193,12 @@ def _build_shuffle_idx(num_samples, total_size, np_rng):
     if num_samples == total_size:
         return shuffle_idx_first
 
-    shuffle_idx_last = np.arange(start=num_samples, stop=total_size, step=1, dtype=dtype_)
+    shuffle_idx_last = np.arange(
+        start=num_samples, stop=total_size, step=1, dtype=dtype_
+    )
     np_rng.shuffle(shuffle_idx_last)
 
     return np.concatenate((shuffle_idx_first, shuffle_idx_last))
-
 
 
 class GPTDataset(paddle.io.Dataset):
@@ -214,7 +229,11 @@ class GPTDataset(paddle.io.Dataset):
         else:
             document_ids = documents
 
-        self.doc_idx, self.sample_idx, self.shuffle_idx = construct_samples_and_shuffle_data(
+        (
+            self.doc_idx,
+            self.sample_idx,
+            self.shuffle_idx,
+        ) = construct_samples_and_shuffle_data(
             self.name,
             self.file_prefix,
             document_ids,
@@ -254,19 +273,27 @@ class GPTDataset(paddle.io.Dataset):
         # Data from the sample doc. just select the needed ids.
         if doc_index_f == doc_index_l:
             current_start_pos = self.start_pos[self.doc_idx[doc_index_f]]
-            return self.sample_ids[current_start_pos + offset_f : current_start_pos + offset_l + 1].tolist()
+            return self.sample_ids[
+                current_start_pos + offset_f : current_start_pos + offset_l + 1
+            ].tolist()
 
         # Data from multi docs.
         else:
             current_start_pos = self.start_pos[self.doc_idx[doc_index_f]]
             next_start_pos = self.start_pos[self.doc_idx[doc_index_f] + 1]
-            tokens = self.sample_ids[current_start_pos + offset_f : next_start_pos].tolist()
+            tokens = self.sample_ids[
+                current_start_pos + offset_f : next_start_pos
+            ].tolist()
             for i in range(doc_index_f + 1, doc_index_l):
                 current_start_pos = self.start_pos[self.doc_idx[i]]
                 next_start_pos = self.start_pos[self.doc_idx[i] + 1]
-                tokens.extend(self.sample_ids[current_start_pos:next_start_pos].tolist())
+                tokens.extend(
+                    self.sample_ids[current_start_pos:next_start_pos].tolist()
+                )
             last_start_pos = self.start_pos[self.doc_idx[doc_index_l]]
-            tokens.extend(self.sample_ids[last_start_pos : last_start_pos + offset_l + 1].tolist())
+            tokens.extend(
+                self.sample_ids[last_start_pos : last_start_pos + offset_l + 1].tolist()
+            )
 
         return tokens
 
@@ -277,9 +304,11 @@ class GPTDataset(paddle.io.Dataset):
         doc_index_l = self.sample_idx[idx + 1][0]
         offset_f = self.sample_idx[idx][1]
         offset_l = self.sample_idx[idx + 1][1]
-        tokens = self._get_single_sample_from_idx(doc_index_f, doc_index_l, offset_f, offset_l)
+        tokens = self._get_single_sample_from_idx(
+            doc_index_f, doc_index_l, offset_f, offset_l
+        )
         return self._construct_sample(tokens)
 
     def __len__(self):
-        return self.sample_idx.shape[0] - 1
-
+        return 1
+        # return self.sample_idx.shape[0] - 1

@@ -1,9 +1,8 @@
-import paddle
-import paddle.distributed as dist
-import logging
-import random
 import os
 from contextlib import contextmanager
+
+import paddle
+import paddle.distributed as dist
 
 
 def barrier():
@@ -47,9 +46,9 @@ def init_dist_training_env(config):
         dist.init_parallel_env()
         config.device = paddle.device.get_device()
         config.world_size = get_world_size()
-        print('------------------------')
-        print('device numbers:', config.world_size)
-        print('the processing uses', config.device)
+        print("------------------------")
+        print("device numbers:", config.world_size)
+        print("the processing uses", config.device)
         return
 
 

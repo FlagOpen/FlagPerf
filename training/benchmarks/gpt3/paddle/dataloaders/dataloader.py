@@ -14,17 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-import pdb
 from typing import Optional
+
 import numpy as np
 import paddle
-from .dataset import GPTDataset
-from paddlenlp.utils.log import logger
 from paddle.io import DataLoader, DistributedBatchSampler
+from paddlenlp.utils.log import logger
+
+from .dataset import GPTDataset
 
 
 def get_train_data_file(config):
-    input_dir = os.path.join(config.base_path, config.data_dir)
+    input_dir = os.path.join(config.data_dir)
     if len(input_dir.split()) > 1:
         # weight-1 data-prefix-1 weight-2 data-prefix-2 ...
         return input_dir.split()
@@ -45,6 +46,7 @@ def get_train_data_file(config):
                 logger.info("    > set weight of %s dataset to 1.0" % x)
             return ret
     return files
+
 
 def get_train_valid_test_split_(splits_string, size):
     """Get dataset splits from comma or '/' separated string list."""
@@ -71,6 +73,7 @@ def get_train_valid_test_split_(splits_string, size):
     assert splits_index[-1] == size
     return splits_index
 
+
 def create_pretrained_dataset(
     config,
     data_file,
@@ -86,7 +89,9 @@ def create_pretrained_dataset(
         * config.dataset_world_size
         * config.eval_iters
         * (config.max_steps // config.eval_steps + 1),
-        config.per_device_eval_batch_size * config.dataset_world_size * config.test_iters,
+        config.per_device_eval_batch_size
+        * config.dataset_world_size
+        * config.test_iters,
     ]
 
     input_prefix = data_file[0]
@@ -105,7 +110,9 @@ def create_pretrained_dataset(
 
     splits = get_train_valid_test_split_(config.split, len(sample_lens))
 
-    assert len(sample_lens) >= splits[-1], "The document nums should larger than max of splits, but %s < %s" % (
+    assert (
+        len(sample_lens) >= splits[-1]
+    ), "The document nums should larger than max of splits, but %s < %s" % (
         len(sample_lens),
         splits[-1],
     )
@@ -133,7 +140,7 @@ def create_pretrained_dataset(
             eos_id=tokenizer.eos_token_id,
             seed=config.seed,
         )
-        
+
         # print_dataset(dataset[0], name)
         return dataset
 
@@ -162,7 +169,8 @@ def create_pretrained_dataset(
 
     return train_dataset, valid_dataset, test_dataset, _collate_data
 
-def _get_train_sampler(config,train_dataset) -> Optional[paddle.io.Sampler]:
+
+def _get_train_sampler(config, train_dataset) -> Optional[paddle.io.Sampler]:
     # if config.world_size <= 1:
     #     return paddle.io.BatchSampler(
     #         dataset=train_dataset,
@@ -170,7 +178,6 @@ def _get_train_sampler(config,train_dataset) -> Optional[paddle.io.Sampler]:
     #         batch_size=config.per_device_train_batch_size,
     #         drop_last=config.dataloader_drop_last,
     #     )
-    
 
     return DistributedBatchSampler(
         train_dataset,
@@ -178,8 +185,9 @@ def _get_train_sampler(config,train_dataset) -> Optional[paddle.io.Sampler]:
         shuffle=False,
         num_replicas=config.dataset_world_size,
         rank=paddle.distributed.get_rank(),
-        drop_last=config.dataloader_drop_last
+        drop_last=config.dataloader_drop_last,
     )
+
 
 def _get_eval_sampler(config, eval_dataset):
     # if config.world_size <= 1:
@@ -190,12 +198,12 @@ def _get_eval_sampler(config, eval_dataset):
     #         drop_last=False,
     #     )
     # else:
-        # drop_last = False
-        # if config.pipeline_parallel_degree > 1:
-        #     drop_last = True
-        #     logger.warning(
-        #         "In parallel mode, the bacth_size is strictly checked. set DistributedBatchSampler drop_last=True."
-        #     )
+    # drop_last = False
+    # if config.pipeline_parallel_degree > 1:
+    #     drop_last = True
+    #     logger.warning(
+    #         "In parallel mode, the bacth_size is strictly checked. set DistributedBatchSampler drop_last=True."
+    #     )
 
     return DistributedBatchSampler(
         eval_dataset,
@@ -209,9 +217,12 @@ def _get_eval_sampler(config, eval_dataset):
 
 def load_data(config, tokenizer):
     data_file = get_train_data_file(config)
-    train_dataset, eval_dataset, test_dataset, data_collator = create_pretrained_dataset(
-        config, data_file, tokenizer
-    )
+    (
+        train_dataset,
+        eval_dataset,
+        test_dataset,
+        data_collator,
+    ) = create_pretrained_dataset(config, data_file, tokenizer)
 
     train_sampler = _get_train_sampler(config, train_dataset)
     eval_sampler = _get_eval_sampler(config, eval_dataset)

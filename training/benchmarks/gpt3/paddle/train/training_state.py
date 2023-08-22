@@ -1,13 +1,13 @@
+import inspect
 from dataclasses import dataclass
 
 import paddle
-import inspect
-from icecream import ic
+
 
 @dataclass
 class TrainingState:
     _trainer = None
-    _status = 'aborted'  # later set to 'success' if termination criteria met
+    _status = "aborted"  # later set to 'success' if termination criteria met
 
     global_steps = 0
     skipped_steps = 0
@@ -36,10 +36,13 @@ class TrainingState:
 
     def _is_property(self, value):
         status = [
-            not callable(value), not inspect.isclass(value),
-            not inspect.ismodule(value), not inspect.ismethod(value),
-            not inspect.isfunction(value), not inspect.isbuiltin(value),
-            "classmethod object" not in str(value)
+            not callable(value),
+            not inspect.isclass(value),
+            not inspect.ismodule(value),
+            not inspect.ismethod(value),
+            not inspect.isfunction(value),
+            not inspect.isbuiltin(value),
+            "classmethod object" not in str(value),
         ]
         return all(status)
 
@@ -59,8 +62,12 @@ class TrainingState:
         state_dict["loss"] = self.loss.detach()
 
         exclude = [
-            "eval_avg_loss", "eval_embedding_average", "skipped_steps",
-            "converged", "init_time", "raw_train_time"
+            "eval_avg_loss",
+            "eval_embedding_average",
+            "skipped_steps",
+            "converged",
+            "init_time",
+            "raw_train_time",
         ]
         for exkey in exclude:
             if exkey in state_dict:

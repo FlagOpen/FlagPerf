@@ -1,5 +1,8 @@
-from paddlenlp.transformers import CosineAnnealingWithWarmupDecay, LinearAnnealingWithWarmupDecay
-from icecream import ic
+from paddlenlp.transformers import (
+    CosineAnnealingWithWarmupDecay,
+    LinearAnnealingWithWarmupDecay,
+)
+
 
 def create_scheduler(config):
     if config.decay_steps is None:
@@ -15,7 +18,7 @@ def create_scheduler(config):
             decay_step=config.decay_steps,
             last_epoch=0,
         )
-    elif config.lr_scheduler_type== "linear":
+    elif config.lr_scheduler_type == "linear":
         lr_scheduler = LinearAnnealingWithWarmupDecay(
             max_lr=config.learning_rate,
             min_lr=config.min_learning_rate,

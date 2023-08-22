@@ -21,7 +21,6 @@ from paddle.distributed.fleet.meta_parallel import (
     SharedLayerDesc,
 )
 from paddle.distributed.fleet.utils import recompute
-
 from paddlenlp.transformers import (
     GPTConfig,
     GPTDecoderLayer,
@@ -121,13 +120,18 @@ class PipelinePretrainedModel(PretrainedModel):
         super().__init__(config, *args, **kwargs)
 
     def add_sequential_layer(self, layer_desc, name_prefix=""):
-        self._sequential_layers.append({"layer": layer_desc, "name_prefix": name_prefix})
+        self._sequential_layers.append(
+            {"layer": layer_desc, "name_prefix": name_prefix}
+        )
 
     def get_sequential_layers(self):
         return [x["layer"] for x in self._sequential_layers]
 
     def get_sequential_name_prefixs(self):
-        return {str(index): x["name_prefix"] for index, x in enumerate(self._sequential_layers)}
+        return {
+            str(index): x["name_prefix"]
+            for index, x in enumerate(self._sequential_layers)
+        }
 
     def _set_pipeline_name_mapping(self, mappings=None):
         if mappings is not None:
@@ -157,7 +161,11 @@ class PipelinePretrainedModel(PretrainedModel):
                         single_name = [prefixs[idx]]
                         single_name.extend(name_splited[1:])
                     else:
-                        raise ("The mapping table had bad row, please check parameter name:{}".format(k))
+                        raise (
+                            "The mapping table had bad row, please check parameter name:{}".format(
+                                k
+                            )
+                        )
                 mapping[".".join(single_name)] = k
 
             self._pipeline_name_mapping = mapping
@@ -192,7 +200,9 @@ class PipelinePretrainedModel(PretrainedModel):
 
         if self._pipeline_name_mapping is None:
             self._set_pipeline_name_mapping()
-        assert len(self._pipeline_name_mapping) > 0, "The pipeline stage must have parameters!"
+        assert (
+            len(self._pipeline_name_mapping) > 0
+        ), "The pipeline stage must have parameters!"
         pp_to_single_mapping = {v: k for k, v in self._pipeline_name_mapping.items()}
 
         for k in list(state_dict.keys()):
@@ -204,7 +214,9 @@ class PipelinePretrainedModel(PretrainedModel):
     def set_state_dict(self, state_dict, *args, **kwargs):
         if self._pipeline_name_mapping is None:
             self._set_pipeline_name_mapping()
-        assert len(self._pipeline_name_mapping) > 0, "The pipeline stage must have parameters!"
+        assert (
+            len(self._pipeline_name_mapping) > 0
+        ), "The pipeline stage must have parameters!"
 
         for k in list(state_dict.keys()):
             v = state_dict.pop(k)
@@ -247,7 +259,13 @@ class GPTForCausalLMPipe(PipelinePretrainedModel, PipelineLayer):
         config.tensor_parallel_rank = tensor_parallel_rank
 
         self.add_sequential_layer(
-            SharedLayerDesc("gpt", GPTEmbeddingPipe, shared_weight_attr="embedding_weight", config=config), "gpt"
+            SharedLayerDesc(
+                "gpt",
+                GPTEmbeddingPipe,
+                shared_weight_attr="embedding_weight",
+                config=config,
+            ),
+            "gpt",
         )
         for i in range(config.num_hidden_layers):
             self.add_sequential_layer(
@@ -255,7 +273,9 @@ class GPTForCausalLMPipe(PipelinePretrainedModel, PipelineLayer):
                 f"gpt.decoder.layers.{i}",
             )
 
-        self.add_sequential_layer(LayerDesc(LayerNormPipe, config=config), "gpt.decoder.norm")
+        self.add_sequential_layer(
+            LayerDesc(LayerNormPipe, config=config), "gpt.decoder.norm"
+        )
 
         def _logits_helper(embedding, output):
             return parallel_matmul(output, embedding.embedding_weight, True)

@@ -10,15 +10,15 @@ device = "gpu"
 # data
 # =========================================================
 # vocab file path
-tokenizer_vocab_file : str = 'sentencepiece.bpe.model'
+tokenizer_vocab_file: str = "sentencepiece.bpe.model"
 
 # The name of the dataset to use (via the datasets library).
-data_dir : str = "data" 
+data_dir: str = "data"
 
 # Train/valid/test data split.
 split: str = "949,50,1"
 
-# The maximum total input sequence length after tokenization. Sequences longer 
+# The maximum total input sequence length after tokenization. Sequences longer
 max_seq_length: int = 2048
 
 # Use share folder for data dir and output dir on multi machine.
@@ -31,29 +31,31 @@ dataset_rank = 0
 # Model
 # =========================================================
 # Only support for llama pre-training for now.
-model_type = "llama"
+model_type = "gpt"
 
-hidden_size = 768 # 4096
+model_name_or_path = "gpt2-medium-en"
+
+hidden_size = 1024  # 4096
 
 initializer_range = 0.02
 
-intermediate_size = 11008
+intermediate_size = 4096
 
 lm_shift_labels = False
 
-max_position_embeddings = 2048
+max_position_embeddings = 1024
 
-num_attention_heads = 8 # 32
+num_attention_heads = 16
 
-num_hidden_layers = 2 # 32
+num_hidden_layers = 24
 
 rms_norm_eps = 1e-06
 
-vocab_size = 32000
+vocab_size = 50304
 
 bos_token_id = 1
 
-eos_token_id = 2
+eos_token_id = 50256
 
 pad_token_id = 0
 
@@ -68,7 +70,7 @@ tie_word_embeddings = False
 use_flash_attention: bool = False
 
 # Pretrained tokenizer name or path if not the same as model_name
-tokenizer_name_or_path = None
+tokenizer_name_or_path = "gpt2-medium-en"
 
 # llama, use_fused_rms_norm
 use_fused_rms_norm: bool = False
@@ -87,7 +89,7 @@ virtual_pp_degree: int = 1
 # Pre-training from existing paddlenlp model weights. Default Fasle and model will train from scratch. If set True, the model_name_or_path argument must exist in the paddlenlp models.
 continue_training: bool = False
 
-num_workers: int = 1 
+num_workers: int = 1
 
 dataloader_drop_last: bool = False
 
@@ -126,15 +128,15 @@ test_iters = eval_iters * 10
 decay_steps: float = None
 
 # Number of updates steps to accumulate before performing a backward/update pass.
-gradient_accumulation_steps : int = 1
+gradient_accumulation_steps: int = 1
 
-local_rank : int = -1
-local_process_index : int = 0
+local_rank: int = -1
+local_process_index: int = 0
 
 # random seed
 seed: int = 1234
 
-world_size : int = 1
+world_size: int = 1
 
 max_grad_norm = 1.0
 
@@ -151,7 +153,7 @@ use_hybrid_parallel = True
 # Run model in fp16 mode
 fp16: bool = True
 
-fp16_opt_level = 'O2'
+fp16_opt_level = "O2"
 
 bf16: bool = False
 
@@ -179,7 +181,7 @@ dist_backend: str = "nccl"
 learning_rate: float = 0.0001
 
 # Minimum learning rate deacyed to.
-min_learning_rate : float = 1e-05
+min_learning_rate: float = 1e-05
 
 # number of iterations to decay LR over, If None defaults to `--train-iters`*`--epochs`
 lr_decay_steps: int = 10

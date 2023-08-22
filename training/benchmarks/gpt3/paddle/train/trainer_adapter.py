@@ -1,11 +1,9 @@
 import paddle
-import paddle.distributed as dist
-
-from paddle.optimizer import Optimizer
 import paddle.amp.auto_cast as autocast
-from paddle import nn, Tensor
-from typing import Tuple
-from icecream import ic
+import paddle.distributed as dist
+from paddle import Tensor, nn
+from paddle.optimizer import Optimizer
+
 
 def convert_model(config, model: nn.Layer) -> nn.Layer:
     return model
@@ -14,34 +12,41 @@ def convert_model(config, model: nn.Layer) -> nn.Layer:
 def create_optimizer(config, model: nn.Layer, lr_scheduler) -> Optimizer:
     parameter_list = model.parameters()
     decay_parameters = [
-        p.name for n, p in model.named_parameters() if not any(nd in n for nd in ["bias", "norm"])
+        p.name
+        for n, p in model.named_parameters()
+        if not any(nd in n for nd in ["bias", "norm"])
     ]
 
     def apply_decay_param_fun(x):
         return x in decay_parameters
-    
+
     from paddle.optimizer import AdamW
-    optimizer = AdamW(parameters=parameter_list,
-                     learning_rate=lr_scheduler,
-                     apply_decay_param_fun=apply_decay_param_fun,
-                     beta1=config.adam_beta1,
-                     beta2=config.adam_beta2,
-                     epsilon=config.adam_epsilon,
-                     weight_decay=config.weight_decay,
-                     grad_clip=nn.ClipGradByGlobalNorm(config.max_grad_norm)
-                     if config.max_grad_norm > 0
-                     else None,
-                     multi_precision=True
-                    )
+
+    optimizer = AdamW(
+        parameters=parameter_list,
+        learning_rate=lr_scheduler,
+        apply_decay_param_fun=apply_decay_param_fun,
+        beta1=config.adam_beta1,
+        beta2=config.adam_beta2,
+        epsilon=config.adam_epsilon,
+        weight_decay=config.weight_decay,
+        grad_clip=nn.ClipGradByGlobalNorm(config.max_grad_norm)
+        if config.max_grad_norm > 0
+        else None,
+        multi_precision=True,
+    )
     return optimizer
 
 
 def model_to_fp16(config, model: nn.Layer, optimizer):
     paddle.amp.decorate(models=model, level=config.fp16_opt_level)
-    decorated = paddle.amp.decorate(models=model, optimizers=optimizer, level=config.fp16_opt_level)
+    decorated = paddle.amp.decorate(
+        models=model, optimizers=optimizer, level=config.fp16_opt_level
+    )
     model, optimizer = decorated
 
     return model, optimizer
+
 
 def autocast_smart_context_manager(config):
     """
@@ -89,8 +94,17 @@ def create_grad_scaler(config):
     return scaler
 
 
-def backward(config, step: int, loss: Tensor, optimizer, lr_scheduler, 
-             do_grad_scaling, scaler, model, **kwarg):
+def backward(
+    config,
+    step: int,
+    loss: Tensor,
+    optimizer,
+    lr_scheduler,
+    do_grad_scaling,
+    scaler,
+    model,
+    **kwarg
+):
     if do_grad_scaling:
         scaler.scale(loss).backward()
     else:
@@ -111,7 +125,5 @@ def backward(config, step: int, loss: Tensor, optimizer, lr_scheduler,
         # for n, p in model.named_parameters():
         #     ic(n, p, p.grad)
         optimizer.clear_grad()
-    
+
     return loss.detach()
-        
-    
