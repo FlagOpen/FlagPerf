@@ -31,7 +31,6 @@ from utils import flagperf_logger
 ms.set_seed(1)
 
 
-@moxing_wrapper()
 def eval_net():
     """eval net"""
     target = config.device_target
@@ -65,10 +64,7 @@ def eval_net():
 
     # eval model
     res = model.eval(dataset)
-    converged = 'true'
-    if res['top_1_accuracy'] < config.target_acc1:
-        converged = 'false'
-    return converged, res['top_1_accuracy']
+    return res['top_1_accuracy']
 
 if __name__ == '__main__':
     run_logger = flagperf_logger.FlagPerfLogger()
@@ -76,7 +72,7 @@ if __name__ == '__main__':
     run_logger.init(run_log_dir, "flagperf_run.log", 'info', "both", log_caller=True)
 
     start_time = time.time()
-    converged, acc = eval_net()
+    acc = eval_net()
     run_logger.info("--------------Eval Info--------------------")
     run_logger.info("e2e_time:" + str(time.time() - start_time))
     run_logger.info("acc:" + str(acc))

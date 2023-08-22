@@ -253,7 +253,6 @@ def set_save_ckpt_dir():
     return ckpt_save_dir
 
 
-@moxing_wrapper()
 def train_net():
     """train net"""
     target = config.device_target
