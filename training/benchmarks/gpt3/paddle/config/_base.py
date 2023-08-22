@@ -115,7 +115,7 @@ max_samples_termination: float = 120000
 # frequency of logging loss. If not positive, no logging is provided for training loss
 log_freq: int = 20
 
-eval_steps = 1000
+eval_steps = 5000
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 1
@@ -128,7 +128,7 @@ test_iters = eval_iters * 10
 decay_steps: float = None
 
 # Number of updates steps to accumulate before performing a backward/update pass.
-gradient_accumulation_steps: int = 1
+gradient_accumulation_steps: int = 2
 
 local_rank: int = -1
 local_process_index: int = 0
@@ -178,10 +178,10 @@ dist_backend: str = "nccl"
 # lr_scheduler args
 # =========================================================
 # initial learning rate
-learning_rate: float = 0.0001
+learning_rate: float = 0.00001
 
 # Minimum learning rate deacyed to.
-min_learning_rate: float = 1e-05
+min_learning_rate: float = 5e-06
 
 # number of iterations to decay LR over, If None defaults to `--train-iters`*`--epochs`
 lr_decay_steps: int = 10
