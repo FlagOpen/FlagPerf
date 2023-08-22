@@ -129,6 +129,7 @@ main()
     export EVAL_DATA_PATH=${DATA_DIR}/val/
     cd $WORK_PATH
     export RESULT_PATH=${LOG_DIR}/
+    export LOG_PATH=${REAL_LOG_DIR}/
     source ./config/config.sh
     node_train "$@" || { logger_Warn "run_node_train failed"; return 1; }
     node_eval "$@" || { logger_Warn "run_node_eval failed"; return 1; }

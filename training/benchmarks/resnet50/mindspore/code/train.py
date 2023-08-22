@@ -316,7 +316,7 @@ def train_net():
 
 if __name__ == '__main__':
     run_logger = flagperf_logger.FlagPerfLogger()
-    run_log_dir = os.path.join(os.getenv('RUN_LOG_DIR'), os.getenv('RANK_ID'))
+    run_log_dir = os.path.join(os.getenv('LOG_PATH'), os.getenv('RANK_ID'))
     run_logger.init(run_log_dir, "flagperf_run.log", 'info', "both", log_caller=True)
 
     start_time = time.time()
@@ -329,5 +329,10 @@ if __name__ == '__main__':
         "throughput(ips)_raw": total_samples / train_time,
         "throughput(ips)_pure_compute": total_samples / (train_time - build_time),
     }
-    run_logger.info("train info:", finished_info)
+    run_logger.info("--------------Train Info--------------------")
+    run_logger.info("e2e_time:" + str(time.time() - start_time))
+    run_logger.info("train_time:" + str(train_time))
+    run_logger.info("pure_training_computing_time:" + str(train_time - build_time))
+    run_logger.info("throughput(ips)_raw:" + str(total_samples / train_time))
+    run_logger.info("throughput(ips)_pure_compute:" + str(total_samples / (train_time - build_time)))
 
