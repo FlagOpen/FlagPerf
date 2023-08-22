@@ -13,21 +13,30 @@
 # limitations under the License.
 # ============================================================================
 """train resnet."""
+# sys
 import datetime
 import glob
 import os
 import numpy as np
 import time
+import sys
+import time
 
+# logger
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../../")))
+from utils import flagperf_logger
+
+# mindspore
 import mindspore as ms
 import mindspore.nn as nn
 from mindspore.train.train_thor import ConvertModelUtils
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig, LossMonitor, TimeMonitor
 from mindspore.communication.management import init, get_rank
 from mindspore.parallel import set_algo_parameters
-
 import mindspore.log as logger
 
+# resnet code
 from src.lr_generator import get_lr, warmup_cosine_annealing_lr
 from src.CrossEntropySmooth import CrossEntropySmooth
 from src.eval_callback import EvalCallBack
@@ -36,12 +45,8 @@ from src.model_utils.config import config
 from src.model_utils.moxing_adapter import moxing_wrapper
 from src.model_utils.device_adapter import get_rank_id, get_device_num
 from src.resnet import conv_variance_scaling_initializer
-try:
-   import ais_utils
-except ImportError:
-   ais_utils_is_existed = False
-else:
-   ais_utils_is_existed = True
+from src.resnet import resnet50 as resnet
+from src.dataset import create_dataset
 
 ms.set_seed(1)
 
@@ -78,30 +83,6 @@ class LossCallBack(LossMonitor):
                                                       cur_step_in_epoch, loss), flush=True)
 
 
-if config.net_name in ("resnet18", "resnet34", "resnet50", "resnet152"):
-    if config.net_name == "resnet18":
-        from src.resnet import resnet18 as resnet
-    elif config.net_name == "resnet34":
-        from src.resnet import resnet34 as resnet
-    elif config.net_name == "resnet50":
-        from src.resnet import resnet50 as resnet
-    else:
-        from src.resnet import resnet152 as resnet
-    if config.dataset == "cifar10":
-        from src.dataset import create_dataset1 as create_dataset
-    else:
-        if config.mode_name == "GRAPH":
-            from src.dataset import create_dataset2 as create_dataset
-        else:
-            from src.dataset import create_dataset_pynative as create_dataset
-elif config.net_name == "resnet101":
-    from src.resnet import resnet101 as resnet
-    from src.dataset import create_dataset3 as create_dataset
-else:
-    from src.resnet import se_resnet50 as resnet
-    from src.dataset import create_dataset4 as create_dataset
-
-
 def filter_checkpoint_parameter_by_list(origin_dict, param_filter):
     """remove useless parameters according to filter_list"""
     for key in list(origin_dict.keys()):
@@ -120,53 +101,29 @@ def apply_eval(eval_param):
     return res[metrics_name]
 
 
-def set_graph_kernel_context(run_platform, net_name):
-    if run_platform == "GPU" and net_name == "resnet101":
-        ms.set_context(enable_graph_kernel=True)
-        ms.set_context(graph_kernel_flags="--enable_parallel_fusion --enable_expand_ops=Conv2D")
-
-
 def set_parameter():
     """set_parameter"""
     target = config.device_target
-    if target == "CPU":
-        config.run_distribute = False
 
     # init context
-    if config.mode_name == 'GRAPH':
-        if target == "Ascend":
-            rank_save_graphs_path = os.path.join(config.save_graphs_path, "soma", str(os.getenv('DEVICE_ID')))
-            ms.set_context(mode=ms.GRAPH_MODE, device_target=target, save_graphs=config.save_graphs,
+    rank_save_graphs_path = os.path.join(config.save_graphs_path, "soma", str(os.getenv('DEVICE_ID')))
+    ms.set_context(mode=ms.GRAPH_MODE, device_target=target, save_graphs=config.save_graphs,
                            save_graphs_path=rank_save_graphs_path)
-        else:
-            ms.set_context(mode=ms.GRAPH_MODE, device_target=target, save_graphs=config.save_graphs)
-        set_graph_kernel_context(target, config.net_name)
-    else:
-        ms.set_context(mode=ms.PYNATIVE_MODE, device_target=target, save_graphs=False)
 
-    if config.parameter_server:
-        ms.set_ps_context(enable_ps=True)
     if config.run_distribute:
-        if target == "Ascend":
-            device_id = int(os.getenv('DEVICE_ID'))
-            ms.set_context(device_id=device_id)
-            ms.set_auto_parallel_context(device_num=config.device_num, parallel_mode=ms.ParallelMode.DATA_PARALLEL,
-                                         gradients_mean=True)
-            set_algo_parameters(elementwise_op_strategy_follow=True)
-            if config.net_name == "resnet50" or config.net_name == "se-resnet50":
-                if config.boost_mode not in ["O1", "O2"]:
-                    ms.set_auto_parallel_context(all_reduce_fusion_config=config.all_reduce_fusion_config)
-            elif config.net_name in ["resnet101", "resnet152"]:
-                ms.set_auto_parallel_context(all_reduce_fusion_config=config.all_reduce_fusion_config)
-            init()
-        # GPU target
-        else:
-            init()
-            ms.set_auto_parallel_context(device_num=get_device_num(),
-                                         parallel_mode=ms.ParallelMode.DATA_PARALLEL,
-                                         gradients_mean=True)
-            if config.net_name == "resnet50":
-                ms.set_auto_parallel_context(all_reduce_fusion_config=config.all_reduce_fusion_config)
+        device_id = int(os.getenv('DEVICE_ID'))
+        ms.set_context(device_id=device_id)
+        ms.set_auto_parallel_context(device_num=config.device_num, parallel_mode=ms.ParallelMode.DATA_PARALLEL,
+                                     gradients_mean=True)
+        set_algo_parameters(elementwise_op_strategy_follow=True)
+        if config.net_name == "resnet50" or config.net_name == "se-resnet50":
+            if config.boost_mode not in ["O1", "O2"]:
+                ms.set_auto_parallel_context(
+                    all_reduce_fusion_config=config.all_reduce_fusion_config)
+        elif config.net_name in ["resnet101", "resnet152"]:
+            ms.set_auto_parallel_context(
+                all_reduce_fusion_config=config.all_reduce_fusion_config)
+        init()
 
 
 def load_pre_trained_checkpoint():
@@ -238,28 +195,17 @@ def init_weight(net, param_dict):
 
 def init_lr(step_size):
     """init lr"""
-    if config.optimizer == "Thor":
-        from src.lr_generator import get_thor_lr
-        lr = get_thor_lr(0, config.lr_init, config.lr_decay, config.lr_end_epoch, step_size, decay_epochs=39)
-    else:
-        if config.net_name in ("resnet18", "resnet34", "resnet50", "resnet152", "se-resnet50"):
-            lr = get_lr(lr_init=config.lr_init, lr_end=config.lr_end, lr_max=config.lr_max,
-                        warmup_epochs=config.warmup_epochs, total_epochs=config.epoch_size, steps_per_epoch=step_size,
-                        lr_decay_mode=config.lr_decay_mode)
-        else:
-            lr = warmup_cosine_annealing_lr(config.lr, step_size, config.warmup_epochs, config.epoch_size,
-                                            config.pretrain_epoch_size * step_size)
+    lr = get_lr(lr_init=config.lr_init, lr_end=config.lr_end, lr_max=config.lr_max,
+                warmup_epochs=config.warmup_epochs, total_epochs=config.epoch_size, steps_per_epoch=step_size,
+                lr_decay_mode=config.lr_decay_mode)
     return lr
 
 
 def init_loss_scale():
-    if config.dataset == "imagenet2012":
-        if not config.use_label_smooth:
-            config.label_smooth_factor = 0.0
-        loss = CrossEntropySmooth(sparse=True, reduction="mean",
-                                  smooth_factor=config.label_smooth_factor, num_classes=config.class_num)
-    else:
-        loss = nn.SoftmaxCrossEntropyWithLogits(sparse=True, reduction='mean')
+    if not config.use_label_smooth:
+        config.label_smooth_factor = 0.0
+    loss = CrossEntropySmooth(sparse=True, reduction="mean",
+                              smooth_factor=config.label_smooth_factor, num_classes=config.class_num)
     return loss
 
 
@@ -319,8 +265,6 @@ def train_net():
                              distribute=config.run_distribute)
     step_size = dataset.get_dataset_size()
     net = resnet(class_num=config.class_num)
-    if config.parameter_server:
-        net.set_param_ps()
 
     init_weight(net=net, param_dict=ckpt_param_dict)
     lr = ms.Tensor(init_lr(step_size=step_size))
@@ -336,28 +280,14 @@ def train_net():
     metrics = {"acc"}
     if config.run_distribute:
         metrics = {'acc': DistAccuracy(batch_size=config.batch_size, device_num=config.device_num)}
-    if (config.net_name not in ("resnet18", "resnet34", "resnet50", "resnet101", "resnet152", "se-resnet50")) or \
-        config.parameter_server or target == "CPU":
-        ## fp32 training
-        model = ms.Model(net, loss_fn=loss, optimizer=opt, metrics=metrics, eval_network=dist_eval_network)
-    else:
-        model = ms.Model(net, loss_fn=loss, optimizer=opt, loss_scale_manager=loss_scale, metrics=metrics,
-                         amp_level="O2", boost_level=config.boost_mode, keep_batchnorm_fp32=False,
-                         eval_network=dist_eval_network,
-                         boost_config_dict={"grad_freeze": {"total_steps": config.epoch_size * step_size}})
+    model = ms.Model(net, loss_fn=loss, optimizer=opt, loss_scale_manager=loss_scale, metrics=metrics,
+                     amp_level="O2", keep_batchnorm_fp32=False, eval_network=dist_eval_network)
 
-    if config.optimizer == "Thor" and config.dataset == "imagenet2012":
-        from src.lr_generator import get_thor_damping
-        damping = get_thor_damping(0, config.damping_init, config.damping_decay, 70, step_size)
-        split_indices = [26, 53]
-        opt = nn.thor(net, lr, ms.Tensor(damping), config.momentum, config.weight_decay, config.loss_scale,
-                      config.batch_size, split_indices=split_indices, frequency=config.frequency)
-        model = ConvertModelUtils().convert_to_thor_model(model=model, network=net, loss_fn=loss, optimizer=opt,
-                                                          loss_scale_manager=loss_scale, metrics={'acc'},
-                                                          amp_level="O2", keep_batchnorm_fp32=False)
-        config.run_eval = False
-        logger.warning("Thor optimizer not support evaluation while training.")
+    # build
+    build_start_time = time.time()
     model.build(dataset, None, sink_size=dataset.get_dataset_size(), epoch=config.epoch_size - config.pretrain_epoch_size)
+    build_time = time.time() - build_start_time
+
     # define callbacks
     time_cb = TimeMonitor(data_size=step_size)
     loss_cb = LossCallBack(config.has_trained_epoch)
@@ -371,39 +301,33 @@ def train_net():
         ckpt_cb = ModelCheckpoint(prefix="resnet", directory=ckpt_save_dir, config=config_ck)
         cb += [ckpt_cb]
     run_eval(target, model, ckpt_save_dir, cb)
-    # train model
-    if config.net_name == "se-resnet50":
-        config.epoch_size = config.train_epoch_size
-    dataset_sink_mode = (not config.parameter_server) and target != "CPU"
-    config.pretrain_epoch_size = config.has_trained_epoch
-    if ais_utils_is_existed:
-        start_time = ais_utils.get_datatime()
-    else:
-        start_time = time.time()    
-    model.train(config.epoch_size - config.pretrain_epoch_size, dataset, callbacks=cb,
-                sink_size=dataset.get_dataset_size(), dataset_sink_mode=dataset_sink_mode)
-    all_data_sum = step_size * config.batch_size * config.epoch_size
-    if ais_utils_is_existed:
-        end_time = ais_utils.get_datatime()
-        throughput_rate = ais_utils.calc_throughput_rate(all_data_sum, start_time, end_time)
-    else:
-        end_time = time.time()
-        throughput_rate = all_data_sum/(end_time - start_time)
 
-    rank_id = int(os.getenv('RANK_ID'))
-    THROUGHPUT_DIR = os.getenv("RESULT_PATH")
-    if THROUGHPUT_DIR is None:
-        print("Warning: The environment variable 'RESULT_PATH' is not set. ")
-    elif not os.path.isdir(THROUGHPUT_DIR):
-        print("Warning: The environment variable 'RESULT_PATH' is not a valid directory. ")
-    else:
-        THROUGHPUT_LOG = os.path.join(THROUGHPUT_DIR, "all_data_size")
-        with open(THROUGHPUT_LOG, 'w') as f:
-            f.write("{}".format(all_data_sum))
+    # train model
+    train_start_time = time.time()
+    real_epoch = config.epoch_size - config.has_trained_epoch
+    model.train(real_epoch, dataset, callbacks=cb,
+                sink_size=dataset.get_dataset_size(), dataset_sink_mode=true)
+    train_time = time.time() - train_start_time
 
     if config.run_eval and config.enable_cache:
         print("Remember to shut down the cache server via \"cache_admin --stop\"")
 
+    return build_time, train_time, int(os.getenv('RANK_SIZE')) * step_size * config.batch_size * real_epoch
 
 if __name__ == '__main__':
-    train_net()
+    run_logger = flagperf_logger.FlagPerfLogger()
+    run_log_dir = os.path.join(os.getenv('RUN_LOG_DIR'), os.getenv('RANK_ID'))
+    run_logger.init(run_log_dir, "flagperf_run.log", 'info', "both", log_caller=True)
+
+    start_time = time.time()
+    build_time, train_time, total_samples = train_net()
+
+    finished_info = {
+        "e2e_time": time.time() - start_time,
+        "train_time": train_time,
+        "pure_training_computing_time": train_time - build_time,
+        "throughput(ips)_raw": total_samples / train_time,
+        "throughput(ips)_pure_compute": total_samples / (train_time - build_time),
+    }
+    run_logger.info("train info:", finished_info)
+

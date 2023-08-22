@@ -60,10 +60,6 @@ function get_train_cmd()
         --save_checkpoint_epochs=${EPOCH_SIZE} \
         --config_path=$CONFIG_PATH
         "
-        # for mindspore1.5
-        export ENV_FUSION_CLEAR=1
-        export ENV_SINGLE_EVAL=1
-        export SKT_ENABLE=1
 }
 
 function get_eval_cmd()
@@ -121,7 +117,6 @@ function node_eval()
 
 main()
 {
-    start_time=$(date +%s)
     node_init eval || { logger_Warn "init failed"; return 1; }
     export RANK_SIZE=$NPROC
     export DEVICE_NUM=$NPROC
@@ -132,15 +127,7 @@ main()
     export RESULT_PATH=${LOG_DIR}/
     source ./config/config.sh
     node_train "$@" || { logger_Warn "run_node_train failed"; return 1; }
-    train_end_time=$(date +%s)
     node_eval "$@" || { logger_Warn "run_node_eval failed"; return 1; }
-    e2e_end_time=$(date +%s)
-
-    train_time_no_eval=$((train_end_time-start_time))
-    all_data_size=$(cat $RESULT_PATH/all_data_size)
-    echo "e2e time taken: $((e2e_end_time-start_time)) seconds." >> ${RESULT_PATH}/info.log
-    echo "train time without eval taken: ${train_time_no_eval} seconds." >> ${RESULT_PATH}/info.log
-    echo "throughput without eval: $(($all_data_size/$train_time_no_eval))." >> ${RESULT_PATH}/info.log
 }
 
 main "$@"
