@@ -310,5 +310,4 @@ class GPTDataset(paddle.io.Dataset):
         return self._construct_sample(tokens)
 
     def __len__(self):
-        return 1
-        # return self.sample_idx.shape[0] - 1
+        return self.sample_idx.shape[0] - 1
