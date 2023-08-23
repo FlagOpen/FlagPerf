@@ -18,4 +18,6 @@ training/benchmarks/llama/paddle/proxy.sh
 training/benchmarks/llama/paddle/run.sh
 training/benchmarks/llama/paddle/creat.sh
 training/benchmarks/llama/paddle/test.sh
+training/benchmarks/llama/paddle/creat.sh
+training/benchmarks/llama/paddle/test.sh
 start_paddle_task_1.py

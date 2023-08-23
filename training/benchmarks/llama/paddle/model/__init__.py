@@ -1,7 +1,7 @@
 from model.models.modeling import LlamaConfig, LlamaForCausalLM
-from model.models.modeling_pp import LlamaForCausalLMPipe
 from memory_profiler import profile
-
+from contextlib import contextmanager
+import paddle
 # @profile(precision=4, stream=open("memory_profiler_train_create.log", "w+"))
 def create_model(config):
     llama_config = LlamaConfig(hidden_size=config.hidden_size,
@@ -21,7 +21,23 @@ def create_model(config):
                                use_cache=config.use_cache,
                                use_recompute=config.use_recompute,
                                use_flash_attention=config.use_flash_attention,
-                               fp16_opt_level=config.fp16_opt_level)
-                
-    model = LlamaForCausalLM(llama_config)
+                               fp16_opt_level=config.fp16_opt_level)     
+    @contextmanager
+    def dtype_guard(dtype="float32"):
+        origin_dtype = paddle.get_default_dtype()
+        paddle.set_default_dtype(dtype)
+        try:
+            yield
+        finally:
+            paddle.set_default_dtype(origin_dtype)
+
+    if config.fp16:
+        dtype = "float16"
+    else:
+        dtype = "float32"
+       
+    with dtype_guard(dtype):
+        model = LlamaForCausalLM(llama_config)
+    
+
     return llama_config, model

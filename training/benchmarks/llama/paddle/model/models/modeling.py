@@ -116,6 +116,14 @@ class LlamaConfig(PretrainedConfig):
         fp16_opt_level="O0",
         **kwargs,
     ):
+        super().__init__(
+            pad_token_id=pad_token_id,
+            bos_token_id=bos_token_id,
+            eos_token_id=eos_token_id,
+            tie_word_embeddings=tie_word_embeddings,
+            tensor_parallel_output=tensor_parallel_output,
+            **kwargs,
+        )
         self.vocab_size = vocab_size
         self.hidden_size = hidden_size
         self.intermediate_size = intermediate_size
@@ -137,15 +145,6 @@ class LlamaConfig(PretrainedConfig):
         self.pad_token_id = pad_token_id
         self.bos_token_id = bos_token_id
         self.eos_token_id = eos_token_id
-
-        super().__init__(
-            pad_token_id=pad_token_id,
-            bos_token_id=bos_token_id,
-            eos_token_id=eos_token_id,
-            tie_word_embeddings=tie_word_embeddings,
-            tensor_parallel_output=tensor_parallel_output,
-            **kwargs,
-        )
 
 def get_triangle_upper_mask(x, mask=None):
     if mask is not None:
@@ -968,11 +967,9 @@ class LlamaLMHead(nn.Layer):
 
 class LlamaForCausalLM(LlamaPretrainedModel):
     enable_to_static_method = True
-    # @profile(precision=4, stream=open("memory_profiler_train_model.log", "w+"))
     def __init__(self, config):
         super().__init__(config)
         self.config = config
-        print(self.config)
 
         self.llama = LlamaModel(config)
         self.lm_head = LlamaLMHead(config)
@@ -1054,6 +1051,7 @@ class LlamaForCausalLM(LlamaPretrainedModel):
         output_hidden_states=None,
         return_dict=None,
     ):
+
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
             output_hidden_states if output_hidden_states is not None else self.config.output_hidden_states

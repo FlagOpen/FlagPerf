@@ -10,6 +10,7 @@ import paddle.nn as nn
 import numpy as np
 from model import create_model
 from schedulers import create_scheduler
+from optimizers import create_optimizer
 
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
@@ -20,13 +21,11 @@ from train.driver import Driver, Event, dist_paddle
 from collections.abc import Mapping
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from icecream import ic
 from tqdm import tqdm
 import paddle.profiler as profiler
 
 from memory_profiler import profile
  
-
 
 class Trainer():
 
@@ -55,12 +54,13 @@ class Trainer():
     # @profile(precision=4, stream=open("memory_profiler_train_init.log", "w+"))
     def init(self):
         self.model_config, self.model = create_model(self.config)
-
         self.model = self._init_model(self.model)
+
         self.model = self.adapter.convert_model(self.config, self.model)
 
         self.lr_scheduler = create_scheduler(self.config)
-        self.optimizer = self.adapter.create_optimizer(self.config, self.model, self.lr_scheduler)
+        self.optimizer = create_optimizer(self.config, self.model, self.lr_scheduler)
+
         # Mixed precision
         if self.config.fp16:
             self.do_grad_scaling = True
@@ -71,32 +71,32 @@ class Trainer():
         if self.config.sharding:
             self.model, self.optimizer, self.grad_scaler = self.adapter.train_on_sharding(self.config, self.model, self.optimizer, self.grad_scaler)
 
+
+
     # @profile(precision=4, stream=open("memory_profiler_train_ckpt.log", "w+"))
     def _init_model(self, model):
         checkpoint_path = os.path.join(self.config.base_path, self.config.data_dir, self.config.init_checkpoint)
-        state_dict = paddle.load(checkpoint_path)
-
-        def convert_state_dict_dtype_and_shape(state_dict, model_to_load):
-            # convert the dtype of state dict
-            def is_0d_or_1d(tensor):
-                return len(tensor.shape) == 0 or list(tensor.shape) == [1]
-
-            for key, value in model_to_load.state_dict().items():
-                if key in state_dict:
-                    if isinstance(state_dict[key], np.ndarray):
-                        raise ValueError(
-                            "convert_state_dict_dtype expected paddle.Tensor not numpy.ndarray, plase convert numpy.ndarray to paddle.Tensor"
-                        )
-                    if state_dict[key].is_floating_point() and state_dict[key].dtype != value.dtype:
-                        state_dict[key] = paddle.cast(state_dict.pop(key), value.dtype)
-
-                    # unified 0d and 1d tensor
-                    if is_0d_or_1d(value) and is_0d_or_1d(state_dict[key]):
-                        if list(value.shape) != list(state_dict[key].shape):
-                            state_dict[key] = paddle.reshape(state_dict.pop(key), value.shape)
+        state_dict = paddle.load(checkpoint_path, return_numpy=True)
         
-        convert_state_dict_dtype_and_shape(state_dict, model)
+        def convert_state_dict_dtype(state_dict, model_to_load):
+            if self.config.fp16:
+                dtype = "float16"
+            else:
+                dtype = "float32"
+            # convert the dtype of state dict
+            for k, v in model_to_load.state_dict().items():
+                # if not isinstance(v, np.ndarray):
+                #     dtype = str(v.dtype)[dtype_prefix_len:]
+                if k in state_dict:
+                    if paddle.in_dynamic_mode():
+                        if isinstance(state_dict[k], np.ndarray):
+                            state_dict[k] = state_dict[k].astype(dtype)
+                        else:
+                            state_dict[k] = paddle.cast(state_dict[k], dtype)
+        
+        convert_state_dict_dtype(state_dict, model)
         model.set_state_dict(state_dict)
+
         return model
 
     # @profile(precision=4, stream=open("memory_profiler_train_epoch.log", "w+"))
@@ -178,9 +178,6 @@ class Trainer():
         with self.adapter.autocast_smart_context_manager(self.config):
             outputs = self.model(**inputs)
             loss_step = outputs[0]
-
-        if self.config.gradient_accumulation_steps > 1:
-            loss_step = loss_step / self.config.gradient_accumulation_steps
 
         self.adapter.backward(self.config, state.global_steps, loss_step,
                               self.optimizer, self.lr_scheduler, 

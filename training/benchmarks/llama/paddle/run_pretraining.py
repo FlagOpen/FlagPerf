@@ -113,6 +113,7 @@ def main():
     training_state.raw_train_time = time.time() - train_start_time
     
     return config, training_state, trainer.tr_loss
+    # return None, None, None
 
 if __name__ == "__main__":
     now = time.time()
