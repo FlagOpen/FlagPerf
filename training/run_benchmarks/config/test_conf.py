@@ -53,6 +53,8 @@ CLEAR_CACHES = True
     "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
+    "llama:paddle_2.5.0:V100:1:8:1": "/ssd2/laixinyi/projects/FlagPerf/training/benchmarks/llama/paddle/data",
+
     # "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
     # "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
     # "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
@@ -75,5 +77,4 @@ CASES = {
     # "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
-    "llama:paddle_2.5.0:V100:1:8:1": "/ssd2/laixinyi/projects/FlagPerf/training/benchmarks/llama/paddle/data",
 }

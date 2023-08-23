@@ -5,7 +5,7 @@ import random
 import os
 import numpy as np
 from contextlib import contextmanager
-from icecream import ic
+import paddle.distributed.fleet as fleet
 
 def set_seed(config):
     random.seed(config.seed)
@@ -99,3 +99,16 @@ def format_step(step):
 
 def all_gather(tensor_list, tensor):
     return dist.all_gather(tensor_list, tensor)
+
+def fused_allreduce_gradients(params):
+    from paddle.distributed.fleet.utils.hybrid_parallel_util import fused_allreduce_gradients
+    return fused_allreduce_gradients(params, None)
+
+def group_sharded_parallel(model, optimizer, level, scaler):
+    return dist.sharding.group_sharded_parallel(model, optimizer, level, scaler=scaler)
+
+def get_data_parallel_group():
+    fleet.init()
+    hcg = fleet.get_hybrid_communicate_group()
+    dp_group = hcg.get_data_parallel_group()
+    return dp_group
