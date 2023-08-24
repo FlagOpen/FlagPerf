@@ -7,3 +7,15 @@ __pycache__/
 training/result/*
 inference/result/*
 inference/onnxs/*
+
+training/benchmarks/llama/memory_profiler_train_create.log
+training/benchmarks/llama/run.sh
+training/benchmarks/llama/paddle/data
+training/benchmarks/llama/paddle/dataloaders/sentencepiece.bpe.model
+training/=2.0.0rc
+training/creat.sh
+training/benchmarks/llama/paddle/proxy.sh
+training/benchmarks/llama/paddle/run.sh
+training/benchmarks/llama/paddle/creat.sh
+training/benchmarks/llama/paddle/test.sh
+start_paddle_task_1.py
