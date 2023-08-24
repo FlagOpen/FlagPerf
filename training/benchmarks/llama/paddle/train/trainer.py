@@ -22,9 +22,6 @@ from collections.abc import Mapping
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from tqdm import tqdm
-import paddle.profiler as profiler
-
-from memory_profiler import profile
  
 
 class Trainer():
@@ -61,33 +58,34 @@ class Trainer():
         self.optimizer = create_optimizer(self.config, self.model, self.lr_scheduler)
 
         # Mixed precision
-        if self.config.fp16:
+        if self.config.amp:
             self.do_grad_scaling = True
             self.model, self.optimizer = self.adapter.model_to_fp16(self.config, self.model, self.optimizer)
             self.grad_scaler = self.adapter.create_grad_scaler(self.config)
 
+        # print("adam 参数", self.optimizer._weight_decay, self.optimizer._lr_ratio, self.optimizer._apply_decay_param_fun,\
+        #      self.optimizer._grad_clip, self.optimizer._lazy_mode, self.optimizer._multi_precision)
         # Sharding
         if self.config.sharding:
             self.model, self.optimizer, self.grad_scaler = self.adapter.train_on_sharding(self.config, self.model, self.optimizer, self.grad_scaler)
 
-        self.model = self.adapter.model_to_ddp(self.config, self.model)
+        else:
+            self.model = self.adapter.model_to_ddp(self.config, self.model)
 
+        # for n, p in self.model.named_parameters():
+        #     print(n, p)
 
-
-    # @profile(precision=4, stream=open("memory_profiler_train_ckpt.log", "w+"))
     def _init_model(self, model):
         checkpoint_path = os.path.join(self.config.base_path, self.config.data_dir, self.config.init_checkpoint)
         state_dict = paddle.load(checkpoint_path, return_numpy=True)
         
         def convert_state_dict_dtype(state_dict, model_to_load):
-            if self.config.fp16:
+            if self.config.amp:
                 dtype = "float16"
             else:
                 dtype = "float32"
             # convert the dtype of state dict
             for k, v in model_to_load.state_dict().items():
-                # if not isinstance(v, np.ndarray):
-                #     dtype = str(v.dtype)[dtype_prefix_len:]
                 if k in state_dict:
                     if paddle.in_dynamic_mode():
                         if isinstance(state_dict[k], np.ndarray):
@@ -146,11 +144,9 @@ class Trainer():
                 if self.config.world_size <= 1:
                     state.loss = self.tr_loss / self.config.log_freq
                 else:
-                    tr_log_losses = []
-                    dist_paddle.all_gather(tr_log_losses, self.tr_loss)
-                    tr_log_losses = [t if len(t.shape) > 0 else t.reshape_([-1]) for t in tr_log_losses]
-                    concat = paddle.concat(tr_log_losses, axis=0)
-                    state.loss = concat.mean() / self.config.log_freq
+                    tr_loss_scalar = dist_paddle._nested_gather(self.tr_loss).mean().item()
+                    
+                    state.loss = round(tr_loss_scalar / self.config.log_freq, 8)
                 self.tr_loss = paddle.to_tensor(0.0)
 
             step_info = state.to_dict(**other_state)
@@ -167,21 +163,23 @@ class Trainer():
 
         driver.event(Event.EPOCH_END, state.epoch)
 
-    # @profile(precision=4, stream=open("memory_profiler_train_step.log", "w+"))
     def train_one_step(self, inputs):
         self.model.train()
         state = self.training_state
-        
-        with self.adapter.autocast_smart_context_manager(self.config):
+        if self.config.amp:
+            with self.adapter.autocast_smart_context_manager(self.config):
+                outputs = self.model(**inputs)
+                loss_step = outputs[0]
+        else:
             outputs = self.model(**inputs)
             loss_step = outputs[0]
-
-        self.adapter.backward(self.config, state.global_steps, loss_step,
+        # print(inputs, outputs, loss_step)
+        self.adapter.backward(self.config, state.global_steps, self.model, loss_step,
                               self.optimizer, self.lr_scheduler, 
                               self.do_grad_scaling, self.grad_scaler)
-        print(inputs, outputs, loss_step)
+        
 
-        return loss_step
+        return loss_step.detach()
 
     def detect_training_status(self, state: TrainingState):
         if state.global_steps >= self.config.max_steps or state.num_trained_samples >= self.config.max_samples_termination:

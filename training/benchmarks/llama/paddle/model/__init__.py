@@ -1,5 +1,4 @@
 from model.models.modeling import LlamaConfig, LlamaForCausalLM
-from memory_profiler import profile
 from contextlib import contextmanager
 import paddle
 # @profile(precision=4, stream=open("memory_profiler_train_create.log", "w+"))
@@ -21,7 +20,7 @@ def create_model(config):
                                use_cache=config.use_cache,
                                use_recompute=config.use_recompute,
                                use_flash_attention=config.use_flash_attention,
-                               fp16_opt_level=config.fp16_opt_level)     
+                               fp16_opt_level=config.amp_opt_level)     
     @contextmanager
     def dtype_guard(dtype="float32"):
         origin_dtype = paddle.get_default_dtype()
@@ -31,13 +30,13 @@ def create_model(config):
         finally:
             paddle.set_default_dtype(origin_dtype)
 
-    # if config.fp16:
-    #     dtype = "float16"
-    # else:
-    #     dtype = "float32"
+    if config.amp:
+        dtype = "float16"
+    else:
+        dtype = "float32"
        
-    # with dtype_guard(dtype):
-    #     model = LlamaForCausalLM(llama_config)
+    with dtype_guard(dtype):
+        model = LlamaForCausalLM(llama_config)
     
-    model = LlamaForCausalLM(llama_config)
+    # model = LlamaForCausalLM(llama_config)
     return llama_config, model

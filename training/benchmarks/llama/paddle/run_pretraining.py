@@ -80,13 +80,13 @@ def main():
     trainer.init()
 
     dist_paddle.barrier()
-    init_evaluation_start = time.time()
-    training_state.eval_avg_loss = evaluator.evaluate(trainer, config)
-    init_evaluation_end = time.time()
-    init_evaluation_info = dict(
-        eval_loss=training_state.eval_avg_loss,
-        time=init_evaluation_end - init_evaluation_start)
-    llama_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
+    # init_evaluation_start = time.time()
+    # training_state.eval_avg_loss = evaluator.evaluate(trainer, config)
+    # init_evaluation_end = time.time()
+    # init_evaluation_info = dict(
+    #     eval_loss=training_state.eval_avg_loss,
+    #     time=init_evaluation_end - init_evaluation_start)
+    # llama_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     if not config.do_train:
         return config, training_state
@@ -110,7 +110,6 @@ def main():
     training_state.raw_train_time = time.time() - train_start_time
     
     return config, training_state, trainer.tr_loss
-    # return None, None, None
 
 if __name__ == "__main__":
     now = time.time()
@@ -134,16 +133,3 @@ if __name__ == "__main__":
     else:
         finished_info = {"e2e_time": e2e_time}
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
-
-    # 可视化 loss
-    # ic(trainer.tr_loss)
-    # print(sum(tr_loss) / len(tr_loss))
-
-    # plt.switch_backend('Agg') 
-
-    # plt.figure()
-    # plt.plot(tr_loss,'b',label = 'loss')  
-    # plt.ylabel('loss')
-    # plt.xlabel('perf_step')
-    # plt.legend()
-    # plt.savefig("./step_loss_dp.jpg")

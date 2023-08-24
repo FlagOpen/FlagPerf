@@ -105,13 +105,13 @@ class LlamaConfig(PretrainedConfig):
         recompute_granularity="full",
         use_flash_attention=False,
         use_fused_rms_norm=False,
-        tensor_parallel_output=True,
+        tensor_parallel_output=False,
         lm_shift_labels=True,
         pad_token_id=0,
         bos_token_id=1,
         eos_token_id=2,
         tie_word_embeddings=False,
-        fp16_opt_level="O0",
+        amp_opt_level="O0",
         **kwargs,
     ):
         super().__init__(
@@ -138,7 +138,7 @@ class LlamaConfig(PretrainedConfig):
         self.use_fused_rms_norm = use_fused_rms_norm
         self.tensor_parallel_output = tensor_parallel_output
         self.lm_shift_labels = lm_shift_labels
-        self.fp16_opt_level = fp16_opt_level
+        self.amp_opt_level = amp_opt_level
 
         self.pad_token_id = pad_token_id
         self.bos_token_id = bos_token_id
@@ -250,7 +250,7 @@ def scaled_dot_product_attention(
             attn_weights, paddle.full([1], float(finfo(query_states.dtype).min), dtype=attn_weights.dtype)
         )
 
-        if config.fp16_opt_level is not None:
+        if config.amp_opt_level is not None:
             with paddle.amp.auto_cast(False):
                 attn_weights = F.softmax(attn_weights, axis=-1, dtype="float32").astype(query_states.dtype)
         else:
@@ -318,7 +318,7 @@ class LlamaRMSNorm(nn.Layer):
         if self.config.use_fused_rms_norm:
             return rms_norm_fused(hidden_states, self.weight, self.variance_epsilon)
 
-        if self.config.fp16_opt_level is not None:
+        if self.config.amp_opt_level is not None:
             with paddle.amp.auto_cast(False):
                 variance = hidden_states.astype("float32").pow(2).mean(-1, keepdim=True)
                 hidden_states = paddle.rsqrt(variance + self.variance_epsilon) * hidden_states
