@@ -45,7 +45,7 @@ max_position_embeddings = 2048
 
 num_attention_heads = 32 # 32, 8
 
-num_hidden_layers = 32 # 32, 2
+num_hidden_layers = 8 # 32, 2
 
 rms_norm_eps = 1e-06
 

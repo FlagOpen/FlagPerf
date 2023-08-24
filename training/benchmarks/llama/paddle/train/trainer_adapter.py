@@ -1,19 +1,24 @@
+import os
+import sys
 import paddle
 import paddle.distributed as dist
-from train.driver import dist_paddle
-
-from paddle.optimizer import Optimizer
 import paddle.amp.auto_cast as autocast
+import paddle.distributed.fleet as fleet
+from paddle.optimizer import Optimizer
 from paddle import nn, Tensor
 from typing import Tuple
-import paddle.distributed.fleet as fleet
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+from driver import dist_paddle
+
 
 def convert_model(config, model: nn.Layer) -> nn.Layer:
     return model
 
 
 def model_to_fp16(config, model: nn.Layer, optimizer):
-    # paddle.amp.decorate(models=model, level=config.fp16_opt_level)
+    paddle.amp.decorate(models=model, level=config.fp16_opt_level)
     decorated = paddle.amp.decorate(models=model, optimizers=optimizer, level=config.fp16_opt_level)
     model, optimizer = decorated
 
@@ -67,15 +72,11 @@ def model_to_ddp(config, model: nn.Layer) -> nn.Layer:
 
 def create_grad_scaler(config):
     scaler = paddle.amp.GradScaler(init_loss_scaling=config.scale_loss)
-
-    # if config.sharding:
-    #     scaler = fleet.distributed_scaler(scaler)
-    #     if config.sharding == "stage2" or config.sharding == "stage3":
-    #         from fleet.meta_parallel.sharding.group_sharded_utils import (
-    #             GroupShardedScaler,
-    #         )
-    #         scaler = GroupShardedScaler(scaler)
-    #     return scaler
+    if config.sharding:
+        from paddle.distributed.fleet.meta_parallel.sharding.group_sharded_utils import (
+            GroupShardedScaler,
+        )
+        scaler = GroupShardedScaler(scaler)
     return scaler
 
 def train_on_sharding(config, model, optimizer, grad_scaler):
@@ -107,43 +108,20 @@ def train_on_sharding(config, model, optimizer, grad_scaler):
 
         
 def backward(config, step: int, loss: Tensor, optimizer, lr_scheduler, 
-             do_grad_scaling, scaler, model, **kwarg):
-    # Recompute and DP
-    if config.use_recompute and dist_paddle.get_world_size() > 1:
-        with model.no_sync():
-            if do_grad_scaling:
-                scaler.scale(loss).backward()
-            else:
-                loss.backward()
+             do_grad_scaling, scaler, **kwarg):
+    if do_grad_scaling:
+        scaler.scale(loss).backward()
     else:
-        if do_grad_scaling:
-            scaler.scale(loss).backward()
-        else:
-            loss.backward()
+        loss.backward()
 
     if step % config.gradient_accumulation_steps == 0:
-        # Recompute
-        if config.use_recompute:
-            dist_paddle.fused_allreduce_gradients(list(model.parameters()))
-            # if config.sharding == "stage3":
-            #     for p in model.parameters():
-            #         if hasattr(p, "bw_storage"):
-            #             assert p.grad is None, "This case shouldn't happen."
-            #             p.bw_storage.scale_(1.0 / dist_paddle.get_data_parallel_group().nranks)
-            #             dist_paddle.all_reduce(p.bw_storage, group=dp_group)
-
-
-        # Optimizer step
         if do_grad_scaling:
-            if config.sharding == "stage2" or config.sharding == "stage3":
-                scaler.step(optimizer)
-                scaler.update()
-            else:
-                scaler.minimize(optimizer, loss)
+            scaler.step(optimizer)
+            scaler.update()
             optimizer_was_run = not scaler._cache_founf_inf
-
         else:
             optimizer.step()
+
         if optimizer_was_run:
             lr_scheduler.step()
 

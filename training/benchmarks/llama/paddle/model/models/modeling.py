@@ -30,8 +30,6 @@ from paddlenlp.transformers.model_outputs import (
 from paddlenlp.transformers.model_utils import PretrainedModel, register_base_model
 from paddlenlp.transformers.configuration_utils import PretrainedConfig
 
-from icecream import ic
-from memory_profiler import profile
 __all__ = [
     "LlamaModel",
     "LlamaPretrainedModel",

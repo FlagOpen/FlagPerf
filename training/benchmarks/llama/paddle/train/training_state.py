@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 import paddle
 import inspect
-from icecream import ic
 
 @dataclass
 class TrainingState:

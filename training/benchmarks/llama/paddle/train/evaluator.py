@@ -5,16 +5,11 @@ import paddle
 import time
 import math
 import numpy as np
-from train.driver import dist_paddle
-import paddle.nn as nn
-from tqdm import tqdm
-from icecream import ic
-
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver import dist_paddle
 
 class Evaluator:
-
     def __init__(self, config, dataloader):
         self.config = config
         self.eval_dataloader = dataloader
