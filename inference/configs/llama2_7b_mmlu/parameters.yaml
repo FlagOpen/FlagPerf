@@ -1,5 +1,3 @@
-seq_length: 512
-mask_ratio: 0.10
-weight_dir: "weights"
-eval_file: "eval.txt"
-random_seed: 0
+weight_dir: "llama2_7b_hf"
+mmlu_dir: "mmlu_dataset/data"
+few_shots: 5

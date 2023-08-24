@@ -1,27 +1,24 @@
 ### 1. 推理数据集
 
-● 下载地址：`https://drive.google.com/drive/folders/1cywmDnAsrP5-2vsr8GDc6QUc7VWe-M3v`
-
-```
-文件列表：
-results_text.tar.gz
-bert_reference_results_text_md5.txt
-```
-
-* 解压后将eval.txt放置在<data_dir>目录下
+* 下载地址：`https://huggingface.co/datasets/Stevross/mmlu/tree/main`
+  1. 下载其中的data.tar
+  2. 将.tar文件还原为目录
+  3. 将解压后的data目录放置在config.data_dir/config.mmlu_dir
 
 ### 2. 模型与权重
 
 * 模型实现
-  * pytorch：transformers.BertForMaskedLM
-* 权重下载
-  * pytorch：BertForMaskedLM.from_pretrained("bert-large/base-uncased")
-* 权重选择
-  * 使用save_pretrained将加载的bert-large或bert-base权重保存到<data_dir>/<weight_dir>路径下
+  * pytorch：transformers.LlamaForCausalLM
+* 权重加载
+  * pytorch：LlamaForCausalLM.from_pretrained(config.data_dir/config.weight_dir)
+* 权重获取方式
+  1. 填写申请表，向meta ai申请获取llama2模型权重，并同意相关协议
+  2. 下载其中的llama2-7b权重（注意不是chat）
+  3. 使用huggingface提供的convert.py将权重转化为huggingface格式，并保存在config.data_dir/config.weight_dir
 
 ### 3. 软硬件配置与运行信息参考
 
-#### 2.1 Nvidia A100
+#### 3.1 Nvidia A100
 
 - ##### 硬件环境
     - 机器、加速卡型号: NVIDIA_A100-SXM4-40GB
@@ -32,22 +29,21 @@ bert_reference_results_text_md5.txt
    - OS kernel版本: 5.4.0-113-generic
    - 加速卡驱动版本：470.129.06
    - Docker 版本：20.10.16
-   - 训练框架版本：pytorch-1.13.0a0+937e930
+   - 训练框架版本：pytorch-2.1.0a0+4136153
    - 依赖软件版本：
-     - cuda: 11.8
+     - cuda: 12.1
 
 - 推理工具包
 
-   - TensorRT 8.5.1.7
+   - Inductor (torch._dynamo) pytorch-2.1.0a0+4136153
 
-### 4. 运行情况（BERT-Large）
+### 4. 运行情况（Llama2_7b_MMLU）
 
 * 指标列表
 
 | 指标名称           | 指标值索引        | 特殊说明                                                    |
 | ------------------ | ----------------- | ----------------------------------------------------------- |
 | 数据精度           | precision         | 可选fp32/fp16                                               |
-| 批尺寸             | bs                |                       |
 | 硬件存储使用       | mem               | 通常称为“显存”,单位为GiB                                    |
 | 端到端时间         | e2e_time          | 总时间+Perf初始化等时间                                     |
 | 验证总吞吐量       | p_val_whole       | 实际验证序列数除以总验证时间                                |
@@ -55,14 +51,19 @@ bert_reference_results_text_md5.txt
 | 推理总吞吐量       | p_infer_whole     | 实际推理序列数除以总推理时间                                |
 | **推理计算吞吐量** | **\*p_infer_core** | 不包含IO部分耗时                             |
 | **计算卡使用率** | **\*MFU** | model flops utilization                             |
-| 推理结果           | acc(推理/验证)    | 单位为top1MaskedLM准确率(acc1)                              |
+| 推理结果           | acc(推理/验证)    | 单位为MMLU回答准确率(acc1)                            |
+| 可推理最小优化   | minOpt             | 在给定训练框架、编译器之外，必须引入的最小优化 |
 
 * 指标值
 
 
-| 推理工具  | precision | bs   | e2e_time | p_val_whole | p_val_core | p_infer_whole | \*p_infer_core | \*MFU     | acc         | mem        |
+| 推理工具  | precision | e2e_time | p_val_whole | p_val_core | p_infer_whole | \*p_infer_core | \*MFU     | acc         | mem        | minOpt        |
 | ----------- | --------- | ---- | ---- | -------- | ----------- | ---------- | ------------- | ------------ | ----------- | ----------- |
-| tensorrt | fp16      | 32 | 1283.9   | 257.3       | 260.4      | 408.3         | 418.1          | 45.3% | 0.600/0.638 | 17.4/40.0 |
-| tensorrt | fp32   | 32 | 1868.8   | 150.4       | 152.2      | 190.4         | 194.1       | 42.0% | 0.638/0.638 | 16.9/40.0 |
+| inductor | fp16      |          |             |            |               |                |       |             |           | None |
+| inductor | fp32   | 1990     | 5455.3      | 5469.4     | 5675.7        | 5951.8         | 53.4% | 45.8%/45.8% | 35.0/40.0 | None |
 
+* 指标说明
 
+  * minOpt
+
+    在使用给定训练框架、编译器等基础环境上，部分硬件（单卡）需要使用额外的优化、才能进行推理（解决显存不足等问题），例如int8 quantization，CPU-offload，kernl（flash-attention）等。如必须引入优化才可运行推理，则需在minOpt填写引入的优化方案。

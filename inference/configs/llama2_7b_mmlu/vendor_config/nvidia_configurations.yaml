@@ -1,3 +1,4 @@
-trt_tmp_path: nvidia_tmp/bertLarge.trt
-has_dynamic_axis: false
-torchtrt_full_compile: true
+dynamo_mode: "reduce-overhead"
+dynamo_dynamic: true
+dynamo_wamrup_iters: 10
+dynamo_wamrup_times: 10
