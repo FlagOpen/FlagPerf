@@ -1,5 +1,4 @@
 from paddlenlp.transformers import CosineAnnealingWithWarmupDecay, LinearAnnealingWithWarmupDecay
-from icecream import ic
 
 def create_scheduler(config):
     if config.decay_steps is None:

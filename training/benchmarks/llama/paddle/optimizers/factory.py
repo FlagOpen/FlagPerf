@@ -11,7 +11,6 @@ def create_optimizer(config, model: nn.Layer, lr_scheduler):
     def apply_decay_param_fun(x):
         return x in decay_parameters
     
-    
     optimizer = AdamW(parameters=parameter_list,
                     learning_rate=lr_scheduler,
                     apply_decay_param_fun=apply_decay_param_fun,
@@ -19,9 +18,10 @@ def create_optimizer(config, model: nn.Layer, lr_scheduler):
                     beta2=config.adam_beta2,
                     epsilon=config.adam_epsilon,
                     weight_decay=config.weight_decay,
-                    grad_clip=nn.ClipGradByGlobalNorm(config.max_grad_norm)
-                    if config.max_grad_norm > 0
-                    else None,
+                    grad_clip=None,
+                    # grad_clip=nn.ClipGradByGlobalNorm(config.max_grad_norm)
+                    # if config.max_grad_norm > 0
+                    # else None,
                     multi_precision=True
                     )
     return optimizer

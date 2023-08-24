@@ -21,7 +21,6 @@ import paddle
 from .dataset import GPTDataset
 from paddlenlp.utils.log import logger
 from paddle.io import DataLoader, DistributedBatchSampler
-from icecream import ic
 
 def get_train_data_file(config):
     input_dir = os.path.join(config.base_path, config.data_dir)
@@ -163,14 +162,6 @@ def create_pretrained_dataset(
     return train_dataset, valid_dataset, test_dataset, _collate_data
 
 def _get_train_sampler(config,train_dataset) -> Optional[paddle.io.Sampler]:
-    if config.world_size <= 1:
-        return paddle.io.BatchSampler(
-            dataset=train_dataset,
-            shuffle=False,
-            batch_size=config.per_device_train_batch_size,
-            drop_last=config.dataloader_drop_last,
-        )
-    
     return DistributedBatchSampler(
         train_dataset,
         batch_size=config.per_device_train_batch_size,
@@ -181,13 +172,6 @@ def _get_train_sampler(config,train_dataset) -> Optional[paddle.io.Sampler]:
     )
 
 def _get_eval_sampler(config, eval_dataset):
-    if config.world_size <= 1:
-        return paddle.io.BatchSampler(
-            eval_dataset,
-            batch_size=config.per_device_eval_batch_size,
-            shuffle=False,
-            drop_last=False,
-        )
     return DistributedBatchSampler(
         eval_dataset,
         num_replicas=config.world_size,

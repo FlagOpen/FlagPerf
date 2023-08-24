@@ -51,10 +51,20 @@ def init_dist_training_env(config):
     if dist.get_world_size() <= 1:
         config.device = paddle.device.get_device()
         config.world_size = get_world_size()
+        config.dataset_world_size = get_world_size()
     else:
         dist.init_parallel_env()
         config.device = paddle.device.get_device()
         config.world_size = get_world_size()
+        config.dataset_world_size = get_world_size()
+        if config.sharding:
+            strategy = fleet.DistributedStrategy()
+            hybrid_configs = {
+                                "dp_degree": 1,
+                                "sharding_degree": config.world_size,
+                            }
+            strategy.hybrid_configs = hybrid_configs
+            fleet.init(is_collective=True, strategy=strategy)
         print('------------------------')
         print('device numbers:', config.world_size)
         print('the processing uses', config.device)
@@ -97,18 +107,21 @@ def format_step(step):
         s += "Validation Iteration: {} ".format(step[2])
     return s
 
-def all_gather(tensor_list, tensor):
-    return dist.all_gather(tensor_list, tensor)
+def _nested_gather(tr_loss):
+    tr_log_losses = []
+    dist.all_gather(tr_log_losses, tr_loss)
+    tr_log_losses = [t if len(t.shape) > 0 else t.reshape_([-1]) for t in tr_log_losses]
+    concat = paddle.concat(tr_log_losses, axis=0)
+    return concat
 
 def fused_allreduce_gradients(params):
     from paddle.distributed.fleet.utils.hybrid_parallel_util import fused_allreduce_gradients
     return fused_allreduce_gradients(params, None)
 
-def group_sharded_parallel(model, optimizer, level, scaler):
-    return dist.sharding.group_sharded_parallel(model, optimizer, level, scaler=scaler)
+def group_sharded_parallel(model, optimizer, level, scaler, **extra_kwargs):
+    return dist.sharding.group_sharded_parallel(model, optimizer, level, scaler=scaler, **extra_kwargs)
 
 def get_data_parallel_group():
-    fleet.init()
     hcg = fleet.get_hybrid_communicate_group()
     dp_group = hcg.get_data_parallel_group()
     return dp_group

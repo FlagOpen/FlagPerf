@@ -81,9 +81,6 @@ fuse_attention_ffn: bool = False
 # full core_attn
 recompute_granularity: str = "full"
 
-# virtual_pp_degree
-virtual_pp_degree: int = 1
-
 # Pre-training from existing paddlenlp model weights. Default Fasle and model will train from scratch. If set True, the model_name_or_path argument must exist in the paddlenlp models.
 continue_training: bool = False
 
@@ -152,9 +149,9 @@ sharding = "stage3"
 # fp16 config args
 # =========================================================
 # Run model in fp16 mode
-fp16: bool = True
+amp: bool = True
 
-fp16_opt_level = 'O2'
+amp_opt_level = 'O2'
 
 bf16: bool = False
 

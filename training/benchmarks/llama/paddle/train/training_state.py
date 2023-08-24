@@ -55,7 +55,7 @@ class TrainingState:
             lr = lr[0]
 
         state_dict["learning_rate"] = "{:.3e}".format(lr)
-        state_dict["loss"] = self.loss.detach()
+        state_dict["loss"] = self.loss
 
         exclude = [
             "eval_avg_loss", "eval_embedding_average", "skipped_steps",
