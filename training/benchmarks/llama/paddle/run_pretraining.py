@@ -18,13 +18,10 @@ from train.trainer import Trainer
 from train.training_state import TrainingState
 from train import trainer_adapter
 
-from icecream import ic
-import pdb
-import matplotlib.pyplot as plt
 
-# CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-# sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from train.driver import Driver, Event, dist_paddle, check
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+from driver import Driver, Event, dist_paddle, check
 
 logger = None
 

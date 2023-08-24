@@ -15,9 +15,9 @@ from optimizers import create_optimizer
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
 
-# CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-# sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
-from train.driver import Driver, Event, dist_paddle
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
+from driver import Driver, Event, dist_paddle
 from collections.abc import Mapping
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
@@ -54,10 +54,9 @@ class Trainer():
     # @profile(precision=4, stream=open("memory_profiler_train_init.log", "w+"))
     def init(self):
         self.model_config, self.model = create_model(self.config)
-        self.model = self._init_model(self.model)
+        # self.model = self._init_model(self.model)
 
         self.model = self.adapter.convert_model(self.config, self.model)
-
         self.lr_scheduler = create_scheduler(self.config)
         self.optimizer = create_optimizer(self.config, self.model, self.lr_scheduler)
 
@@ -66,10 +65,12 @@ class Trainer():
             self.do_grad_scaling = True
             self.model, self.optimizer = self.adapter.model_to_fp16(self.config, self.model, self.optimizer)
             self.grad_scaler = self.adapter.create_grad_scaler(self.config)
-        self.model = self.adapter.model_to_ddp(self.config, self.model)
+
         # Sharding
         if self.config.sharding:
             self.model, self.optimizer, self.grad_scaler = self.adapter.train_on_sharding(self.config, self.model, self.optimizer, self.grad_scaler)
+
+        self.model = self.adapter.model_to_ddp(self.config, self.model)
 
 
 
@@ -171,17 +172,15 @@ class Trainer():
         self.model.train()
         state = self.training_state
         
-        # np.random.seed(10)
-        # x = np.random.randint(2500, size=(1,2049))
-        # inputs['input_ids'] = paddle.to_tensor(x[:, :-1], dtype="int64")
-        # inputs['labels'] = paddle.to_tensor(x[:, 1:], dtype="int64")
         with self.adapter.autocast_smart_context_manager(self.config):
             outputs = self.model(**inputs)
             loss_step = outputs[0]
 
         self.adapter.backward(self.config, state.global_steps, loss_step,
                               self.optimizer, self.lr_scheduler, 
-                              self.do_grad_scaling, self.grad_scaler, self.model)
+                              self.do_grad_scaling, self.grad_scaler)
+        print(inputs, outputs, loss_step)
+
         return loss_step
 
     def detect_training_status(self, state: TrainingState):

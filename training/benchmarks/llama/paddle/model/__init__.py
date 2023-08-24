@@ -31,13 +31,13 @@ def create_model(config):
         finally:
             paddle.set_default_dtype(origin_dtype)
 
-    if config.fp16:
-        dtype = "float16"
-    else:
-        dtype = "float32"
+    # if config.fp16:
+    #     dtype = "float16"
+    # else:
+    #     dtype = "float32"
        
-    with dtype_guard(dtype):
-        model = LlamaForCausalLM(llama_config)
+    # with dtype_guard(dtype):
+    #     model = LlamaForCausalLM(llama_config)
     
-
+    model = LlamaForCausalLM(llama_config)
     return llama_config, model

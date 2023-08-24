@@ -163,7 +163,7 @@ def create_pretrained_dataset(
     return train_dataset, valid_dataset, test_dataset, _collate_data
 
 def _get_train_sampler(config,train_dataset) -> Optional[paddle.io.Sampler]:
-    if config.world_size <= 1 or config.sharding is not None:
+    if config.world_size <= 1:
         return paddle.io.BatchSampler(
             dataset=train_dataset,
             shuffle=False,
@@ -181,7 +181,7 @@ def _get_train_sampler(config,train_dataset) -> Optional[paddle.io.Sampler]:
     )
 
 def _get_eval_sampler(config, eval_dataset):
-    if config.world_size <= 1 or config.sharding is not None:
+    if config.world_size <= 1:
         return paddle.io.BatchSampler(
             eval_dataset,
             batch_size=config.per_device_eval_batch_size,
