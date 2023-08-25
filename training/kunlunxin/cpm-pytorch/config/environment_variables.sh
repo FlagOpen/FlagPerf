@@ -19,3 +19,8 @@ export XPUSIM_TOPOLOGY_FILE=$(readlink -f $topo_file)
 export BKCL_CCIX_RING="1"
 export ALLREDUCE_ASYNC="0"
 export ALLREDUCE_FUSION="0"
+
+## install dependency
+pip install http://10.1.2.158:8111/flagperf/202307/cpm/xacc-0.1.0-cp38-cp38-linux_x86_64.whl
+pip install http://10.1.2.158:8111/flagperf/202307/cpm/xmlir-0.0.1-cp38-cp38-linux_x86_64.whl
+pip install sentencepiece jieba
