@@ -47,8 +47,8 @@ class InferModel:
                                                  config_var_dtype_map=input_fp16,
                                                  ).value()
         else: ## fp32
-            os.environ['XTCL_USE_FP16'] = '0'
-            os.environ['XTCL_QUANTIZE_WEIGHT'] = '0'
+            os.environ['XTCL_USE_FP16'] = '1'
+            os.environ['XTCL_QUANTIZE_WEIGHT'] = '1'
 
         with tvm.transform.PassContext(opt_level=3, config=build_config):
             if USE_VM_COMPILE:
