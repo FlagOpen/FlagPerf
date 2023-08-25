@@ -1,0 +1,8 @@
+ixrt_tmp_path: iluvatar_tmp/resnet50-fp16.engine
+has_dynamic_axis: false
+repeat: 1
+image_size: 224
+exist_onnx_path: onnxs/resnet50_bs256_pytorch_fp16False.onnx
+# exist_compiler_path: resnet50-fp16.engine
+output_types: {"output":"float32"}
+input_types: {"input": "float32"}
