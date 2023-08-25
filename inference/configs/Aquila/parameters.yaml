@@ -2,5 +2,5 @@
 # There is no parameters for resnet50 case.
 state_dict: "checkpoints_in"
 model_name: "aquilachat-7b"
-model_save_path: "autoloader_save_path"
+model_save_path: "model_save_path"
 ntrain: 5

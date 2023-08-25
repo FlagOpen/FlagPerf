@@ -15,10 +15,10 @@ from .utils import TASKS, gen_prompt, format_example, batch_split
 def cal_perf(config, tokens, duration, core_time, str_prefix):
     model_forward_perf = config.repeat * tokens / duration
     logger.info(str_prefix + "(" + config.framework + ") Perf: " +
-                str(model_forward_perf) + " qps")
+                str(model_forward_perf) + " tps")
     model_forward_core_perf = config.repeat * tokens / core_time
     logger.info(str_prefix + "(" + config.framework + ") core Perf: " +
-                str(model_forward_core_perf) + " qps")
+                str(model_forward_core_perf) + " tps")
     return round(model_forward_perf, 3), round(model_forward_core_perf, 3)
 
 
