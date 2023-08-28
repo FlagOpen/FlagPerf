@@ -1,7 +1,7 @@
-fp16 = True
-ddp_type = "apex"
 train_batch_size = 8
 eval_batch_size = 8
+
+max_samples_termination = 24135
 
 dist_backend = "nccl"
 
@@ -17,7 +17,4 @@ lr_decay_iters = 4338
 log_freq = 1
 
 training_event = None
-
-max_samples_termination = 1388270 * 4
-target_accuracy = 0.8
 

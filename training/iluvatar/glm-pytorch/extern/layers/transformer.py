@@ -1,7 +1,7 @@
 import torch
 import math
 
-from .transformer_block import GPT2TransformerLayer
+from .transformer_block import GLMTransformerLayer
 from .layernorm import LayerNorm
 from model.models.checkpoint import checkpoint
 
@@ -25,7 +25,7 @@ def unscaled_init_method(sigma):
     return init_
 
 
-class GPT2Transformer(torch.nn.Module):
+class GLMTransformer(torch.nn.Module):
     """GPT-2 transformer.
 
     This module takes input from embedding layer and it's output can
@@ -78,7 +78,7 @@ class GPT2Transformer(torch.nn.Module):
         block_position_encoding=True,
         attention_scale=1.0,
     ):
-        super(GPT2Transformer, self).__init__()
+        super(GLMTransformer, self).__init__()
         self.hidden_size = hidden_size
         # Store activation checkpoiting flag.
         self.checkpoint_activations = checkpoint_activations
@@ -112,7 +112,7 @@ class GPT2Transformer(torch.nn.Module):
 
         def get_layer():
 
-            return GPT2TransformerLayer(
+            return GLMTransformerLayer(
                 hidden_size,
                 num_attention_heads,
                 attention_dropout_prob,
@@ -131,7 +131,6 @@ class GPT2Transformer(torch.nn.Module):
         # Final layer norm before output.
         self.final_layernorm = LayerNorm(hidden_size, eps=layernorm_epsilon)
 
-        # TODO deepspeed
         # if deepspeed.checkpointing.is_configured():
         #     global get_cuda_rng_tracker, checkpoint
         #     get_cuda_rng_tracker = deepspeed.checkpointing.get_cuda_rng_tracker
@@ -278,21 +277,21 @@ if __name__ == "__main__":
                               dtype=torch.int64).to('cuda')
     attention_mask = torch.tensor([5, 10]).to('cuda')
 
-    model = GPT2Transformer(num_layers=24,
-                            hidden_size=1024,
-                            num_attention_heads=16,
-                            max_sequence_length=512,
-                            max_memory_length=0,
-                            embedding_dropout_prob=0.1,
-                            attention_dropout_prob=0.1,
-                            output_dropout_prob=0.1,
-                            checkpoint_activations=True,
-                            checkpoint_num_layers=1,
-                            layernorm_epsilon=1.0e-5,
-                            init_method_std=0.02,
-                            use_scaled_init_for_output_weights=True,
-                            block_position_encoding=True,
-                            attention_scale=1.0).to('cuda')
+    model = GLMTransformer(num_layers=24,
+                           hidden_size=1024,
+                           num_attention_heads=16,
+                           max_sequence_length=512,
+                           max_memory_length=0,
+                           embedding_dropout_prob=0.1,
+                           attention_dropout_prob=0.1,
+                           output_dropout_prob=0.1,
+                           checkpoint_activations=True,
+                           checkpoint_num_layers=1,
+                           layernorm_epsilon=1.0e-5,
+                           init_method_std=0.02,
+                           use_scaled_init_for_output_weights=True,
+                           block_position_encoding=True,
+                           attention_scale=1.0).to('cuda')
 
     outputs = model(hidden_states, position_ids, attention_mask)
     print(outputs[0].shape)
