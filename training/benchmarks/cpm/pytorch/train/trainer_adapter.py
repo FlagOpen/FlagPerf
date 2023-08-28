@@ -38,16 +38,17 @@ def create_optimizer(config, model: nn.Module) -> Optimizer:
 
 def model_to_fp16(config, model: nn.Module,
                   optimizer: Optimizer) -> Tuple[nn.Module, Optimizer]:
-    model = FP16_Module(model)
     args = config
-    optimizer = FP16_Optimizer(optimizer,
-                               static_loss_scale=args.loss_scale,
-                               dynamic_loss_scale=args.dynamic_loss_scale,
-                               dynamic_loss_args={
-                                   'scale_window': args.loss_scale_window,
-                                   'min_scale': args.min_scale,
-                                   'delayed_shift': args.hysteresis
-                               })
+    if args.fp16:
+        model = FP16_Module(model)
+        optimizer = FP16_Optimizer(optimizer,
+                                static_loss_scale=args.loss_scale,
+                                dynamic_loss_scale=args.dynamic_loss_scale,
+                                dynamic_loss_args={
+                                    'scale_window': args.loss_scale_window,
+                                    'min_scale': args.min_scale,
+                                    'delayed_shift': args.hysteresis
+                                })
 
     return model, optimizer
 
