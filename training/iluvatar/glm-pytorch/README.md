@@ -1,20 +1,7 @@
-### 模型信息
-- 模型介绍
->GLM is a General Language Model pretrained with an autoregressive blank-filling objective and can be finetuned on various natural language understanding and generation tasks.
->Please refer to our paper for a detailed description of GLM:
->[GLM: General Language Model Pretraining with Autoregressive Blank Infilling](https://arxiv.org/abs/2103.10360) (ACL 2022)
-
-- 模型代码来源
-> https://github.com/THUDM/GLM
-
 ### 模型Checkpoint下载
-> `https://cloud.tsinghua.edu.cn/d/13f5b03da9594e5490c4/files/?p=%2Fglm-large-blank.tar.bz2`
-
+[模型Checkpoint下载](../../benchmarks/glm/README.md#模型checkpoint)
 ### 测试数据集下载
-> `https://dl.fbaipublicfiles.com/glue/superglue/data/v2/ReCoRD.zip`
-
-- 预处理
-> 无需预处理 
+[测试数据集下载](../../benchmarks/glm/README.md#数据集)
 
 ### 天数智芯 BI-V100 GPU配置与运行信息参考
 #### 环境配置
@@ -23,22 +10,36 @@
 
 - ##### 软件环境
    - OS版本：Ubuntu 20.04
-   - OS kernel版本:  4.15.0-156-generic x86_64    
-   - 加速卡驱动版本：3.0.0
+   - OS kernel版本:  5.4.0-148-generic x86_64    
+   - 加速卡驱动版本：3.1.0
    - Docker 版本：20.10.8
-   - 训练框架版本：torch-1.10.2+corex.3.0.0
+   - 训练框架版本：torch-1.13.1+corex.3.1.0
    - 依赖软件版本：无
 
 
 ### 运行情况
-| 训练资源 |       配置文件     | 运行时长(s) | 目标精度 | 收敛精度 | Steps数 | 性能(samples/s) |
-| -------- | ------------------ | ----------- | -------- | -------- | ------- | --------------- |
-| 单机8卡  | config_BI-V100x1x8 | 10120.93    | 0.8      | 0.8081   | 1500    | 9.82            |
-| 两机8卡  | config_BI-V100x2x8 | coming      | 0.8      | coming   | coming  | coming          |
+* 通用指标
 
-### 许可证
+| 指标名称         | 指标值                                       | 特殊说明                                    |
+| ---------------- | -------------------------------------------- | ------------------------------------------- |
+| 任务类别         | 自然语言理解、无条件文本生成、有条件文本生成 |                                             |
+| 模型             | GLM                                          |                                             |
+| 数据集           | superglue                                    |                                             |
+| 数据精度         | precision,见“性能指标”                       | 可选fp32/amp/fp16                           |
+| 超参修改         | fix_hp,见“性能指标”                          | 跑满硬件设备评测吞吐量所需特殊超参          |
+| 硬件设备简称     | BI-V100                                  |                                             |
+| 硬件存储使用     | mem(actual/total),见“性能指标”               | 通常称为“显存”,单位为GiB                    |
+| 端到端时间       | e2e_time,见“性能指标”                        | 总时间+Perf初始化等时间                     |
+| 总吞吐量         | p_whole,见“性能指标”                         | 实际训练样本数除以总时间(performance_whole) |
+| 训练吞吐量       | p_train,见“性能指标”                         | 不包含每个epoch末尾的评估部分耗时           |
+| **计算吞吐量**   | **p_core,见“性能指标”**                      | 不包含数据IO部分的耗时(p3>p2>p1)            |
+| 训练结果         | acc,见“性能指标”                             | 准确率                                      |
+| 额外修改项       | 无                                           |                                             |
 
+* 性能指标
 
-本项目基于Apache 2.0 license。
-
-本项目部分代码基于MLCommons https://github.com/mlcommons/training_results_v1.0/tree/master/NVIDIA 实现。
+| 配置                | precision | fix_hp          | e2e_time | p_whole | p_train | p_core | acc   | mem       |
+| ------------------- | --------- | --------------- | -------- | ------- | ------- | ------ | ----- | --------- |
+| BI-V100单机8卡（1x8）  | fp32      | bs=8, lr=1e-05 |      |     |     |    | 0.806 | 29.7/32.0 |
+| BI-V100单机单卡（1x1） | fp32      | bs=8, lr=1e-05 |      |      |      |     |       | 28.8/32.0 |
+| BI-V100两机8卡（2x8）  | fp32      | bs=8, lr=1e-05 |      |     |     |    |  | 28.3/32.0 |
