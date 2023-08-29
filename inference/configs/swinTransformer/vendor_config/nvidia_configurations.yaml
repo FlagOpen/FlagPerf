@@ -1,0 +1,3 @@
+trt_tmp_path: nvidia_tmp/swin.trt
+has_dynamic_axis: false
+torchtrt_full_compile: true

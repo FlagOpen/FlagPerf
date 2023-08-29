@@ -114,8 +114,6 @@ class InferModel:
 
     def __call__(self, model_inputs: list):
 
-        batch_size = self.config.batch_size
-
         for i, model_input in enumerate(model_inputs):
             model_input = model_input.cuda()
 

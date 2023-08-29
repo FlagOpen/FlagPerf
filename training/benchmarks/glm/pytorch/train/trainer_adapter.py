@@ -1,19 +1,13 @@
-import os
-import sys
-
 from torch.optim import Optimizer
 from torch import nn, Tensor
 from typing import Tuple
 
-import optimizers
 try:
     from apex.optimizers import FusedAdam as Adam
 except ImportError:
     from torch.optim import AdamW as Adam
 from optimizers import FP16_Optimizer, get_optimizer_param_groups
 
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver.dist_pytorch import main_proc_print
 
 

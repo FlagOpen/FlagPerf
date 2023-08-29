@@ -336,7 +336,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
                 + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
                 + f" --loglevel " + getattr(config, "FLAGPERF_LOG_LEVEL") \
                 + f" --vendor " + getattr(config, "VENDOR") \
-                + f" --case " + getattr(config, "MODEL")  \
+                + f" --case " + case_config["model"]  \
                 + f" --data_dir " + case_config["data_dir_container"] \
                 + f" --framework " + case_config["framework"] \
                 + f" --log_dir " + curr_log_path  + " 2>&1 | tee "+curr_log_path+"/stdout_err.out.log" + "\""
