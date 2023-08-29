@@ -46,8 +46,14 @@ def install_requriements(vendor, model, framework, pipsource):
     framework_path = os.path.join(case_path, framework_name)
 
     req_file = os.path.join(framework_path, "requirements.txt")
-    print(req_file)
-    env_file = os.path.join(framework_path, "environment_variables.sh")
+    
+    vendor_filename = vendor + "_requirements.txt"
+    vendor_req_file = os.path.join(framework_path, vendor_filename)
+    if os.path.exists(vendor_req_file):
+        req_file = vendor_req_file
+
+    env_file = os.path.join(framework_path, "environment_variables.sh")  
+        
     if not os.path.isfile(req_file):
         print("requirenments file ", req_file, " doesn't exist. Do nothing.")
         return 0
