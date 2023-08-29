@@ -47,7 +47,7 @@ def install_requriements(vendor, model, framework, pipsource):
 
     req_file = os.path.join(framework_path, "requirements.txt")
     
-    vendor_filename = vendor + "requirements.txt"
+    vendor_filename = vendor + "_requirements.txt"
     vendor_req_file = os.path.join(framework_path, vendor_filename)
     if os.path.exists(vendor_req_file):
         req_file = vendor_req_file
