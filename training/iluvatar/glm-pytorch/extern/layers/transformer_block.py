@@ -1,12 +1,11 @@
 import torch
 
-# from model.layers.attention import SelfAttention
+from model.layers.attention import SelfAttention
 from .layernorm import LayerNorm
 from model.layers.mlp import GLMMLP
-from .attention import OfficialSelfAttentionApex
 
 
-class GPT2TransformerLayer(torch.nn.Module):
+class GLMTransformerLayer(torch.nn.Module):
     """A single layer transformer for GPT2.
 
     We use the following notation:
@@ -46,7 +45,7 @@ class GPT2TransformerLayer(torch.nn.Module):
                  relative_encoding=False,
                  performer=False,
                  attention_scale=1.0):
-        super(GPT2TransformerLayer, self).__init__()
+        super(GLMTransformerLayer, self).__init__()
         # Set output layer initialization if not provided.
         if output_layer_init_method is None:
             output_layer_init_method = init_method
@@ -54,10 +53,17 @@ class GPT2TransformerLayer(torch.nn.Module):
         # Layernorm on the input data.
         self.input_layernorm = LayerNorm(hidden_size, eps=layernorm_epsilon)
 
-        self.attention = OfficialSelfAttentionApex(hidden_size,
-                                                   num_attention_heads,
-                                                   attention_dropout_prob,
-                                                   output_dropout_prob)
+        # Self attention.
+        self.attention = SelfAttention(
+            hidden_size,
+            num_attention_heads,
+            attention_dropout_prob,
+            output_dropout_prob,
+            init_method,
+            output_layer_init_method=output_layer_init_method,
+            relative_encoding=relative_encoding,
+            performer=performer,
+            attention_scale=attention_scale)
 
         # Layernorm on the input data.
         self.post_attention_layernorm = LayerNorm(hidden_size,
@@ -96,3 +102,24 @@ class GPT2TransformerLayer(torch.nn.Module):
         output = layernorm_input + mlp_output
 
         return output
+
+
+if __name__ == "__main__":
+    batch_size = 8
+    seq_len = 512
+    hidden_size = 1024
+    num_attention_heads = 16
+    attention_dropout_prob = 0.1
+    output_dropout_prob = 0.1
+    layernorm_epsilon = 1e-10
+    init_method = torch.nn.init.xavier_normal_
+    test_transformer = GLMTransformerLayer(hidden_size, num_attention_heads,
+                                           attention_dropout_prob,
+                                           output_dropout_prob,
+                                           layernorm_epsilon, init_method)
+
+    hidden_states = torch.rand([batch_size, seq_len, hidden_size])
+    ltor_mask = torch.ones([1, 1, seq_len, seq_len])
+
+    outputs = test_transformer(hidden_states, ltor_mask)
+    print(outputs.shape)
