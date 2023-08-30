@@ -58,7 +58,7 @@
 | 推理总吞吐量       | p_infer_whole     | 实际推理序列数除以总推理时间                                |
 | **推理计算吞吐量** | **\*p_infer_core** | 不包含IO部分耗时                             |
 | **计算卡使用率** | **\*MFU** | model flops utilization                             |
-| 推理结果           | acc(推理/验证)    | 单位为MMLU回答准确率                            |
+| 推理结果           | acc(推理/验证)    | 单位为5-shots MMLU回答准确率                            |
 
 * 指标值
 
