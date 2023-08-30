@@ -1,4 +1,0 @@
-trt_tmp_path: null
-has_dynamic_axis: false
-batch_size: 1
-max_gen_len: 1

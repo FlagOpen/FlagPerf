@@ -8,7 +8,7 @@ from tqdm import tqdm
 from loguru import logger
 
 from tools import torch_sync
-from flagai.model.predictor.aquila import aquila_generate
+from flagai.data.tokenizer import Tokenizer
 from .utils import TASKS, gen_prompt, format_example, batch_split
 
 
@@ -29,12 +29,15 @@ def batch_infer(model, tokenizer, config, prompts):
     prompt_tokens_all = 0
     for batch_input in tqdm(batch_split(prompts, config.batch_size)):
         prompt_tokens = tokenizer.tokenize(batch_input[0])
+        tokens = tokenizer.encode(batch_input[0])
+        tokens = torch.LongTensor([tokens]).cuda()
         prompt_tokens_all += len(prompt_tokens)
         with torch.no_grad():
             torch_sync(config)
             core_time_start = time.time()
-            model_output = aquila_generate(tokenizer, model, prompts=batch_input, max_gen_len=config.max_gen_len)
-            torch_sync(config)
+            model_forward_output = model(tokens)
+            predict_result = torch.argmax(model_forward_output["logits"], dim=1)
+            model_output = tokenizer.decode([predict_result.item()])
             core_time += time.time() - core_time_start
         answers.append(model_output)
     duration = time.time() - start
@@ -44,10 +47,11 @@ def batch_infer(model, tokenizer, config, prompts):
     return answers, model_forward_perf , model_forward_core_perf
 
 
-def model_forward(model_tuple, dataloader, evaluator, config):
+def model_forward(model, dataloader, evaluator, config):
     run_results = {}
-    model  =  model_tuple[0]
-    tokenizer = model_tuple[1]
+    model_path = os.path.join(os.path.dirname(__file__) + config.download_path)
+    tokenizer = Tokenizer.from_pretrained(config.model_name, cache_dir=model_path)
+
     average_model_forward_perf = []
     average_model_forward_core_perf = []
 

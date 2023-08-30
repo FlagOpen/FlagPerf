@@ -8,8 +8,8 @@ from flagai.auto_model.auto_loader import AutoLoader
 
 def create_model(config):
     logger.info("build model...")
-    if os.path.exists(config.model_save_path):
-        model_dict = torch.load(config.model_save_path)
+    if os.path.exists(config.download_path):
+        model_dict = torch.load(config.download_path)
         model = model_dict["model"]
         tokenizer = model_dict["tokenizer"]
     else:
@@ -21,13 +21,14 @@ def create_model(config):
         fp16=True)
         model = loader.get_model()
         tokenizer = loader.get_tokenizer()
-        torch.save({"model":model, "tokenizer":tokenizer}, config.model_save_path)
+        torch.save({"model":model, "tokenizer":tokenizer}, config.download_path)
 
     model.cuda()
     model.eval()
     if config.fp16:
         model.half()
 
-    return (model, tokenizer)
+    # return (model, tokenizer)
+    return model
 
 
