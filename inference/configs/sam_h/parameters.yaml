@@ -1,0 +1,3 @@
+weights: "sam_h_weights"
+datasize: 1000
+ground_truth: "sam_gt"
