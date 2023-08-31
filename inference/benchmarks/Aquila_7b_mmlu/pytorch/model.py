@@ -28,7 +28,6 @@ def create_model(config):
     if config.fp16:
         model.half()
 
-    # return (model, tokenizer)
     return model
 
 

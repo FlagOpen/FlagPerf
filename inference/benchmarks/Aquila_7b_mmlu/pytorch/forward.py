@@ -49,7 +49,7 @@ def batch_infer(model, tokenizer, config, prompts):
 
 def model_forward(model, dataloader, evaluator, config):
     run_results = {}
-    model_path = os.path.join(os.path.dirname(__file__) + config.download_path)
+    model_path = os.path.join(os.path.dirname(__file__), config.download_path)
     tokenizer = Tokenizer.from_pretrained(config.model_name, cache_dir=model_path)
 
     average_model_forward_perf = []
