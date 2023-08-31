@@ -23,7 +23,6 @@ class InferModel:
         for input in onnx_model.graph.input:
             input_shape = input.type.tensor_type.shape.dim
             input_shape = [a.dim_value for a in input_shape]
-            input_shape[0] = config.batch_size
             input_name = input.name #'inputs:0'
             self.input_names.append(input_name)
             shape_dict[input_name] = input_shape
