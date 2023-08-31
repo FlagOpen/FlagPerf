@@ -194,6 +194,9 @@ def main():
         proc.wait()
 
     START_LOGGER.stop()
+    # check the return code of each process
+    if proc.returncode != 0:
+        raise Exception("Exception! process {0} returncode != 0, please check relevant issue".format(str(proc.pid)))
 
 
 if __name__ == '__main__':
