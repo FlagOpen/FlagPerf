@@ -29,5 +29,3 @@ def create_model(config):
         model.half()
 
     return model
-
-

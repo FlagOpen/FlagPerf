@@ -1,6 +1,3 @@
-# TASKS = [
-#          'abstract_algebra']
-
 TASKS = [
         'abstract_algebra',
         'anatomy',
