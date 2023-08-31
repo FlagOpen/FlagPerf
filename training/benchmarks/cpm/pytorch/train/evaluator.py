@@ -40,7 +40,9 @@ class Evaluator:
                 all_losses.append(loss.item())
 
                 preds = torch.argmax(output, -1)
-                if isinstance(model.module, FP16_Module):
+                if not hasattr(model, "module"):
+                   embeddings = model.word_embeddings.weight
+                elif isinstance(model.module, FP16_Module):
                     embeddings = model.module.module.word_embeddings.weight
                 else:
                     embeddings = model.module.word_embeddings.weight

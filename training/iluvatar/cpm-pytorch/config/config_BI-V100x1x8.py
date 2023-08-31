@@ -19,3 +19,4 @@ beta_2: float = 0.99
 eps: float = 1e-08
 
 seed = 23333
+training_event = None
