@@ -19,3 +19,4 @@ export XPUSIM_TOPOLOGY_FILE=$(readlink -f $topo_file)
 export BKCL_CCIX_RING="1"
 export ALLREDUCE_ASYNC="0"
 export ALLREDUCE_FUSION="0"
+
