@@ -2,6 +2,6 @@
 ddp_type: str = "native"
 
 # disable fp16
-fp16 = False
+fp16 = True
 
 vendor = 'kunlunxin'
