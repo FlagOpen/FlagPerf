@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin and ascend.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend and mthreads.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -19,6 +19,8 @@ VENDOR = "nvidia"
 #       "--device=/dev/davinciX --device=/dev/davinci_manager + \
 #        --device=/dev/devmm_svm --device=/dev/hisi_hdc + \
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
+#   mthreads:
+#       " --env MTHREADS_VISIBLE_DEVICES=all"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -26,6 +28,7 @@ ACCE_CONTAINER_OPT = " --gpus all"
 #   MLU_VISIBLE_DEVICES for cambricon
 #   XPU_VISIBLE_DEVICES for kunlunxin
 #   ASCEND_VISIBLE_DEVICES for ascend
+#   MUSA_VISIBLE_DEVICES for mthreads
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
