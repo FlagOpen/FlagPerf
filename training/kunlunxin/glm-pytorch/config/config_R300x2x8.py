@@ -2,7 +2,7 @@ vendor = 'kunlunxin'
 fp16 = False
 
 train_batch_size = 4
-eval_batch_size = 6
+eval_batch_size = 4
 
 dist_backend = "xccl"
 
