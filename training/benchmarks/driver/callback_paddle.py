@@ -1,10 +1,12 @@
-from driver import Driver, Event
 from paddlenlp.trainer import (
     TrainerCallback,
     TrainerControl,
     TrainerState,
     TrainingArguments,
 )
+
+from .base import Driver
+from .event import Event
 
 
 class PaddleCallback(TrainerCallback):
