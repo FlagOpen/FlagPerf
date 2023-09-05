@@ -110,7 +110,8 @@ per_device_eval_batch_size = 1
 max_samples_termination: float = 120000
 
 # frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 20
+log_freq: int = 20  # for FlagPerf
+logging_steps: int = 20  # for PaddleNLP
 
 eval_steps = 5000
 
@@ -133,15 +134,7 @@ local_rank: int = -1
 # random seed
 seed: int = 1234
 
-# world_size: int = 1
-
 max_grad_norm = 1.0
-
-# tensor_parallel_rank = 0
-
-# pipeline_parallel_rank = 0
-
-# use_hybrid_parallel = True
 
 tensor_parallel_degree = 1
 pipeline_parallel_degree = 1

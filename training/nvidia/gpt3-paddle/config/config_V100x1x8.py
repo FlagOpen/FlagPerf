@@ -13,4 +13,5 @@ min_learning_rate = 0.000005
 weight_decay = 0.01
 warmup_ratio = 0.01
 log_freq = 20
+logging_steps = log_freq
 seed = 42

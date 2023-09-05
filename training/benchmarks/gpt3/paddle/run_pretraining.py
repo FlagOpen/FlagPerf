@@ -15,7 +15,7 @@ from dataloaders.dataset import create_pretrained_dataset, get_train_data_file
 from driver import Driver, Event, PaddleCallback, dist_paddle
 from driver.config_manager import get_properties_from_config
 from model.modeling_pp import GPTForCausalLMPipe
-from paddlenlp.trainer import PdArgumentParser, TrainingArguments, get_last_checkpoint
+from paddlenlp.trainer import PdArgumentParser, TrainingArguments
 from paddlenlp.transformers import (
     AutoTokenizer,
     CosineAnnealingWithWarmupDecay,
@@ -26,6 +26,8 @@ from paddlenlp.transformers import (
 from paddlenlp.utils.log import logger
 from train.trainer import PretrainingTrainer
 from train.training_state import TrainingState
+
+# logger.disable()
 
 MODEL_CLASSES = {
     "gpt": (
@@ -158,7 +160,6 @@ def main(gpt_driver):
     model_args, data_args, training_args = parser.parse_dict(
         get_properties_from_config(config)
     )
-    # model_args, data_args, training_args = set_arguments(config, (model_args, data_args, training_args))
     data_args.input_dir = gpt_driver.config.data_dir
 
     if model_args.tokenizer_name_or_path is None:
@@ -184,20 +185,6 @@ def main(gpt_driver):
         f"Process rank: {training_args.local_rank}, device: {training_args.device}, world_size: {training_args.world_size}, "
         + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16 or training_args.bf16}"
     )
-
-    # Detecting last checkpoint.
-    last_checkpoint = None
-    if (
-        os.path.isdir(training_args.output_dir)
-        and training_args.do_train
-        and not training_args.overwrite_output_dir
-    ):
-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
-        if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
-            logger.info(
-                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
-                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
-            )
 
     config_class, model_class = MODEL_CLASSES[model_args.model_type]
 
@@ -280,13 +267,6 @@ def main(gpt_driver):
         callbacks=[PaddleCallback(driver=gpt_driver)],
     )
 
-    checkpoint = None
-    if training_args.resume_from_checkpoint is not None:
-        checkpoint = training_args.resume_from_checkpoint
-    elif last_checkpoint is not None:
-        checkpoint = last_checkpoint
-    checkpoint = None
-
     dist_paddle.barrier()
 
     # init_evaluation_start = time.time()
@@ -309,7 +289,7 @@ def main(gpt_driver):
     # gpt_driver.event(Event.LAUNCH_TRAINING)
     train_start_time = time.time()
     if training_args.do_train:
-        train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        train_result = trainer.train()
         metrics = train_result.metrics
         trainer.save_model()
         trainer.log_metrics("train", metrics)
