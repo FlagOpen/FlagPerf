@@ -1,4 +1,3 @@
-max_steps: int = 10000
 # =========================================================
 # Required parameters
 # =========================================================
@@ -14,7 +13,7 @@ device = "gpu"
 tokenizer_vocab_file: str = "sentencepiece.bpe.model"
 
 # The name of the dataset to use (via the datasets library).
-data_dir: str = "data"
+input_dir: str = "data"
 
 # Train/valid/test data split.
 split: str = "949,50,1"
@@ -60,7 +59,7 @@ pad_token_id = 0
 
 use_cache = False
 
-use_recompute = False
+recompute = False
 
 tensor_parallel_output = True
 
@@ -99,6 +98,8 @@ dataloader_drop_last: bool = False
 # Do trainingFalse
 do_train: bool = True
 
+do_eval: bool = True
+
 # Total number of training steps to perform.
 max_steps: int = 10000
 
@@ -110,8 +111,11 @@ per_device_eval_batch_size = 1
 max_samples_termination: float = 120000
 
 # frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 20  # for FlagPerf
-logging_steps: int = 20  # for PaddleNLP
+logging_steps: int = 20
+
+log_freq = logging_steps
+
+logging_dir: str = None
 
 eval_steps = 5000
 
@@ -132,12 +136,16 @@ local_rank: int = -1
 # local_process_index: int = 0
 
 # random seed
-seed: int = 1234
+seed: int = 42
 
-max_grad_norm = 1.0
+max_grad_norm: float = 1.0
+
+sharding: str = "stage2"
 
 tensor_parallel_degree = 1
+
 pipeline_parallel_degree = 1
+
 # =========================================================
 # fp16 config args
 # =========================================================
@@ -204,6 +212,5 @@ adam_epsilon: float = 1e-08
 init_checkpoint = "model_state.pdparams"
 
 output_dir = "gpt3-paddle/output"
-
 
 disable_tqdm = True

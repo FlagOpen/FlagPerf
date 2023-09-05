@@ -15,6 +15,8 @@ mutable_params = [
     "weight_decay",
     "warmup_ratio",
     "seed",
+    "sharding",
+    "recompute",
 ]
 
-mutable_params += ["local_rank", "do_train", "data_dir", "log_freq"]
+mutable_params += ["local_rank", "do_train", "input_dir", "logging_steps"]

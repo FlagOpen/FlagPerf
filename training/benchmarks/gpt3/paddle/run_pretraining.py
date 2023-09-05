@@ -8,11 +8,9 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional
 
-import config
 import paddle
-from config import mutable_params
 from dataloaders.dataset import create_pretrained_dataset, get_train_data_file
-from driver import Driver, Event, PaddleCallback, dist_paddle
+from driver import Driver, Event, dist_paddle
 from driver.config_manager import get_properties_from_config
 from model.modeling_pp import GPTForCausalLMPipe
 from paddlenlp.trainer import PdArgumentParser, TrainingArguments
@@ -146,10 +144,14 @@ class ModelArguments:
     )
 
 
-def main(gpt_driver):
+def main():
 
-    # global logger
+    import config
+    from config import mutable_params
 
+    gpt_driver = Driver(config, mutable_params)
+    gpt_driver.setup_config(argparse.ArgumentParser("gpt"))
+    gpt_driver.setup_modules(globals(), locals())
     training_state = TrainingState()
 
     dist_paddle.barrier()
@@ -160,7 +162,7 @@ def main(gpt_driver):
     model_args, data_args, training_args = parser.parse_dict(
         get_properties_from_config(config)
     )
-    data_args.input_dir = gpt_driver.config.data_dir
+    data_args.input_dir = gpt_driver.config.data_dir  # todo discuss
 
     if model_args.tokenizer_name_or_path is None:
         model_args.tokenizer_name_or_path = model_args.model_name_or_path
@@ -264,7 +266,7 @@ def main(gpt_driver):
         eval_dataset=eval_dataset if training_args.do_eval else None,
         optimizers=(None, lr_scheduler),
         tokenizer=tokenizer,
-        callbacks=[PaddleCallback(driver=gpt_driver)],
+        callbacks=[dist_paddle.PaddleCallback(driver=gpt_driver)],
     )
 
     dist_paddle.barrier()
@@ -301,17 +303,13 @@ def main(gpt_driver):
         test_ret = trainer.predict(test_dataset)
         trainer.log_metrics("test", test_ret.metrics)
 
-    return config, training_state
+    return config, training_state, gpt_driver
 
 
 if __name__ == "__main__":
     now = time.time()
 
-    gpt_driver = Driver(config, mutable_params)
-    gpt_driver.setup_config(argparse.ArgumentParser("gpt"))
-    gpt_driver.setup_modules(globals(), locals())
-
-    config, state, tr_loss = main(gpt_driver)
+    config, state, driver = main()
 
     if not dist_paddle.is_main_process():
         exit()
@@ -331,4 +329,4 @@ if __name__ == "__main__":
         }
     else:
         finished_info = {"e2e_time": e2e_time}
-    gpt_driver.logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
+    driver.logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
