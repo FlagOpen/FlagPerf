@@ -1,24 +1,19 @@
 # Copyright (c) 2023 BAAI. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
-# 标准库
 import os
 import sys
 import time
 from typing import Any, Tuple
 
-# 三方库
-
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
                                              "../../")))  # benchmarks目录
-# 本地库
 import config
 from driver import Event, dist_pytorch
 from driver.helper import InitHelper
 
-# 导入相关的模块、方法、变量。这里保持名称一致，实现可以不同。
 from train import trainer_adapter
 from train.evaluator import Evaluator
 from train.trainer import Trainer
@@ -55,7 +50,7 @@ def main() -> Tuple[Any, Any]:
     training_state = TrainingState()
 
     # 构建 trainer：依赖 evaluator、TrainingState对象
-    evaluator = Evaluator(config)
+    evaluator = Evaluator(config, eval_dataloader)
     trainer = Trainer(driver=model_driver,
                       adapter=trainer_adapter,
                       evaluator=evaluator,
@@ -66,14 +61,13 @@ def main() -> Tuple[Any, Any]:
 
     # 设置分布式环境, trainer init()
     dist_pytorch.barrier(config.vendor)
-    train_dataloader, eval_dataloader = trainer.init(train_dataloader,
-                                                     eval_dataloader)
+    trainer.init(train_dataloader)
     dist_pytorch.barrier(config.vendor)
 
     # evaluation统计
     init_evaluation_start = time.time()  # evaluation起始时间，单位为秒
 
-    trainer.evaluate(trainer.model, eval_dataloader, device=trainer.device)
+    training_state.acc = evaluator.evaluate(trainer)
 
     init_evaluation_end = time.time()  # evaluation结束时间，单位为秒
 
@@ -96,11 +90,11 @@ def main() -> Tuple[Any, Any]:
     epoch = 0
     while not training_state.end_training:
         training_state.epoch = epoch
-        trainer.train_one_epoch(train_dataloader, eval_dataloader)
+        trainer.train_one_epoch(train_dataloader)
         epoch += 1
 
     # TRAIN_END事件
-    training_state.traintime = time.time() - train_start_time
+    training_state.train_time = time.time() - train_start_time
     model_driver.event(Event.TRAIN_END)
 
     return config, training_state
@@ -118,19 +112,16 @@ if __name__ == "__main__":
 
         finished_info = {
             "e2e_time": e2e_time,
-            "train_time": state.traintime,
-            "train_no_eval_time": state.noevaltime,
-            "pure_training_computing_time": state.purecomputetime,
-            "throughput(ips)_raw": state.num_trained_samples / state.traintime,
+            "train_time": state.train_time,
+            "train_no_eval_time": state.no_eval_time,
+            "pure_training_computing_time": state.pure_compute_time,
+            "throughput(ips)_raw": state.num_trained_samples / state.train_time,
             "throughput(ips)_no_eval":
-            state.num_trained_samples / state.noevaltime,
+            state.num_trained_samples / state.no_eval_time,
             "throughput(ips)_pure_compute":
-            state.num_trained_samples / state.purecomputetime,
+            state.num_trained_samples / state.pure_compute_time,
             "converged": state.converged,
-            "rouge1": state.rouge1,
-            "rouge2": state.rouge2,
-            "rougeL": state.rougeL,
-            "rougeLsum": state.rougeLsum,
+            "acc": state.acc,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

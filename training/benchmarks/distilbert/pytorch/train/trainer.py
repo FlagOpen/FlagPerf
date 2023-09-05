@@ -2,12 +2,13 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
 import time
-import torch
-import torch.utils.data
-from torch.types import Device
 import os
 import sys
 import math
+
+import torch
+import torch.utils.data
+from torch.types import Device
 
 from model import create_model
 from optimizers import create_optimizer
@@ -103,17 +104,18 @@ class Trainer:
 
         driver.event(Event.EPOCH_END, state.epoch)
 
-    def train_one_step(self, tokens, position_ids, attention_mask, labels, loss_mask):
+    def train_one_step(self, data):
 
         state = self.training_state
         self.model.train()
 
-        losses = self.model(tokens, position_ids, attention_mask, labels=labels)
+        outputs = self.model(**data)
         #loss 为标量
-        loss = torch.sum(losses.view(-1) * loss_mask.view(-1)) / loss_mask.view(-1).sum()
+        loss = outputs["loss"].item()
         state.loss = loss
-        self.adapter.backward(state.global_steps, loss,
-                              self.optimizer, self.lr_scheduler)
+        self.adapter.backward(self.config, state.global_steps, outputs["loss"],
+                              self.optimizer)
+        self.lr_scheduler.step()
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
                           self.optimizer)
 
@@ -129,7 +131,6 @@ class Trainer:
 
     def can_do_eval(self, state: TrainingState):
         do_eval = all([
-            self.config.test_data_prefix is not None,
             state.num_trained_samples >= self.config.eval_iter_start_samples,
             self.config.eval_interval_samples > 0,
             state.global_steps > 1,

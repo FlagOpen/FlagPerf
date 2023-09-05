@@ -22,15 +22,12 @@ class DistilBertDataset(Dataset):
 
     def __getitem__(self, idx):
         sample = {
-            'idx': self.idx[idx],
             'sentence': self.sentence[idx],
             'label': self.label[idx],
             'input_ids': self.input_ids[idx],
             'attention_mask': self.attention_mask[idx],
         }
         return sample
-
-# dataset.remove_columns(['idx', 'sentence'])
 
 
 def default_data_collator(features: List[InputDataClass]) -> Dict[str, Any]:
@@ -46,9 +43,7 @@ def default_data_collator(features: List[InputDataClass]) -> Dict[str, Any]:
     # Ensure that tensor is created with the correct type
     # (it should be automatically the case, but let's make sure of it.)
     if "label" in first and first["label"] is not None:
-        label = first["label"].item() if isinstance(first["label"], torch.Tensor) else first["label"]
-        dtype = torch.long if isinstance(label, int) else torch.float
-        batch["labels"] = torch.tensor([f["label"] for f in features], dtype=dtype)
+        batch["labels"] = torch.tensor([f["label"] for f in features], dtype=torch.long)
     elif "label_ids" in first and first["label_ids"] is not None:
         if isinstance(first["label_ids"], torch.Tensor):
             batch["labels"] = torch.stack([f["label_ids"] for f in features])
@@ -135,5 +130,5 @@ if __name__ == '__main__':
     config = Config('distilbert', False, 4, 4, False, 8, 1234)
     train_dataloader = build_train_dataloader(config)
     for i, batch in enumerate(train_dataloader):
-        print(batch)
+        print(batch.keys())
         break
