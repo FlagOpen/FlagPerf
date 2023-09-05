@@ -184,7 +184,31 @@ def _build_shuffle_idx(num_samples, total_size, np_rng):
 
     return np.concatenate((shuffle_idx_first, shuffle_idx_last))
 
+def get_train_valid_test_split_(splits_string, size):
+    """Get dataset splits from comma or '/' separated string list."""
 
+    splits = []
+    if splits_string.find(",") != -1:
+        splits = [float(s) for s in splits_string.split(",")]
+    elif splits_string.find("/") != -1:
+        splits = [float(s) for s in splits_string.split("/")]
+    else:
+        splits = [float(splits_string)]
+    while len(splits) < 3:
+        splits.append(0.0)
+    splits = splits[:3]
+    splits_sum = sum(splits)
+    assert splits_sum > 0.0
+    splits = [split / splits_sum for split in splits]
+    splits_index = [0]
+    for index, split in enumerate(splits):
+        splits_index.append(splits_index[index] + int(round(split * float(size))))
+    diff = splits_index[-1] - size
+    for index in range(1, len(splits_index)):
+        splits_index[index] -= diff
+    assert len(splits_index) == 4
+    assert splits_index[-1] == size
+    return splits_index
 
 class GPTDataset(paddle.io.Dataset):
     def __init__(

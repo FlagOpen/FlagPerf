@@ -174,7 +174,7 @@ def _get_basic_train_script_args(task_args):
 
     if task_args.enable_extern_config:
         basic_train_script_args += " --enable_extern_config " \
-                                   + "--extern_module_dir " + extern_module_dir
+                                + "--extern_module_dir " + extern_module_dir
     return basic_train_script_args
 
 

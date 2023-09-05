@@ -1,20 +1,23 @@
+import os
+from contextlib import contextmanager
+import random
+import numpy as np
 import paddle
 import paddle.distributed as dist
-import logging
-import random
-import os
-import numpy as np
-from contextlib import contextmanager
-import paddle.distributed.fleet as fleet
 
-def set_seed(config):
-    random.seed(config.seed)
-    np.random.seed(config.seed)
-    paddle.seed(config.seed)
 
 def barrier():
     if dist.is_initialized():
         dist.barrier()
+
+def set_seed(args):
+    if args.device == "cpu":
+        idx = 0
+    else:
+        idx = paddle.distributed.get_rank()
+    random.seed(args.seed + idx)
+    np.random.seed(args.seed + idx)
+    paddle.seed(args.seed + idx)
 
 
 def get_rank(default=0):
@@ -37,7 +40,6 @@ def get_world_size():
         world_size = dist.get_world_size()
     else:
         world_size = 1
-
     return world_size
 
 
@@ -47,31 +49,21 @@ def main_proc_print(*args, **kwargs):
 
 
 def init_dist_training_env(config):
-    paddle.device.set_device("gpu")
     if dist.get_world_size() <= 1:
         config.device = paddle.device.get_device()
         config.world_size = get_world_size()
-        config.dataset_world_size = get_world_size()
     else:
         dist.init_parallel_env()
         config.device = paddle.device.get_device()
         config.world_size = get_world_size()
-        config.dataset_world_size = get_world_size()
-        if config.sharding:
-            strategy = fleet.DistributedStrategy()
-            hybrid_configs = {
-                                "dp_degree": 1,
-                                "sharding_degree": config.world_size,
-                            }
-            strategy.hybrid_configs = hybrid_configs
-            fleet.init(is_collective=True, strategy=strategy)
-        print('------------------------')
-        print('device numbers:', config.world_size)
-        print('the processing uses', config.device)
+        print("------------------------")
+        print("device numbers:", config.world_size)
+        print("the processing uses", config.device)
         return
 
 
 def global_batch_size(config):
+
     return config.per_device_train_batch_size * config.world_size
 
 
@@ -106,22 +98,3 @@ def format_step(step):
     if len(step) > 2:
         s += "Validation Iteration: {} ".format(step[2])
     return s
-
-def _nested_gather(tr_loss):
-    tr_log_losses = []
-    dist.all_gather(tr_log_losses, tr_loss)
-    tr_log_losses = [t if len(t.shape) > 0 else t.reshape_([-1]) for t in tr_log_losses]
-    concat = paddle.concat(tr_log_losses, axis=0)
-    return concat
-
-def fused_allreduce_gradients(params):
-    from paddle.distributed.fleet.utils.hybrid_parallel_util import fused_allreduce_gradients
-    return fused_allreduce_gradients(params, None)
-
-def group_sharded_parallel(model, optimizer, level, scaler, **extra_kwargs):
-    return dist.sharding.group_sharded_parallel(model, optimizer, level, scaler=scaler, **extra_kwargs)
-
-def get_data_parallel_group():
-    hcg = fleet.get_hybrid_communicate_group()
-    dp_group = hcg.get_data_parallel_group()
-    return dp_group

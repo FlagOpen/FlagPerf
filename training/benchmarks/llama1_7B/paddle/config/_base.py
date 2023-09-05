@@ -3,7 +3,7 @@
 # =========================================================
 vendor: str = None
 
-device = "gpu"
+device: str = "gpu"
 
 
 # =========================================================
@@ -13,7 +13,7 @@ device = "gpu"
 tokenizer_vocab_file : str = 'sentencepiece.bpe.model'
 
 # The name of the dataset to use (via the datasets library).
-data_dir : str = "data" 
+input_dir : str = "data" 
 
 # Train/valid/test data split.
 split: str = "949,50,1"
@@ -24,57 +24,61 @@ max_seq_length: int = 2048
 # Use share folder for data dir and output dir on multi machine.
 share_folder: bool = False
 
-dataset_rank = 0
+dataset_rank: int = 0
+
+dataloader_num_workers: int = 1
 
 
 # =========================================================
 # Model
 # =========================================================
 # Only support for llama pre-training for now.
-model_type = "llama"
+model_type: str = "llama"
 
-hidden_size = 4096 # 4096, 768
+model_name_or_path: str = "facebook/llama-7b"
 
-initializer_range = 0.02
+hidden_size: int = 4096 # 4096, 768
 
-intermediate_size = 11008
+initializer_range: float = 0.02
 
-lm_shift_labels = False
+intermediate_size: int = 11008
 
-max_position_embeddings = 2048
+lm_shift_labels: bool = False
 
-num_attention_heads = 32 # 32, 8
+max_position_embeddings: int = 2048
 
-num_hidden_layers = 8 # 32, 2
+num_attention_heads: int = 32 # 32, 8
 
-rms_norm_eps = 1e-06
+num_hidden_layers: int = 32 # 32, 2
 
-vocab_size = 32000
+rms_norm_eps: float = 1e-06
 
-bos_token_id = 1
+vocab_size: int = 32000
 
-eos_token_id = 2
+bos_token_id: int = 1
 
-pad_token_id = 0
+eos_token_id: int = 2
 
-use_cache = False
+pad_token_id: int = 0
 
-use_recompute = False
+use_cache: bool = False
 
-tensor_parallel_output = True
+recompute: bool = True
 
-tie_word_embeddings = False
+tensor_parallel_output: bool = True
+
+tie_word_embeddings: bool = False
 
 use_flash_attention: bool = False
 
 # Pretrained tokenizer name or path if not the same as model_name
-tokenizer_name_or_path = None
+tokenizer_name_or_path: str = "facebook/llama-7b"
 
 # llama, use_fused_rms_norm
 use_fused_rms_norm: bool = False
 
 # gpt, fuse_attention_qkv
-fuse_attention_qkv: bool = False
+fuse_attention_qkv: bool = True
 
 fuse_attention_ffn: bool = False
 
@@ -82,7 +86,7 @@ fuse_attention_ffn: bool = False
 recompute_granularity: str = "full"
 
 # Pre-training from existing paddlenlp model weights. Default Fasle and model will train from scratch. If set True, the model_name_or_path argument must exist in the paddlenlp models.
-continue_training: bool = False
+continue_training: bool = True
 
 num_workers: int = 1 
 
@@ -97,25 +101,31 @@ dataset_world_size: int = 1
 # Do trainingFalse
 do_train: bool = True
 
+do_eval: bool = True
+
 # Total number of training steps to perform.
 max_steps: int = 10000
 
-per_device_train_batch_size = 1
+per_device_train_batch_size: int = 1
 
-per_device_eval_batch_size = 1
+per_device_eval_batch_size: int = 1
 
 # Total number of training samples to run.
 max_samples_termination: float = 120000
 
 # frequency of logging loss. If not positive, no logging is provided for training loss
-log_freq: int = 20
+logging_steps: int = 20
 
-eval_steps = 1000
+log_freq = logging_steps
+
+logging_dir: str = None
+
+eval_steps: int = 1000
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 1
 
-eval_iters = 10
+eval_iters: int = 10
 
 test_iters = eval_iters * 10
 
@@ -130,32 +140,29 @@ local_rank : int = -1
 local_process_index : int = 0
 
 # random seed
-seed: int = 1234
+seed: int = 42
 
 world_size : int = 1
 
-max_grad_norm = 1.0
+max_grad_norm: float = 1.0
 
-tensor_parallel_rank = 0
+use_hybrid_parallel: bool = True
 
-pipeline_parallel_rank = 0
+sharding: str = "stage2"
 
-use_hybrid_parallel = True
-
-sharding = "stage3"
-
+disable_tqdm : bool = True
 
 # =========================================================
 # fp16 config args
 # =========================================================
 # Run model in fp16 mode
-amp: bool = True
+fp16: bool = True
 
-amp_opt_level = 'O2'
+fp16_opt_level: str = 'O2'
 
 bf16: bool = False
 
-scale_loss = 1024.0
+scale_loss: float = 1024.0
 
 amp_custom_white_list = None
 
@@ -208,4 +215,5 @@ adam_epsilon: float = 1e-08
 # load and save args
 # =========================================================
 # Path to a directory containing a model checkpoint.
-init_checkpoint = "model_state.pdparams"
+init_checkpoint: str = "model_state.pdparams"
+output_dir: str = "llama-paddle/output"
