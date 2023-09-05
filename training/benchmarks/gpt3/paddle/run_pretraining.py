@@ -13,7 +13,7 @@ from dataloaders.dataset import create_pretrained_dataset, get_train_data_file
 from driver import Driver, Event, dist_paddle
 from driver.config_manager import get_properties_from_config
 from model.modeling_pp import GPTForCausalLMPipe
-from paddlenlp.trainer import PdArgumentParser, TrainingArguments
+from paddlenlp.trainer import PdArgumentParser, TrainingArguments, set_seed
 from paddlenlp.transformers import (
     AutoTokenizer,
     CosineAnnealingWithWarmupDecay,
@@ -170,6 +170,7 @@ def main():
     if data_args.data_cache is not None:
         os.makedirs(data_args.data_cache, exist_ok=True)
 
+    set_seed(seed=training_args.seed, args=training_args)
     # paddlenlp.trainer.set_seed(seed=training_args.seed, args=training_args)
     paddle.set_device(training_args.device)
     if paddle.distributed.get_world_size() > 1:

@@ -5,11 +5,13 @@ from typing import Optional
 import paddle
 from paddlenlp.trainer import Trainer, speed_metrics
 from paddlenlp.utils.batch_sampler import DistributedBatchSampler
+from paddlenlp.utils.log import logger
 
 
 class PretrainingTrainer(Trainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        logger.disable()
 
     def evaluate(
         self, eval_dataset=None, ignore_keys=None, metric_key_prefix: str = "eval"
