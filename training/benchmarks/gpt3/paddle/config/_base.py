@@ -135,6 +135,8 @@ gradient_accumulation_steps: int = 2
 local_rank: int = -1
 # local_process_index: int = 0
 
+target_loss: float = 7.0
+
 # random seed
 seed: int = 42
 

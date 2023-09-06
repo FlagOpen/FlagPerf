@@ -271,60 +271,65 @@ def main():
     )
 
     dist_paddle.barrier()
-
-    # init_evaluation_start = time.time()
-    # training_state.eval_avg_loss = evaluator.evaluate(trainer)
-    # init_evaluation_end = time.time()
-    # init_evaluation_info = dict(
-    #     eval_loss=training_state.eval_avg_loss,
-    #     time=init_evaluation_end - init_evaluation_start,
-    # )
-    # gpt_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
-
-    dist_paddle.barrier()
-
     gpt_driver.event(Event.INIT_END)
     init_end_time = gpt_driver.logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e3
 
     # Training
     dist_paddle.barrier()
-    # gpt_driver.event(Event.LAUNCH_TRAINING)
-    train_start_time = time.time()
-    if training_args.do_train:
-        train_result = trainer.train()
-        metrics = train_result.metrics
-        trainer.save_model()
-        trainer.log_metrics("train", metrics)
-        trainer.save_metrics("train", metrics)
-        trainer.save_state()
-    training_state.raw_train_time = time.time() - train_start_time
+    try:
+        if training_args.do_train:
+            train_result = trainer.train()
+            train_metrics = train_result.metrics
+            trainer.save_model()
+            trainer.log_metrics("train", train_metrics)
+            trainer.save_metrics("train", train_metrics)
+            trainer.save_state()
 
+            training_state.raw_train_time = train_metrics["train_runtime"]
+            training_state.training_sequences_per_second = train_metrics[
+                "train_samples_per_second"
+            ]
+            training_state.loss = train_metrics["train_loss"]
+    except:
+        training_state.end_training = False
+
+    # Evaluation
+    dist_paddle.barrier()
+    eval_metrics = trainer.evaluate()
+    training_state.eval_loss = eval_metrics["eval_loss"]
+    if training_state.eval_loss <= config.target_loss:
+        state.converged_success()
+
+    init_evaluation_info = dict(
+        eval_loss=training_state.eval_loss,
+        time=eval_metrics["eval_runtime"],
+    )
+    gpt_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
+
+    # Testing
     if training_args.do_predict:
         test_ret = trainer.predict(test_dataset)
         trainer.log_metrics("test", test_ret.metrics)
 
-    return config, training_state, gpt_driver
+    return training_args, training_state, gpt_driver
 
 
 if __name__ == "__main__":
     now = time.time()
 
-    config, state, driver = main()
+    training_args, state, driver = main()
 
     if not dist_paddle.is_main_process():
         exit()
 
     e2e_time = time.time() - now
-    training_perf = (
-        dist_paddle.global_batch_size(config) * state.global_steps
-    ) / state.raw_train_time
-    if config.do_train:
+    if training_args.do_train:
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": training_perf,
+            "training_sequences_per_second": state.training_sequences_per_second,
             "converged": state.converged,
-            "final_loss": state.eval_avg_loss,
+            "final_loss": state.eval_loss,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }

@@ -61,9 +61,13 @@ def init_dist_training_env(config):
         return
 
 
-def global_batch_size(config):
+def global_batch_size(args: TrainingArguments):
 
-    return config.per_device_train_batch_size * config.world_size
+    return (
+        args.train_batch_size
+        * args.gradient_accumulation_steps
+        * args.dataset_world_size
+    )
 
 
 @contextmanager
@@ -164,7 +168,9 @@ class PaddleCallback(TrainerCallback):
         control: TrainerControl,
         **kwargs
     ):
-        self.driver.event(Event.EVALUATE)
+        logs = kwargs["metrics"]
+        logs["global_step"] = state.global_step
+        self.driver.event(Event.EVALUATE, result=logs)
 
     def on_log(
         self,
