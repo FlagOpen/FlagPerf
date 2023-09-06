@@ -140,7 +140,7 @@ if __name__ == "__main__":
     e2e_time = time.time() - e2e_start
     e2e_time = round(float(e2e_time), 3)
 
-    flops = eval(config.flops) * p_infer_core
+    flops = eval(config.flops) * (p_infer_core if p_infer_core is not None else p_forward_core)
 
     infer_info = {
         "vendor": config.vendor,

@@ -1,0 +1,7 @@
+# contain case-specified parameters, like max_seq_length in BERT. 
+# There is no parameters for resnet50 case.
+state_dict: "checkpoints_in"
+model_name: "aquilachat-7b"
+download_path: "download_path"
+ntrain: 5
+max_gen_len: 1

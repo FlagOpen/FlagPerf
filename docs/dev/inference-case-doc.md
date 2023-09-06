@@ -205,6 +205,8 @@ exist_compiler_path: null
 
 对于某些case，如需要镜像本身以外的pip包，可在benchmarks/&lt;case\>/\<framework\>下添加requirements.txt，框架启动时会自动在运行此次评测的镜像中安装
 
+对于部分厂商适配case，如果需要与标准case不同，且不能包含在厂商dockerfile中的包（例如，yolov5标准case依赖于pycocotools2.0.4，厂商A只接受pycocotools2.0.7），则可以在同目录下添加\<vendor\>_requirements.txt（如nvidia\_requirements.txt）。框架在自动安装时如果检测到对应vendor的文件，则会**忽略标准case的“requirements.txt，只安装该厂商指定的\<vendor\>\_requirements.txt**。
+
 ##### 3.2.1 config
 
 对于标准case、需要组织的是configurations.yaml、parameters.yaml，及vendor_config/nvidia_configurations.yaml。
