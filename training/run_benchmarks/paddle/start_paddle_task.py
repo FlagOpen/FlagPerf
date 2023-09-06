@@ -198,52 +198,6 @@ def _get_basic_train_script_args(task_args):
     return basic_train_script_args
 
 
-def test_main():
-    """Parse args and start the training task. Support DDP."""
-    task_args = parse_args()
-    task_args.framework = "paddle"
-
-    task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
-    helper.write_pid_file(task_args.log_dir, "start_paddle_task.pid")
-
-    # Check and get train script & its basic args.
-    basic_train_script_args = _get_basic_train_script_args(task_args)
-    if basic_train_script_args is None:
-        START_LOGGER.error("Can't get args of train script.")
-        sys.exit(3)
-
-    train_script_path = helper.get_train_script_path(task_args)
-    if train_script_path is None:
-        START_LOGGER.error("Can't find path of train script.")
-        sys.exit(4)
-
-    current_env = _set_paddle_container_envs(task_args)
-
-    start_cmd = (
-        sys.executable
-        + " -u -m paddle.distributed.launch "
-        + " --log_dir "
-        + task_log_dir
-        + " "
-        + train_script_path
-        + " "
-        + basic_train_script_args
-    )
-    # + " 2>&1 | tee " \
-    # + task_log_dir + "/rank" + str(task_args.node_rank) \
-    # + ".out.log"
-
-    START_LOGGER.info("Start task with command: " + start_cmd)
-    START_LOGGER.debug("----------- Process envs -----------")
-    for environ in current_env.keys():
-        START_LOGGER.debug(environ + ":" + current_env[environ])
-    START_LOGGER.debug("start command: " + start_cmd)
-    process = subprocess.Popen(start_cmd, shell=True, env=current_env)
-    process.wait()
-
-    START_LOGGER.stop()
-
-
 def main():
     """Parse args and start the training task. Support DDP."""
     task_args = parse_args()
@@ -285,10 +239,6 @@ def main():
         current_env["PADDLE_CURRENT_ENDPOINT"] = (
             str(task_args.master_addr) + ":" + str(task_args.master_port)
         )
-        # current_env["PADDLE_TRAINER_ENDPOINTS"] = str(task_args.master_addr) \
-        #                                          + ':' + str(task_args.master_port1) \
-        #  + ',' + str(task_args.master_addr) \
-        #  + ':' + str(task_args.master_port2)
         current_env["FLAGS_embedding_deterministic"] = "1"
         current_env["FLAGS_cudnn_deterministic"] = "1"
         current_env["NVIDIA_TF32_OVERRIDE"] = "0"
@@ -296,9 +246,13 @@ def main():
 
         start_cmd = (
             sys.executable
-            + " -u "
-            + train_script_path
-            + " "
+            + " -u -m paddle.distributed.launch "
+            + " --log_dir {}".format(task_log_dir)
+            + ' --gpus "{}" '.format(local_rank)
+            + " --master={} ".format(
+                str(task_args.master_addr) + ":" + str(task_args.master_port)
+            )
+            + " {} ".format(train_script_path)
             + basic_train_script_args
             + " 2>&1 | tee "
             + task_log_dir
