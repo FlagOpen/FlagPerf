@@ -1,26 +1,49 @@
-# DistilBERT base model (uncased)
+## Model Introduction
+### DistilBERT base model (uncased)
 
 This model is a distilled version of the [BERT base model](https://huggingface.co/bert-base-uncased). It was
 introduced in [this paper](https://arxiv.org/abs/1910.01108). The code for the distillation process can be found
 [here](https://github.com/huggingface/transformers/tree/main/examples/research_projects/distillation). This model is uncased: it does
 not make a difference between english and English.
 
-## Model description
+## Model and Training Scripts source code
+Pytorch case:
+This repository includes software from https://github.com/huggingface/transformers/tree/v4.33.0
+licensed under the Apache License 2.0.
 
-DistilBERT is a transformers model, smaller and faster than BERT, which was pretrained on the same corpus in a
-self-supervised fashion, using the BERT base model as a teacher. This means it was pretrained on the raw texts only,
-with no humans labelling them in any way (which is why it can use lots of publicly available data) with an automatic
-process to generate inputs and labels from those texts using the BERT base model. More precisely, it was pretrained
-with three objectives:
+Some of the files in this directory were modified by BAAI in 2023 to support FlagPerf.
 
-- Distillation loss: the model was trained to return the same probabilities as the BERT base model.
-- Masked language modeling (MLM): this is part of the original training loss of the BERT base model. When taking a
-  sentence, the model randomly masks 15% of the words in the input then run the entire masked sentence through the
-  model and has to predict the masked words. This is different from traditional recurrent neural networks (RNNs) that
-  usually see the words one after the other, or from autoregressive models like GPT which internally mask the future
-  tokens. It allows the model to learn a bidirectional representation of the sentence.
-- Cosine embedding loss: the model was also trained to generate hidden states as close as possible as the BERT base
-  model.
+## Dataset and Model Checkpoints
 
-This way, the model learns the same inner representation of the English language than its teacher model, while being
-faster for inference or downstream tasks.
+> Dataset website：https://huggingface.co/datasets/sst2
+https://huggingface.co/distilbert-base-uncased
+> Model checkpoint website: https://huggingface.co/distilbert-base-uncased
+
+We have already preprocessed the dataset and the model checkpoint files(The preprocessing script is `training/benchmarks/distilbert/pytorch/data_preprocessing/create_train_eval_data.py`).
+The preprocessed can be downloaded directly from https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/datasets/distilbert_train.tar.
+No additional preprocessing steps need to be conducted.
+
+After decompressing, the dataset and model checkpoint files are organized as the following:
+
+```
+distilbert
+├── dataset                     # dataset files
+│   ├── eval_dataset.npz
+│   └── train_dataset.npz
+└── model                       # model checkpoint and config files
+    ├── config.json
+    ├── pytorch_model.bin
+    ├── special_tokens_map.json
+    ├── tokenizer_config.json
+    └── vocab.txt
+```
+
+## Benchmark Task and Target Accuracy
+This experiment is to finetune a text classification task on SST-2 dataset with DistilBERT-base-uncased pretrained checkpoints.
+After finetuning 3 epoches, the DistilBERT-base-uncased model is able to achieve accuracy score of 90+, which matches the evaluation result on the [report](https://huggingface.co/distilbert-base-uncased).
+
+## AI Frameworks && Accelerators supports
+
+|            | Pytorch | Paddle | TensorFlow2 |
+| ---------- | ------- | ------ | ----------- |
+| Nvidia GPU | [✅](../../nvidia/distilbert-pytorch/README.md)       | N/A    | N/A       |
