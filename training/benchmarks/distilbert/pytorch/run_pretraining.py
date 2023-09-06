@@ -87,7 +87,7 @@ def main() -> Tuple[Any, Any]:
     train_start_time = time.time()
 
     # 训练过程
-    epoch = 0
+    epoch = 1
     while not training_state.end_training:
         training_state.epoch = epoch
         trainer.train_one_epoch(train_dataloader)

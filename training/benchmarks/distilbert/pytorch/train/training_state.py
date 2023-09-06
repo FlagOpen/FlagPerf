@@ -62,7 +62,7 @@ class TrainingState:
         state_dict["learning_rate"] = lr
 
         exclude = [
-            "eval_avg_loss", "eval_embedding_average", "skipped_steps",
+            "acc", "skipped_steps",
             "converged", "init_time", "raw_train_time"
         ]
         for exkey in exclude:

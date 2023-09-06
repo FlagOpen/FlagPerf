@@ -38,6 +38,7 @@ class Trainer:
         self.model.to(self.device)
 
         self.model = self.adapter.convert_model(self.model)
+        self.model = self.adapter.model_to_ddp(self.config, self.model)
 
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, train_dataloader,
@@ -77,32 +78,24 @@ class Trainer:
                 sequences_per_second = state.num_trained_samples / state.no_eval_time
                 other_state["seq/s"] = sequences_per_second
 
-            eval_result = None
-            if self.can_do_eval(state):
-                eval_start = time.time()
-                state.acc = self.evaluator.evaluate(self)
-                eval_end = time.time()
-                eval_result = dict(
-                    global_steps=state.global_steps,
-                    acc=state.acc,
-                    time=eval_end - eval_start)
-
-            end_training = self.detect_training_status(state)
-
             step_info = state.to_dict(**other_state)
             driver.event(Event.STEP_END,
                          message=step_info,
                          step=state.global_steps,
                          loss=state.loss)
-
-            if eval_result is not None:
-                driver.event(Event.EVALUATE, eval_result)
-
-            if end_training:
-                break
+            
             no_eval_start = time.time()
 
         driver.event(Event.EPOCH_END, state.epoch)
+        eval_start = time.time()
+        state.acc = self.evaluator.evaluate(self)
+        eval_result = dict(
+            global_steps=state.global_steps,
+            acc=state.acc,
+            time=time.time() - eval_start)
+        driver.event(Event.EVALUATE, eval_result)
+        self.detect_training_status(state)
+        
 
     def train_one_step(self, data):
 
@@ -123,20 +116,10 @@ class Trainer:
     def detect_training_status(self, state: TrainingState):
         if state.acc >= self.config.target_acc:
             state.converged_success()
+            state.end_training = True
 
-        if state.global_steps >= self.config.max_steps:
+        if state.epoch >= self.config.max_epoch:
             state.end_training = True
 
         return state.end_training
 
-    def can_do_eval(self, state: TrainingState):
-        do_eval = all([
-            state.num_trained_samples >= self.config.eval_iter_start_samples,
-            self.config.eval_interval_samples > 0,
-            state.global_steps > 1,
-            state.global_steps %
-            math.ceil(self.config.eval_interval_samples /
-                      dist_pytorch.global_batch_size(self.config)) == 0,
-        ])
-
-        return do_eval or state.global_steps >= self.config.max_steps

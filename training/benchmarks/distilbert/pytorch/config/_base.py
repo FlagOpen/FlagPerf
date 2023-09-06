@@ -22,15 +22,11 @@ train_batch_size: int = 4
 eval_batch_size: int = 4
 
 max_epoch: int = 3
-target_acc: float = 40.5
+target_acc: float = 0.903
 
 do_train = True
 distributed: bool = True
 
-eval_iter_start_samples: int = 0
-eval_interval_samples: int = 4
-
-max_steps: int = 4000
 
 # =========================================================
 # utils
@@ -50,8 +46,9 @@ dataloader_num_workers: int = 8
 # =========================================================
 local_rank: int = -1
 use_env: bool = True
-log_freq: int = 1
-print_freq: int = 1
+log_freq: int = 1000
+print_freq: int = 1000
 n_device: int = 1
 sync_bn: bool = False
 gradient_accumulation_steps: int = 1
+
