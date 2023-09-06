@@ -26,7 +26,7 @@
     - 加速卡型号: Iluvatar BI-V100 32G
   - 软件
     - OS kernel版本: 
-    Linux 4.15.0-156-generic x86_64
+    Linux 5.4.0-148-generic x86_64
     - Docker 版本: 
     20.10.8
 
@@ -38,17 +38,17 @@
 - 核心软件信息 
   - AI框架&版本
 
-    torch: 1.10.2+corex.3.0.0
+    torch: 1.13.1+corex.3.1.0
 
   - 其它软件版本
 
     cuda: 10.2
 
-    corex: 3.0.0
+    corex: 3.1.0
 
-    torchtext: 0.11.2+corex.3.0.0
+    torchtext: 0.14.1+corex.3.1.0
 
-    apex: 0.1+corex.3.0.0
+    apex: 0.1+corex.3.1.0
 
 
 

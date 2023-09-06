@@ -142,7 +142,10 @@ class Trainer():
 
         # calculate output
         preds = torch.argmax(output, -1)
-        if isinstance(self.model.module, FP16_Module):
+
+        if not hasattr(self.model, "module"):
+            embeddings = self.model.word_embeddings.weight
+        elif isinstance(self.model.module, FP16_Module):
             embeddings = self.model.module.module.word_embeddings.weight
         else:
             embeddings = self.model.module.word_embeddings.weight

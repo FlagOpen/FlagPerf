@@ -22,6 +22,11 @@ import sentencepiece as spm
 import jieba
 
 try:
+    jieba.initialize()
+except Exception:
+    pass
+
+try:
     from functools import lru_cache
 except ImportError:
     # Just a dummy decorator to get the checks to run on python2
