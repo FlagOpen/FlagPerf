@@ -275,6 +275,10 @@ def main():
     init_end_time = gpt_driver.logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e3
 
+    # INIT Evaluation
+    dist_paddle.barrier()
+    trainer.evaluate()
+
     # Training
     dist_paddle.barrier()
     try:
@@ -298,14 +302,6 @@ def main():
     dist_paddle.barrier()
     eval_metrics = trainer.evaluate()
     training_state.eval_loss = eval_metrics["eval_loss"]
-    if training_state.eval_loss <= config.target_loss:
-        state.converged_success()
-
-    init_evaluation_info = dict(
-        eval_loss=training_state.eval_loss,
-        time=eval_metrics["eval_runtime"],
-    )
-    gpt_driver.event(Event.INIT_EVALUATION, init_evaluation_info)
 
     # Testing
     if training_args.do_predict:
