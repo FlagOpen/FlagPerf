@@ -162,7 +162,7 @@ def main():
     model_args, data_args, training_args = parser.parse_dict(
         get_properties_from_config(config)
     )
-    data_args.input_dir = gpt_driver.config.data_dir  # todo discuss
+    data_args.input_dir = gpt_driver.config.data_dir
 
     if model_args.tokenizer_name_or_path is None:
         model_args.tokenizer_name_or_path = model_args.model_name_or_path
