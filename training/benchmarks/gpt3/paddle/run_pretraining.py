@@ -4,14 +4,13 @@ from __future__ import absolute_import, division, print_function
 
 import argparse
 import os
+import sys
 import time
 from dataclasses import dataclass, field
 from typing import Optional
 
 import paddle
 from dataloaders.dataset import create_pretrained_dataset, get_train_data_file
-from driver import Driver, Event, dist_paddle
-from driver.config_manager import get_properties_from_config
 from model.modeling_pp import GPTForCausalLMPipe
 from paddlenlp.trainer import PdArgumentParser, TrainingArguments, set_seed
 from paddlenlp.transformers import (
@@ -25,7 +24,10 @@ from paddlenlp.utils.log import logger
 from train.trainer import PretrainingTrainer
 from train.training_state import TrainingState
 
-# logger.disable()
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
+from driver import Driver, Event, dist_paddle
+from driver.config_manager import get_properties_from_config
 
 MODEL_CLASSES = {
     "gpt": (

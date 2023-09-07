@@ -200,7 +200,7 @@ def start_container_in_cluster(dp_path, run_args, container_name, image_name,
                 + " utils/container_manager.py -o runnew " \
                 + " -c " + container_name + " -i " + image_name + " -a \"" \
                 + run_args + "\""
-    start_container_cmd = "sudo docker run " + run_args + \
+    start_container_cmd = "sudo nvidia-docker run " + run_args + \
                       " --name=" + container_name + " \"" + image_name + "\" " + \
                       "sleep infinity"
     sys.stdout = stdout
