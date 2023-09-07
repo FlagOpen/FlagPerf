@@ -1,81 +1,23 @@
 import os
 from contextlib import contextmanager
-import random
-import numpy as np
+
 import paddle
 import paddle.distributed as dist
+from paddlenlp.trainer import (
+    TrainerCallback,
+    TrainerControl,
+    TrainerState,
+    TrainingArguments,
+)
+from paddlenlp.trainer.trainer_utils import IntervalStrategy
 
+from .base import Driver
+from .event import Event
+from typing import Dict
 
 def barrier():
     if dist.is_initialized():
         dist.barrier()
-
-def set_seed(args):
-    if args.device == "cpu":
-        idx = 0
-    else:
-        idx = paddle.distributed.get_rank()
-    random.seed(args.seed + idx)
-    np.random.seed(args.seed + idx)
-    paddle.seed(args.seed + idx)
-
-
-def get_rank(default=0):
-    """
-    Gets distributed rank or returns zero if distributed is not initialized.
-    """
-    if dist.is_initialized():
-        rank = dist.get_rank()
-    else:
-        rank = default
-    return rank
-
-
-def get_world_size():
-    """
-    Gets total number of distributed workers or returns one if distributed is
-    not initialized.
-    """
-    if dist.is_initialized():
-        world_size = dist.get_world_size()
-    else:
-        world_size = 1
-    return world_size
-
-
-def main_proc_print(*args, **kwargs):
-    if is_main_process():
-        print(*args, **kwargs)
-
-
-def init_dist_training_env(config):
-    if dist.get_world_size() <= 1:
-        config.device = paddle.device.get_device()
-        config.world_size = get_world_size()
-    else:
-        dist.init_parallel_env()
-        config.device = paddle.device.get_device()
-        config.world_size = get_world_size()
-        print("------------------------")
-        print("device numbers:", config.world_size)
-        print("the processing uses", config.device)
-        return
-
-
-def global_batch_size(config):
-
-    return config.per_device_train_batch_size * config.world_size
-
-
-@contextmanager
-def sync_workers():
-    """
-    Yields distributed rank and synchronizes all workers on exit.
-    """
-    rank = get_rank()
-    yield rank
-    barrier()
-
 
 def is_main_process():
     if dist.is_initialized():
@@ -86,15 +28,87 @@ def is_main_process():
 
     return True
 
+class PaddleCallback(TrainerCallback):
+    def __init__(self, driver: Driver):
+        self.driver = driver
 
-def format_step(step):
-    if isinstance(step, str):
-        return step
-    s = ""
-    if len(step) > 0:
-        s += "Training Epoch: {} ".format(step[0])
-    if len(step) > 1:
-        s += "Training Iteration: {} ".format(step[1])
-    if len(step) > 2:
-        s += "Validation Iteration: {} ".format(step[2])
-    return s
+    def on_init_end(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerState,
+        **kwargs
+    ):
+        self.driver.event(Event.INIT_END)
+
+    def on_train_begin(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs
+    ):
+        self.driver.event(Event.TRAIN_START)
+
+    def on_train_end(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs
+    ):
+        self.driver.event(Event.TRAIN_END)
+
+    def on_epoch_begin(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs
+    ):
+        self.driver.event(Event.EPOCH_BEGIN, epoch=state.epoch)
+
+    def on_epoch_end(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs
+    ):
+        self.driver.event(Event.EPOCH_END, epoch=state.epoch)
+
+    def on_step_begin(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs
+    ):
+        self.driver.event(Event.STEP_BEGIN, step=state.global_step + 1)
+
+    def on_evaluate(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs
+    ):
+        logs = kwargs["metrics"]
+        logs["global_step"] = state.global_step
+        self.driver.event(Event.EVALUATE, result=logs)
+        if kwargs["metrics"]["eval_ppl"] < self.driver.config.target_ppl:
+            control.should_training_stop = True
+            
+
+
+    def on_log(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        logs=None,
+        **kwargs
+    ):
+        _ = logs.pop("total_flos", None)
+        if state.is_local_process_zero:
+            self.driver.logger.log(Event.STEP_END, message=logs)

@@ -24,6 +24,8 @@ class TrainingState:
     init_time = 0
     raw_train_time = 0
 
+    training_sequences_per_second = 0
+
     def status(self):
         if self.converged:
             self._status = "success"

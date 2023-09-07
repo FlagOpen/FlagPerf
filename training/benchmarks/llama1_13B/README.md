@@ -9,6 +9,7 @@ Please refer to this paper for a detailed description of LLaMA1:
 Paddle case代码来源:
 https://github.com/PaddlePaddle/PaddleNLP/tree/develop/llm/llama licensed under the Apache License, Version 2.0.
 
+
 #### 数据集
 ##### 测试数据集下载地址
 测试数据集中提供了处理好的openwebtext 100k条 doc的训练样本：
@@ -24,7 +25,7 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwe
 * 运行自动加载
 
 #### 模型checkpoint
-* 运行自动下载，参数量：7B
+* 运行自动下载，参数量：13B
 * Paddle的 LLaMA 模型的权重的使用则需要遵循[License](../../paddlenlp/transformers/llama/LICENSE)。
 
 ### 框架与芯片支持情况

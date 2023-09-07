@@ -1,18 +1,17 @@
 """LLaMA Pretraining"""
 
-from __future__ import absolute_import, division, print_function
-
+import math
 import argparse
 import os
 import random
 import sys
 import time
-
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 import paddle
+
 from paddlenlp.trainer import (
     PdArgumentParser,
     Trainer,
@@ -27,16 +26,20 @@ from paddlenlp.transformers import (
     LinearAnnealingWithWarmupDecay,
     LlamaConfig,
     LlamaForCausalLM,
+    register_sequence_parallel_allreduce_hooks,
 )
+
+from paddlenlp.metrics import Perplexity
 from paddlenlp.utils.batch_sampler import DistributedBatchSampler
 from paddlenlp.utils.log import logger
+from paddlenlp.trainer.trainer_utils import EvalPrediction
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, PaddleCallback, dist_paddle
+from driver import Driver, Event, dist_paddle
 from driver.config_manager import get_properties_from_config
-from dataloaders.dataloader import get_train_data_file
-from dataloaders.dataloader import create_pretrained_dataset
+from dataloaders.dataloader import create_pretrained_dataset, get_train_data_file
+from model.models.modeling_pp import LlamaForCausalLMPipe
 from train.trainer import PretrainingTrainer
 from train.training_state import TrainingState
 
@@ -46,6 +49,18 @@ MODEL_CLASSES = {
         LlamaForCausalLM,
     ),
 }
+
+def ppl(x: EvalPrediction):
+    perplexity = Perplexity()
+    predictions = paddle.to_tensor(x.predictions)
+    labels = paddle.to_tensor(x.label_ids)
+    correct = perplexity.compute(predictions, labels)
+    perplexity.update(correct.numpy())
+    ret = perplexity.accumulate()
+
+    return {'ppl': ret}
+
+
 
 def add_start_docstrings(*docstr):
     def docstring_decorator(fn):
@@ -67,6 +82,13 @@ class PreTrainingArguments(TrainingArguments):
             "help": "The steps use to control the learing rate. If the step > decay_steps, will use the min_learning_rate."
         },
     )
+    enable_linear_fused_grad_add: bool = field(
+        default=False,
+        metadata={
+            "help": "Enable fused linear grad add strategy, which will reduce elementwise add for grad accumulation in the backward of nn.Linear ."
+        },
+    )
+
 
 @dataclass
 class DataArguments:
@@ -93,6 +115,14 @@ class DataArguments:
         metadata={"help": "Use share folder for data dir and output dir on multi machine."},
     )
 
+    data_impl: str = field(default="mmap", metadata={"help": "The format of the preprocessed data."})
+    skip_warmup: bool = field(
+        default=True,
+        metadata={"help": "Whether to skip the warmup process of mmap files."},
+    )
+    data_cache: str = field(default=None, metadata={"help": "The path of the cached dataset."})
+
+
 @dataclass
 class ModelArguments:
     """
@@ -103,7 +133,7 @@ class ModelArguments:
         default="llama", metadata={"help": "Only support for llama pre-training for now."}
     )
     model_name_or_path: str = field(
-        default="facebook/tiny-random-llama",
+        default="__internal_testing__/tiny-random-llama",
         metadata={
             "help": "Path to pretrained model or model identifier from https://paddlenlp.readthedocs.io/zh/latest/model_zoo/transformers.html"
         },
@@ -124,24 +154,67 @@ class ModelArguments:
         metadata={"help": "llama, use_fused_rms_norm"},
     )
     fuse_attention_qkv: bool = field(
-        default=True,
-        metadata={"help": "gpt, fuse_attention_qkv"},
+        default=False,
+        metadata={"help": "whether to fuse attention qkv"},
+    )
+    fuse_attention_ffn: bool = field(
+        default=False,
+        metadata={"help": "whether to fuse first up and gate proj in mlp block"},
     )
     recompute_granularity: str = field(
         default="full",
-        metadata={"help": "full core_attn"},
+        metadata={"help": "Choose among ['full', 'core_attn', 'full_attn']"},
     )
     virtual_pp_degree: int = field(
         default=1,
         metadata={"help": "virtual_pp_degree"},
     )
-
     continue_training: bool = field(
         default=False,
         metadata={
-            "help": "Pre-training from existing paddlenlp model weights. Default Fasle and model will train from scratch. If set True, the model_name_or_path argument must exist in the paddlenlp models."
+            "help": "Pre-training from existing paddlenlp model weights. Default False and model will train from scratch. If set True, the model_name_or_path argument must exist in the paddlenlp models."
         },
     )
+    sequence_parallel: bool = field(
+        default=False,
+        metadata={"help": "whether to use sequence parallel"},
+    )
+    fuse_sequence_parallel_allreduce: bool = field(
+        default=False,
+        metadata={"help": "whether to use fuse sequence parallel allreduce"},
+    )
+    rope_fusion_level: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "The level of fusion of rope embedding. Can be chosen from:\n"
+            "(1) 'full': fuse sin cos compute and rope embedding\n"
+            "(2) 'core': only fuse rope embedding, will compute the sin and cos\n"
+            "(3) None: don't fuse any part of the rope embedding"
+        },
+    )
+    no_recompute_layers: Optional[List[int]] = field(
+        default=None,
+        metadata={"help": "Specify the full transformer layers that should not be recomputed."},
+    )
+    pp_recompute_interval: int = field(
+        default=1,
+        metadata={
+            "help": "The interval for the number of layers at which recomputation occurs. A value of 0 indicates no recomputation. Default is 0."
+        },
+    )
+    recompute_use_reentrant: bool = field(
+        default=False,
+        metadata={"help": "recompute_use_reentrant"},
+    )
+
+def set_seed(args):
+    if args.device == "cpu":
+        idx = 0
+    else:
+        idx = paddle.distributed.get_rank()
+    random.seed(args.seed + idx)
+    np.random.seed(args.seed + idx)
+    paddle.seed(args.seed + idx)
 
 def main():
     import config
@@ -154,15 +227,18 @@ def main():
     dist_paddle.barrier()
     llama_driver.event(Event.INIT_START)
     init_start_time = llama_driver.logger.previous_log_time
-
     parser = PdArgumentParser((ModelArguments, DataArguments, PreTrainingArguments))
+
     model_args, data_args, training_args = parser.parse_dict(
         get_properties_from_config(config)
     )
+    data_args.input_dir = gpt_driver.config.data_dir
+
     if model_args.tokenizer_name_or_path is None:
         model_args.tokenizer_name_or_path = model_args.model_name_or_path
-    
-    dist_paddle.set_seed(training_args)
+
+
+    set_seed(training_args)
     paddle.set_device(training_args.device)
     if paddle.distributed.get_world_size() > 1:
         paddle.distributed.init_parallel_env()
@@ -183,11 +259,6 @@ def main():
     last_checkpoint = None
     if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
         last_checkpoint = get_last_checkpoint(training_args.output_dir)
-        # if last_checkpoint is None and len(
-        #         os.listdir(training_args.output_dir)) > 1:
-        #     raise ValueError(
-        #         f"Output directory ({training_args.output_dir}) already exists and is not empty. "
-        #         "Use --overwrite_output_dir to overcome.")
         if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
             logger.info(
                 f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
@@ -199,19 +270,33 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_name_or_path)
 
     llama_config = config_class.from_pretrained(model_args.model_name_or_path)
-    llama_config.max_position_embeddings = max(llama_config.max_position_embeddings, data_args.max_seq_length)
+
+    llama_config.seq_length = data_args.max_seq_length
+
+    if not model_args.continue_training:
+        llama_config.max_position_embeddings = max(llama_config.max_position_embeddings, data_args.max_seq_length)
+
     if not model_args.continue_training:
         llama_config.vocab_size = max(llama_config.vocab_size, ((tokenizer.vocab_size - 1) // 128 + 1) * 128)
         logger.info(f"Reset vocab size to {llama_config.vocab_size} for batter amp peformance.")
 
-    llama_config.lm_shift_labels = False
+    if model_args.no_recompute_layers is not None:
+        model_args.no_recompute_layers.sort()
+
     llama_config.use_flash_attention = model_args.use_flash_attention
     llama_config.use_fused_rms_norm = model_args.use_fused_rms_norm
-    llama_config.fuse_attention_qkv = False
+    llama_config.fuse_attention_qkv = model_args.fuse_attention_qkv
+    llama_config.fuse_attention_ffn = model_args.fuse_attention_ffn
     llama_config.recompute_granularity = model_args.recompute_granularity
     llama_config.virtual_pp_degree = model_args.virtual_pp_degree
-    llama_config.use_recompute = training_args.recompute
+    llama_config.sequence_parallel = model_args.sequence_parallel
+    llama_config.fuse_sequence_parallel_allreduce = model_args.fuse_sequence_parallel_allreduce
+    llama_config.rope_fusion_level = model_args.rope_fusion_level
+    llama_config.no_recompute_layers = model_args.no_recompute_layers
+    llama_config.pp_recompute_interval = model_args.pp_recompute_interval
+    llama_config.recompute_use_reentrant = model_args.recompute_use_reentrant
 
+    llama_config.use_recompute = training_args.recompute
     llama_config.tensor_parallel_degree = training_args.tensor_parallel_degree
     llama_config.tensor_parallel_rank = training_args.tensor_parallel_rank
 
@@ -237,6 +322,15 @@ def main():
     else:
         model = model_class._from_config(llama_config, dtype=dtype)
 
+    if model_args.sequence_parallel:
+        register_sequence_parallel_allreduce_hooks(
+            model, training_args.gradient_accumulation_steps, model_args.fuse_sequence_parallel_allreduce
+        )
+
+    if training_args.recompute:
+        model.recompute_enable()
+
+    # Create the learning_rate sheduler and optimizer
     if training_args.decay_steps is None:
         training_args.decay_steps = training_args.max_steps
     warmup_steps = training_args.warmup_ratio * training_args.max_steps
@@ -261,11 +355,20 @@ def main():
     
     data_file = get_train_data_file(data_args)
     train_dataset, eval_dataset, test_dataset, data_collator = create_pretrained_dataset(
-        data_args, training_args, data_file, tokenizer
+        data_args,
+        training_args,
+        data_file,
+        tokenizer,
+        need_data=training_args.should_load_dataset,
     )
 
-    print(f"train_dataset length:{len(train_dataset)}")
-    print(f"eval_dataset length:{len(eval_dataset)}")
+    total_effective_tokens = (
+        training_args.per_device_train_batch_size
+        * training_args.dataset_world_size
+        * training_args.max_steps
+        * training_args.gradient_accumulation_steps
+        * data_args.max_seq_length
+    )
 
     trainer = PretrainingTrainer(
         model=model,
@@ -275,7 +378,8 @@ def main():
         eval_dataset=eval_dataset if training_args.do_eval else None,
         optimizers=(None, lr_scheduler),
         tokenizer=tokenizer,
-        callbacks=[PaddleCallback(driver=llama_driver)],
+        callbacks=[dist_paddle.PaddleCallback(driver=llama_driver)],
+        compute_metrics=ppl,
     )
 
     checkpoint = None
@@ -284,46 +388,61 @@ def main():
     elif last_checkpoint is not None:
         checkpoint = last_checkpoint
 
-    if not config.do_train:
-        return config, training_state
-
+    dist_paddle.barrier()
     llama_driver.event(Event.INIT_END)
     init_end_time = llama_driver.logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e+3
 
+    # Training
     dist_paddle.barrier()
+    try:
+        if training_args.do_train:
+            train_result = trainer.train(resume_from_checkpoint=checkpoint)
+            metrics = train_result.metrics
+            trainer.save_model()
+            trainer.log_metrics("train", metrics)
+            trainer.save_metrics("train", metrics)
+            trainer.save_state()
+            training_state.raw_train_time = train_metrics["train_runtime"]
+            training_state.training_sequences_per_second = train_metrics[
+                "train_samples_per_second"
+            ]
+            training_state.loss = train_metrics["train_loss"]
+            training_state.effective_tokens_per_second = total_effective_tokens / train_metrics["train_runtime"]
+    except:
+        training_state.end_training = False
+        
+    # End Evaluation
+    dist_paddle.barrier()
+    eval_metrics = trainer.evaluate()
+    training_state.eval_loss = eval_metrics["eval_loss"]
+    training_state.eval_ppl = eval_metrics["eval_ppl"]
+    if eval_metrics["eval_ppl"] < config.target_ppl:
+        training_state.converged_success()
 
-    train_start_time = time.time()
-    train_result = trainer.train(resume_from_checkpoint=checkpoint)
-    metrics = train_result.metrics
-    trainer.save_model()
-    trainer.log_metrics("train", metrics)
-    trainer.save_metrics("train", metrics)
-    trainer.save_state()
-    training_state.raw_train_time = time.time() - train_start_time
-    
-    return config, training_state
+    return training_args, training_state, llama_driver
 
 if __name__ == "__main__":
     now = time.time()
 
-    config, state = main()
+    training_args, state, llama_driver = main()
 
     if not dist_paddle.is_main_process():
         exit()
 
     e2e_time = time.time() - now
-    training_perf = (dist_paddle.global_batch_size(config) *
-                     state.global_steps) / state.raw_train_time
-    if config.do_train:
+
+    if training_args.do_train:
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": training_perf,
+            "training_sequences_per_second": state.training_sequences_per_second,
+            "effective_tokens_per_second": state.effective_tokens_per_second,
             "converged": state.converged,
-            "final_loss": state.eval_avg_loss,
+            "final_loss": state.eval_loss,
+            "final_ppl": state.eval_ppl,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }
     else:
         finished_info = {"e2e_time": e2e_time}
-    logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
+    llama_driver.logger.log(Event.FINISHED, message=finished_info, stacklevel=0)

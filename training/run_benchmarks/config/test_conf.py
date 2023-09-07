@@ -74,5 +74,5 @@ CASES = {
     
     # "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-    "llama:paddle_2.5.1:V100:1:8:1": "/ssd2/laixinyi/projects/FlagPerf/training/benchmarks/llama/paddle/data"
+    # "llama1_7B:paddle_2.5.1:A100:1:8:1": "/home/dataset/llama1_7B/"
 }

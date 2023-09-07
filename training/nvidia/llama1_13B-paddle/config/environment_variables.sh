@@ -1,0 +1,1 @@
+training/nvidia/llama1_7B-paddle/config/environment_variables.sh

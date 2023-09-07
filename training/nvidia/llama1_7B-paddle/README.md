@@ -1,82 +1,53 @@
-
 ### 模型Checkpoint下载
-[模型Checkpoint下载](../../benchmarks/bert/README.md#模型checkpoint下载)
+* 运行自动下载
 
 
 ### 测试数据集下载
-[测试数据集下载](../../benchmarks/bert/README.md#测试数据集下载)
-
-
-### Paddle版本运行指南
-
-单卡运行命令：
-● 依赖包，paddlepaddle-gpu
-
-'''
-python -m pip install paddlepaddle-gpu==2.4.0rc0 -i https://pypi.tuna.tsinghua.edu.cn/simple
-'''
-
-● bash环境变量:
+测试数据集中提供了处理好的100k条doc的训练样本：
 ```
-export MASTER_ADDR=user_ip
-export MASTER_PORT=user_port
-export WORLD_SIZE=1
-export NODE_RANK=0
-export CUDA_VISIBLE_DEVICES=0,1#可用的GPU索引
-export RANK=0
-export LOCAL_RANK=0
+wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwebtext_100k_ids.npy
+wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwebtext_100k_idx.npz
 ```
-example：
-```
-export MASTER_ADDR=10.21.226.184
-export MASTER_PORT=29501
-export WORLD_SIZE=1
-export NODE_RANK=0
-export CUDA_VISIBLE_DEVICES=0,1#可用的GPU索引
-export RANK=0
-export LOCAL_RANK=0
-```
-
-● 运行脚本:
-
-在该路径目录下
-
-```
-python run_pretraining.py
---data_dir data_path
---extern_config_dir config_path
---extern_config_file config_file.py
-```
-
-example：
-```
-python run_pretraining.py
---data_dir /ssd2/yangjie40/data_config
---extern_config_dir /ssd2/yangjie40/flagperf/training/nvidia/bert-pytorch/config
---extern_config_file config_A100x1x2.py
-```
-
 
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器、加速卡型号: NVIDIA_A100-SXM4-40GB
+    - 机器型号: NVIDIA DGX A100(40G) 
+    - 加速卡型号: NVIDIA_A100-SXM4-40GB
+    - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
 - ##### 软件环境
    - OS版本：Ubuntu 20.04
-   - OS kernel版本: 5.4.0-113-generic
-   - 加速卡驱动版本：470.129.06
+   - OS kernel版本: 5.4.0-113-generic     
+   -  加速卡驱动版本：470.129.06
    - Docker 版本：20.10.16
-   - 训练框架版本: paddle-2.4.0-rc
-   - 依赖软件版本：
-     - cuda: cuda_11.2.r11.2
+   - 训练框架版本：pytorch-1.8.0a0+52ea372
+   - 依赖软件版本：无
 
+#### 运行情况
 
-### 运行情况
-| 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度 | Steps数 | 性能(samples/s)|
-| -------- | --------------- | ----------- | -------- | -------- | ------- | ---------------- |
-| 单机1卡  | config_A100x1x1 | N/A         | 0.67     | N/A      | N/A     | N/A              |
-| 单机2卡  | config_A100x1x2 | N/A         | 0.67     | N/A      | N/A     | N/A              |
-| 单机4卡  | config_A100x1x4 | 1715.28     | 0.67     | 0.6809   | 6250    | 180.07           |
-| 单机8卡  | config_A100x1x8 | 1315.42     | 0.67     | 0.6818   | 4689    | 355.63           |
+* 通用指标
 
+| 指标名称       | 指标值                         | 特殊说明                                    |
+| -------------- | ------------------------------ | ------------------------------------------- |
+| 任务类别       | 文本分类、文本生成             |                                             |
+| 模型           | llama1_7B                    |                                             |
+| 数据集         | openwebtext              |                                             |
+| 数据精度       | precision,见“性能指标”         | 可选fp32/amp/fp16                           |
+| 超参修改       | fix_hp,见“性能指标”            | 跑满硬件设备评测吞吐量所需特殊超参          |
+| 硬件设备简称   | nvidia A100                    |                                             |
+| 硬件存储使用   | mem(actual/total),见“性能指标” | 通常称为“显存”,单位为GiB                    |
+| 端到端时间     | e2e_time,见“性能指标”          | 总时间+Perf初始化等时间                     |
+| 总吞吐量       | p_whole,见“性能指标”           | 实际训练样本数除以总时间(performance_whole) |
+| 训练吞吐量     | p_train,见“性能指标”           | 不包含每个epoch末尾的评估部分耗时           |
+| **计算吞吐量** | **p_core,见“性能指标”**        | 不包含数据IO部分的耗时(p3>p2>p1)            |
+| 训练结果       | acc,见“性能指标”               | 分类准确率(mlm_accuracy)                    |
+| 额外修改项     | 无                             |                                             |
+
+* 性能指标
+
+| 配置                | precision | fix_hp           | e2e_time | p_whole | p_train | p_core | ppl   | mem       |
+| ------------------- | --------- | ---------------- | -------- | ------- | ------- | ------ | ----- | --------- |
+| A100单机8卡（1x8）  | fp16      | /                |    |      |     |    |   |  |
+| A100单机8卡（1x8）  | fp16      | bs=8, steps=  |    |    |    |   |  |  |
+| A100两机8卡（2x8） | fp16      | bs=8,steps= |          |    |   |   |       | |
