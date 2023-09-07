@@ -1,7 +1,7 @@
 # DO NOT MODIFY THESE REQUIRED PARAMETERS
 
 # Required parameters
-vendor: str = "nvidia"
+vendor: str = None
 data_dir: str = None
 name: str = "dlrm"
 cudnn_benchmark: bool = False
@@ -94,8 +94,6 @@ save_checkpoint_path: str = None
 # =========================================================
 # Saving and logging
 # =========================================================
-# Destination for the log file with various results and statistics
-log_path: str = "./log.json"
 # Number of optimization steps between validations. If None will test after each epoch"
 test_freq: int = None
 # Don't test the model unless this many epochs has been completed
