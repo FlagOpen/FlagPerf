@@ -72,9 +72,9 @@ decay_end_lr: float = 0
 # train && evaluate
 # =========================================================
 # Batch size used for training
-train_batch_size: int = 65536
+train_batch_size: int = 0
 # Batch size used for testing/validation
-eval_batch_size: int = 65536
+eval_batch_size: int = 0
 
 # refer: https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Recommendation/DLRM#training-accuracy-nvidia-dgx-a100-8x-a100-80gb
 target_auc: float = 0.802
