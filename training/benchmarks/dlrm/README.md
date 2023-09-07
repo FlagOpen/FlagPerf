@@ -7,7 +7,7 @@ With the advent of deep learning, neural network-based recommendation models hav
 [Deep Learning Recommendation Model for Personalization and Recommendation Systems](https://arxiv.org/abs/1906.00091) 
 
 - 模型代码来源
-This case includes code from the BSD 3-Clause License open source project at https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2
+This case includes code from the BSD 3-Clause License open source project at https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Recommendation/DLRM
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
