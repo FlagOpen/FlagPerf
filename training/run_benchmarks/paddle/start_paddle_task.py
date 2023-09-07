@@ -239,6 +239,10 @@ def main():
         current_env["PADDLE_CURRENT_ENDPOINT"] = (
             str(task_args.master_addr) + ":" + str(task_args.master_port)
         )
+        # current_env["PADDLE_TRAINER_ENDPOINTS"] = str(task_args.master_addr) \
+        #                                          + ':' + str(task_args.master_port1) \
+        #  + ',' + str(task_args.master_addr) \
+        #  + ':' + str(task_args.master_port2)
         current_env["FLAGS_embedding_deterministic"] = "1"
         current_env["FLAGS_cudnn_deterministic"] = "1"
         current_env["NVIDIA_TF32_OVERRIDE"] = "0"
@@ -246,13 +250,9 @@ def main():
 
         start_cmd = (
             sys.executable
-            + " -u -m paddle.distributed.launch "
-            + " --log_dir {}".format(task_log_dir)
-            + ' --gpus "{}" '.format(local_rank)
-            + " --master={} ".format(
-                str(task_args.master_addr) + ":" + str(task_args.master_port)
-            )
-            + " {} ".format(train_script_path)
+            + " -u "
+            + train_script_path
+            + " "
             + basic_train_script_args
             + " 2>&1 | tee "
             + task_log_dir

@@ -159,7 +159,7 @@ class PaddleCallback(TrainerCallback):
         control: TrainerControl,
         **kwargs
     ):
-        self.driver.event(Event.STEP_BEGIN, step=state.global_step)
+        self.driver.event(Event.STEP_BEGIN, step=state.global_step + 1)
 
     def on_evaluate(
         self,
