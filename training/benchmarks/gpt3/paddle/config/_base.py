@@ -68,7 +68,7 @@ tie_word_embeddings = False
 use_flash_attention: bool = False
 
 # Pretrained tokenizer name or path if not the same as model_name
-tokenizer_name_or_path = "gpt2-medium-en"
+tokenizer_name_or_path = None
 
 # llama, use_fused_rms_norm
 use_fused_rms_norm: bool = False
@@ -117,7 +117,7 @@ log_freq = logging_steps
 
 logging_dir: str = None
 
-eval_steps = 5000
+eval_steps = 5000000
 
 # Sample to begin performing eval.
 eval_iter_start_samples: int = 1
