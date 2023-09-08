@@ -3,6 +3,7 @@ import config
 
 from torch import nn
 import torch.distributed as dist
+import torch_xmlir
 
 from optimizers import get_optimizer_param_groups
 from optimizers.loss_scaler import DynamicLossScaler
@@ -79,4 +80,5 @@ def backward(step, lm_loss, reduced_loss, optimizer, lr_scheduler, model):
     if DynamicLossScaler._has_inf_or_nan(reduced_loss):
         main_proc_print("Found NaN loss, skip backward")
 
+    torch_xmlir.xpu.empty_cache()
     return reduced_loss
