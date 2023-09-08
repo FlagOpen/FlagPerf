@@ -19,9 +19,3 @@ export XMLIR_F_XPU_FC_GEMM_MODE=float
 export XMLIR_F_FAST_INDEX_PUT=true
 
 export XACC_ENABLE=1
-if python -c "import xacc" &> /dev/null; then
-    python -m xacc.install
-else
-    echo "XACC is not installed"
-    exit 1
-fi
