@@ -50,7 +50,7 @@ RUN /root/miniconda/envs/python38/bin/pip install \
 
 RUN /root/miniconda/envs/python38/bin/pip install torch==1.13.0+cpu torchvision==0.14.0+cpu torchaudio==0.13.0 --extra-index-url https://download.pytorch.org/whl/cpu
 
-RUN cd /root && wget https://baidu-kunlun-public.su.bcebos.com/XTCL/XTCL-2.1/XTCL-ubuntu_x86_64.tar.gz && tar -xzf XTCL-ubuntu_x86_64.tar.gz
+RUN cd /root && wget https://baidu-kunlun-public.su.bcebos.com/XTCL/XTCL-ubuntu.tar.gz && mv XTCL-ubuntu.tar.gz XTCL-ubuntu_x86_64.tar.gz && tar -xzf XTCL-ubuntu_x86_64.tar.gz && mv XTCL XTCL-ubuntu_x86_64
 
 RUN cd /root && wget https://klx-sdk-release-public.su.bcebos.com/xre/release/4.0.18.1/xre-ubuntu_2004_x86_64.tar.gz && tar -xzf xre-ubuntu_2004_x86_64.tar.gz
 
