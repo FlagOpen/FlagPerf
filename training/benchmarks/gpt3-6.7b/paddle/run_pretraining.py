@@ -20,6 +20,7 @@ from paddlenlp.transformers import (
     GPTForCausalLM,
     LinearAnnealingWithWarmupDecay,
 )
+from paddlenlp.metrics import AccuracyAndF1
 from paddlenlp.utils.log import logger
 from train.trainer import PretrainingTrainer
 from train.training_state import TrainingState
@@ -319,7 +320,18 @@ def main():
     if training_args.do_predict:
         test_ret = trainer.predict(test_dataset)
         trainer.log_metrics("test", test_ret.metrics)
-
+        test_metric = AccuracyAndF1()
+        preds = paddle.to_tensor(test_ret.predictions)
+        preds = preds.reshape([-1, preds.shape[-1]])
+        label = paddle.to_tensor(test_ret.label_ids)
+        label = label.reshape([-1,1])
+        
+        correct = test_metric.compute(pred=preds, label=label)
+        test_metric.update(correct)
+        training_state.test_acc = test_metric.accumulate()[0]
+        if training_state.test_acc > config.target_acc:
+            training_state.converged_success()
+        
     return training_args, training_state, gpt_driver
 
 

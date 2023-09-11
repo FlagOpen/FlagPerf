@@ -171,6 +171,9 @@ class PaddleCallback(TrainerCallback):
         logs = kwargs["metrics"]
         logs["global_step"] = state.global_step
         self.driver.event(Event.EVALUATE, result=logs)
+        
+        if kwargs["metrics"]["eval_loss"] < self.driver.config.target_loss:
+            control.should_training_stop = True
 
     def on_log(
         self,

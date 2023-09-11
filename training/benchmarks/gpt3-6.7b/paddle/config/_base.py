@@ -106,6 +106,12 @@ do_train: bool = True
 
 do_eval: bool = True
 
+do_predict: bool = True
+
+target_loss = 1.0
+
+target_acc = 0.6
+
 # Total number of training steps to perform.
 max_steps: int = 10000
 
