@@ -1,0 +1,1 @@
+../../gpt3-6.7b-paddle/config/environment_variables.sh

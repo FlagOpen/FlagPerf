@@ -5,7 +5,6 @@ vendor: str = None
 
 device = "gpu"
 
-
 # =========================================================
 # data
 # =========================================================
@@ -31,7 +30,7 @@ share_folder: bool = False
 # Only support for llama pre-training for now.
 model_type = "gpt"
 
-model_name_or_path = "gpt2-medium-en"
+model_name_or_path = "gpt3-6.7B-en"
 
 hidden_size = 1024  # 4096
 

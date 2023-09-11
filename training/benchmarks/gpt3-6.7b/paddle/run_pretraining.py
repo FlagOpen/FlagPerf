@@ -288,8 +288,8 @@ def main():
     training_state.init_time = (init_end_time - init_start_time) / 1e3
 
     # INIT Evaluation
-    dist_paddle.barrier()
-    trainer.evaluate()
+    # dist_paddle.barrier()
+    # trainer.evaluate()
 
     # Training
     dist_paddle.barrier()
