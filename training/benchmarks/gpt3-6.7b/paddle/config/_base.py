@@ -8,9 +8,6 @@ device = "gpu"
 # =========================================================
 # data
 # =========================================================
-# vocab file path
-tokenizer_vocab_file: str = "sentencepiece.bpe.model"
-
 # The name of the dataset to use (via the datasets library).
 input_dir: str = "data"
 
@@ -18,7 +15,7 @@ input_dir: str = "data"
 split: str = "949,50,1"
 
 # The maximum total input sequence length after tokenization. Sequences longer
-max_seq_length: int = 2048
+max_seq_length: int = 1024
 
 # Use share folder for data dir and output dir on multi machine.
 share_folder: bool = False
@@ -32,19 +29,27 @@ model_type = "gpt"
 
 model_name_or_path = "gpt3-6.7B-en"
 
-hidden_size = 1024  # 4096
+tokenizer_name_or_path = "gpt3-6.7B-en"
+
+hidden_size = 1024  # for gpt3-6.7b, 5120 for gpt3-13b
 
 initializer_range = 0.02
 
-intermediate_size = 4096
+intermediate_size = 16384  # for gpt3-6.7b, 20480 for gpt3-13b
 
 lm_shift_labels = False
 
 max_position_embeddings = 1024
 
-num_attention_heads = 16
+num_attention_heads = 32  # for gpt3-6.7b, 128 for gpt3-13b
 
-num_hidden_layers = 24
+num_hidden_layers = 32  # for gpt3-6.7b, 40 for gpt3-13b
+
+hidden_act = "gelu"
+
+hidden_dropout_prob = 0.1
+
+attention_probs_dropout_prob = 0.1
 
 rms_norm_eps = 1e-06
 
@@ -53,6 +58,8 @@ vocab_size = 50304
 bos_token_id = 1
 
 eos_token_id = 50256
+
+eol_token_id = 198
 
 pad_token_id = 0
 
@@ -73,7 +80,7 @@ tokenizer_name_or_path = None
 use_fused_rms_norm: bool = False
 
 # gpt, fuse_attention_qkv
-fuse_attention_qkv: bool = True
+fuse_attention_qkv: bool = False
 
 fuse_attention_ffn: bool = False
 
@@ -105,6 +112,8 @@ max_steps: int = 10000
 per_device_train_batch_size = 1
 
 per_device_eval_batch_size = 1
+
+dataloader_num_workers = 1
 
 # Total number of training samples to run.
 max_samples_termination: float = 120000
