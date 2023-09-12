@@ -78,8 +78,7 @@ class GPTDataset(torch.utils.data.Dataset):
 
         # Build index mappings.
         self.doc_idx, self.sample_idx, self.shuffle_idx = _build_index_mappings(
-            self.name, data_prefix, documents, self.indexed_dataset.sizes,
-            num_samples, seq_length, seed)
+            documents, self.indexed_dataset.sizes, seq_length, seed)
 
     def __len__(self):
         # -1 is due to data structure used to retieve the index:
@@ -115,8 +114,7 @@ class GPTDataset(torch.utils.data.Dataset):
         return {'text': np.array(sample, dtype=np.int64)}
 
 
-def _build_index_mappings(name, data_prefix, documents, sizes,
-                          num_samples, seq_length, seed):
+def _build_index_mappings(documents, sizes, seq_length, seed):
     """Build doc-idx, sample-idx, and shuffle-idx.
     doc-idx: is an array (ordered) of documents to be used in training.
     sample-idx: is the start document index and document offset for each
@@ -125,51 +123,20 @@ def _build_index_mappings(name, data_prefix, documents, sizes,
     """
     # Number of tokens in each epoch and number of required epochs.
     tokens_per_epoch = _num_tokens(documents, sizes)
-    num_epochs = _num_epochs(tokens_per_epoch, seq_length, num_samples)
     # rng state
     np_rng = np.random.RandomState(seed=seed)
 
-    # For the last epoch, decide whether include the entire epoch
-    # in the global shuffle or not.
-
-    # If we need only one epoch, then separating last epoch  does
-    # not mean anything.
-    if num_epochs == 1:
-        separate_last_epoch = False
-
-    else:
-        # Get the number of samples for the last epoch
-        num_samples_from_epochs_minus_one = (
-            (num_epochs - 1) * tokens_per_epoch - 1) // seq_length
-        last_epoch_num_samples = num_samples - \
-                                    num_samples_from_epochs_minus_one
-        assert last_epoch_num_samples >= 0, \
-            'last epoch number of samples should be non-negative.'
-        num_samples_per_epoch = (tokens_per_epoch - 1) // seq_length
-        assert last_epoch_num_samples < (num_samples_per_epoch + 1), \
-            'last epoch number of samples exceeded max value.'
-        # If we have less than 80% of the samples for the last epoch,
-        # seperate out the epoch and treat it differently.
-        # Note: the 80% number is just based on common sense and can
-        # be adjusted if needed.
-        separate_last_epoch = (last_epoch_num_samples <
-                                int(0.80 * num_samples_per_epoch))
-
     # doc-idx.
-    doc_idx = _build_doc_idx(documents, num_epochs, np_rng,
-                                separate_last_epoch)
+    doc_idx = _build_doc_idx(documents, np_rng)
     # sample-idx.
     assert doc_idx.dtype == np.int32
     assert sizes.dtype == np.int32
     sample_idx = _build_sample_idx(sizes, doc_idx, seq_length,
-                                    num_epochs, tokens_per_epoch)
+                                   tokens_per_epoch)
     # shuffle-idx.
     # -1 is due to data structure used to retieve the index:
     #    sample i --> [sample_idx[i], sample_idx[i+1])
-    if separate_last_epoch:
-        num_samples_ = num_samples_from_epochs_minus_one
-    else:
-        num_samples_ = sample_idx.shape[0] - 1
+    num_samples_ = sample_idx.shape[0] - 1
     shuffle_idx = _build_shuffle_idx(num_samples_,
                                         sample_idx.shape[0] - 1, np_rng)
     
@@ -181,46 +148,26 @@ def _num_tokens(documents, sizes):
     return np.sum(sizes[documents])
 
 
-def _num_epochs(tokens_per_epoch, seq_length, num_samples):
-    """Based on number of samples and sequence lenght, calculate how many
-    epochs will be needed."""
-    num_epochs = 0
-    total_tokens = 0
-    while True:
-        num_epochs += 1
-        total_tokens += tokens_per_epoch
-        # -1 is because we need to retrieve seq_length + 1 token each time
-        # but the last token will overlap with the first token of the next
-        # sample except for the last sample.
-        if ((total_tokens - 1) // seq_length) >= num_samples:
-            return num_epochs
-
-
-def _build_doc_idx(documents, num_epochs, np_rng, separate_last_epoch):
+def _build_doc_idx(documents, np_rng):
     """Build an array with length = number-of-epochs * number-of-dcuments.
     Each index is mapped to a corresponding document."""
-    if not separate_last_epoch or num_epochs == 1:
-        doc_idx = np.mgrid[0:num_epochs, 0:len(documents)][1]
-        doc_idx[:] = documents
-        doc_idx = doc_idx.reshape(-1)
-        doc_idx = doc_idx.astype(np.int32)
-        np_rng.shuffle(doc_idx)
-        return doc_idx
-
-    doc_idx_first = _build_doc_idx(documents, num_epochs-1, np_rng, False)
-    doc_idx_last = _build_doc_idx(documents, 1, np_rng, False)
-    return np.concatenate((doc_idx_first, doc_idx_last))
+    doc_idx = np.mgrid[0:1, 0:len(documents)][1]
+    doc_idx[:] = documents
+    doc_idx = doc_idx.reshape(-1)
+    doc_idx = doc_idx.astype(np.int32)
+    np_rng.shuffle(doc_idx)
+    return doc_idx
 
 
-def _build_sample_idx(sizes, doc_idx, seq_length,
-                      num_epochs, tokens_per_epoch):
+
+def _build_sample_idx(sizes, doc_idx, seq_length, tokens_per_epoch):
     """Sample index mapping is a 2D array with sizes
     [number-of-samples + 1, 2] where [..., 0] contains
     the index into `doc_idx` and [..., 1] is the
     starting offset in that document."""
 
     # Total number of samples. For -1 see comments in `_num_epochs`.
-    num_samples = (num_epochs * tokens_per_epoch - 1) // seq_length
+    num_samples = (tokens_per_epoch - 1) // seq_length
     sample_idx = np.zeros([num_samples + 1, 2], dtype=np.int32)
 
     # Index into sample_idx.
