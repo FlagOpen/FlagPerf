@@ -115,6 +115,8 @@ target_acc = 0.6
 # Total number of training steps to perform.
 max_steps: int = 10000
 
+save_steps: int = 10000
+
 per_device_train_batch_size = 1
 
 per_device_eval_batch_size = 1
