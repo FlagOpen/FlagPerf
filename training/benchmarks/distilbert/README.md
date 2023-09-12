@@ -40,7 +40,7 @@ distilbert
 
 ## Benchmark Task and Target Accuracy
 This experiment is to finetune a text classification task on SST-2 dataset with DistilBERT-base-uncased pretrained checkpoints.
-After finetuning 3 epoches, the DistilBERT-base-uncased model is able to achieve accuracy score of 90+, which matches the evaluation result on the [report](https://huggingface.co/distilbert-base-uncased).
+After finetuning 10 epoches, the DistilBERT-base-uncased model is able to achieve accuracy score of 90+, which matches the evaluation result on the [report](https://huggingface.co/distilbert-base-uncased).
 
 ## AI Frameworks && Accelerators supports
 
