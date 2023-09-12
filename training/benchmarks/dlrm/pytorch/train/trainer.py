@@ -180,14 +180,16 @@ class Trainer:
                                           cuda_graphs=config.cuda_graphs)
 
         model.train()
-        
+
         batch_iter = prefetcher(iter(train_dataloader), data_stream)
         max_step = len(train_dataloader)
 
         for step in range(max_step):
             no_eval_start_time = time.time()
+            state.global_steps += 1
             numerical_features, categorical_features, click = next(batch_iter)
-            state.num_trained_samples += click.size(0)
+            state.num_trained_samples = state.global_steps * \
+                dist_pytorch.global_batch_size(self.config)
             self.timer.click(synchronize=(device == 'cuda'))
 
             pure_compute_start_time = time.time()

@@ -181,6 +181,7 @@ if __name__ == "__main__":
         finished_info = {
             "e2e_time": e2e_time,
             "num_trained_samples": state.num_trained_samples,
+            "global_steps": state.global_steps,
             "train_time": state.train_time,
             "train_no_eval_time": state.no_eval_time,
             "pure_training_computing_time": state.pure_compute_time,
