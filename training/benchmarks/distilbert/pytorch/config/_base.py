@@ -21,8 +21,8 @@ weight_decay = 0.0
 train_batch_size: int = 4
 eval_batch_size: int = 4
 
-max_epoch: int = 3
-target_acc: float = 0.903
+max_epoch: int = 10
+target_acc: float = 0.91
 
 do_train = True
 distributed: bool = True
