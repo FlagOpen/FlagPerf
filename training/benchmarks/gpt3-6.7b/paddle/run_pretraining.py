@@ -20,7 +20,8 @@ from paddlenlp.transformers import (
     GPTForCausalLM,
     LinearAnnealingWithWarmupDecay,
 )
-from paddlenlp.metrics import AccuracyAndF1
+from paddlenlp.metrics import Perplexity
+from paddlenlp.trainer import EvalPrediction
 from paddlenlp.utils.log import logger
 from train.trainer import PretrainingTrainer
 from train.training_state import TrainingState
@@ -37,6 +38,15 @@ MODEL_CLASSES = {
     ),
 }
 
+def ppl(x: EvalPrediction):
+    perplexity = Perplexity()
+    predictions = paddle.to_tensor(x.predictions)
+    labels = paddle.to_tensor(x.label_ids)
+    correct = perplexity.compute(predictions, labels)
+    perplexity.update(correct.numpy())
+    ret = perplexity.accumulate()
+    return {"ppl":ret}
+    
 
 @dataclass
 class PreTrainingArguments(TrainingArguments):
@@ -281,6 +291,7 @@ def main():
         optimizers=(None, lr_scheduler),
         tokenizer=tokenizer,
         callbacks=[dist_paddle.PaddleCallback(driver=gpt_driver)],
+        compute_metrics = ppl,
     )
 
     dist_paddle.barrier()
@@ -315,22 +326,8 @@ def main():
     dist_paddle.barrier()
     eval_metrics = trainer.evaluate()
     training_state.eval_loss = eval_metrics["eval_loss"]
-
-    # Testing
-    if training_args.do_predict:
-        test_ret = trainer.predict(test_dataset)
-        trainer.log_metrics("test", test_ret.metrics)
-        test_metric = AccuracyAndF1()
-        preds = paddle.to_tensor(test_ret.predictions)
-        preds = preds.reshape([-1, preds.shape[-1]])
-        label = paddle.to_tensor(test_ret.label_ids)
-        label = label.reshape([-1,1])
-        
-        correct = test_metric.compute(pred=preds, label=label)
-        test_metric.update(correct)
-        training_state.test_acc = test_metric.accumulate()[0]
-        if training_state.test_acc > config.target_acc:
-            training_state.converged_success()
+    if eval_metrics["eval_ppl"] < config.target_ppl:
+        training_state.converged_success()
         
     return training_args, training_state, gpt_driver
 
