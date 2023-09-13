@@ -4,9 +4,14 @@
 import torch
 from torch.optim import Optimizer
 from torch import nn, Tensor
+from driver.dist_pytorch import main_proc_print, is_dist_avail_and_initialized
+from torch.nn.parallel import DistributedDataParallel as DDP
 
 import config
-from driver.dist_pytorch import main_proc_print
+
+def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
+                           loss_fn, grad_scaler):
+    return model
 
 
 def convert_model(model: nn.Module) -> nn.Module:
@@ -20,6 +25,10 @@ def model_to_fp16(model: nn.Module) -> nn.Module:
         model.half()
     return model
 
+def model_to_ddp(model: nn.Module) -> nn.Module:
+    if is_dist_avail_and_initialized():
+        model = DDP(model, device_ids=[config.local_rank])
+    return model
 
 def create_grad_scaler():
     """create_grad_scaler for mixed precision training"""
