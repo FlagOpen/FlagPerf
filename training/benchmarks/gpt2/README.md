@@ -42,8 +42,6 @@ python tools/preprocess_data.py \
         --chunk-size 25 \
 ```
 
-### 模型checkpoint 
-> `https://ngc.nvidia.com/catalog/models/nvidia:megatron_lm_345m`
 
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|
