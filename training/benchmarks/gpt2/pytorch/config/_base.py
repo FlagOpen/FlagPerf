@@ -17,13 +17,13 @@ device: str = None
 seed: int = 1234
 gradient_accumulation_steps: int = 1
 
-max_steps: int = 7689
+max_steps: int = 23070
 train_batch_size: int = 4
 
-eval_iter_start_samples: int = 32
-eval_interval_samples: int = 32
+eval_iter_start_samples: int = 3200
+eval_interval_samples: int = 3200
 
-target_acc: float = 0.70
+target_acc: float = 0.60
 
 # =========================================================
 # data
@@ -31,7 +31,6 @@ target_acc: float = 0.70
 
 train_data_prefix: str = "lambada_train_text_document"
 test_data_prefix: str = "lambada_test.json"
-init_checkpoint: str = "model_optim_rng.pt"
 vocab_file: str = "gpt2-vocab.json"
 merge_file: str = "gpt2-merges.txt"
 

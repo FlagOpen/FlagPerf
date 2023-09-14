@@ -93,30 +93,6 @@ class Trainer():
         self.lr_scheduler = create_scheduler(self.optimizer)
 
     def _init_model(self, model, device):
-        if self.config.init_checkpoint:
-            checkpoint_path = os.path.join(self.config.data_dir, self.config.init_checkpoint)
-            checkpoint = torch.load(self.config.init_checkpoint,
-                                    map_location="cpu")
-            if "model" in checkpoint:
-                checkpoint = checkpoint["model"]
-            checkpoint_version = checkpoint.get('checkpoint_version', 0)
-            model.load_state_dict(checkpoint, strict=True)
-            # fix query_key_value ordering
-            if checkpoint_version < 2.0:
-                for name, param in model.named_parameters():
-                    if name.endswith(('.query_key_value.weight', '.query_key_value.bias')):
-                        if checkpoint_version == 0:
-                            fixed_param = _transpose_first_dim(param.data, 3, True, model)
-                        elif checkpoint_version == 1.0:
-                            fixed_param = _transpose_first_dim(param.data, 3, False, model)
-                        param.data.copy_(fixed_param)
-                    if name.endswith(('.key_value.weight', '.key_value.bias')):
-                        if checkpoint_version == 0:
-                            fixed_param = _transpose_first_dim(param.data, 2, True, model)
-                        elif checkpoint_version == 1.0:
-                            fixed_param = _transpose_first_dim(param.data, 2, False, model)
-                        param.data.copy_(fixed_param)
-
         model = model.to(device)
         return model
 

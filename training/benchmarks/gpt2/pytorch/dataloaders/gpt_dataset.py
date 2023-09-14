@@ -8,7 +8,7 @@ import numpy as np
 import torch
 
 from dataloaders.indexed_dataset import make_dataset as make_indexed_dataset
-from dataloaders.dataloader import build_pretraining_data_loader, build_data_loader
+from dataloaders.dataloader import build_data_loader
 from dataloaders import get_tokenizer
 
 import config
@@ -242,8 +242,8 @@ def build_train_test_data_dataloaders(
         train_num_samples=train_samples)
 
     # Build dataloders.
-    train_dataloader = build_pretraining_data_loader(
-        train_ds, 0)
+    train_dataloader = build_data_loader(train_ds, config.train_batch_size,
+                                   config.num_workers, drop_last=False)
 
     test_dataloader = build_data_loader(test_ds, config.train_batch_size,
                                    config.num_workers, drop_last=False)
