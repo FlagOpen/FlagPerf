@@ -195,7 +195,7 @@ class Trainer:
                         f"{state.global_steps / steps_per_epoch:.2f} in {run_time_s}s. "
                     )
                     state.converged_success()
-                    break
+                    return
                 else:
                     print(f"config.target_auc:{config.target_auc}, "
                           f"state.eval_auc:{state.eval_auc}")
@@ -209,7 +209,7 @@ class Trainer:
                     f"state.global_steps:{state.global_steps} config.max_steps:{config.max_steps} finish training, but not converged."
                 )
                 state.end_training = True
-                break
+                return
 
     def weight_update(self):
         config = self.config
