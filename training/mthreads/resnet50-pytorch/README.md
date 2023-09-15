@@ -14,7 +14,7 @@
    - OS版本：Ubuntu 20.04 LTS
    - OS kernel版本: 5.4.0-42-generic
    - 加速卡驱动版本：2.2.0
-   - Docker镜像和版本: PyTroch2.0_musa1.4_ec6a747fd342 
+   - Docker镜像和版本: PyTorch2.0_musa1.4_ec6a747fd342 
    - 训练框架版本：pytorch-2.0.0+torch_musa-git8ea3501
    - 依赖软件版本:
      - musa toolkits: 1.4.0+git4e25703

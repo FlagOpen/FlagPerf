@@ -7,7 +7,7 @@
 
 摩尔线程MTT  S系列全功能GPU支持多样算力，借助覆盖深度学习、图形渲染、视频处理和科学计算的完整MUSA软件栈，可为AI训练、AI推理、大模型、AIGC、云游戏、云渲染、视频云、数字孪生等场景提供通用智能算力支持，旨在为数据中心、智算中心和元计算中心的建设构建坚实算力基础，助力元宇宙中多元应用创新和落地。
 
-MUSA软件栈通过musify CUDA代码迁移工具、计算/通信加速库、mcc编译器、musa运行时和驱动实现对CUDA生态的兼容，帮助用户快速完成代码及应用的迁移。通过torch_musa插件，可以实现MTT S系列GPU对原生PyTroch的对接，用户可以无感的把AI模型运行在摩尔线程全功能GPU上。
+MUSA软件栈通过musify CUDA代码迁移工具、计算/通信加速库、mcc编译器、musa运行时和驱动实现对CUDA生态的兼容，帮助用户快速完成代码及应用的迁移。通过torch_musa插件，可以实现MTT S系列GPU对原生PyTorch的对接，用户可以无感的把AI模型运行在摩尔线程全功能GPU上。
 
 # FlagPerf适配验证环境说明
 ## 环境配置参考
@@ -20,7 +20,7 @@ MUSA软件栈通过musify CUDA代码迁移工具、计算/通信加速库、mcc�
     - OS版本：Ubuntu 20.04 LTS
     - OS kernel版本: 5.4.0-154-generic
     - 加速卡驱动版本：2.2.0
-    - Docker 版本: PyTroch2.0_musa1.4_ec6a747fd342 
+    - Docker 版本: PyTorch2.0_musa1.4_ec6a747fd342 
 
 ## 容器镜像信息
 - 容器构建信息
