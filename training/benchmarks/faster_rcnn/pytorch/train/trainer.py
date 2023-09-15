@@ -134,7 +134,7 @@ class Trainer:
                                                        header):
             images = list(img.to(device) for img in images)
 
-            torch.cuda.synchronize()
+            dist_pytorch.barrier()
             model_time = time.time()
             outputs = model(images)
 
