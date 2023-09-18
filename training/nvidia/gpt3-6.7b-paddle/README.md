@@ -4,10 +4,9 @@
 ## 数据下载
 
 ```shell
-mkdir data-gpt3
-cd data-gpt3 # 后续在training/run_benchmarks/config/test_conf.py中修改数据位置使用
-wget -O data/gpt_en_dataset_300m_ids.npy https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_ids.npy
-wget -O data/gpt_en_dataset_300m_idx.npz https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_idx.npz
+mkdir GPT-3-data # 后续在training/run_benchmarks/config/test_conf.py中修改数据位置使用
+wget -O GPT-3-data/gpt_en_dataset_300m_ids.npy https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_ids.npy
+wget -O GPT-3-data/gpt_en_dataset_300m_idx.npz https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_idx.npz
 ```
 
 ## 基于FlagPerf运行
@@ -18,7 +17,7 @@ export nnodes=1 # 机器数量
 export nprocs=8 # 机器可用GPU数量
 export hosts="127.0.0.1" # 可用机器IP地址 “10.1.2.1, 10.1.2.3, 10.1.2.4”
 export master="127.0.0.1"
-export data_dir="./data_gpt3"
+export data_dir="./GPT-3-data"
 export log_dir="./log_dir/results"
 
 
