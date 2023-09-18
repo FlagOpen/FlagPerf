@@ -1,0 +1,8 @@
+psutil==5.9.5
+numpy>=1.15.4
+timm==0.4.12
+accelerate==0.20.3
+
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==1.12.1+cpu
+torchvision==0.13.1+cpu
