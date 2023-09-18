@@ -23,8 +23,8 @@ log_freq = 1
 seed = 42
 
 # for parallel
-per_device_train_batch_size = 1
-per_device_eval_batch_size = 1
+per_device_train_batch_size = 2
+per_device_eval_batch_size = 2
 tensor_parallel_degree = 1
 pipeline_parallel_degree = 1
 use_flash_attention = 1

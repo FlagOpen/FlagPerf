@@ -23,8 +23,8 @@ log_freq = 1
 seed = 42
 
 # for parallel
-per_device_train_batch_size = 1
-per_device_eval_batch_size = 1
+per_device_train_batch_size = 2
+per_device_eval_batch_size = 2
 tensor_parallel_degree = 2
 pipeline_parallel_degree = 4
 use_flash_attention = 1
@@ -32,6 +32,6 @@ fuse_attention_qkv = 0
 use_fused_rms_norm = 1
 fp16 = True
 fp16_opt_level = "O2"
-sharding = ""
+sharding = "stage1"
 recompute = False
 recompute_granularity = "full"
