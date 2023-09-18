@@ -18,8 +18,8 @@ warmup_ratio = 0.01
 max_grad_norm = 1.0
 target_loss = 1.0
 target_ppl = 0.6
-logging_steps = 20
-log_freq = 20
+logging_steps = 1
+log_freq = 1
 seed = 42
 
 # for parallel
