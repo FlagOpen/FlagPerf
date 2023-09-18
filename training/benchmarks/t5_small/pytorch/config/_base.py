@@ -18,8 +18,8 @@ weight_decay = 0.0
 # =========================================================
 # train && evaluate
 # =========================================================
-train_batch_size: int = 4
-eval_batch_size: int = 4
+train_batch_size: int = 32
+eval_batch_size: int = 32
 
 max_epoch: int = 3
 target_rouge1: float = 40.5
