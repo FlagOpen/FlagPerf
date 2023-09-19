@@ -15,7 +15,7 @@ input_dir: str = "data"
 split: str = "949,50,1"
 
 # The maximum total input sequence length after tokenization. Sequences longer
-max_seq_length: int = 1024
+max_seq_length: int = 2048
 
 # Use share folder for data dir and output dir on multi machine.
 share_folder: bool = False
@@ -31,7 +31,7 @@ model_name_or_path = "gpt3-6.7B-en"
 
 tokenizer_name_or_path = "gpt3-6.7B-en"
 
-hidden_size = 1024  # for gpt3-6.7b, 5120 for gpt3-13b
+hidden_size = 4096  # for gpt3-6.7b, 5120 for gpt3-13b
 
 initializer_range = 0.02
 
@@ -39,7 +39,7 @@ intermediate_size = 16384  # for gpt3-6.7b, 20480 for gpt3-13b
 
 lm_shift_labels = False
 
-max_position_embeddings = 1024
+max_position_embeddings = 2048
 
 num_attention_heads = 32  # for gpt3-6.7b, 128 for gpt3-13b
 
@@ -98,7 +98,7 @@ do_predict: bool = True
 target_ppl = 10000
 
 # Total number of training steps to perform.
-max_steps: int = 10000
+max_steps: int = 512*1024*1024
 
 save_steps: int = 10000
 
@@ -170,6 +170,8 @@ tensor_parallel_degree = 1
 
 pipeline_parallel_degree = 1
 
+distributed_dataloader = True
+
 # =========================================================
 # fp16 config args
 # =========================================================
@@ -180,7 +182,7 @@ fp16_opt_level = "O2"
 
 bf16: bool = False
 
-scale_loss = 1024.0
+scale_loss = 32768.0
 
 amp_custom_white_list = None
 
@@ -201,31 +203,29 @@ dist_backend: str = "nccl"
 # lr_scheduler args
 # =========================================================
 # initial learning rate
-learning_rate: float = 0.00001
+learning_rate: float = 1.2e-4 # for gpt3-6.7B, 1.0 for gpt3-13B
 
 # Minimum learning rate deacyed to.
-min_learning_rate: float = 5e-06
-
-# number of iterations to decay LR over, If None defaults to `--train-iters`*`--epochs`
-lr_decay_steps: int = 10
+min_learning_rate: float = learning_rate * 0.1
 
 # learning rate decay function
-# lr_scheduler_type: str = "linear"
+lr_scheduler_type: str = "cosine"
 
-# percentage of data to warmup on (.01 = 1% of all training iters). Default 0.01
-warmup_ratio: float = 0.01
+# Initial learning rate decay per epoch
+# decay tokens = 260B, batch_size tokens= 2M, 260B / 2M = 130M
+lr_decay_steps: int = 130*1024*1024
 
-warmup_steps: int = 0
+# warmup tokens = 375M, batch_size tokens= 2M, 375M / 2M = 187.5 steps
+warmup_steps: int = 188
 
 # weight decay coefficient for L2 regularization
-weight_decay: float = 0.01
-
+weight_decay: float = 0.1
 
 # =========================================================
 # optimizer args
 # =========================================================
 adam_beta1: float = 0.9
-adam_beta2: float = 0.999
+adam_beta2: float = 0.95
 adam_epsilon: float = 1e-08
 
 
