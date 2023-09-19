@@ -8,7 +8,7 @@ max_seq_length = 2048
 # training info
 dataloader_num_workers = 8
 gradient_accumulation_steps = 32
-max_steps = 512*1024*1024
+max_steps = 512
 save_steps = 10000
 eval_steps = 5000000
 learning_rate = 1.0e-4
@@ -24,7 +24,7 @@ seed = 42
 
 # for parallel
 per_device_train_batch_size = 8
-per_device_eval_batch_size = 8
+per_device_eval_batch_size = 1
 tensor_parallel_degree = 2
 pipeline_parallel_degree = 4
 sharding_parallel_degree = 1

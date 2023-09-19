@@ -9,6 +9,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional
 
+import paddlenlp
 import paddle
 from dataloaders.dataset import create_pretrained_dataset, get_train_data_file
 from model.modeling_pp import GPTForCausalLMPipe
@@ -168,6 +169,11 @@ def main():
     import config
     from config import mutable_params
 
+    paddlenlp.transformers.PRETRAINED_POSITIONAL_EMBEDDINGS_SIZES["gpt3-6.7B-en"] = 2048
+    paddlenlp.transformers.PRETRAINED_POSITIONAL_EMBEDDINGS_SIZES["gpt3-13B-en"] = 2048
+    paddlenlp.transformers.GPT_PRETRAINED_INIT_CONFIGURATION["gpt3-6.7B-en"]["max_position_embeddings"] = 2048
+    paddlenlp.transformers.GPT_PRETRAINED_INIT_CONFIGURATION["gpt3-13B-en"]["max_position_embeddings"] = 2048
+
     gpt_driver = Driver(config, mutable_params)
     gpt_driver.setup_config(argparse.ArgumentParser("gpt"))
     gpt_driver.setup_modules(globals(), locals())
@@ -254,14 +260,13 @@ def main():
     # Create the learning_rate sheduler and optimizer
     if training_args.decay_steps is None:
         training_args.decay_steps = training_args.max_steps
-    warmup_steps = training_args.warmup_ratio * training_args.max_steps
 
     lr_scheduler = None
     if training_args.lr_scheduler_type.value == "cosine":
         lr_scheduler = CosineAnnealingWithWarmupDecay(
             max_lr=training_args.learning_rate,
             min_lr=training_args.min_learning_rate,
-            warmup_step=warmup_steps,
+            warmup_step=training_args.warmup_steps,
             decay_step=training_args.decay_steps,
             last_epoch=0,
         )
@@ -269,7 +274,7 @@ def main():
         lr_scheduler = LinearAnnealingWithWarmupDecay(
             max_lr=training_args.learning_rate,
             min_lr=training_args.min_learning_rate,
-            warmup_step=warmup_steps,
+            warmup_step=training_args.warmup_steps,
             decay_step=training_args.decay_steps,
             last_epoch=0,
         )
