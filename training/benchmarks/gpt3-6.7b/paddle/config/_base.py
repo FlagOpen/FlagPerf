@@ -217,6 +217,7 @@ lr_decay_steps: int = 130*1024*1024
 
 # warmup tokens = 375M, batch_size tokens= 2M, 375M / 2M = 187.5 steps
 warmup_steps: int = 188
+# warmup_ratio: float = 0.01
 
 # weight decay coefficient for L2 regularization
 weight_decay: float = 0.1

@@ -13,7 +13,7 @@ mutable_params = [
     "learning_rate",
     "min_learning_rate",
     "weight_decay",
-    "warmup_ratio",
+    "warmup_steps",
     "seed",
     "sharding",
     "recompute",
