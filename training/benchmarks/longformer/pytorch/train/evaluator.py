@@ -38,10 +38,6 @@ class Evaluator:
                 correct = (outputs == inputs['labels'][mask]).float()
                 output = correct.sum()
 
-                # Reduce across processes.
-                if dist_pytorch.is_dist_avail_and_initialized():
-                    torch.distributed.all_reduce(output)
-
                 total_output += output
         acc = total_output / num_examples
         return acc.item()

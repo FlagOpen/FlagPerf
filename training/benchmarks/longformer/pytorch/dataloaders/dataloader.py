@@ -13,57 +13,50 @@ from transformers import LongformerTokenizer, DataCollatorForLanguageModeling
 InputDataClass = NewType("InputDataClass", Any)
 
 
-def get_tokenized_dataset(config):
-    tokenizer = LongformerTokenizer.from_pretrained('allenai/longformer-base-4096', use_auto_token=False)
-    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=0.15)
-    raw_datasets = load_dataset("wikitext", "wikitext-2-raw-v1")
-    column_names = list(raw_datasets["train"].features)
-    text_column_name = "text" if "text" in column_names else column_names[0]
-    max_seq_length = tokenizer.model_max_length
-    if max_seq_length > 1024:
-        max_seq_length = 1024
+class LongformerDataset(Dataset):
+    def __init__(self, filepath):
+        origin_data = np.load(filepath)
+        self.input_ids = origin_data['input_ids']
+        self.special_tokens_mask = origin_data['special_tokens_mask']
+        self.attention_mask = origin_data['attention_mask']
 
-    def tokenize_function(examples):
-        return tokenizer(examples[text_column_name], return_special_tokens_mask=True)
+    def __len__(self):
+        return len(self.input_ids)
 
-    tokenized_datasets = raw_datasets.map(
-                    tokenize_function,
-                    batched=True,
-                    num_proc=None,
-                    remove_columns=[text_column_name],
-                    load_from_cache_file=True,
-                    desc="Running tokenizer on dataset line_by_line",
-                )
-
-    def group_texts(examples):
-        # Concatenate all texts.
-        concatenated_examples = {k: list(chain(*examples[k])) for k in examples.keys()}
-        total_length = len(concatenated_examples[list(examples.keys())[0]])
-        # We drop the small remainder, and if the total_length < max_seq_length  we exclude this batch and return an empty dict.
-        # We could add padding if the model supported it instead of this drop, you can customize this part to your needs.
-        total_length = (total_length // max_seq_length) * max_seq_length
-        # Split by chunks of max_len.
-        result = {
-            k: [t[i : i + max_seq_length] for i in range(0, total_length, max_seq_length)]
-            for k, t in concatenated_examples.items()
+    def __getitem__(self, idx):
+        sample = {
+            'input_ids': self.input_ids[idx],
+            'special_tokens_mask': self.special_tokens_mask[idx],
+            'attention_mask': self.attention_mask[idx]
         }
-        return result
+        return sample
 
-    tokenized_datasets = tokenized_datasets.map(
-                    group_texts,
-                    batched=True,
-                    num_proc=None,
-                    load_from_cache_file=True,
-                    desc=f"Grouping texts in chunks of {max_seq_length}",
-                )
-    return tokenized_datasets, data_collator
+def get_data_collator(config):
+    model_path = os.path.join(config.data_dir, 'model')
+    tokenizer = LongformerTokenizer.from_pretrained(model_path)
+    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=0.15)
+    return data_collator
+
+def build_train_sampler(config, dataset):
+    if torch.distributed.is_initialized():
+        world_size = torch.distributed.get_world_size()
+        rank = torch.distributed.get_rank()
+        sampler = torch.utils.data.distributed.DistributedSampler(
+            dataset, num_replicas=world_size, rank=rank, seed = config.seed)
+    else:
+        generator = torch.Generator()
+        generator.manual_seed(config.seed)
+        sampler = torch.utils.data.RandomSampler(dataset, generator=generator)
+    return sampler
 
 def build_train_dataloader(config):
-    dataset, data_collator = get_tokenized_dataset(config)
+    data_collator = get_data_collator(config)
+    train_dataset = LongformerDataset(
+        os.path.join(config.data_dir, 'dataset', 'train_dataset.npz'))
+    train_sampler = build_train_sampler(config, train_dataset)
     data_loader = DataLoader(
-            dataset['train'],
-            shuffle=True,
-            sampler=None,
+            train_dataset,
+            sampler=train_sampler,
             collate_fn=data_collator,
             batch_size=config.train_batch_size,
             drop_last=config.dataloader_drop_last,
@@ -71,13 +64,12 @@ def build_train_dataloader(config):
         )
     return data_loader
 
-
-
 def build_eval_dataloader(config):
-    dataset, data_collator = get_tokenized_dataset(config)
+    data_collator = get_data_collator(config)
+    eval_dataset = LongformerDataset(
+        os.path.join(config.data_dir, 'dataset', 'eval_dataset.npz'))
     data_loader = DataLoader(
-            dataset['validation'],
-            sampler=None,
+            eval_dataset,
             collate_fn=data_collator,
             batch_size=config.eval_batch_size,
             drop_last=config.dataloader_drop_last,

@@ -18,7 +18,8 @@ def model_to_ddp(config, model: nn.Module) -> nn.Module:
     if use_ddp:
         model = DistributedDataParallel(
             model,
-            device_ids=[config.local_rank])
+            device_ids=[config.local_rank],
+            find_unused_parameters=True)
 
     return model
 
