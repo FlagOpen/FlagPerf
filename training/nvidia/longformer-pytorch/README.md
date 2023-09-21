@@ -1,15 +1,26 @@
-### Nvidia GPU配置与运行信息参考
+### 1. 下载数据集和模型
+
+[下载链接](https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/datasets/longformer_train.tar)
+
+### 2. 设置test_conf.py
+
+为了使得`training/nvidia/t5_small-pytorch/config/requirements.txt`里的依赖库均能被下载，需要将`training/run_benchmarks/config/test_conf.py`里的`PIP_SOURCE`的值修改为`https://pypi.tuna.tsinghua.edu.cn/simple`
+
+
+### 3. Nvidia GPU配置与运行信息参考
+
 #### 环境配置
 - ##### 硬件环境
-    - 加速卡型号: A100-SXM4-80GB
+    - 机器、加速卡型号: NVIDIA_A100-SXM4-40GB
     - 多机网络类型、带宽: InfiniBand，200Gb/s
 - ##### 软件环境
-   - OS版本：Ubuntu 18.04
-   - OS kernel版本: 3.10.0-957.el7.x86_64
-   - 加速卡驱动版本：530.30.02
-   - Docker 版本：pytorch/pytorch:1.13.1-cuda11.6-cudnn8-devel
-   - 训练框架版本：pytorch-1.13.1+49444c3
-   - 依赖软件版本：无
+   - OS版本：Ubuntu 20.04
+   - OS kernel版本: 5.4.0-113-generic
+   - 加速卡驱动版本：470.129.06
+   - Docker 版本：20.10.16
+   - 训练框架版本：pytorch-1.8.0a0+52ea372
+   - 依赖软件版本：
+     - cuda: 11.4
 
 ### 运行情况
 
