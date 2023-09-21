@@ -18,6 +18,7 @@ class TrainingState:
 
     epoch: int = 1
     num_trained_samples = 0
+    num_steps: int = 0
 
     # state related
     end_training: bool = False

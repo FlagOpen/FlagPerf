@@ -105,6 +105,11 @@ class Trainer:
             self.training_state.pure_compute_time += time.time(
             ) - pure_compute_start_time
 
+            state.num_steps = state.num_steps + 1
+            if config.max_steps != -1 and state.num_steps >= config.max_steps:
+                state.end_training = True
+                break
+
         self.lr_scheduler.step()
         state.num_trained_samples += len(data_loader.dataset)
         self.training_state.no_eval_time += time.time() - noeval_start_time
