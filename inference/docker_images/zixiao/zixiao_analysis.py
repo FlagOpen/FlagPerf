@@ -14,6 +14,3 @@ def analysis_log(logpath):
             max_usage = max(max_usage, usage)
     return round(max_usage, 2), max_mem, eval("30e12"), eval("120e12")
 
-
-if __name__ == "__main__":
-    max1, max2, max2,max4 = analysis_log("zixiao.log")

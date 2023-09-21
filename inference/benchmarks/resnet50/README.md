@@ -102,7 +102,7 @@ find ./val -name "*JPEG" | wc -l
     - 机器、加速卡型号: C100
     
 - ##### 软件环境
-   - OS版本：Ubuntu Ubuntu 20.04
+   - OS版本：Ubuntu 20.04
    - OS kernel版本: 5.15.0-78-generic
    - 加速卡驱动版本：2.4.12
    - Docker 版本：24.0.4
