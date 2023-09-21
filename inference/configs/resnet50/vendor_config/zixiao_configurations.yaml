@@ -1,0 +1,5 @@
+compiler: zxrt
+no_validation: true
+batch_size: 48
+exist_onnx_path: inference/onnxs/resnet50_pytorch.onnx
+repeat: 1
