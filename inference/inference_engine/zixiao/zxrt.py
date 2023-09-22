@@ -46,7 +46,7 @@ class InferModel:
         for input in onnx_model.graph.input:
             input_shape = input.type.tensor_type.shape.dim
             input_shape = [a.dim_value for a in input_shape]
-            input_shape[0] = config.batch_size
+            input_shape[0] = config.batch_size // 6
             input_name = input.name
             self.input_names.append(input_name)
             self.input_shapes.append(input_shape)
@@ -81,30 +81,34 @@ class InferModel:
     def __call__(self, model_inputs: list):
         inputs = []
         outputs = []
+        foo_time_start = time.time()
         for input in model_inputs:
             inputs.append(input.numpy())
         input_batch = inputs[0].shape[0]
         # zixiao acceleration card has 6 compute cells
         assert input_batch % self.zixiao_VG_num == 0
         vg_batch = input_batch // self.zixiao_VG_num
-        foo_time_start = time.time()
+        foo_time = time.time() - foo_time_start
         for i in range(self.zixiao_VG_num):
             vg_input = []
+            foo_time_start_data_slice = time.time()
             for input in inputs:
                 vg_input.append(input[vg_batch * i: vg_batch * (i + 1)])
+            foo_time += time.time() - foo_time_start_data_slice
             outputs.append(self.engine.runV2(vg_input,
                                              py_stream=self.streams[self.test_index % 12]))
             self.test_index += 1
         zx_outputs = []
         for i in range(self.zixiao_VG_num):
             zx_outputs.append([output for output in outputs[i].get()])
-        # d2h
-        foo_time = time.time() - foo_time_start
         # concat vg_batch result
+        foo_time_start2 = time.time()
         host_output = []
         for i in range(len(zx_outputs[0])):
             tmp_output = []
             for j in range(self.zixiao_VG_num):
                 tmp_output.append(zx_outputs[j][i])
             host_output.append(np.concatenate(tmp_output))
-        return [torch.from_numpy(output) for output in host_output], foo_time
+        infer_output = [torch.from_numpy(output) for output in host_output]
+        foo_time += time.time() - foo_time_start2
+        return infer_output, foo_time

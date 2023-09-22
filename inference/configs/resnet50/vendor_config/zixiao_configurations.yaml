@@ -1,4 +1,4 @@
 compiler: zxrt
 no_validation: true
-batch_size: 48
+batch_size: 192
 exist_onnx_path: onnxs/resnet50_pytorch.onnx
