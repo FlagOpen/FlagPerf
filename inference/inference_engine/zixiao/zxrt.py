@@ -34,19 +34,18 @@ class InferModel:
     def __init__(self, config, onnx_path, model):
         self.input_names = []
         self.engine = self.build_engine(config, onnx_path)
-        self.test_index = 0
-        self.batch_size = config.batch_size
+        self.batch_size = config.zixiao_test_batch_size
         self.zixiao_VG_num = 6
 
     def build_engine(self, config, onnx_path):
-        self.handler = TopsInference.set_device(0, -1)
+        self.handler = TopsInference.set_device(4, -1)
         onnx_model = onnx.load(onnx_path)
         self.input_shapes = []
         self.input_dtype = []
         for input in onnx_model.graph.input:
             input_shape = input.type.tensor_type.shape.dim
             input_shape = [a.dim_value for a in input_shape]
-            input_shape[0] = config.batch_size // 6
+            input_shape[0] = config.zixiao_test_batch_size
             input_name = input.name
             self.input_names.append(input_name)
             self.input_shapes.append(input_shape)
@@ -84,31 +83,33 @@ class InferModel:
         foo_time_start = time.time()
         for input in model_inputs:
             inputs.append(input.numpy())
-        input_batch = inputs[0].shape[0]
+        total_input_num = inputs[0].shape[0]
+        total_test_batch = (total_input_num + self.batch_size - 1) //  self.batch_size
         # zixiao acceleration card has 6 compute cells
-        assert input_batch % self.zixiao_VG_num == 0
-        vg_batch = input_batch // self.zixiao_VG_num
         foo_time = time.time() - foo_time_start
-        for i in range(self.zixiao_VG_num):
-            vg_input = []
+        for i in range(total_test_batch):
             foo_time_start_data_slice = time.time()
+            vg_input = []
             for input in inputs:
-                vg_input.append(input[vg_batch * i: vg_batch * (i + 1)])
+                vg_input.append(input[self.batch_size * i: self.batch_size * (i + 1)])
             foo_time += time.time() - foo_time_start_data_slice
-            outputs.append(self.engine.runV2(vg_input,
-                                             py_stream=self.streams[self.test_index % 12]))
-            self.test_index += 1
+            outputs.append(self.engine.runV2(vg_input, py_stream=self.streams[i % 12]))
+        # zixiao sync
+        for i in range(12):
+            outputs[i-12].get()
+        # zixiao sync done
+
+        # concat batch result
+        foo_time_start_d2h = time.time()
         zx_outputs = []
-        for i in range(self.zixiao_VG_num):
+        for i in range(total_test_batch):
             zx_outputs.append([output for output in outputs[i].get()])
-        # concat vg_batch result
-        foo_time_start2 = time.time()
         host_output = []
         for i in range(len(zx_outputs[0])):
             tmp_output = []
-            for j in range(self.zixiao_VG_num):
+            for j in range(total_test_batch):
                 tmp_output.append(zx_outputs[j][i])
             host_output.append(np.concatenate(tmp_output))
         infer_output = [torch.from_numpy(output) for output in host_output]
-        foo_time += time.time() - foo_time_start2
+        foo_time += time.time() - foo_time_start_d2h
         return infer_output, foo_time
