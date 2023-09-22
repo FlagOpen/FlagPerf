@@ -41,7 +41,7 @@
 
 * 性能指标
 
-| 配置                | precision | fix_hp           | e2e_time | p_whole | p_train | p_core | acc   | mem       |
+| 配置                | precision | fix_hp           | e2e_time | p_whole | p_train | p_core | mlm_accuracy   | mem       |
 | ------------------- | --------- | ---------------- | -------- | ------- | ------- | ------ | ----- | --------- |
 | R300单机单卡（1x1）  | fp32      | bs=8,lr=3.5e-04    |          |         |          |    |      |          |
 | R300单机8卡（1x8）  | fp32      | bs=8,lr=3.5e-04    |           |         |         |    | 0.36  |  26.5/32.0  |
