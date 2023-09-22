@@ -1,3 +1,6 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 from dataclasses import dataclass
 import inspect
 import torch
@@ -23,6 +26,8 @@ class TrainingState:
     # time related
     init_time = 0
     raw_train_time = 0
+    no_eval_time = 0
+    pure_compute_time = 0
 
     def status(self):
         if self.converged:

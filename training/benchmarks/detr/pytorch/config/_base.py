@@ -20,6 +20,20 @@ lr_backbone=1e-5
 lr_drop = 200
 weight_decay = 1e-4
 clip_max_norm = 0.1
+model_name = 'transformer'
+backbone = 'resnet50'
+dilation = False
+position_embedding = 'sine'
+enc_layers = 6
+dec_layers = 6
+dim_feedforward = 2048
+hidden_dim = 256
+dropout = 0.1
+nheads = 8
+num_queries = 100
+pre_norm = False
+masks = False
+
 
 # -----------------------------------------------------------------------------
 # Loss

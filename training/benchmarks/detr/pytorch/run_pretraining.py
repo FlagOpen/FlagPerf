@@ -1,3 +1,6 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 """detr Pretraining"""
 # 标准库
 import os
@@ -154,10 +157,18 @@ if __name__ == "__main__":
         finished_info = {
             "e2e_time": e2e_time,
             "init_time": state.init_time,
-            "raw_train_time": state.raw_train_time,
             "training_images_per_second": training_perf,
             "converged": state.converged,
             "final_mAP": state.eval_mAP,
+            "raw_train_time": state.raw_train_time,
+            "train_no_eval_time": state.no_eval_time,
+            "pure_training_computing_time": state.pure_compute_time,
+            "throughput(ips)_raw":
+            state.num_trained_samples / state.raw_train_time,
+            "throughput(ips)_no_eval":
+            state.num_trained_samples / state.no_eval_time,
+            "throughput(ips)_pure_compute":
+            state.num_trained_samples / state.pure_compute_time,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

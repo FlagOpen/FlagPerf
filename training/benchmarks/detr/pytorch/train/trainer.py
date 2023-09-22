@@ -1,3 +1,6 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 import math
 import time
 import os
@@ -33,6 +36,7 @@ class Trainer:
         
         model.train()
         criterion.train()
+        noeval_start_time = time.time()
         metric_logger = utils.MetricLogger(delimiter="  ")
         metric_logger.add_meter('lr', utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
         metric_logger.add_meter('class_error', utils.SmoothedValue(window_size=1, fmt='{value:.2f}'))
@@ -44,6 +48,7 @@ class Trainer:
             samples = samples.to(device)
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
             
+            pure_compute_start_time = time.time()
             outputs = model(samples)
             loss_dict = criterion(outputs, targets)
             weight_dict = criterion.weight_dict
@@ -69,10 +74,15 @@ class Trainer:
             metric_logger.update(loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled)
             metric_logger.update(class_error=loss_dict_reduced['class_error'])
             metric_logger.update(lr=optimizer.param_groups[0]["lr"])
-        
+
+            self.training_state.pure_compute_time += time.time() - pure_compute_start_time
+
         # gather the stats from all processes
         metric_logger.synchronize_between_processes()
         print("Averaged stats:", metric_logger)
+
+        state.num_trained_samples += len(data_loader.dataset)
+        self.training_state.no_eval_time += time.time() - noeval_start_time
 
     @torch.no_grad()
     def evaluate(self, model, criterion, postprocessors, data_loader, base_ds, device, epoch):
