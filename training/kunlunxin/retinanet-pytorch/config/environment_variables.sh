@@ -4,5 +4,3 @@ export XMLIR_D_XPU_L3_SIZE=66060288
 export XMLIR_D_FORCE_FALLBACK_STR="aten::_index_put_impl_,aten::index.Tensor"
 
 export XACC_ARGS="-L auto_tune"
-
-python -m xacc.install
