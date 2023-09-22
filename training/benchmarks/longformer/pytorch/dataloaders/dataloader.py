@@ -1,17 +1,10 @@
 import os
-from itertools import chain
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-from torch.utils.data.dataloader import default_collate
-from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
-from collections.abc import Mapping
 import datasets
-from datasets import load_dataset
 from transformers import LongformerTokenizer, DataCollatorForLanguageModeling
-InputDataClass = NewType("InputDataClass", Any)
-
 
 class LongformerDataset(Dataset):
     def __init__(self, filepath):
