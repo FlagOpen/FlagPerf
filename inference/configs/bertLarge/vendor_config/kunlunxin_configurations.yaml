@@ -1,0 +1,3 @@
+compiler: xtcl
+no_validation: true
+exist_onnx_path: onnxs/bertLarge/bertLarge_bs32_pytorch_fp16False.onnx
