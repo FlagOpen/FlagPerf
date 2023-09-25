@@ -197,14 +197,14 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer" style="text-decoration:none" target="_parent">SwinTransformer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69">N/A</td>
-    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69"><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -242,7 +242,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -266,7 +266,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(6.7B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -274,7 +274,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(13B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -298,7 +298,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>TransformerXL</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -314,7 +314,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DETR</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -322,13 +322,12 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Longformer</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Under Review</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
   </table>
-
 
 
 #### 推理列表
