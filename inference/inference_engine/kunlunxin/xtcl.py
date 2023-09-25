@@ -26,7 +26,7 @@ class InferModel:
         for input in onnx_model.graph.input:
             input_shape = input.type.tensor_type.shape.dim
             input_shape = [a.dim_value for a in input_shape]
-            input_shape[0] = config.batch_size
+            #input_shape[0] = config.batch_size
             input_name = input.name #'inputs:0'
             self.input_names.append(input_name)
             shape_dict[input_name] = input_shape
@@ -35,7 +35,11 @@ class InferModel:
 
         target_host = f'llvm -acc=xpu{os.environ.get("XPUSIM_DEVICE_MODEL", "KUNLUN1")[-1]}'
         ctx = tvm.device("xpu", 0)
-        build_config = {}
+        build_config = {
+                }
+        #os.environ["XTCL_BUILD_DEBUG"] = '1'
+        if config.resnet50_fuse:
+            os.environ["XTCL_FUSE_RES50V15"] = '1'
         if config.fp16 == True:
             os.environ["XTCL_USE_NEW_ALTER_PASS"] = '1'
             input_fp16 = { name:"float16" for name in self.input_names}
@@ -47,6 +51,7 @@ class InferModel:
                                                  config_var_dtype_map=input_fp16,
                                                  ).value()
         else: ## fp32
+            os.environ["XTCL_USE_NEW_ALTER_PASS"] = '1'
             os.environ['XTCL_USE_FP16'] = '1'
             os.environ['XTCL_QUANTIZE_WEIGHT'] = '1'
 
@@ -70,12 +75,12 @@ class InferModel:
     def __call__(self, model_inputs: list):
         for index, input_name in enumerate(self.input_names):
             if USE_VM_COMPILE:
-                self.engine.set_one_input("main",input_name, tvm.nd.array(model_inputs[index]))
+                self.engine.set_one_input("main",input_name, model_inputs[index].numpy())
             else:
-                self.engine.set_input(input_name, tvm.nd.array(model_inputs[index]))
+                self.engine.set_input(input_name, model_inputs[index].numpy())
         self.engine.run()
-        output_list = [self.engine.get_output(i) for i in range(self.engine.get_num_outputs())]
         foo_time_start = time.time()
+        output_list = [self.engine.get_output(i) for i in range(self.engine.get_num_outputs())]
         # d2h
         output_list = [torch.from_numpy(output.asnumpy()) for output in output_list]
         foo_time = time.time() - foo_time_start
