@@ -272,7 +272,7 @@ def start_monitors_in_cluster(dp_path, case_log_dir, nnodes):
 
     ven_mon_path = os.path.join(dp_path, "docker_images", config.VENDOR,
                                 config.VENDOR + "_monitor.py")
-    start_mon_cmd = "cd " + dp_path + " && " + sys.executable \
+    start_mon_cmd = "cd " + dp_path + " && sudo " + sys.executable \
                     + " " + ven_mon_path + " -o restart -l "
     logger.debug("Run cmd in the cluster to start vendor's monitors: " +
                  start_mon_cmd)
@@ -299,7 +299,7 @@ def stop_monitors_in_cluster(dp_path, nnodes):
 
     ven_mon_path = os.path.join(dp_path, "docker_images", config.VENDOR,
                                 config.VENDOR + "_monitor.py")
-    stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
+    stop_mon_cmd = "cd " + dp_path + " && sudo " + sys.executable \
                    + " " + ven_mon_path + " -o stop"
     logger.debug("Run cmd in the cluster to stop vendor's monitors: " +
                  stop_mon_cmd)

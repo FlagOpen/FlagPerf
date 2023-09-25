@@ -37,6 +37,9 @@ class InferModel:
             build_config["XPUFuzzyMatch"] = xpu_config.XPUGraphMatchConfig(
                 pattern_match=build_config["pattern_match"]).value()
             del build_config["pattern_match"]
+        #os.environ["XTCL_BUILD_DEBUG"] = '1'
+        if config.resnet50_fuse:
+            os.environ["XTCL_FUSE_RES50V15"] = '1'
         if config.fp16 == True:
             os.environ["XTCL_USE_NEW_ALTER_PASS"] = '1'
             build_config["XPUOutDtypeConfig"] = xpu_config.XPUOutDtypeConfig(
@@ -44,9 +47,10 @@ class InferModel:
                 config_last_node=True,
                 config_map={},
             ).value()
-        else:  ## fp32
-            os.environ['XTCL_USE_FP16'] = '0'
-            os.environ['XTCL_QUANTIZE_WEIGHT'] = '0'
+        else: ## fp32
+            os.environ["XTCL_USE_NEW_ALTER_PASS"] = '1'
+            os.environ['XTCL_USE_FP16'] = '1'
+            os.environ['XTCL_QUANTIZE_WEIGHT'] = '1'
 
         with tvm.transform.PassContext(opt_level=3, config=build_config, disabled_pass=disabled_pass):
             if self.vm_enable:
@@ -67,10 +71,9 @@ class InferModel:
                 self.engine.set_one_input("main", input_name, model_inputs[index].numpy())
             else:
                 self.engine.set_input(input_name, tvm.nd.array(model_inputs[index]))
-
         self.engine.run()
-        output_list = [self.engine.get_output(i) for i in range(self.engine.get_num_outputs())]
         foo_time_start = time.time()
+        output_list = [self.engine.get_output(i) for i in range(self.engine.get_num_outputs())]
         # d2h
         output_list = [torch.from_numpy(output.numpy()) for output in output_list]
         foo_time = time.time() - foo_time_start
