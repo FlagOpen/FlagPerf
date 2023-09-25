@@ -2,3 +2,4 @@ h5sparse
 boto3
 h5py
 numpy>=1.15.4
+psutil

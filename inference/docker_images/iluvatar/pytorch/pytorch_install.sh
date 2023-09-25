@@ -14,7 +14,7 @@ done
 search_sdk_results=`find ${SDK_DIR} -name "corex*.run"`
 for installer in $search_sdk_results; do
     echo "Install ${installer}"
-    sh "${installer}" -- --silent --driver --toolkit
+    sh "${installer}" -- --silent --toolkit
 done
 
 search_packages_results=`find ${PKG_DIR} -name "*.whl"`
