@@ -1,0 +1,5 @@
+compiler: xtcl
+# skip validation(will also skip create_model, export onnx). Assert exist_onnx_path != null
+no_validation: true
+# set a real onnx_path to use exist, or set it to anything but null to avoid export onnx manually(like torch-tensorrt)
+exist_onnx_path: /home/FlagPerf/inference/onnxs/vit_l_16_bs32_pytorch_fp16False.onnx
