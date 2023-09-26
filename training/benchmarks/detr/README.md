@@ -7,6 +7,10 @@ Unlike traditional computer vision techniques, DETR approaches object detection 
 |  ----  | ----  |----  |
 | [detr](https://github.com/facebookresearch/detr) |3af9fa878e73b6894ce3596450a8d9b89d918ca9 |2023-2-7 05:12:31|
 
+This repository includes code is licensed under the Apache License, Version 2.0.
+
+Some of the files in this directory were modified by BAAI in 2023 to support FlagPerf.
+
 ### 数据集
 #### 数据集下载地址
   COCO2017数据集

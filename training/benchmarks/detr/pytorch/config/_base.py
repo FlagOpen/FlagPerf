@@ -1,5 +1,5 @@
 # case info
-vendor: str = "nvidia"
+vendor: str = None
 data_dir: str = None
 name: str = "detr"
 cudnn_benchmark: bool = False
@@ -57,8 +57,8 @@ eos_coef = 0.1
 # =========================================================
 # train && evaluate
 # =========================================================
-train_batch_size: int = 2
-eval_batch_size: int = 2
+train_batch_size: int = 128
+eval_batch_size: int = 128
 
 target_mAP: float = 0.35
 
@@ -77,7 +77,6 @@ warmup = 0.1
 dataset_file = 'coco'
 output_dir = ''
 data_dir = ''
-coco_path = ''
 seed: int = 42
 dist_backend: str = 'nccl'
 num_workers: int = 1
