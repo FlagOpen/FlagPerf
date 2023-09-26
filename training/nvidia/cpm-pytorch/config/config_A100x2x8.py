@@ -8,9 +8,9 @@ target_embedding_average = 0.92
 
 gradient_accumulation_steps = 1
 
-train_batch_size = 32
+train_batch_size = 192
 eval_batch_size = train_batch_size
-max_steps = 10000
+max_steps = 2000
 
 warmup = 0.2
 learning_rate = 0.0005

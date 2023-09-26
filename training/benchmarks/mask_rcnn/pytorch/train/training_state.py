@@ -16,8 +16,8 @@ class TrainingState:
     global_steps = 0
 
     loss: float = 0.0
-    eval_map_bbox :float = 0.0
-    eval_map_segm :float = 0.0
+    map_bbox :float = 0.0
+    map_segm :float = 0.0
 
 
     epoch: int = 1
@@ -27,6 +27,8 @@ class TrainingState:
 
     init_time = 0
     raw_train_time = 0
+    no_eval_time = 0.0
+    pure_compute_time = 0
 
     train_start_timestamp = 0
 

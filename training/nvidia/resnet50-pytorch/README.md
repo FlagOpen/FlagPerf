@@ -4,7 +4,9 @@
 ### 2. Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器、加速卡型号: NVIDIA_A100-SXM4-40GB
+    - 机器型号: NVIDIA DGX A100(40G) 
+    - 加速卡型号: NVIDIA_A100-SXM4-40GB
+    - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
 - ##### 软件环境
    - OS版本：Ubuntu 20.04

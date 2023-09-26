@@ -1,0 +1,16 @@
+batch_size: 256
+# 1 item(like 1 sequence, 1 image) flops
+# Attention! For transformer decoder like bert, 1 token cause 2*param flops, so we need 2*length*params like 2*512*0.33B here
+# format: a_1*a*2*...*a_nea_0,like 2*512*0.33e9(bert) or 4.12e9(resnet50)
+flops: 1.55e10
+fp16: true
+compiler: tensorrt
+num_workers: 8
+log_freq: 30
+repeat: 5
+# skip validation(will also skip create_model, export onnx). Assert exist_onnx_path != null
+no_validation: false
+# set a real onnx_path to use exist, or set it to anything but null to avoid export onnx manually(like torch-tensorrt)
+exist_onnx_path: null
+# set a exist path of engine file like resnet50.trt/resnet50.plan/resnet50.engine
+exist_compiler_path: null

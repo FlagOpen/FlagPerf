@@ -1,13 +1,13 @@
 import torch
-import config
-
 from torch import nn
 import torch.distributed as dist
 
+import config
 from optimizers import get_optimizer_param_groups
 from optimizers.loss_scaler import DynamicLossScaler
 from driver.dist_pytorch import main_proc_print
 
+import torch_xmlir
 import torch_xmlir.core.xpu_model as xm
 from torch_xmlir.optimizer import AdamW as Adam
 from torch_xmlir.nn.clip_grad import clip_grad_norm
@@ -79,4 +79,5 @@ def backward(step, lm_loss, reduced_loss, optimizer, lr_scheduler, model):
     if DynamicLossScaler._has_inf_or_nan(reduced_loss):
         main_proc_print("Found NaN loss, skip backward")
 
+    torch_xmlir.xpu.empty_cache()
     return reduced_loss

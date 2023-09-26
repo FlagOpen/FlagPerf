@@ -40,6 +40,8 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.INIT_START)
+    config.distributed = dist_pytorch.get_world_size() > 1
+    train_start_time = time.time()
 
     # logger
     logger = model_driver.logger
@@ -96,7 +98,6 @@ def main() -> Tuple[Any, Any]:
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time  # 训练起始时间，单位为ms
 
     # 训练过程
     epoch = 0
@@ -106,13 +107,8 @@ def main() -> Tuple[Any, Any]:
         epoch += 1
 
     # TRAIN_END事件
+    training_state.raw_train_time = time.time() - train_start_time
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time  # 训练结束时间，单位为ms
-
-    # 训练时长，单位为秒
-    training_state.raw_train_time = (raw_train_end_time -
-                                     raw_train_start_time) / 1e+3
-
     return config, training_state
 
 
@@ -129,13 +125,17 @@ if __name__ == "__main__":
         training_perf = state.num_trained_samples / state.raw_train_time
         finished_info = {
             "e2e_time": e2e_time,
-            "training_samples_per_second": training_perf,
             "converged": state.converged,
-            "final_map_bbox": state.eval_map_bbox,
-            "final_map_segm": state.eval_map_segm,
-            "raw_train_time": state.raw_train_time,
-            "init_time": state.init_time,
-            "num_trained_samples": state.num_trained_samples,
+            "train_time": state.raw_train_time,
+            "train_no_eval_time": state.no_eval_time,
+            "pure_training_computing_time": state.pure_compute_time,
+            "throughput(ips)_raw": state.num_trained_samples / state.raw_train_time,
+            "throughput(ips)_no_eval":
+            state.num_trained_samples / state.no_eval_time,
+            "throughput(ips)_pure_compute":
+            state.num_trained_samples / state.pure_compute_time,
+            "final_map_bbox": state.map_bbox,
+            "final_map_segm": state.map_segm,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

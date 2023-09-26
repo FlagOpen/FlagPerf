@@ -1,16 +1,9 @@
-import os
-import sys
-import imp
 import torch
 
 import numpy as np
 from train.metrics import average_corpus_level
 from model.losses.cross_entropy import cross_entropy
-from torch.nn import CrossEntropyLoss
 from model.fp16 import FP16_Module
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from driver import dist_pytorch
 
 
@@ -47,7 +40,9 @@ class Evaluator:
                 all_losses.append(loss.item())
 
                 preds = torch.argmax(output, -1)
-                if isinstance(model.module, FP16_Module):
+                if not hasattr(model, "module"):
+                   embeddings = model.word_embeddings.weight
+                elif isinstance(model.module, FP16_Module):
                     embeddings = model.module.module.word_embeddings.weight
                 else:
                     embeddings = model.module.word_embeddings.weight
