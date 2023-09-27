@@ -24,10 +24,8 @@ Neither the name of the copyright holder nor the names of its contributors may b
 
 
 ### 框架与芯片支持情况
-|     | Pytorch  |Paddle|TensorFlow2|
-|  ----  | ----  |  ----  | ----  |
-| Nvidia GPU | ✅ |N/A  |N/A|
-| 昆仑芯 XPU | ✅ |N/A  |N/A|
-
-
-
+|              | Pytorch | Paddle | TensorFlow2 |
+| ------------ | ------- | ------ | ----------- |
+| Nvidia GPU   | ✅       | N/A    | N/A         |
+| 昆仑芯 XPU   | ✅       | N/A    | N/A         |
+| 天数智芯 GPU | ✅       | N/A    | N/A         |
