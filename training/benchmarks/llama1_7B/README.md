@@ -24,7 +24,7 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwe
 * 运行自动加载
 
 #### 模型checkpoint
-* 运行自动下载，参数量：7B
+* 运行自动下载
 * Paddle的 LLaMA 模型的权重的使用则需要遵循[License](../../paddlenlp/transformers/llama/LICENSE)。
 
 ### 框架与芯片支持情况
