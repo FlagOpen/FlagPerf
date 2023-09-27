@@ -13,20 +13,38 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 
 ### 数据集
-- 数据集下载地址
-> `https://dl.fbaipublicfiles.com/glue/superglue/data/v2/ReCoRD.zip`
+- 数据集及checkpoint下载地址
+>`https://model.baai.ac.cn/model-detail/100097`  
+> 文件名：`glm_train_dataset.zip`
 
 - 预处理
-> 无需预处理 
+- 无需预处理，解压缩数据集即可。
+```bash
+unzip glm_train_dataset.zip
+```
+解压后的目录结构
+```bash
+├── ReCoRD
+│   └── glm_train_eval_hdf5_sparse
+│       ├── eval_hdf5
+│       │   └── eval_sparse.hdf5
+│       └── train_hdf5
+│           └── train_sparse.hdf5
+├── blocklm-large-blank
+│   ├── 200000
+│   │   └── mp_rank_00_model_states.pt
+│   └── latest_checkpointed_iteration.txt
+```
 
-### 模型checkpoint 
-> `https://cloud.tsinghua.edu.cn/d/13f5b03da9594e5490c4/files/?p=%2Fglm-large-blank.tar.bz2`
+
+
 
 ### 框架与芯片支持情况
 |     | Pytorch  |Paddle|TensorFlow2|
 |  ----  | ----  |  ----  | ----  |
 | Nvidia GPU | ✅ |N/A  |N/A|
 | 昆仑芯 XPU | ✅ |N/A  |N/A|
+| 天数智芯 GPU | ✅ |N/A  |N/A|
 
 
 

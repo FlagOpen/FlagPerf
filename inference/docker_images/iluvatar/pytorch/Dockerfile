@@ -38,9 +38,9 @@ RUN apt-get install -y --fix-missing \
      
 
 # Configure anaconda
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64.sh && \
-    bash ./Miniconda3-py38_4.10.3-Linux-x86_64.sh -b -p /root/miniconda && \
-    /root/miniconda/bin/conda clean -tipsy && \
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.5.2-0-Linux-x86_64.sh && \
+    bash ./Miniconda3-py310_23.5.2-0-Linux-x86_64.sh -b -p /root/miniconda && \
+    /root/miniconda/bin/conda clean -tip && \
     ln -s /root/miniconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /root/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     echo "conda activate base" >> ~/.bashrc && \
