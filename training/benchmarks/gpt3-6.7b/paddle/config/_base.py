@@ -127,9 +127,6 @@ eval_iters = 10
 
 test_iters = eval_iters * 10
 
-# The steps use to control the learing rate. If the step > decay_steps, will use the min_learning_rate.
-decay_steps: float = None
-
 # Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: int = 2
 
@@ -214,6 +211,8 @@ lr_scheduler_type: str = "cosine"
 # Initial learning rate decay per epoch
 # decay tokens = 260B, batch_size tokens= 2M, 260B / 2M = 130M
 lr_decay_steps: int = 130*1024*1024
+decay_steps: float = 130*1024*1024
+
 
 # warmup tokens = 375M, batch_size tokens= 2M, 375M / 2M = 187.5 steps
 warmup_steps: int = 188

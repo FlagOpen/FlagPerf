@@ -12,13 +12,13 @@ from typing import Optional
 import paddlenlp
 import paddle
 from dataloaders.dataset import create_pretrained_dataset, get_train_data_file
-from model.modeling_pp import GPTForCausalLMPipe
 from paddlenlp.trainer import PdArgumentParser, TrainingArguments, set_seed
 from paddlenlp.transformers import (
     AutoTokenizer,
     CosineAnnealingWithWarmupDecay,
     GPTConfig,
     GPTForCausalLM,
+    GPTForCausalLMPipe,
     LinearAnnealingWithWarmupDecay,
 )
 from paddlenlp.metrics import Perplexity
@@ -249,13 +249,12 @@ def main():
     if model_args.continue_training:
         model = model_class.from_pretrained(
             model_args.model_name_or_path,
-            config=config,
+            config=gpt_config,
             dtype=dtype,
             load_state_as_np=True,
         )
     else:
-        model_config = config_class.from_pretrained(model_args.model_name_or_path)
-        model = model_class(model_config)
+        model = model_class(gpt_config)
 
     # Create the learning_rate sheduler and optimizer
     if training_args.decay_steps is None:
