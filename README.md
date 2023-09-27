@@ -347,7 +347,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" x:str>英伟达+tensorrt/inductor</td>
     <td class="xl65" x:str>昆仑芯+xtcl</td>
     <td class="xl65" x:str>天数智芯+ixrt</td>
-    <td class="xl65" x:str>腾讯紫霄+zxrt</td>
+    <td class="xl65" x:str>腾讯九霄</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/resnet50" style="text-decoration:none" target="_parent">resnet50</a></td>
@@ -431,7 +431,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore、摩尔线程、腾讯紫霄共同建设中。
+本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore、摩尔线程、腾讯九霄共同建设中。
 诚邀各框架、芯片、编译器团队与个人参与！
 
 ![cooperation](assets/imgs/logos.png)
