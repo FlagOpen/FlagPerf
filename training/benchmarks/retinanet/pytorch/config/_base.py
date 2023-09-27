@@ -41,7 +41,6 @@ eval_batch_size: int = 16
 
 target_mAP: float = 0.35
 max_epoch: int = 26
-max_steps: int = -1
 
 do_train = True
 fp16 = False
