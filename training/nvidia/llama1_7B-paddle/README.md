@@ -12,8 +12,8 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwe
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器型号: NVIDIA DGX A100(40G) 
-    - 加速卡型号: NVIDIA_A100-SXM4-40GB
+    - 机器型号: NVIDIA DGX A100(*0G) 
+    - 加速卡型号: NVIDIA_A100-SXM4-80GB
     - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
 - ##### 软件环境
@@ -21,7 +21,7 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwe
    - OS kernel版本: 5.4.0-113-generic     
    -  加速卡驱动版本：470.129.06
    - Docker 版本：20.10.16
-   - 训练框架版本：pytorch-1.8.0a0+52ea372
+   - 训练框架版本：paddle-2.5.1
    - 依赖软件版本：无
 
 #### 运行情况
@@ -33,21 +33,19 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwe
 | 任务类别       | 文本分类、文本生成             |                                             |
 | 模型           | llama1_7B                    |                                             |
 | 数据集         | openwebtext              |                                             |
+| 配置文件       | config                    |                                             |
 | 数据精度       | precision,见“性能指标”         | 可选fp32/amp/fp16                           |
 | 超参修改       | fix_hp,见“性能指标”            | 跑满硬件设备评测吞吐量所需特殊超参          |
-| 硬件设备简称   | nvidia A100                    |                                             |
-| 硬件存储使用   | mem(actual/total),见“性能指标” | 通常称为“显存”,单位为GiB                    |
-| 端到端时间     | e2e_time,见“性能指标”          | 总时间+Perf初始化等时间                     |
-| 总吞吐量       | p_whole,见“性能指标”           | 实际训练样本数除以总时间(performance_whole) |
-| 训练吞吐量     | p_train,见“性能指标”           | 不包含每个epoch末尾的评估部分耗时           |
-| **计算吞吐量** | **p_core,见“性能指标”**        | 不包含数据IO部分的耗时(p3>p2>p1)            |
-| 训练结果       | acc,见“性能指标”               | 分类准确率(mlm_accuracy)                    |
-| 额外修改项     | 无                             |                                             |
+| 并行策略       | parallel_strategy,见“性能指标” | DP, TP, PP, SP          |
+| 硬件设备简称   | nvidia A100 (80G *8)          |                                             |
+| 硬件存储使用   | memory(actual/total),见“性能指标” | 通常称为“显存”,单位为GiB                    |
+| 吞吐量       | throughput,见“性能指标”           | 训练吞吐量 |
 
 * 性能指标
 
-| 配置                | precision | fix_hp           | e2e_time | p_whole | p_train | p_core | ppl   | mem       |
-| ------------------- | --------- | ---------------- | -------- | ------- | ------- | ------ | ----- | --------- |
-| A100单机8卡（1x8）  | fp16      | /                |    |      |     |    |   |  |
-| A100单机8卡（1x8）  | fp16      | bs=8, steps=  |    |    |    |   |  |  |
-| A100两机8卡（2x8） | fp16      | bs=8,steps= |          |    |   |   |       | |
+| 配置     | config | precision | fix_hp | parallel_strategy | throughput   | memory  |
+| ------- | ------- | --------- | ------ | ---------------- | ------------ | ------ | 
+| A100单机8卡（1x8）  | config_TP1PP1SH2SP8A100x1x8 | fp16, level="O2" | per_device_bs=4, accumulate=32, (global bs = 2M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=True, sharding="stage2", sharding_degree=8 |   15.70715 * 2048 / 8 = 4021 tokens/s   |  76.98 * 8 GB  |
+| A100单机8卡（1x8）  | config_TP2PP1SH1SP4A100x1x8 | fp16, level="O2" | per_device_bs=4, accumulate=64, (global bs = 2M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=True, sharding="stage1", sharding_degree=4, tensor_parallel_degree=2 |   14.27326 * 2048 / 8 = 3653 tokens/s   |  62.11 * 8 GB  |   
+| A100单机8卡（1x8）  | config_TP2PP1SH2SP4A100x1x8 | fp16, level="O2" | per_device_bs=4, accumulate=64, (global bs = 2M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=True, sharding="stage2", sharding_degree=4, tensor_parallel_degree=2 |   13.48227 * 2048 / 8 = 3451 tokens/s   |  57.63 * 8 GB  |   
+| A100单机8卡（1x8）  | config_TP2PP4SH1SP1A100x1x8 | fp16, level="O2" | per_device_bs=4, accumulate=64, (global bs = 2M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=True, sharding="stage2", sharding_degree=4, tensor_parallel_degree=2 |  13.644565 * 2048 / 8 = 3493 tokens/s   |  58.62\*2 + 53.51\*2 + 49.46\*2 + 47.95\*2 GB  |   
