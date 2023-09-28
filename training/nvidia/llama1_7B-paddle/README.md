@@ -12,7 +12,7 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwe
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器型号: NVIDIA DGX A100(*0G) 
+    - 机器型号: NVIDIA DGX A100(80G) 
     - 加速卡型号: NVIDIA_A100-SXM4-80GB
     - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
