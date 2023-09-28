@@ -33,18 +33,24 @@ def parse_args():
                         "the IP address or the hostname of node 0, for "
                         "single node multi-proc training, the "
                         "--master_addr can simply be 127.0.0.1")
-    parser.add_argument("--master_port1",
+    parser.add_argument("--master_port",
                         default=12532,
                         type=int,
                         help="Master node (rank 0)'s free port that needs to "
                         "be used for communication during distributed "
                         "training")
-    parser.add_argument("--master_port2",
-                        default=58759,
-                        type=int,
-                        help="Master node (rank 0)'s free port that needs to "
-                        "be used for communication during distributed "
-                        "training")
+    # parser.add_argument("--master_port1",
+    #                     default=12532,
+    #                     type=int,
+    #                     help="Master node (rank 0)'s free port that needs to "
+    #                     "be used for communication during distributed "
+    #                     "training")
+    # parser.add_argument("--master_port2",
+    #                     default=58759,
+    #                     type=int,
+    #                     help="Master node (rank 0)'s free port that needs to "
+    #                     "be used for communication during distributed "
+    #                     "training")
 
     parser.add_argument("--nnodes",
                         type=int,
@@ -127,7 +133,6 @@ def _set_common_ddp_envs(task_args):
             task_args.visible_dev_env] = current_env['PADDLE_WORLD_DEVICE_IDS']
     return current_env
 
-
 def _get_basic_train_script_args(task_args):
     '''Generate basic train script args according to the script options.'''
     config_dir, config_file = helper.get_config_dir_file(task_args)
@@ -142,13 +147,13 @@ def _get_basic_train_script_args(task_args):
 
     basic_train_script_args = " --data_dir " + task_args.data_dir \
                               + " --extern_config_dir " + config_dir \
-                              + " --extern_config_file " + config_file
+                              + " --extern_config_file " + config_file \
+                              + " --vendor " + task_args.vendor
 
     if task_args.enable_extern_config:
         basic_train_script_args += " --enable_extern_config " \
-                                   + "--extern_module_dir " + extern_module_dir
+                                + "--extern_module_dir " + extern_module_dir
     return basic_train_script_args
-
 
 def main():
     '''Parse args and start the training task. Support DDP.
@@ -172,6 +177,12 @@ def main():
 
     current_env = _set_common_ddp_envs(task_args)
 
+    current_env["PADDLE_TRAINER_ENDPOINTS"] = str(task_args.master_addr) \
+                                              + ':' + str(task_args.master_port)
+    for local_rank in range(0, task_args.nproc):
+        current_env["PADDLE_TRAINER_ENDPOINTS"] += ',' + str(task_args.master_addr) \
+                                                 + ':' + str(task_args.master_port + 1)
+
     # start all processes in container
     processes = []
     for local_rank in range(0, task_args.nproc):
@@ -182,11 +193,15 @@ def main():
         current_env["FLAGS_selected_accelerators"] = str(local_rank)
         current_env["PADDLE_LOCAL_DEVICE_IDS"] = str(local_rank)
         current_env["PADDLE_CURRENT_ENDPOINT"] = str(task_args.master_addr) \
-                                                 + ':' + str(task_args.master_port1)
-        current_env["PADDLE_TRAINER_ENDPOINTS"] = str(task_args.master_addr) \
-                                                 + ':' + str(task_args.master_port1) \
-                                                 + ',' + str(task_args.master_addr) \
-                                                 + ':' + str(task_args.master_port2)
+                                                 + ':' + str(task_args.master_port)
+        # current_env["PADDLE_TRAINER_ENDPOINTS"] = str(task_args.master_addr) \
+        #                                          + ':' + str(task_args.master_port1) \
+                                                #  + ',' + str(task_args.master_addr) \
+                                                #  + ':' + str(task_args.master_port2)
+        # current_env["FLAGS_embedding_deterministic"] = "1"
+        # current_env["FLAGS_cudnn_deterministic"] = "1"
+        # current_env["NVIDIA_TF32_OVERRIDE"] = "0"                          
+        # current_env["NCCL_ALGO"] = "Tree"
 
         start_cmd = sys.executable + " -u " + train_script_path + " " \
                                    + basic_train_script_args + " 2>&1 | tee " \
