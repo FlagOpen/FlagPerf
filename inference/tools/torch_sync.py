@@ -10,3 +10,7 @@ def torch_sync(config):
         # kunlunxin case
         # xpu sync already finsh after InferModel.__call__
         pass
+    if config.vendor == "zixiao":
+        # zixiao case
+        # zixiao sync already finsh after InferModel.__call__
+        pass

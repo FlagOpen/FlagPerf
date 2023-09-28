@@ -1,0 +1,6 @@
+compiler: zxrt
+no_validation: true
+batch_size: 50000
+exist_onnx_path: onnxs/resnet50_pytorch.onnx
+repeat: 1
+zixiao_test_batch_size: 32
