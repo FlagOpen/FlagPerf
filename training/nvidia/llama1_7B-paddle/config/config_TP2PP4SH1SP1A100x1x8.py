@@ -30,6 +30,7 @@ per_device_train_batch_size = 4
 per_device_eval_batch_size = 1
 tensor_parallel_degree = 2
 pipeline_parallel_degree = 4
+virtual_pp_degree = 1
 sharding_parallel_degree = 1
 gradient_accumulation_steps = 256
 use_flash_attention = 1
