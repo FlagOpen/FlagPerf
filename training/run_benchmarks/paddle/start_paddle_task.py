@@ -56,6 +56,41 @@ def parse_args():
     #                     help="Master node (rank 0)'s free port that needs to "
     #                     "be used for communication during distributed "
     #                     "training")
+    parser.add_argument(
+        "--node_rank",
+        type=int,
+        default=0,
+        help="The rank of the node for multi-node distributed " "training",
+    )
+    parser.add_argument(
+        "--master_addr",
+        default="127.0.0.1",
+        type=str,
+        help="Master node (rank 0)'s address, should be either"
+        "the IP address or the hostname of node 0, for "
+        "single node multi-proc training, the "
+        "--master_addr can simply be 127.0.0.1",
+    )
+    parser.add_argument(
+        "--master_port",
+        default=12532,
+        type=int,
+        help="Master node (rank 0)'s free port that needs to "
+        "be used for communication during distributed "
+        "training",
+    )
+    # parser.add_argument("--master_port1",
+    #                     default=12532,
+    #                     type=int,
+    #                     help="Master node (rank 0)'s free port that needs to "
+    #                     "be used for communication during distributed "
+    #                     "training")
+    # parser.add_argument("--master_port2",
+    #                     default=58759,
+    #                     type=int,
+    #                     help="Master node (rank 0)'s free port that needs to "
+    #                     "be used for communication during distributed "
+    #                     "training")
 
     parser.add_argument(
         "--nnodes", type=int, required=True, help="how many hosts to run the testcase."
@@ -189,9 +224,14 @@ def _get_basic_train_script_args(task_args):
         + config_file
         + " --vendor "
         + task_args.vendor
+        + " --vendor "
+        + task_args.vendor
     )
 
     if task_args.enable_extern_config:
+        basic_train_script_args += (
+            " --enable_extern_config " + "--extern_module_dir " + extern_module_dir
+        )
         basic_train_script_args += (
             " --enable_extern_config " + "--extern_module_dir " + extern_module_dir
         )
@@ -227,6 +267,14 @@ def main():
             "," + str(task_args.master_addr) + ":" + str(task_args.master_port + 1)
         )
 
+    current_env["PADDLE_TRAINER_ENDPOINTS"] = (
+        str(task_args.master_addr) + ":" + str(task_args.master_port)
+    )
+    for local_rank in range(0, task_args.nproc):
+        current_env["PADDLE_TRAINER_ENDPOINTS"] += (
+            "," + str(task_args.master_addr) + ":" + str(task_args.master_port + 1)
+        )
+
     # start all processes in container
     processes = []
     for local_rank in range(0, task_args.nproc):
@@ -236,6 +284,17 @@ def main():
         current_env["FLAGS_selected_gpus"] = str(local_rank)
         current_env["FLAGS_selected_accelerators"] = str(local_rank)
         current_env["PADDLE_LOCAL_DEVICE_IDS"] = str(local_rank)
+        current_env["PADDLE_CURRENT_ENDPOINT"] = (
+            str(task_args.master_addr) + ":" + str(task_args.master_port)
+        )
+        # current_env["PADDLE_TRAINER_ENDPOINTS"] = str(task_args.master_addr) \
+        #                                          + ':' + str(task_args.master_port1) \
+        #  + ',' + str(task_args.master_addr) \
+        #  + ':' + str(task_args.master_port2)
+        # current_env["FLAGS_embedding_deterministic"] = "1"
+        # current_env["FLAGS_cudnn_deterministic"] = "1"
+        # current_env["NVIDIA_TF32_OVERRIDE"] = "0"
+        # current_env["NCCL_ALGO"] = "Tree"
         current_env["PADDLE_CURRENT_ENDPOINT"] = (
             str(task_args.master_addr) + ":" + str(task_args.master_port)
         )
