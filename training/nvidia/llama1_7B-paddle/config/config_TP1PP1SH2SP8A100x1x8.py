@@ -7,7 +7,7 @@ max_seq_length = 2048
 
 # training info
 dataloader_num_workers = 1
-max_steps = 512
+max_steps = 100
 save_steps = 10000
 eval_steps = 10000
 learning_rate = 3e-4
