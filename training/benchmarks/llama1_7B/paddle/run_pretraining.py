@@ -26,6 +26,7 @@ from paddlenlp.transformers import (
     LinearAnnealingWithWarmupDecay,
     LlamaConfig,
     LlamaForCausalLM,
+    LlamaForCausalLMPipe,
     register_sequence_parallel_allreduce_hooks,
 )
 
@@ -39,7 +40,6 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_paddle
 from driver.config_manager import get_properties_from_config
 from dataloaders.dataloader import create_pretrained_dataset, get_train_data_file
-from model.models.modeling_pp import LlamaForCausalLMPipe
 from train.trainer import PretrainingTrainer
 from train.training_state import TrainingState
 
@@ -232,7 +232,7 @@ def main():
     model_args, data_args, training_args = parser.parse_dict(
         get_properties_from_config(config)
     )
-    data_args.input_dir = gpt_driver.config.data_dir
+    data_args.input_dir = llama_driver.config.data_dir
 
     if model_args.tokenizer_name_or_path is None:
         model_args.tokenizer_name_or_path = model_args.model_name_or_path
@@ -403,12 +403,10 @@ def main():
             trainer.log_metrics("train", metrics)
             trainer.save_metrics("train", metrics)
             trainer.save_state()
-            training_state.raw_train_time = train_metrics["train_runtime"]
-            training_state.training_sequences_per_second = train_metrics[
-                "train_samples_per_second"
-            ]
-            training_state.loss = train_metrics["train_loss"]
-            training_state.effective_tokens_per_second = total_effective_tokens / train_metrics["train_runtime"]
+            training_state.raw_train_time = metrics["train_runtime"]
+            training_state.training_sequences_per_second = metrics["train_samples_per_second"]
+            training_state.loss = metrics["train_loss"]
+            training_state.effective_tokens_per_second = total_effective_tokens / metrics["train_runtime"]
     except:
         training_state.end_training = False
         
