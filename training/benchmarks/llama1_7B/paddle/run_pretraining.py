@@ -331,16 +331,12 @@ def main():
         model.recompute_enable()
 
     # Create the learning_rate sheduler and optimizer
-    if training_args.decay_steps is None:
-        training_args.decay_steps = training_args.max_steps
-    warmup_steps = training_args.warmup_ratio * training_args.max_steps
-
     lr_scheduler = None
     if training_args.lr_scheduler_type.value == "cosine":
         lr_scheduler = CosineAnnealingWithWarmupDecay(
             max_lr=training_args.learning_rate,
             min_lr=training_args.min_learning_rate,
-            warmup_step=warmup_steps,
+            warmup_step=training_args.warmup_steps,
             decay_step=training_args.decay_steps,
             last_epoch=0,
         )
@@ -348,7 +344,7 @@ def main():
         lr_scheduler = LinearAnnealingWithWarmupDecay(
             max_lr=training_args.learning_rate,
             min_lr=training_args.min_learning_rate,
-            warmup_step=warmup_steps,
+            warmup_step=training_args.warmup_steps,
             decay_step=training_args.decay_steps,
             last_epoch=0,
         )
