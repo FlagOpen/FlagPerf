@@ -1,1 +1,0 @@
-../gpt3-6.7b-paddle/README.md
