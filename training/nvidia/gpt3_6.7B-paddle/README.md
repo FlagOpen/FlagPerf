@@ -5,8 +5,9 @@
 
 ```shell
 mkdir GPT-3-data # 后续在training/run_benchmarks/config/test_conf.py中修改数据位置使用
-wget -O GPT-3-data/gpt_en_dataset_300m_ids.npy https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_ids.npy
-wget -O GPT-3-data/gpt_en_dataset_300m_idx.npz https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_idx.npz
+cd GPT-3-data
+wget https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_ids.npy
+wget https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset_300m_idx.npz
 ```
 
 ## 基于FlagPerf运行

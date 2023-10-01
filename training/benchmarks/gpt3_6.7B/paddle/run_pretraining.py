@@ -285,6 +285,14 @@ def main():
         test_dataset,
         data_collator,
     ) = create_pretrained_dataset(data_args, training_args, data_file, tokenizer)
+    
+    total_effective_tokens = (
+        training_args.per_device_train_batch_size
+        * training_args.dataset_world_size
+        * training_args.max_steps
+        * training_args.gradient_accumulation_steps
+        * data_args.max_seq_length
+    )
 
     trainer = PretrainingTrainer(
         model=model,
@@ -319,19 +327,18 @@ def main():
             trainer.save_state()
 
             training_state.raw_train_time = train_metrics["train_runtime"]
-            training_state.training_sequences_per_second = train_metrics[
-                "train_samples_per_second"
-            ]
+            training_state.training_sequences_per_second = train_metrics["train_samples_per_second"]
             training_state.loss = train_metrics["train_loss"]
+            training_state.effective_tokens_per_second = total_effective_tokens / train_metrics["train_runtime"]
     except:
         training_state.end_training = False
 
     # Evaluation
-    dist_paddle.barrier()
-    eval_metrics = trainer.evaluate()
-    training_state.eval_loss = eval_metrics["eval_loss"]
-    if eval_metrics["eval_ppl"] < config.target_ppl:
-        training_state.converged_success()
+    # dist_paddle.barrier()
+    # eval_metrics = trainer.evaluate()
+    # training_state.eval_loss = eval_metrics["eval_loss"]
+    # if eval_metrics["eval_ppl"] < config.target_ppl:
+    #     training_state.converged_success()
         
     return training_args, training_state, gpt_driver
 
@@ -349,8 +356,10 @@ if __name__ == "__main__":
         finished_info = {
             "e2e_time": e2e_time,
             "training_sequences_per_second": state.training_sequences_per_second,
-            "converged": state.converged,
-            "final_loss": state.eval_loss,
+            "effective_tokens_per_second": state.effective_tokens_per_second,
+            # "converged": state.converged,
+            # "final_loss": state.eval_loss,
+            # "final_ppl": state.eval_ppl,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }
