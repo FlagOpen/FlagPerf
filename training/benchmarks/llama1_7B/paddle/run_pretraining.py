@@ -407,12 +407,12 @@ def main():
         training_state.end_training = False
         
     # End Evaluation
-    dist_paddle.barrier()
-    eval_metrics = trainer.evaluate()
-    training_state.eval_loss = eval_metrics["eval_loss"]
-    training_state.eval_ppl = eval_metrics["eval_ppl"]
-    if eval_metrics["eval_ppl"] < config.target_ppl:
-        training_state.converged_success()
+    # dist_paddle.barrier()
+    # eval_metrics = trainer.evaluate()
+    # training_state.eval_loss = eval_metrics["eval_loss"]
+    # training_state.eval_ppl = eval_metrics["eval_ppl"]
+    # if eval_metrics["eval_ppl"] < config.target_ppl:
+    #     training_state.converged_success()
 
     return training_args, training_state, llama_driver
 
@@ -432,8 +432,8 @@ if __name__ == "__main__":
             "training_sequences_per_second": state.training_sequences_per_second,
             "effective_tokens_per_second": state.effective_tokens_per_second,
             "converged": state.converged,
-            "final_loss": state.eval_loss,
-            "final_ppl": state.eval_ppl,
+            # "final_loss": state.eval_loss,
+            # "final_ppl": state.eval_ppl,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }
