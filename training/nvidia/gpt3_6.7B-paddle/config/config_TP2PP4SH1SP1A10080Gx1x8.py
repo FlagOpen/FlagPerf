@@ -27,7 +27,7 @@ seed = 42
 
 # for parallel
 per_device_train_batch_size = 4
-per_device_eval_batch_size = 1
+per_device_eval_batch_size = 1024
 tensor_parallel_degree = 2
 pipeline_parallel_degree = 4
 sharding_parallel_degree = 1
