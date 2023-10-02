@@ -40,5 +40,5 @@ fp16 = True
 fp16_opt_level = "O2"
 scale_loss = 1024
 sharding = "stage1"
-recompute = False
+recompute = True
 recompute_granularity = "full"
