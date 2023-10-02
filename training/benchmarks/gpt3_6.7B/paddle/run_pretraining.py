@@ -78,7 +78,7 @@ class DataArguments:
     """
 
     input_dir: str = field(
-        default="/ssd2/zhuweiguo/data/gpt3/",
+        default=None,
         metadata={"help": "The name of the dataset to use (via the datasets library)."},
     )
     split: str = field(
@@ -94,21 +94,15 @@ class DataArguments:
     )
     share_folder: bool = field(
         default=False,
-        metadata={
-            "help": "Use share folder for data dir and output dir on multi machine."
-        },
+        metadata={"help": "Use share folder for data dir and output dir on multi machine."},
     )
 
-    data_impl: str = field(
-        default="mmap", metadata={"help": "The format of the preprocessed data."}
-    )
+    data_impl: str = field(default="mmap", metadata={"help": "The format of the preprocessed data."})
     skip_warmup: bool = field(
         default=True,
         metadata={"help": "Whether to skip the warmup process of mmap files."},
     )
-    data_cache: str = field(
-        default=None, metadata={"help": "The path of the cached dataset."}
-    )
+    data_cache: str = field(default=None, metadata={"help": "The path of the cached dataset."})
 
 
 @dataclass
@@ -127,10 +121,7 @@ class ModelArguments:
         },
     )
     tokenizer_name_or_path: Optional[str] = field(
-        default=None,
-        metadata={
-            "help": "Pretrained tokenizer name or path if not the same as model_name"
-        },
+        default=None, metadata={"help": "Pretrained tokenizer name or path if not the same as model_name"}
     )
     output_attentions: bool = field(
         default=False, metadata={"help": "Whether output attention weights"}
@@ -243,7 +234,7 @@ def main():
         if training_args.bf16:
             dtype = "bfloat16"
 
-    if training_args.pipeline_parallel_degree > 1:
+    if training_args.pipeline_parallel_degree > 1 and model_args.model_type == "gpt":
         model_class = GPTForCausalLMPipe
 
     if model_args.continue_training:
@@ -256,6 +247,8 @@ def main():
     else:
         model = model_class(gpt_config)
 
+    if training_args.recompute:
+        model.recompute_enable()
     # Create the learning_rate sheduler and optimizer
     if training_args.decay_steps is None:
         training_args.decay_steps = training_args.max_steps
@@ -303,17 +296,13 @@ def main():
         optimizers=(None, lr_scheduler),
         tokenizer=tokenizer,
         callbacks=[dist_paddle.PaddleCallback(driver=gpt_driver)],
-        compute_metrics = ppl,
+        compute_metrics=ppl,
     )
 
     dist_paddle.barrier()
     gpt_driver.event(Event.INIT_END)
     init_end_time = gpt_driver.logger.previous_log_time
     training_state.init_time = (init_end_time - init_start_time) / 1e3
-
-    # INIT Evaluation
-    # dist_paddle.barrier()
-    # trainer.evaluate()
 
     # Training
     dist_paddle.barrier()
