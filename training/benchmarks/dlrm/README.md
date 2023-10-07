@@ -19,6 +19,8 @@ Neither the name of the copyright holder nor the names of its contributors may b
   Criteo Terabyte Dataset.
   Website：https://labs.criteo.com/2013/12/download-terabyte-click-logs/
 
+  if the original website is unavailable, please mailto: flagperf@baai.ac.cn for help.
+
 
 #### 预处理
 
