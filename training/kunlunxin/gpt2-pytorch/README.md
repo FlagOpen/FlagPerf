@@ -31,7 +31,7 @@
 | 硬件设备简称   | R300             |                                             |
 | 硬件存储使用   | mem,见“性能指标”        | 通常称为“显存”,单位为GiB                    |
 | 端到端时间     | e2e_time,见“性能指标”   | 总时间+Perf初始化等时间                     |
-| 总吞吐量       | p_whole,见“性能指标”    | 实际训练序列数除以总时间(performance_whole) |
+| 总吞吐量       | p_whole,见“性能指标”    | 实际训练样本数除以总时间(performance_whole) |
 | 训练吞吐量     | p_train,见“性能指标”    | 不包含每个epoch末尾的评估部分耗时           |
 | **计算吞吐量** | **p_core,见“性能指标”** | 不包含数据IO部分的耗时(p3>p2>p1)，单位为samples/s(seq_length=1024)|
 | 训练结果       | lambada_acc,见“性能指标”    | lambada任务准确率                         |                                      |
