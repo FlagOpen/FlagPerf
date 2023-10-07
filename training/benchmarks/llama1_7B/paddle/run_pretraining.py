@@ -26,6 +26,7 @@ from paddlenlp.transformers import (
     LinearAnnealingWithWarmupDecay,
     LlamaConfig,
     LlamaForCausalLM,
+    LlamaForCausalLMPipe,
     register_sequence_parallel_allreduce_hooks,
 )
 
@@ -39,7 +40,6 @@ sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event, dist_paddle
 from driver.config_manager import get_properties_from_config
 from dataloaders.dataloader import create_pretrained_dataset, get_train_data_file
-from model.models.modeling_pp import LlamaForCausalLMPipe
 from train.trainer import PretrainingTrainer
 from train.training_state import TrainingState
 
@@ -232,7 +232,7 @@ def main():
     model_args, data_args, training_args = parser.parse_dict(
         get_properties_from_config(config)
     )
-    data_args.input_dir = gpt_driver.config.data_dir
+    data_args.input_dir = llama_driver.config.data_dir
 
     if model_args.tokenizer_name_or_path is None:
         model_args.tokenizer_name_or_path = model_args.model_name_or_path
@@ -331,16 +331,12 @@ def main():
         model.recompute_enable()
 
     # Create the learning_rate sheduler and optimizer
-    if training_args.decay_steps is None:
-        training_args.decay_steps = training_args.max_steps
-    warmup_steps = training_args.warmup_ratio * training_args.max_steps
-
     lr_scheduler = None
     if training_args.lr_scheduler_type.value == "cosine":
         lr_scheduler = CosineAnnealingWithWarmupDecay(
             max_lr=training_args.learning_rate,
             min_lr=training_args.min_learning_rate,
-            warmup_step=warmup_steps,
+            warmup_step=training_args.warmup_steps,
             decay_step=training_args.decay_steps,
             last_epoch=0,
         )
@@ -348,7 +344,7 @@ def main():
         lr_scheduler = LinearAnnealingWithWarmupDecay(
             max_lr=training_args.learning_rate,
             min_lr=training_args.min_learning_rate,
-            warmup_step=warmup_steps,
+            warmup_step=training_args.warmup_steps,
             decay_step=training_args.decay_steps,
             last_epoch=0,
         )
@@ -403,22 +399,20 @@ def main():
             trainer.log_metrics("train", metrics)
             trainer.save_metrics("train", metrics)
             trainer.save_state()
-            training_state.raw_train_time = train_metrics["train_runtime"]
-            training_state.training_sequences_per_second = train_metrics[
-                "train_samples_per_second"
-            ]
-            training_state.loss = train_metrics["train_loss"]
-            training_state.effective_tokens_per_second = total_effective_tokens / train_metrics["train_runtime"]
+            training_state.raw_train_time = metrics["train_runtime"]
+            training_state.training_sequences_per_second = metrics["train_samples_per_second"]
+            training_state.loss = metrics["train_loss"]
+            training_state.effective_tokens_per_second = total_effective_tokens / metrics["train_runtime"]
     except:
         training_state.end_training = False
         
     # End Evaluation
-    dist_paddle.barrier()
-    eval_metrics = trainer.evaluate()
-    training_state.eval_loss = eval_metrics["eval_loss"]
-    training_state.eval_ppl = eval_metrics["eval_ppl"]
-    if eval_metrics["eval_ppl"] < config.target_ppl:
-        training_state.converged_success()
+    # dist_paddle.barrier()
+    # eval_metrics = trainer.evaluate()
+    # training_state.eval_loss = eval_metrics["eval_loss"]
+    # training_state.eval_ppl = eval_metrics["eval_ppl"]
+    # if eval_metrics["eval_ppl"] < config.target_ppl:
+    #     training_state.converged_success()
 
     return training_args, training_state, llama_driver
 
@@ -438,8 +432,8 @@ if __name__ == "__main__":
             "training_sequences_per_second": state.training_sequences_per_second,
             "effective_tokens_per_second": state.effective_tokens_per_second,
             "converged": state.converged,
-            "final_loss": state.eval_loss,
-            "final_ppl": state.eval_ppl,
+            # "final_loss": state.eval_loss,
+            # "final_ppl": state.eval_ppl,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
         }
