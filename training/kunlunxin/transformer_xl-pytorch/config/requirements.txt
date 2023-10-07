@@ -1,5 +1,0 @@
-datasets
-transformers
-sacremoses
-psutil
-accelerate
