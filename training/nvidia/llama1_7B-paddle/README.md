@@ -44,6 +44,7 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/llama/data/llama_openwe
 * 性能指标
 
 | 配置     | config | precision | fix_hp | parallel_strategy | throughput   | memory  |
+| ------- | ------- | --------- | ------ | ---------------- | ------------ | ------ |
 | LLaMA-7B | ------- | --------- | ------ | ---------------- | ------------ | ------ | 
 | A100单机8卡（1x8*80G）  | config_TP1PP1SH2SP8A10080Gx1x8 | fp16, level="O2" | per_device_bs=4, accumulate=64, (global bs = 4M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=True, sharding="stage2", sharding_degree=8 |   16.67 * 2048 / 8 = 4267 tokens/s   |  70.09 * 8 GB  |
 | A100单机8卡（1x8*80G）  | config_TP2PP1SH1SP4A10080Gx1x8 | fp16, level="O2" | per_device_bs=4, accumulate=128, (global bs = 4M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=True, sharding="stage1", sharding_degree=4, tensor_parallel_degree=2 |   15.19 * 2048 / 8 = 3888 tokens/s   |  58.73 * 8 GB  |   
