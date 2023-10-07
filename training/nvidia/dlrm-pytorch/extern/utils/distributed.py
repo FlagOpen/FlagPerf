@@ -72,23 +72,44 @@ def is_main_process():
     return get_rank() == 0
 
 
-def get_gpu_batch_sizes(global_batch_size: int,
-                        num_gpus: int = 4,
-                        batch_std: int = 64,
-                        divisible_by: int = 64):
+def init_distributed_mode(backend="nccl", use_gpu=True):
+    if 'RANK' in os.environ and 'WORLD_SIZE' in os.environ:
+        rank = int(os.environ["RANK"])
+        world_size = int(os.environ['WORLD_SIZE'])
+        gpu = int(os.environ['LOCAL_RANK'])
+    elif 'OMPI_COMM_WORLD_RANK' in os.environ and 'OMPI_COMM_WORLD_SIZE' in os.environ:
+        rank = int(os.environ['OMPI_COMM_WORLD_RANK'])
+        world_size = int(os.environ['OMPI_COMM_WORLD_SIZE'])
+        gpu = int(os.environ['OMPI_COMM_WORLD_LOCAL_RANK'])
+        os.environ['MASTER_ADDR'] = '127.0.0.1'
+        os.environ['MASTER_PORT'] = '29500'
+    else:
+        print('Not using distributed mode')
+        return 0, 1, 0
+
+    if use_gpu:
+        torch.cuda.set_device(gpu)
+
+    if rank != 0:
+        warnings.filterwarnings("ignore")
+
+    os.environ["NCCL_ASYNC_ERROR_HANDLING"] = "0"
+    torch.distributed.init_process_group(backend=backend, world_size=world_size, rank=rank, init_method='env://')
+
+    return rank, world_size, gpu
+
+
+def get_gpu_batch_sizes(global_batch_size: int, num_gpus: int = 4, batch_std: int = 64, divisible_by: int = 64):
     batch_avg = global_batch_size // num_gpus
     start, end = batch_avg - batch_std, batch_avg + batch_std
     sizes_range = (x for x in range(start, end + 1) if x % divisible_by == 0)
     solutions = [
-        sizes
-        for sizes in combinations_with_replacement(sizes_range, num_gpus)
-        if sum(sizes) == global_batch_size
+        sizes for sizes in combinations_with_replacement(sizes_range, num_gpus) if sum(sizes) == global_batch_size
     ]
 
     if not solutions:
-        raise RuntimeError(
-            "Could not find GPU batch sizes for a given configuration. "
-            "Please adjust global batch size or number of used GPUs.")
+        raise RuntimeError("Could not find GPU batch sizes for a given configuration. "
+                           "Please adjust global batch size or number of used GPUs.")
 
     return max(solutions, key=lambda sizes: reduce(lambda x, y: x * y, sizes))
 
@@ -100,7 +121,6 @@ def argsort(sequence, reverse: bool = False):
 
 
 def distribute_to_buckets(sizes: Sequence[int], buckets_num: int):
-
     def sum_sizes(indices):
         return sum(sizes[i] for i in indices)
 
@@ -141,9 +161,7 @@ def get_device_mapping(embedding_sizes: Sequence[int], num_gpus: int = 8):
     """
     if num_gpus > 4:
         # for higher no. of GPUs, make sure the one with bottom mlp has no embeddings
-        gpu_buckets = distribute_to_buckets(
-            embedding_sizes,
-            num_gpus - 1)  # leave one device out for the bottom MLP
+        gpu_buckets = distribute_to_buckets(embedding_sizes, num_gpus - 1)  # leave one device out for the bottom MLP
         gpu_buckets.insert(0, [])
     else:
         gpu_buckets = distribute_to_buckets(embedding_sizes, num_gpus)

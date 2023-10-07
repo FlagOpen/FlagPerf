@@ -1,6 +1,5 @@
 from driver import dist_pytorch
 from utils.utils import LearningRateScheduler
-from apex import optimizers as apex_optim
 
 
 def create_scheduler(args, mlp_optimizer, embedding_optimizer):

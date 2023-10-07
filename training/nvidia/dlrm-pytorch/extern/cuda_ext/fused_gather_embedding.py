@@ -17,7 +17,7 @@ Fused Buckle Embedding
 """
 
 from absl import logging
-from apex import amp
+# from apex import amp
 from torch.autograd import Function
 
 from dlrm.cuda_ext import fused_embedding
@@ -40,4 +40,4 @@ class BuckleEmbeddingFusedGatherFunction(Function):
         return grad_weights, None, None, None
 
 
-buckle_embedding_fused_gather = amp.float_function(BuckleEmbeddingFusedGatherFunction.apply)
+# buckle_embedding_fused_gather = amp.float_function(BuckleEmbeddingFusedGatherFunction.apply)

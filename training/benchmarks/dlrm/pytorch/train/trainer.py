@@ -12,8 +12,7 @@ import torch.utils.data
 from torch.types import Device
 
 # local lib
-from model import create_model
-from optimizers import create_mlp_optimizer, create_embedding_optimizer
+from optimizers import create_embedding_optimizer
 from schedulers import create_scheduler
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
@@ -44,20 +43,22 @@ class Trainer:
 
     def init(self):
         dist_pytorch.main_proc_print("Init progress:")
-        self.model = create_model(self.config, self.device,
-                                  self.device_mapping, self.feature_spec)
+        self.model = self.adapter.create_model(self.config, self.device,
+                                               self.device_mapping,
+                                               self.feature_spec)
         self.model.to(self.device)
         self.model = self.adapter.convert_model(self.model)
         self.model = self.adapter.model_to_fp16(self.model)
 
-        self.mlp_optimizer = create_mlp_optimizer(self.model, self.config)
+        self.mlp_optimizer = self.adapter.create_mlp_optimizer(
+            self.model, self.config)
         self.embedding_optimizer = create_embedding_optimizer(
             self.model, self.config)
 
         self.lr_scheduler = create_scheduler(self.config, self.mlp_optimizer,
                                              self.embedding_optimizer)
         self.loss_fn = torch.nn.BCEWithLogitsLoss(reduction="mean")
-        self.grad_scaler = self.adapter.create_grad_scaler()
+        self.grad_scaler = self.adapter.create_grad_scaler(self.config)
         self.timer = StepTimer()
 
         torch.backends.cudnn.enabled = self.config.cudnn_deterministic

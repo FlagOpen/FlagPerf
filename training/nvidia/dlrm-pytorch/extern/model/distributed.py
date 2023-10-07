@@ -19,8 +19,8 @@ from typing import Sequence, Optional
 import torch
 from torch import nn
 
-from model.network.factories import create_interaction
-from model.network.parts import DlrmBottom, DlrmTop
+from .network.factories import create_interaction
+from .network.parts import DlrmBottom, DlrmTop
 
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))

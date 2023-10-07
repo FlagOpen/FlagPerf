@@ -1,8 +1,16 @@
+from typing import Sequence
 import itertools
 import torch
 import numpy as np
 
 from apex import parallel
+from apex import optimizers as apex_optim
+
+from utils.distributed import is_distributed, is_main_process
+from dataloaders.utils import get_embedding_sizes
+
+from .model.network.embeddings import Embeddings, JointEmbedding, MultiTableEmbeddings, FusedJointEmbedding, JointSparseEmbedding
+from .model.distributed import DistributedDlrm
 
 
 class CudaGraphWrapper:
@@ -153,3 +161,101 @@ def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
     return trainWrapper
 
 
+def create_embeddings(embedding_type: str,
+                      categorical_feature_sizes: Sequence[int],
+                      embedding_dim: int,
+                      device: str = "cuda",
+                      hash_indices: bool = False,
+                      fp16: bool = False) -> Embeddings:
+    if embedding_type == "joint":
+        return JointEmbedding(categorical_feature_sizes,
+                              embedding_dim,
+                              device=device,
+                              hash_indices=hash_indices)
+    elif embedding_type == "joint_fused":
+        assert not is_distributed(), "Joint fused embedding is not supported in the distributed mode. " \
+                                     "You may want to use 'joint_sparse' option instead."
+        return FusedJointEmbedding(categorical_feature_sizes,
+                                   embedding_dim,
+                                   device=device,
+                                   hash_indices=hash_indices,
+                                   amp_train=fp16)
+    elif embedding_type == "joint_sparse":
+        return JointSparseEmbedding(categorical_feature_sizes,
+                                    embedding_dim,
+                                    device=device,
+                                    hash_indices=hash_indices)
+    elif embedding_type == "multi_table":
+        return MultiTableEmbeddings(categorical_feature_sizes,
+                                    embedding_dim,
+                                    hash_indices=hash_indices,
+                                    device=device)
+    else:
+        raise NotImplementedError(f"unknown embedding type: {embedding_type}")
+
+
+def create_model(args, device, device_mapping, feature_spec):
+    rank = args.local_rank
+    bottom_mlp_sizes = args.bottom_mlp_sizes if args.local_rank == device_mapping[
+        'bottom_mlp'] else None
+    world_embedding_sizes = get_embedding_sizes(
+        feature_spec, max_table_size=args.max_table_size)
+    world_categorical_feature_sizes = np.asarray(world_embedding_sizes)
+    # Embedding sizes for each GPU
+    categorical_feature_sizes = world_categorical_feature_sizes[
+        device_mapping['embedding'][rank]].tolist()
+    num_numerical_features = feature_spec.get_number_of_numerical_features()
+
+    model = DistributedDlrm(
+        vectors_per_gpu=device_mapping['vectors_per_gpu'],
+        embedding_device_mapping=device_mapping['embedding'],
+        embedding_type=args.embedding_type,
+        embedding_dim=args.embedding_dim,
+        world_num_categorical_features=len(world_categorical_feature_sizes),
+        categorical_feature_sizes=categorical_feature_sizes,
+        num_numerical_features=num_numerical_features,
+        hash_indices=args.hash_indices,
+        bottom_mlp_sizes=bottom_mlp_sizes,
+        top_mlp_sizes=args.top_mlp_sizes,
+        interaction_op=args.interaction_op,
+        fp16=args.amp,
+        use_cpp_mlp=args.optimized_mlp,
+        bottom_features_ordered=args.bottom_features_ordered,
+        device=device)
+    return model
+
+
+def create_mlp_optimizer(model, args):
+    data_parallel_lr = args.lr
+    world_size = args.n_device
+    if args.Adam_MLP_optimizer:
+        MLP_model_parallel_lr = args.lr
+    else:
+        MLP_model_parallel_lr = args.lr / world_size
+
+    if is_main_process():
+        mlp_params = [{
+            'params': list(model.top_model.parameters()),
+            'lr': data_parallel_lr
+        }, {
+            'params': list(model.bottom_model.mlp.parameters()),
+            'lr': MLP_model_parallel_lr
+        }]
+    else:
+        mlp_params = [{
+            'params': list(model.top_model.parameters()),
+            'lr': data_parallel_lr
+        }]
+
+    if args.Adam_MLP_optimizer:
+        mlp_optimizer = apex_optim.FusedAdam(mlp_params)
+    else:
+        mlp_optimizer = apex_optim.FusedSGD(mlp_params)
+    return mlp_optimizer
+
+
+def create_grad_scaler(args):
+    """create_grad_scaler for mixed precision training"""
+    scaler = torch.cuda.amp.GradScaler(enabled=args.amp,
+                                       growth_interval=int(1e9))
+    return scaler
