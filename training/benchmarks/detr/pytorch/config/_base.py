@@ -60,10 +60,10 @@ eos_coef = 0.1
 train_batch_size: int = 128
 eval_batch_size: int = 128
 
-target_mAP: float = 0.35
+target_mAP: float = 0.42
 
 start_epoch = 0
-epochs = 10
+epochs = 300
 
 do_train = True
 fp16 = False
