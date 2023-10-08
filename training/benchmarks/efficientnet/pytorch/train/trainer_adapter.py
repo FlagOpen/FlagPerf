@@ -86,7 +86,7 @@ def create_grad_scaler(args):
     return scaler
 
 
-def backward(args, step: int, epoch: int, loss: torch.Tensor, model: nn.Module,
+def backward(args, step: int, loss: torch.Tensor, model: nn.Module,
              optimizer: Optimizer, scaler):
     if scaler is not None:
         scaler.scale(loss).backward()
