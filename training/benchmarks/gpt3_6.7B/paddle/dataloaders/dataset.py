@@ -10,6 +10,7 @@ def create_pretrained_dataset(
     training_args,
     data_file,
     tokenizer,
+    need_data=True,
 ):
 
     train_val_test_num_samples = [
@@ -41,6 +42,7 @@ def create_pretrained_dataset(
         seed=training_args.seed,
         skip_warmup=data_args.skip_warmup,
         data_cache_path=data_args.data_cache,
+        need_data=need_data,
     )
 
     def print_dataset(data, mode="train"):
@@ -58,18 +60,14 @@ def create_pretrained_dataset(
         labels = tokens_[:, 1:]
         tokens = tokens_[:, :-1]
 
-        # Attention mask.
-        attention_mask = paddle.ones(tokens.shape, dtype=paddle.int64)
-
         return {
             "input_ids": tokens,
-            "attention_mask": attention_mask,
             "labels": labels,
         }
-
-    print_dataset(train_dataset[0])
-    print_dataset(valid_dataset[0])
-    print_dataset(test_dataset[0])
+    if need_data:
+        print_dataset(train_dataset[0])
+        print_dataset(valid_dataset[0])
+        print_dataset(test_dataset[0])
 
     return train_dataset, valid_dataset, test_dataset, _collate_data
 

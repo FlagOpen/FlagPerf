@@ -111,9 +111,7 @@ class ModelArguments:
     Arguments pertaining to which model/config/tokenizer we are going to pre-train from.
     """
 
-    model_type: Optional[str] = field(
-        default="gpt", metadata={"help": "Only support for gpt pre-training for now."}
-    )
+    model_type: Optional[str] = field(default="gpt", metadata={"help": "Only support for gpt pre-training for now."})
     model_name_or_path: str = field(
         default="gpt2-medium-en",
         metadata={
@@ -123,8 +121,11 @@ class ModelArguments:
     tokenizer_name_or_path: Optional[str] = field(
         default=None, metadata={"help": "Pretrained tokenizer name or path if not the same as model_name"}
     )
-    output_attentions: bool = field(
-        default=False, metadata={"help": "Whether output attention weights"}
+    output_attentions: bool = field(default=False, metadata={"help": "Whether output attention weights"})
+    use_flash_attention: bool = field(default=False, metadata={"help": "Whether to use flash attention"})
+    virtual_pp_degree: int = field(
+        default=1,
+        metadata={"help": "virtual_pp_degree"},
     )
     use_flash_attention: bool = field(
         default=False, metadata={"help": "Whether to use flash attention"}
@@ -214,6 +215,7 @@ def main():
     gpt_config.max_position_embeddings = max(
         gpt_config.max_position_embeddings, data_args.max_seq_length
     )
+    gpt_config.virtual_pp_degree = model_args.virtual_pp_degree
     gpt_config.hidden_dropout_prob = model_args.hidden_dropout_prob
     gpt_config.attention_probs_dropout_prob = model_args.attention_probs_dropout_prob
     gpt_config.enable_fuse_transformer = model_args.enable_fuse_transformer
@@ -277,7 +279,7 @@ def main():
         eval_dataset,
         test_dataset,
         data_collator,
-    ) = create_pretrained_dataset(data_args, training_args, data_file, tokenizer)
+    ) = create_pretrained_dataset(data_args, training_args, data_file, tokenizer, need_data=training_args.should_load_dataset)
     
     total_effective_tokens = (
         training_args.per_device_train_batch_size
