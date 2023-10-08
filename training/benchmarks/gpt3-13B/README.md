@@ -1,1 +1,0 @@
-../gpt3_6.7B/README.md
