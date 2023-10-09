@@ -77,4 +77,5 @@ CASES = {
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "t5_small:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/t5_small_train",
     # "gpt2:pytorch_1.12:A100:1:8:1": "/raid/dataset/gpt2",
+    # "bert_hf:pytorch_1.13:A100:1:8:1": "/raid/dataset/bert_hf_train",
 }
