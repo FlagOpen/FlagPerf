@@ -15,12 +15,11 @@ Some of the files in this directory were modified by BAAI in 2023 to support Fla
 
 ## Dataset and Model Checkpoints
 
-> Dataset website：https://huggingface.co/datasets/enwik8
-https://huggingface.co/allenai/longformer-base-4096
+> Dataset website：https://huggingface.co/datasets/enwik8 and https://huggingface.co/allenai/longformer-base-4096
 > Model checkpoint website: https://huggingface.co/allenai/longformer-base-4096
 
 We have already preprocessed the dataset and the model checkpoint files(The preprocessing script is `training/benchmarks/longformer/pytorch/data_preprocessing/create_train_eval_data.py`).
-The preprocessed can be downloaded directly from https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/datasets/longformer_train.tar.
+The preprocessed dataset can be downloaded directly from https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/datasets/longformer_train.tar.
 No additional preprocessing steps need to be conducted.
 After decompressing, the dataset and model checkpoint files are organized as the following:
 
