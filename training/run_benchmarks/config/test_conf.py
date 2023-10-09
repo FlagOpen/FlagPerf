@@ -83,7 +83,11 @@ CASES = {
     # "llama1_7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/llama/"
-    
+    # "llama1_13B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/llama/"
+
     # "gpt3_6.7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/gpt-3/"
     # "gpt3_6.7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
     # "gpt3_6.7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
