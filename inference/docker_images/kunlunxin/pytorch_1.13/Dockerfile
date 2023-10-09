@@ -46,11 +46,12 @@ RUN /root/miniconda/envs/python38/bin/pip install \
     munch \
     pyyaml \
     tqdm \
-    scipy
+    scipy \
+    opencv-python-headless
 
 RUN /root/miniconda/envs/python38/bin/pip install torch==1.13.0+cpu torchvision==0.14.0+cpu torchaudio==0.13.0 --extra-index-url https://download.pytorch.org/whl/cpu
 
-RUN cd /root && wget https://baidu-kunlun-public.su.bcebos.com/XTCL/XTCL-2.1/XTCL-ubuntu_x86_64.tar.gz && tar -xzf XTCL-ubuntu_x86_64.tar.gz
+RUN cd /root && wget https://baidu-kunlun-public.su.bcebos.com/XTCL/kunlunxin_xtcl_output_ubuntu1604_daily_0923.tar.gz && tar -xzf kunlunxin_xtcl_output_ubuntu1604_daily_0923.tar.gz &&  mv output/XTCL  XTCL-ubuntu_x86_64
 
 RUN cd /root && wget https://klx-sdk-release-public.su.bcebos.com/xre/release/4.0.18.1/xre-ubuntu_2004_x86_64.tar.gz && tar -xzf xre-ubuntu_2004_x86_64.tar.gz
 
@@ -69,6 +70,7 @@ ENV KERNEL_SEARCH_PATH=/root/XTCL-ubuntu_x86_64/xpu/kernels
 ENV XPUSIM_DEVICE_MODEL=KUNLUN2
 ENV XTCL_AUTO_ALLOC_L3=1
 ENV TVM_DIR=/root/XTCL-ubuntu_x86_64
+
 
 
 

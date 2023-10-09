@@ -1,0 +1,10 @@
+compiler: xtcl
+no_validation: true
+build_config:
+  FuseWithoutPattern:
+    - FuseConv2dTransposeBiasAdd
+  pattern_match:
+    - fuse_attention_sam
+disabled_pass:
+  - xgraph_layout_opt
+exist_onnx_path: onnxs/sam_h_bs4_pytorch_fp16True.onnx

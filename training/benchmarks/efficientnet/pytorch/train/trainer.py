@@ -1,19 +1,18 @@
-import torch
-from torch.types import Device
-import torch.distributed as dist
 import os
 import sys
 import time
 import math
 
+import torch
+import torch.distributed as dist
+from torch.types import Device
+
+import config
 from model import create_model
 from schedulers import create_scheduler
-
 from train.evaluator import Evaluator
 from train.training_state import TrainingState
 from train import utils
-
-import config
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
@@ -75,11 +74,11 @@ class Trainer:
         driver = self.driver
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
-        step_start_time = time.time()
-        epoch_start_num_sample = state.num_trained_samples
-
         if dist_pytorch.is_dist_avail_and_initialized():
             dataloader.sampler.set_epoch(state.epoch)
+
+        no_eval_start_time = time.time()
+
         for batch_idx, batch in enumerate(dataloader):
 
             state.global_steps += 1
@@ -89,46 +88,32 @@ class Trainer:
 
             driver.event(Event.STEP_BEGIN, step=state.global_steps)
             self.train_one_step(batch)
+            info = {
+                "num_trained_samples": state.num_trained_samples,
+                "epoch": state.epoch,
+                "steps": state.global_steps,
+            }
+            driver.event(Event.STEP_END, step=state.global_steps, message=info)
 
-            other_state = dict()
-
-            step_end_time = time.time()
-            step_total_time = step_end_time - step_start_time
-            step_start_time = step_end_time
-            images_per_second = dist_pytorch.global_batch_size(
-                self.config) / step_total_time
-            other_state["img/s"] = images_per_second
-            if hasattr(self.optimizer, 'loss_scaler'):
-                loss_scale = self.optimizer.loss_scaler.loss_scale
-                other_state['loss_scale'] = loss_scale
-
-            eval_result = None
-            if self.can_do_eval(state):
-                eval_start = time.time()
-                state.eval_loss, state.eval_acc1, state.eval_acc5 = self.evaluator.evaluate(
-                    self)
-                eval_end = time.time()
-                eval_result = dict(global_steps=state.global_steps,
-                                   eval_loss=state.eval_loss,
-                                   eval_acc1=state.eval_acc1,
-                                   eval_acc5=state.eval_acc5,
-                                   time=eval_end - eval_start)
-
-            end_training = self.detect_training_status(state)
-            step_info = state.to_dict(**other_state)
-            driver.event(Event.STEP_END,
-                         message=step_info,
-                         step=state.global_steps,
-                         loss=state.loss)
-
-            if eval_result is not None:
-                driver.event(Event.EVALUATE, eval_result)
-
-            if end_training:
+            if self.detect_training_status(state):
                 break
 
-        epoch_start_num_sample += len(dataloader.dataset)
-        state.num_trained_samples = epoch_start_num_sample
+        state.no_eval_time += time.time() - no_eval_start_time
+
+        eval_start = time.time()
+        state.eval_loss, state.eval_acc1, state.eval_acc5 = self.evaluator.evaluate(
+            self)
+        eval_end = time.time()
+        eval_result = dict(
+            global_steps=state.global_steps,
+            eval_loss=state.eval_loss,
+            eval_acc1=state.eval_acc1,
+            eval_acc5=state.eval_acc5,
+            time=eval_end - eval_start,
+        )
+        print("eval_result", eval_result)
+
+       
 
         self.lr_scheduler.step()
         if self.config.output_dir:
@@ -154,43 +139,25 @@ class Trainer:
         batch = self.process_batch(batch, self.config.device)
         state = self.training_state
         self.model.train()
+
+        pure_compute_start_time = time.time()
         state.loss, state.acc1, state.acc5 = self.forward(batch)
-        self.adapter.backward(self.config, state.global_steps, state.epoch,
-                              state.loss, self.model, self.optimizer,
-                              self.scaler)
-        if dist_pytorch.is_dist_avail_and_initialized():
-            total = torch.tensor([state.loss, state.acc1, state.acc5],
-                                 dtype=torch.float32,
-                                 device=self.config.device)
-            dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
-            total = total / dist.get_world_size()
-            state.loss, state.acc1, state.acc5 = total.tolist()
-        self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
-                          self.optimizer, self.scaler)
+        self.adapter.backward(self.config, state.global_steps, state.loss,
+                              self.model, self.optimizer, self.scaler)
+        state.pure_compute_time += time.time() - pure_compute_start_time
 
     def detect_training_status(self, state):
         config = self.config
         if state.eval_acc1 >= config.target_acc1:
+            dist_pytorch.main_proc_print(
+                f"converged_success. eval_acc1:{state.eval_acc1} target_acc1:{config.target_acc1}"
+            )
             state.converged_success()
 
         if state.num_trained_samples > config.max_samples_termination:
             state.end_training = True
 
         return state.end_training
-
-    def can_do_eval(self, state):
-        config = self.config
-        do_eval = all([
-            config.eval_data is not None,
-            state.num_trained_samples >= config.eval_iter_start_samples,
-            state.global_steps %
-            math.ceil(config.eval_interval_samples /
-                      dist_pytorch.global_batch_size(config)) == 0,
-            config.eval_interval_samples > 0,
-            state.global_steps > 1,
-        ])
-
-        return do_eval or state.num_trained_samples >= config.max_samples_termination
 
     def forward(self, batch):
         images, target = batch
