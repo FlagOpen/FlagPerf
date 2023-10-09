@@ -1,7 +1,7 @@
 ## 模型信息
 ### 模型介绍
 
-BGenerative Pre-trained Transformer 3 (GPT-3) is a large language model released by OpenAI in 2020. Like its predecessor GPT-2, it is a decoder-only transformer model of deep neural network, which uses attention in place of previous recurrence- and convolution-based architectures. Attention mechanisms allow the model to selectively focus on segments of input text it predicts to be the most relevant. It uses a 2048-tokens-long context and then-unprecedented size of 175 billion parameters, requiring 800GB to store. The model demonstrated strong zero-shot and few-shot learning on many tasks.
+Generative Pre-trained Transformer 3 (GPT-3) is a large language model released by OpenAI in 2020. Like its predecessor GPT-2, it is a decoder-only transformer model of deep neural network, which uses attention in place of previous recurrence- and convolution-based architectures. Attention mechanisms allow the model to selectively focus on segments of input text it predicts to be the most relevant. It uses a 2048-tokens-long context and then-unprecedented size of 175 billion parameters, requiring 800GB to store. The model demonstrated strong zero-shot and few-shot learning on many tasks.
 
 Please refer to wikipedia for a detailed description of GPT-3:
 [GPT-3 (wikipedia)](https://en.wikipedia.org/wiki/GPT-3)
