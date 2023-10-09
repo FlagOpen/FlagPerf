@@ -8,6 +8,7 @@
     - 加速卡型号: NVIDIA_A100-SXM4-40GB
     - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
+    
 - ##### 软件环境
    - OS版本：Ubuntu 20.04
    - OS kernel版本: 5.4.0-113-generic
@@ -16,6 +17,10 @@
    - 训练框架版本：pytorch-1.8.0a0+52ea372
    - 依赖软件版本：
      - cuda: 11.4
+   
+- 数据格式
+
+   - 在NVIDIA DGX A100(40G)硬件上，16bit浮点数（fp16）可以使用IEEE 754 fp16或bf16格式实现。在resnet50测试样例中，bf16的性能、准确度更高。因此采用bf16格式作为fp16的实现，实行在16bit训练和amp训练中
 
 ### 运行情况
 
