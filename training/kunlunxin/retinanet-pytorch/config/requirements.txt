@@ -1,0 +1,7 @@
+psutil==5.9.5
+accelerate==0.20.3
+Pillow==9.5.0
+torch==1.12.1+cpu
+https://download.pytorch.org/whl/cpu/torchvision-0.13.1%2Bcpu-cp38-cp38-linux_x86_64.whl
+pycocotools==2.0.5
+numpy==1.23.5

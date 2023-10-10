@@ -1,0 +1,8 @@
+transformers==4.31.0
+evaluate==0.4.0
+datasets==2.14.4
+accelerate==0.21.0
+tokenizers==0.13.3
+nltk==3.8.1
+absl-py==1.4.0
+rouge-score==0.1.2

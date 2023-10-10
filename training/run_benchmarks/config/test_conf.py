@@ -64,7 +64,7 @@ CASES = {
     # "faster_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/fasterrcnn/coco2017/",
     # "bigtransfer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
-    # "tacotron2:pytorch_1.8:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    #"tacotron2:pytorch_1.13:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
     # "resnet50:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
     
@@ -75,7 +75,18 @@ CASES = {
     
     # "transformer:pytorch_1.13:A100:1:8:1": "/raid/home_datasets_ckpt/transformer/train/",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "transformer_xl:pytorch_1.8:A100:1:8:1": "/raid/dataset/transformer_xl/",
     # "t5_small:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/t5_small_train",
     # "gpt2:pytorch_1.12:A100:1:8:1": "/raid/dataset/gpt2",
     # "longformer:pytorch_1.12:A100:1:8:1": "/raid/dataset/longformer_train/",
+    
+    # "llama1_7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_7B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/llama/"
+    
+    # "llama1_13B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/llama/"
 }

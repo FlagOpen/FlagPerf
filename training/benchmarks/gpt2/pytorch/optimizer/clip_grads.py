@@ -62,9 +62,9 @@ def clip_grad_norm_fp32(parameters, grads_for_norm,
             # Multi-tensor applier takes a function and a list of list
             # and performs the operation on that list all in one kernel.
             if grads_for_norm:
-                grad_norm = torch.cuda.FloatTensor([item.norm() for item in grads_for_norm]).norm()
+                grad_norm = torch.FloatTensor([item.norm() for item in grads_for_norm]).norm().cuda()
             else:
-                grad_norm = torch.cuda.FloatTensor([0])
+                grad_norm = torch.FloatTensor([0]).cuda()
             # Since we will be summing across data parallel groups,
             # we need the pow(norm-type).
             total_norm = grad_norm ** norm_type
