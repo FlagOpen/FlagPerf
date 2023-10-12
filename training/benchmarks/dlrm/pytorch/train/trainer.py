@@ -55,7 +55,7 @@ class Trainer:
         self.embedding_optimizer = create_embedding_optimizer(
             self.model, self.config)
 
-        self.lr_scheduler = create_scheduler(self.config, self.mlp_optimizer,
+        self.lr_scheduler = self.adapter.create_scheduler(self.config, self.mlp_optimizer,
                                              self.embedding_optimizer)
         self.loss_fn = torch.nn.BCEWithLogitsLoss(reduction="mean")
         self.grad_scaler = self.adapter.create_grad_scaler(self.config)

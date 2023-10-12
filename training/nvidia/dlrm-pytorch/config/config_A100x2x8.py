@@ -1,6 +1,6 @@
 from config_common import *
 
 # Batch size used for training
-train_batch_size: int = 1024
+train_batch_size: int = 2752512
 # Batch size used for testing/validation
-eval_batch_size: int = 1024
+eval_batch_size: int = 2752512

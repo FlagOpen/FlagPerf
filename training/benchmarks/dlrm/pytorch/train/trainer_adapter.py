@@ -17,6 +17,8 @@ def create_model(args, device, device_mapping, feature_spec):
 def create_mlp_optimizer(model, args):
     pass
     
+def create_scheduler(args, mlp_optimizer, embedding_optimizer):
+    pass
 
 def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
                            loss_fn, grad_scaler):

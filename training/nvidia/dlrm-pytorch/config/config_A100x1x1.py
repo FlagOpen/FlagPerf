@@ -4,5 +4,3 @@ from config_common import *
 train_batch_size: int = 65536 * 4
 # Batch size used for testing/validation
 eval_batch_size: int = 65536 * 4
-
-max_steps: int = 1000

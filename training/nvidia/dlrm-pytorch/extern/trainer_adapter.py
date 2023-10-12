@@ -6,7 +6,8 @@ import numpy as np
 from apex import parallel
 from apex import optimizers as apex_optim
 
-from utils.distributed import is_distributed, is_main_process
+from utils.distributed import is_distributed, is_main_process, get_rank
+from utils.utils import LearningRateScheduler
 from dataloaders.utils import get_embedding_sizes
 
 from .model.network.embeddings import Embeddings, JointEmbedding, MultiTableEmbeddings, FusedJointEmbedding, JointSparseEmbedding
@@ -120,7 +121,7 @@ def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
         return model
 
     def forward_backward(model, *args):
-        rank = config.local_rank
+        rank = get_rank()
         numerical_features, categorical_features, click = args
         world_size = config.n_device
         batch_sizes_per_gpu = [
@@ -195,8 +196,8 @@ def create_embeddings(embedding_type: str,
 
 
 def create_model(args, device, device_mapping, feature_spec):
-    rank = args.local_rank
-    bottom_mlp_sizes = args.bottom_mlp_sizes if args.local_rank == device_mapping[
+    rank = get_rank()
+    bottom_mlp_sizes = args.bottom_mlp_sizes if rank == device_mapping[
         'bottom_mlp'] else None
     world_embedding_sizes = get_embedding_sizes(
         feature_spec, max_table_size=args.max_table_size)
@@ -259,3 +260,42 @@ def create_grad_scaler(args):
     scaler = torch.cuda.amp.GradScaler(enabled=args.amp,
                                        growth_interval=int(1e9))
     return scaler
+
+
+def create_scheduler(args, mlp_optimizer, embedding_optimizer):
+    data_parallel_lr = args.lr
+    world_size = args.n_device
+
+    if args.Adam_MLP_optimizer:
+        MLP_model_parallel_lr = args.lr
+    else:
+        MLP_model_parallel_lr = args.lr / world_size
+
+    if is_main_process():
+        mlp_lrs = [data_parallel_lr, MLP_model_parallel_lr]
+    else:
+        mlp_lrs = [data_parallel_lr]
+
+    # DDP introduces a gradient average through allreduce(mean), which doesn't apply to bottom model.
+    # Compensate it with further scaling lr
+    if args.Adam_embedding_optimizer:
+        embedding_model_parallel_lr = args.lr
+    else:
+        embedding_model_parallel_lr = args.lr / world_size
+
+    embedding_lrs = [embedding_model_parallel_lr]
+
+    base_lrs = [mlp_lrs, embedding_lrs]
+    print("world_size", world_size, "create_scheduler base_lrs", base_lrs)
+
+    lr_scheduler = LearningRateScheduler(
+        optimizers=[mlp_optimizer, embedding_optimizer],
+        base_lrs=[mlp_lrs, embedding_lrs],
+        warmup_steps=args.warmup_steps,
+        warmup_factor=args.warmup_factor,
+        decay_start_step=args.decay_start_step,
+        decay_steps=args.decay_steps,
+        decay_power=args.decay_power,
+        end_lr_factor=args.decay_end_lr / args.lr)
+
+    return lr_scheduler
