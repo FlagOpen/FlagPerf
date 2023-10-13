@@ -88,13 +88,13 @@ find ./val -name "*JPEG" | wc -l
    - OS kernel版本: 5.15.0-78-generic
    - 加速卡驱动版本：3.2.0
    - Docker 版本：24.0.4
-   - 训练框架版本：torch-1.13.1+corex.3.2.0
+   - 训练框架版本：torch-1.13.1+corex.3.2.1
    - 依赖软件版本：
      - cuda: 10.2
    
 - 推理工具包
 
-   - IXRT: ixrt-0.4.0+corex.3.2.0
+   - IXRT: ixrt-0.7.0+corex.3.2.1
 
 #### 2.5 腾讯紫霄 C100
 
