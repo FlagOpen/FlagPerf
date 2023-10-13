@@ -84,11 +84,11 @@ find ./val -name "*JPEG" | wc -l
    - Docker 版本：24.0.4
    - 依赖软件版本：
      - cuda: 10.2
-     - torch-1.13.1+corex.3.2.0
+     - torch-1.13.1+corex.3.2.1
    
 - 推理工具包
 
-   - IXRT: ixrt-0.7.0+corex.3.2.0
+   - IXRT: ixrt-0.7.0+corex.3.2.1
 
 
 ### 3. 运行情况
