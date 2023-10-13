@@ -8,8 +8,10 @@ def analysis_log(logpath):
             usage = line.split(" ")[2]
             usage = float(usage[:-3])
             max_usage = max(max_usage, usage)
-            max_mem = line.split(" ")[3]
-            max_mem = float(max_mem[:-3])
+            if (max_usage >= usage):
+                m_mem = line.split(" ")[3]
+                m_mem = float(m_mem[:-3])
+                max_mem = max(max_mem, m_mem)
 
     return round(max_usage / 1024.0,
                  2), round(max_mem / 1024.0, 2), eval("24e12"), eval("96e12")
