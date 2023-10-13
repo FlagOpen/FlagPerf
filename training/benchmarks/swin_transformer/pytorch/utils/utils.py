@@ -5,7 +5,6 @@
 # Written by Ze Liu
 # --------------------------------------------------------
 
-import os
 import torch
 import torch.distributed as dist
 from torch._six import inf
@@ -13,8 +12,12 @@ from torch._six import inf
 
 def reduce_tensor(tensor):
     rt = tensor.clone()
-    dist.all_reduce(rt, op=dist.ReduceOp.SUM)
-    rt /= dist.get_world_size()
+    # bugfix for 1x1 training
+    if dist.is_available() and dist.is_initialized():
+        dist.all_reduce(rt, op=dist.ReduceOp.SUM)
+        rt /= dist.get_world_size()
+    else:
+        return tensor
     return rt
 
 
