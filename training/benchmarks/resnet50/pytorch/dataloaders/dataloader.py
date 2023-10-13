@@ -8,7 +8,7 @@ import torchvision.transforms as t
 class ToFloat16(object):
 
     def __call__(self, tensor):
-        return tensor.to(dtype=torch.float16)
+        return tensor.to(dtype=torch.bfloat16)
 
 
 def build_train_dataset(config):
