@@ -7,36 +7,60 @@
 * 在data_dir中，共需要放置如下内容：
 
   ├── ckpts
+
   │   ├── iter_0135000
+
   │   │   ├── mp_rank_00
+
   │   │   │   └── model_optim_rng.pt
+
   │   │   ├── mp_rank_01
+
   │   │   │   └── model_optim_rng.pt
+
   │   │   ├── mp_rank_02
+
   │   │   │   └── model_optim_rng.pt
+
   │   │   ├── mp_rank_03
+
   │   │   │   └── model_optim_rng.pt
+
   │   │   ├── mp_rank_04
+
   │   │   │   └── model_optim_rng.pt
+
   │   │   ├── mp_rank_05
+
   │   │   │   └── model_optim_rng.pt
+
   │   │   ├── mp_rank_06
+
   │   │   │   └── model_optim_rng.pt
+
   │   │   └── mp_rank_07
+
   │   │       └── model_optim_rng.pt
+
   │   └── latest_checkpointed_iteration.txt
+
   ├── data
+
   │   └── lambada_test_bak.jsonl
+
   └── tokenizer
-      ├── merges.txt
-      ├── special_tokens.txt
-      └── vocab.json
+
+  ​    ├── merges.txt
+
+  ​    ├── special_tokens.txt
+
+  ​    └── vocab.json
 
 * 其中
 
   * lambada_test_bak.jsonl为推理数据集
   * tokenizer为aquila33B开源模型提供：https://model.baai.ac.cn/model-detail/100119
-  * ckpts从上述路径https://model.baai.ac.cn/model-detail/100119获取所有.bin文件后，依照FlagScalehttps://github.com/FlagOpen/FlagScale描述方法，进行合并后重新划分为8个张量并行子权重
+  * ckpts从上述路径https://model.baai.ac.cn/model-detail/100119 获取所有.bin文件后，依照FlagScalehttps://github.com/FlagOpen/FlagScale 描述方法，进行合并后重新划分为8个张量并行子权重
 
 ### 2. 软硬件配置与运行信息参考
 
