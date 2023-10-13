@@ -261,13 +261,13 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DETR</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/detr" style="text-decoration:none" target="_parent">DETR</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/detr/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/detr-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+   </tr>
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/longformer" style="text-decoration:none" target="_parent">Longformer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/longformer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
@@ -330,7 +330,6 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
       <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
-
 
 #### 推理列表
 
