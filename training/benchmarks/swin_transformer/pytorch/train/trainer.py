@@ -1,11 +1,9 @@
-import os
-import sys
 import time
 import datetime
 
 import torch
 from torch.types import Device
-from timm.utils import accuracy, AverageMeter
+from timm.utils import AverageMeter
 
 from driver import Driver, Event, dist_pytorch
 from train.training_state import TrainingState
@@ -27,6 +25,7 @@ class Trainer:
         
         model.train()
         optimizer.zero_grad()
+        no_eval_start_time = time.time()
 
         num_steps = len(dataloader)
         batch_time = AverageMeter()
@@ -41,6 +40,9 @@ class Trainer:
             state.global_steps += 1
             samples = samples.cuda(non_blocking=True)
             targets = targets.cuda(non_blocking=True)
+            state.num_trained_samples += samples.size(0) * self.config.n_device
+
+            pure_compute_start_time = time.time()
 
             if mixup_fn is not None:
                 samples, targets = mixup_fn(samples, targets)
@@ -70,6 +72,8 @@ class Trainer:
             end = time.time()
             state.loss = loss_meter.val
             
+            state.pure_compute_time += time.time() - pure_compute_start_time
+
             other_state = dict()
             if state.global_steps % self.config.gradient_accumulation_steps == 0:
                 step_end_time = time.time()
@@ -91,6 +95,7 @@ class Trainer:
                          loss=state.loss)         
             
         epoch_time = time.time() - start
+        state.no_eval_time += time.time() - no_eval_start_time
         if config.local_rank == 0:
             print("EPOCH {} training takes {}".format(epoch, datetime.timedelta(seconds=int(epoch_time))))
 

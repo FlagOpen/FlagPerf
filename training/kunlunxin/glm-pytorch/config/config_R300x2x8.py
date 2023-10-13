@@ -14,4 +14,4 @@ lr_decay_ratio = 0.1
 lr_decay_iters = 4338
 log_freq = 1
 seed = 4096
-max_samples_termination = 2776540
+max_samples_termination = 20000

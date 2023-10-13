@@ -158,3 +158,5 @@ gradient_accumulation_steps = 1
 # device
 device: str = None
 n_device: int = 1
+
+distributed : bool = False

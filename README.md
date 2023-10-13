@@ -157,7 +157,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn" style="text-decoration:none" target="_parent">MaskRCNN</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
        <td class="xl69" x:str>N/A</td>
    </tr>
@@ -165,7 +165,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet" style="text-decoration:none" target="_parent">RetinaNet</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
        <td class="xl69" x:str>N/A</td>
    </tr>
@@ -197,14 +197,14 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer" style="text-decoration:none" target="_parent">SwinTransformer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69">N/A</td>
+    <td class="xl69"><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -242,7 +242,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -266,7 +266,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(6.7B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -274,31 +274,23 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(13B)</td>
     <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>yolov5_large</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>T5_small</td>
-    <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr> 
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small" style="text-decoration:none" target="_parent">T5_small</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/t5_small-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT2</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt2" style="text-decoration:none" target="_parent">GPT2</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -306,31 +298,15 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>TransformerXL</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>whisper</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DistilBERT</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Roberta</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/distilbert" style="text-decoration:none" target="_parent">DistilBERT</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/distilbert/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/distilbert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -338,7 +314,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DETR</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -346,12 +322,13 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Longformer</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
   </table>
+
 
 #### 推理列表
 
@@ -370,69 +347,79 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" x:str>英伟达+tensorrt/inductor</td>
     <td class="xl65" x:str>昆仑芯+xtcl</td>
     <td class="xl65" x:str>天数智芯+ixrt</td>
+    <td class="xl65" x:str>腾讯九霄</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/resnet50" style="text-decoration:none" target="_parent">resnet50</a></td>
     <td class="xl69" x:str>f32/f16</td>
-    <td class="xl69" x:str>f32</td>
+    <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>f16</td>
+       <td class="xl69" x:str>f16</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/bertLarge" style="text-decoration:none" target="_parent">BertLarge</a></td>
     <td class="xl69" x:str>f32/f16</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>W32A16</td>
     <td class="xl69" x:str>Incoming</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/vit_l_16" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
     <td class="xl69" x:str>f32/f16</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>W32A16</td>
     <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/yolov5" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
     <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>f32</td>
     <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/stable_diffusion_v1_4" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
     <td class="xl69" x:str>f32/f16</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>f32</td>
     <td class="xl69" x:str>N/A</td>
+       <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/swinTransformer" style="text-decoration:none" target="_parent">SwinTransformer</td>
     <td class="xl69" x:str>f32/f16</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>W32A16</td>
     <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/llama2_7b_mmlu" style="text-decoration:none" target="_parent">Llama2-7B-mmlu</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/209" style="text-decoration:none" target="_parent">Aquila-7B-mmlu</td>
     <td class="xl69" x:str>fp16</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
         <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RNNT</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
+            <td class="xl69" x:str>N/A</td>
    </tr>
 </table>
-
 
 ### 训练部署及启动说明
 
@@ -444,7 +431,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore共同建设中。
+本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore、摩尔线程、腾讯九霄共同建设中。
 诚邀各框架、芯片、编译器团队与个人参与！
 
 ![cooperation](assets/imgs/logos.png)

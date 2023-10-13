@@ -17,3 +17,5 @@ export ALLREDUCE_FUSION=0
 
 export XMLIR_F_XPU_FC_GEMM_MODE=float
 export XMLIR_F_FAST_INDEX_PUT=true
+
+export XACC_ENABLE=1
