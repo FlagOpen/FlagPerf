@@ -60,7 +60,7 @@
 
   * lambada_test_bak.jsonl为推理数据集
   * tokenizer为aquila33B开源模型提供：https://model.baai.ac.cn/model-detail/100119
-  * ckpts从上述路径https://model.baai.ac.cn/model-detail/100119 获取所有.bin文件后，依照FlagScalehttps://github.com/FlagOpen/FlagScale 描述方法，进行合并后重新划分为8个张量并行子权重
+  * ckpts从上述路径https://model.baai.ac.cn/model-detail/100119 获取所有.bin文件后，依照FlagScale https://github.com/FlagOpen/FlagScale 描述方法，进行合并后重新划分为8个张量并行子权重
 
 ### 2. 软硬件配置与运行信息参考
 

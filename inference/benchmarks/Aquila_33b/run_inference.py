@@ -99,6 +99,7 @@ if __name__ == "__main__":
             coreperf = float(line.replace('\n', '').split(':')[1])
         if 'Whole throughput' in line:
             wholeperf = float(line.replace('\n', '').split(':')[1])
+    logfile.close()
             
     infer_info = {
         "vendor": config_from_args.vendor,
