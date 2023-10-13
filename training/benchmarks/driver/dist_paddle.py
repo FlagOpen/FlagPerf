@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from typing import Dict
 
 import paddle
 import paddle.distributed as dist
@@ -13,11 +14,12 @@ from paddlenlp.trainer.trainer_utils import IntervalStrategy
 
 from .base import Driver
 from .event import Event
-from typing import Dict
+
 
 def barrier():
     if dist.is_initialized():
         dist.barrier()
+
 
 def is_main_process():
     if dist.is_initialized():
@@ -27,6 +29,7 @@ def is_main_process():
             return dist.get_rank() == 0
 
     return True
+
 
 class PaddleCallback(TrainerCallback):
     def __init__(self, driver: Driver):
@@ -98,8 +101,6 @@ class PaddleCallback(TrainerCallback):
         self.driver.event(Event.EVALUATE, result=logs)
         if kwargs["metrics"]["eval_ppl"] < self.driver.config.target_ppl:
             control.should_training_stop = True
-            
-
 
     def on_log(
         self,

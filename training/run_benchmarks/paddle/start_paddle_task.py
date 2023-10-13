@@ -129,8 +129,29 @@ def _set_common_ddp_envs(task_args):
 
     # set GPU/MLU device env, TODO other vendor's device
     if task_args.visible_dev_env is not None:
-        current_env[
-            task_args.visible_dev_env] = current_env['PADDLE_WORLD_DEVICE_IDS']
+        current_env[task_args.visible_dev_env] = current_env['PADDLE_WORLD_DEVICE_IDS']
+    return current_env
+
+
+def _set_paddle_container_envs(task_args):
+    """Set and return env items for paddle."""
+
+    # set Paddle distributed related environmental variables
+    current_env = os.environ.copy()
+    current_env["PADDLE_WORLD_DEVICE_IDS"] = ",".join(
+        [str(i) for i in range(task_args.nproc)]
+    )
+    current_env["PADDLE_TRAINER_ENDPOINTS"] = (
+        str(task_args.master_addr) + ":" + str(task_args.master_port)
+    )
+    current_env["FLAGS_embedding_deterministic"] = "1"
+    current_env["FLAGS_cudnn_deterministic"] = "1"
+    current_env["NVIDIA_TF32_OVERRIDE"] = "0"
+    current_env["NCCL_ALGO"] = "Tree"
+
+    # set GPU/MLU device env, TODO other vendor's device
+    if task_args.visible_dev_env is not None:
+        current_env[task_args.visible_dev_env] = current_env["PADDLE_WORLD_DEVICE_IDS"]
     return current_env
 
 def _get_basic_train_script_args(task_args):
