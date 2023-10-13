@@ -213,21 +213,21 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
       <td class="xl69" x:str>N/A</a></td>
    </tr>  
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(6.7B)</td>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_7B" style="text-decoration:none" target="_parent">GPT3-7B</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_7B/paddle" style="text-decoration:none" target="_parent">Paddle(Hybrid Parallel)</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_7B-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+   </tr>  
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(13B)</td>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_13B" style="text-decoration:none" target="_parent">GPT3-13B</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_13B/paddle" style="text-decoration:none" target="_parent">Paddle(Hybrid Parallel)</a</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_13B-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+   </tr>  
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small" style="text-decoration:none" target="_parent">T5_small</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
@@ -278,28 +278,28 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="4" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama2-7B</td>
-    <td class="xl69" x:str>PyTorch(SDP)</td>
+    <td class="xl69" x:str>Deepspeed(SDP)</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Pytorch-Megatron(Hybrid)</td>
+    <td class="xl69" x:str>Pytorch-Megatron(TP)</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Deepspeed(SDP)</td>
+    <td class="xl69" x:str>Pytorch-Megatron(PP)</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Mixed Parallel</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
@@ -307,7 +307,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Aquila-7B</td>
-    <td class="xl69" x:str>Mixed Parallel</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
@@ -315,7 +315,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>chatGLM2-6B</td>
-    <td class="xl69" x:str>Mixed Parallel</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
@@ -323,13 +323,14 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Baichuan-7B</td>
-    <td class="xl69" x:str>Mixed Parallel</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
+
 
 #### 推理列表
 
@@ -420,7 +421,15 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>N/A</td>
             <td class="xl69" x:str>N/A</td>
    </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Aquila-33B</td>
+    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
+   </tr>
 </table>
+
 
 ### 训练部署及启动说明
 
