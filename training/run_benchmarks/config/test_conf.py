@@ -53,9 +53,9 @@ CLEAR_CACHES = True
     "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
-    "bert:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/bert/train/",
-    "glm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/glm/train/",
-    "cpm:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/cpm/train/",
+    "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -64,15 +64,38 @@ CASES = {
     # "faster_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/fasterrcnn/coco2017/",
     # "bigtransfer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
-    # "tacotron2:pytorch_1.8:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    #"tacotron2:pytorch_1.13:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
     # "resnet50:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
     
     # "wav2vec2:pytorch_1.13:A100:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
     # "WaveGlow:pytorch_1.13:A100:1:8:1": "/raid/dataset/LJSpeech/",
 
+    # "distilbert:pytorch_1.12:A100:1:8:1": "/raid/dataset/distilbert/",
     
-    # "transformer:pytorch_1.13:A100:1:8:1": "/home/datasets_ckpt/transformer/train/",
+    # "transformer:pytorch_1.13:A100:1:8:1": "/raid/home_datasets_ckpt/transformer/train/",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "transformer_xl:pytorch_1.8:A100:1:8:1": "/raid/dataset/transformer_xl/",
+    # "t5_small:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/t5_small_train",
+    # "gpt2:pytorch_1.12:A100:1:8:1": "/raid/dataset/gpt2",
+    # "longformer:pytorch_1.12:A100:1:8:1": "/raid/dataset/longformer_train/",
     # "detr:pytorch_1.13:A100:1:8:1": "/raid/dataset/detr/coco2017/",
+    
+    # "llama1_7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_7B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
+    # "llama1_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/llama/"
+
+    # "gpt3_6.7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    # "gpt3_6.7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    # "gpt3_6.7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    # "gpt3_6.7B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    # "gpt3_13B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    # "gpt3_13B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    # "gpt3_13B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
 }
