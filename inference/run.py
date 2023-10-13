@@ -329,10 +329,14 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
     for cfg in must_configs:
         new_case_config[cfg] = getattr(config, cfg)
 
+    main_execute = "run_inference.py"
+    if config.USE_SPECIAL_MAIN:
+        main_execute = "benchmarks/" + case_config["model"] + "/run_inference.py"
+        
     start_cmd = "cd " + dp_path + " && " + sys.executable \
                 + " utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -r \"" \
-                + f"python3 run_inference.py" \
+                + f"python3 " + main_execute \
                 + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
                 + f" --loglevel " + getattr(config, "FLAGPERF_LOG_LEVEL") \
                 + f" --vendor " + getattr(config, "VENDOR") \

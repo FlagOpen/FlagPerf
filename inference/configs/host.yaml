@@ -12,5 +12,6 @@ ACCE_CONTAINER_OPT: " --gpus all"
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
+USE_SPECIAL_MAIN: True
 CASES: 
     "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
