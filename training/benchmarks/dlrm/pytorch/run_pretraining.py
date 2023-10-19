@@ -101,8 +101,8 @@ def main() -> Tuple[Any, Any]:
     training_state.train_time_start_ts = train_start_time
 
     # 训练过程
-    epoch = 0
-    while not training_state.end_training:
+    epoch = 1
+    while not training_state.end_training and epoch <= config.max_epoch:
         training_state.epoch = epoch
         trainer.train_one_epoch(train_dataloader)
         epoch += 1
