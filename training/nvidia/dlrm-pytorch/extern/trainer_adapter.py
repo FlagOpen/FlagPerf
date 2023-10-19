@@ -137,7 +137,7 @@ def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
                            batch_sizes_per_gpu).squeeze()
             loss = loss_fn(output,
                            click[batch_indices[rank]:batch_indices[rank + 1]])
-            grad_scaler.scale(loss).backward()
+        grad_scaler.scale(loss).backward()
         return loss
 
     def zero_grad(model):
