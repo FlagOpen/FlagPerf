@@ -2,13 +2,13 @@ import numpy as np
 
 
 from .distributed import DistributedDlrm
-from utils.distributed import get_gpu_batch_sizes, get_device_mapping, is_main_process, is_distributed
+from utils.distributed import get_gpu_batch_sizes, get_device_mapping, is_main_process, is_distributed, get_rank
 
 from dataloaders.utils import prefetcher, get_embedding_sizes
 
 def create_model(args, device, device_mapping, feature_spec):
-    rank = args.local_rank
-    bottom_mlp_sizes = args.bottom_mlp_sizes if args.local_rank == device_mapping['bottom_mlp'] else None
+    rank = get_rank()
+    bottom_mlp_sizes = args.bottom_mlp_sizes if rank == device_mapping['bottom_mlp'] else None
     world_embedding_sizes = get_embedding_sizes(feature_spec, max_table_size=args.max_table_size)
     world_categorical_feature_sizes = np.asarray(world_embedding_sizes)
      # Embedding sizes for each GPU

@@ -9,12 +9,11 @@ from apex import optimizers as apex_optim
 from utils.distributed import is_distributed, is_main_process, get_rank
 from utils.utils import LearningRateScheduler
 from dataloaders.utils import get_embedding_sizes
-
 from .model.network.embeddings import Embeddings, JointEmbedding, MultiTableEmbeddings, FusedJointEmbedding, JointSparseEmbedding
 from .model.distributed import DistributedDlrm
 
 
-class CudaGraphWrapper:
+class TrainerWrapper:
 
     def __init__(self,
                  model,
@@ -45,7 +44,7 @@ class CudaGraphWrapper:
         return self.loss
 
 
-def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
+def get_trainer_wrapper(model, config, embedding_optimizer, mlp_optimizer,
                            loss_fn, grad_scaler):
 
     def parallelize(model):
@@ -92,7 +91,7 @@ def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
                 for param in param_group['params']:
                     param.grad = None
 
-    trainWrapper = CudaGraphWrapper(
+    trainWrapper = TrainerWrapper(
         model,
         forward_backward,
         parallelize,
@@ -200,6 +199,7 @@ def create_grad_scaler(args):
     scaler = torch.cuda.amp.GradScaler(enabled=args.amp,
                                        growth_interval=int(1e9))
     return scaler
+
 
 
 def create_scheduler(args, mlp_optimizer, embedding_optimizer):

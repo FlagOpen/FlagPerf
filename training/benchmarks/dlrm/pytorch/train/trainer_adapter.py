@@ -1,7 +1,6 @@
 # Copyright (c) 2023 BAAI. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
-import torch
 from torch.optim import Optimizer
 from torch import nn, Tensor
 from driver.dist_pytorch import main_proc_print, is_dist_avail_and_initialized
@@ -13,14 +12,16 @@ import config
 def create_model(args, device, device_mapping, feature_spec):
     pass
 
-
 def create_mlp_optimizer(model, args):
     pass
-    
+  
+def create_grad_scaler(args):
+    pass
+
 def create_scheduler(args, mlp_optimizer, embedding_optimizer):
     pass
 
-def get_cuda_graph_wrapper(model, config, embedding_optimizer, mlp_optimizer,
+def get_trainer_wrapper(model, config, embedding_optimizer, mlp_optimizer,
                            loss_fn, grad_scaler):
     return model
 
@@ -43,9 +44,6 @@ def model_to_ddp(model: nn.Module) -> nn.Module:
     return model
 
 
-def create_grad_scaler(args):
-    """create_grad_scaler for mixed precision training"""
-    pass
     
 
 

@@ -81,7 +81,7 @@ class Trainer:
         # Accumulating loss on GPU to avoid memcpyD2H every step
         moving_loss = torch.zeros(1, device=device)
 
-        trainerWrapper = self.adapter.get_cuda_graph_wrapper(
+        trainerWrapper = self.adapter.get_trainer_wrapper(
             model,
             config,
             self.embedding_optimizer,
@@ -99,11 +99,10 @@ class Trainer:
             no_eval_start_time = time.time()
             state.global_steps += 1
             numerical_features, categorical_features, click = next(batch_iter)
+            pure_compute_start_time = time.time()
             state.num_trained_samples = state.global_steps * \
                 dist_pytorch.global_batch_size(self.config)
             self.timer.click(synchronize=(device == 'cuda'))
-
-            pure_compute_start_time = time.time()
 
             state.global_steps = steps_per_epoch * state.epoch + step
 
@@ -122,7 +121,6 @@ class Trainer:
                                              categorical_features, click)
 
             # need to wait for the gradients before the weight update
-            torch.cuda.current_stream().wait_stream(trainerWrapper.stream)
             self.weight_update()
             moving_loss += loss
             state.pure_compute_time += time.time() - pure_compute_start_time
@@ -203,7 +201,7 @@ class Trainer:
             else:
                 state.no_eval_time += time.time() - no_eval_start_time
 
-            if (state.epoch >= config.max_epoch) or (
+            if (state.epoch > config.max_epoch) or (
                     config.max_steps
                     and state.global_steps >= config.max_steps):
                 print(
