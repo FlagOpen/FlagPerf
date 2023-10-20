@@ -47,4 +47,5 @@
 | R300两机8卡（2x8）  | fp32      | bs=8,lr=0.0001   |     |      |      |     |       |  25.5/32.0  |
 
 ### 收敛曲线
+鉴于DETR模型的训练过程非常耗时（正如原始论文所述：The new model requires extra-long training schedule and benefits from auxiliary decoding losses in the transformer），因此我们在xpu上对DETR模型的训练进行了时间上的限制。我们生成了以step为粒度的mAP值曲线，并与GPU进行了对比。下图展示了xpu与gpu在训练15个step时的mAP值对比结果。
 ![mAP](mAP.png)
