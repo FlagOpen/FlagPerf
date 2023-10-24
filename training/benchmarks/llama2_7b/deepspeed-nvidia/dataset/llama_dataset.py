@@ -3,7 +3,9 @@ import torch
 import os
 from torch.utils.data import Dataset
 
+
 class Llama2PretrainDataset(Dataset):
+
     def __init__(self, npy_file, item_length):
         data = np.load(npy_file)
         self.data = torch.from_numpy(data)
@@ -17,7 +19,9 @@ class Llama2PretrainDataset(Dataset):
 
     def __len__(self):
         return self.length // self.item_length
-        
+
+
 def get_llama_dataset(args, seqlength, datafilename):
-    dataset = Llama2PretrainDataset(os.path.join(args.data_dir, datafilename), seqlength)
+    dataset = Llama2PretrainDataset(os.path.join(args.data_dir, datafilename),
+                                    seqlength)
     return dataset

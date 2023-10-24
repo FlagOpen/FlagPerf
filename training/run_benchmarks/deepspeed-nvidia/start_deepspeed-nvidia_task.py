@@ -114,18 +114,23 @@ def main():
     train_script_path = helper.get_train_script_path(task_args)
     config_dir, config_file = helper.get_config_dir_file(task_args)
     config_file = os.path.join(config_dir, config_file)
-    
+
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
-    exec_cmd = exec_cmd + "deepspeed --num_gpus=" + str(task_args.nproc) + " run_pretraining.py"
+    exec_cmd = exec_cmd + "deepspeed --num_gpus=" + str(
+        task_args.nproc) + " run_pretraining.py"
     exec_cmd = exec_cmd + " --deepspeed --deepspeed_config ds_config.json --data_dir " + task_args.data_dir
-    exec_cmd = exec_cmd + " --flagperf_config " + config_file   
-    exec_cmd = exec_cmd + " --nproc " + str(task_args.nproc) + " --nnodes " + str(task_args.nnodes) 
-    
+    exec_cmd = exec_cmd + " --flagperf_config " + config_file
+    exec_cmd = exec_cmd + " --nproc " + str(
+        task_args.nproc) + " --nnodes " + str(task_args.nnodes)
+
     task_log_file = os.path.join(task_log_dir, "rank0.log.txt")
-    
+
     with open(task_log_file, "w") as f:
-        p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
-        p.wait() 
+        p = subprocess.Popen(exec_cmd,
+                             shell=True,
+                             stdout=f,
+                             stderr=subprocess.STDOUT)
+        p.wait()
 
 
 if __name__ == '__main__':

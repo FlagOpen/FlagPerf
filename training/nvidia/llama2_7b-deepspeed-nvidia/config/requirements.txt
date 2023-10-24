@@ -1,3 +1,2 @@
 sentencepiece
 transformers
-deepspeed

@@ -16,7 +16,9 @@ import deepspeed.comm as dist
 from model import get_llama_model
 from dataset import get_llama_dataset
 
+
 class MyLogHandler(logging.Handler, object):
+
     def __init__(self):
         logging.Handler.__init__(self)
         self.texts = []
@@ -30,7 +32,9 @@ class MyLogHandler(logging.Handler, object):
 def get_argument_parser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--local_rank", type=int, default=-1,
+    parser.add_argument("--local_rank",
+                        type=int,
+                        default=-1,
                         help="Reserved for deepspeed framework")
     parser.add_argument("--data_dir", type=str)
     parser.add_argument("--flagperf_config", type=str)
@@ -44,8 +48,10 @@ def get_argument_parser():
                         help="how many processes will run on each host.")
     return parser
 
+
 def train(model_engine, dataloader):
     model_engine.train()
+    ave_loss = 0.0
     for step, data in enumerate(dataloader):
 
         fake_data = torch.tensor(data).long()
@@ -55,8 +61,12 @@ def train(model_engine, dataloader):
         model_engine.backward(loss)
         model_engine.step()
 
+        ave_loss += loss
         if step % 10 == 0 and args.local_rank == 0:
-            print('Step {}/{}, Loss: {}'.format(step,len(dataloader),loss))
+            print('Step {}/{}, Loss: {}'.format(step, len(dataloader),
+                                                ave_loss / 10))
+            ave_loss = 0.0
+
 
 def get_deepspeed_engine(args, model_config_dir, flashattn):
     with deepspeed.zero.Init(config_dict_or_path=args.deepspeed_config,
@@ -65,10 +75,10 @@ def get_deepspeed_engine(args, model_config_dir, flashattn):
                              mpu=None):
         model = get_llama_model(model_config_dir, flashattn)
 
-    model_engine, _, _, _ = deepspeed.initialize(args=args,
-                                                 model=model,
-                                                 model_parameters=model.parameters())
+    model_engine, _, _, _ = deepspeed.initialize(
+        args=args, model=model, model_parameters=model.parameters())
     return model_engine
+
 
 def get_metric(texts):
     msg = texts[-1]
@@ -81,11 +91,11 @@ if __name__ == "__main__":
     arg_parser = get_argument_parser()
     arg_parser = deepspeed.add_config_arguments(arg_parser)
     args = arg_parser.parse_args()
-    
+
     flagperf_config = {}
     sys.path.append(os.path.dirname(args.flagperf_config))
     config_file = os.path.basename(args.flagperf_config).split('.')[0]
-    
+
     module = import_module(config_file)
 
     seqlength = getattr(module, 'seqlength')
@@ -96,15 +106,21 @@ if __name__ == "__main__":
     flashattn = getattr(module, 'flashattn')
 
     deepspeed.init_distributed()
-    model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"), flashattn)
+    model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"),
+                                        flashattn)
     dataset = get_llama_dataset(args, seqlength, datafilename)
 
     logger = logging.getLogger("DeepSpeed")
     handler = MyLogHandler()
-    logger.addHandler(handler)    
+    logger.addHandler(handler)
 
-    sampler = DistributedSampler(dataset, num_replicas=args.nproc * args.nnodes, rank=args.local_rank)
-    dataloader = DataLoader(dataset, sampler=sampler, batch_size=batchsize, pin_memory=True)
+    sampler = DistributedSampler(dataset,
+                                 num_replicas=args.nproc * args.nnodes,
+                                 rank=args.local_rank)
+    dataloader = DataLoader(dataset,
+                            sampler=sampler,
+                            batch_size=batchsize,
+                            pin_memory=True)
 
     epoch = 0
     while epoch < epochs:
@@ -119,4 +135,4 @@ if __name__ == "__main__":
             chip_tps = whole_tps / args.nproc * args.nnodes
             print("System tokens per second: ", whole_tps)
             print("Tokens/p/s: ", chip_tps)
-            print("MFU: ", chip_tps*7000000000.0*6/theoryflops)
+            print("MFU: ", chip_tps * 7000000000.0 * 6 / theoryflops)
