@@ -32,6 +32,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 |     | Pytorch  |Paddle|TensorFlow2|
 |  ----  | ----  |  ----  | ----  |
 | Nvidia GPU | ✅ |N/A  |N/A|
-
+| 天数智芯   |  ✅  | N/A |N/A|
 
 

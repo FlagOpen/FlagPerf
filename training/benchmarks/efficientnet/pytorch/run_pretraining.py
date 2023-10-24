@@ -29,6 +29,7 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.INIT_START)
+    config.distributed = dist_pytorch.get_world_size() > 1
 
     logger = model_driver.logger
     init_start_time = logger.previous_log_time
@@ -75,7 +76,7 @@ def main() -> Tuple[Any, Any]:
 
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time
+    raw_train_start_time = time.time()
 
     while training_state.epoch < config.epochs and \
             not training_state.end_training:
@@ -83,11 +84,7 @@ def main() -> Tuple[Any, Any]:
         training_state.epoch += 1
 
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time
-
-    training_state.raw_train_time = (raw_train_end_time -
-                                     raw_train_start_time) / 1e+3
-
+    training_state.raw_train_time = time.time() - raw_train_start_time
     return config, training_state
 
 
@@ -104,13 +101,33 @@ if __name__ == "__main__":
         training_perf = (global_batch_size *
                          state.global_steps) / state.raw_train_time
         finished_info = {
-            "e2e_time": e2e_time,
-            "training_images_per_second": training_perf,
-            "converged": state.converged,
-            "final_loss": state.eval_loss,
-            "final_acc1": state.eval_acc1,
-            "final_acc5": state.eval_acc5,
-            "raw_train_time": state.raw_train_time,
-            "init_time": state.init_time,
+            "e2e_time":
+            e2e_time,
+            "training_images_per_second":
+            training_perf,
+            "num_trained_samples":
+            state.num_trained_samples,
+            "global_steps":
+            state.global_steps,
+            "converged":
+            state.converged,
+            "final_loss":
+            state.eval_loss,
+            "final_acc1":
+            state.eval_acc1,
+            "final_acc5":
+            state.eval_acc5,
+            "raw_train_time":
+            state.raw_train_time,
+            "init_time":
+            state.init_time,
+            "pure_training_computing_time":
+            state.pure_compute_time,
+            "throughput(ips)_raw":
+            state.num_trained_samples / state.raw_train_time,
+            "throughput(ips)_no_eval":
+            state.num_trained_samples / state.no_eval_time,
+            "throughput(ips)_pure_compute":
+            state.num_trained_samples / state.pure_compute_time,
         }
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)

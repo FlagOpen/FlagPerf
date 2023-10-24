@@ -9,11 +9,11 @@ FlagPerf是一款面向AI异构芯片的通用基准测试平台。我们希望�
 ----------
 ### 支持列表
 
-你可以点击**模型或训练框架**来跳转到**对应case的训练脚本**，✅来跳转到**对应厂商的运行配置**。
-
 under review表示对应case的支持已开发完毕，在review中；Incoming表示正在添加或计划添加中；N/A表示不支持或尚无计划添加
 
 #### 训练列表
+
+你可以点击**模型或训练框架**来跳转到**对应case的训练脚本**，✅来跳转到**对应厂商的运行配置**。
 
 <table width="960" border="0" cellpadding="0" cellspacing="0" style='width:960pt;border-collapse:collapse;table-layout:fixed;'>
    <col width="73.60" style='mso-width-source:userset;mso-width-alt:3588;'/>
@@ -32,7 +32,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" x:str>华为昇腾</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="3" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert" style="text-decoration:none" target="_parent">BERT</a></td>
+    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert" style="text-decoration:none" target="_parent">BERT</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
@@ -43,15 +43,8 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert/paddle" style="text-decoration:none" target="_parent">Paddle</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bert-paddle" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/bert-paddle" style="text-decoration:none" target="_parent">✅</a></td>
       <td class="xl69" x:str>N/A</td>
-   </tr>
-   <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>MindSpore</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>Incoming</a></td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/cpm" style="text-decoration:none" target="_parent">CPM</a></td>
@@ -89,23 +82,16 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/144" style="text-decoration:none" target="_parent">under review</a></td>
+      <td class="xl69" x:str>under review</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2" style="text-decoration:none" target="_parent">MobileNetV2</a></td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2" style="text-decoration:none" target="_parent">MobileNetV2</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mobilenetv2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/mobilenetv2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/mobilenetv2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
       <td class="xl69" x:str>N/A</td>
-   </tr>
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>MindSpore</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>Incoming</a></td>
-   </tr>   
+   </tr> 
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
@@ -115,19 +101,12 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
       <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn" style="text-decoration:none" target="_parent">FasterRCNN</a></td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn" style="text-decoration:none" target="_parent">FasterRCNN</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/faster_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
       <td class="xl69" x:str>N/A</td>
-   </tr>
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>MindSpore</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>Incoming</a></td>
    </tr>    
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer" style="text-decoration:none" target="_parent">BigTransfer</a></td>
@@ -157,7 +136,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn" style="text-decoration:none" target="_parent">MaskRCNN</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/mask_rcnn-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
        <td class="xl69" x:str>N/A</td>
    </tr>
@@ -165,7 +144,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet" style="text-decoration:none" target="_parent">RetinaNet</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/retinanet-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
        <td class="xl69" x:str>N/A</td>
    </tr>
@@ -197,14 +176,14 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer" style="text-decoration:none" target="_parent">SwinTransformer</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
-    <td class="xl69">N/A</td>
+    <td class="xl69"><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
     <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>under review</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
@@ -218,143 +197,143 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama(7B)</td>
-    <td class="xl69" x:str>MindSpore</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>Incoming</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_7B" style="text-decoration:none" target="_parent">Llama1-7B</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_7B/paddle" style="text-decoration:none" target="_parent">Paddle(Hybrid Parallel)</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama1_7B-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr>  
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama(13B)</td>
-    <td class="xl69" x:str>MindSpore</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>Incoming</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Paddle</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_13B" style="text-decoration:none" target="_parent">Llama1-13B</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_13B/paddle" style="text-decoration:none" target="_parent">Paddle(Hybrid Parallel)</a</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama1_13B-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr>  
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GLM(6B)</td>
-    <td class="xl69" x:str>MindSpore</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_7B" style="text-decoration:none" target="_parent">GPT3-7B</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_7B/paddle" style="text-decoration:none" target="_parent">Paddle(Hybrid Parallel)</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_7B-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr>  
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_13B" style="text-decoration:none" target="_parent">GPT3-13B</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_13B/paddle" style="text-decoration:none" target="_parent">Paddle(Hybrid Parallel)</a</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_13B-paddle" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>Incoming</a></td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr>  
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small" style="text-decoration:none" target="_parent">T5_small</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/t5_small-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/t5_small-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GLM(13B)</td>
-    <td class="xl69" x:str>MindSpore</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt2" style="text-decoration:none" target="_parent">GPT2</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt2/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/gpt2-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>Incoming</a></td>
+      <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(6.7B)</td>
-    <td class="xl69" x:str>Paddle</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer_xl" style="text-decoration:none" target="_parent">Transformer XL</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer_xl/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/transformer_xl-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/transformer_xl-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr> 
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/distilbert" style="text-decoration:none" target="_parent">DistilBERT</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/distilbert/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/distilbert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/distilbert-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr> 
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/detr" style="text-decoration:none" target="_parent">DETR</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/detr/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/detr-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr>
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/longformer" style="text-decoration:none" target="_parent">Longformer</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/longformer/pytorch" style="text-decoration:none" target="_parent">PyTorch</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/longformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
+    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</a></td>
+   </tr> 
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" rowspan="4" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama2-7B</td>
+    <td class="xl69" x:str>Deepspeed(SDP)</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
       <td class="xl69" x:str>N/A</a></td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT3(13B)</td>
-    <td class="xl69" x:str>Paddle</td>
+    <td class="xl69" x:str>Pytorch-Megatron(TP)</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+      <td class="xl69" x:str>N/A</td>
+   </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>yolov5_large</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Pytorch-Megatron(PP)</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</td>
+   </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>T5_small</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</td>
+   </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>GPT2</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Aquila-7B</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</td>
+   </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>TransformerXL</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>chatGLM2-6B</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+    <td class="xl69" x:str>N/A</td>
+      <td class="xl69" x:str>N/A</td>
+   </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>whisper</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DistilBERT</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Baichuan-7B</td>
+    <td class="xl69" x:str>Hybrid Parallel</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Roberta</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DETR</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
-<tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Longformer</td>
-    <td class="xl69" x:str>PyTorch</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-      <td class="xl69" x:str>N/A</a></td>
-   </tr> 
+      <td class="xl69" x:str>N/A</td>
+   </tr>
   </table>
 
-
 #### 推理列表
+
+你可以点击**模型来跳转到**对应case的推理脚本及结果。
 
 <table width="960" border="0" cellpadding="0" cellspacing="0" style='width:960pt;border-collapse:collapse;table-layout:fixed;'>
    <col width="73.60" style='mso-width-source:userset;mso-width-alt:3588;'/>
@@ -365,120 +344,91 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
    <tr height="16.80" class="xl65" style='height:16.80pt;'>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" x:str>模型</td> 
-    <td class="xl65" x:str>精度</td>
-    <td class="xl65" x:str>英伟达tensorrt</td>
-    <td class="xl65" x:str>昆仑芯xtcl</td>
-    <td class="xl65" x:str>天数智芯ixrt</td>
+    <td class="xl65" x:str>模型</td>
+    <td class="xl65" x:str>英伟达+tensorrt/inductor</td>
+    <td class="xl65" x:str>昆仑芯+xtcl</td>
+    <td class="xl65" x:str>天数智芯+ixrt</td>
+    <td class="xl65" x:str>腾讯九霄</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/resnet50" style="text-decoration:none" target="_parent">resnet50</a></td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/resnet50" style="text-decoration:none" target="_parent">resnet50</a></td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>f16</td>
+       <td class="xl69" x:str>f16</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>✅</td>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/bertLarge" style="text-decoration:none" target="_parent">BertLarge</a></td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>W32A16</td>
     <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/bertLarge" style="text-decoration:none" target="_parent">BertLarge</a></td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/vit_l_16" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>W32A16</td>
+    <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>✅</td>
+    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/yolov5" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>f32</td>
     <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-   </tr>
-    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/vit_l_16" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-   </tr>
-    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-   </tr>
-    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/yolov5" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-   </tr>
-    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="2" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/stable_diffusion_v1_4" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/stable_diffusion_v1_4" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>f32</td>
+    <td class="xl69" x:str>N/A</td>
+       <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>✅</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-   </tr> 
-    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>SwinTransformer</td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/swinTransformer" style="text-decoration:none" target="_parent">SwinTransformer</td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>W32A16</td>
+    <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>SAM(segment anything)</td>
-    <td class="xl69" x:str>float32</td>
+    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/llama2_7b_mmlu" style="text-decoration:none" target="_parent">Llama2-7B-mmlu</td>
+    <td class="xl69" x:str>f32/f16</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/pull/209" style="text-decoration:none" target="_parent">Aquila-7B-mmlu</td>
+    <td class="xl69" x:str>fp16</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
+   </tr>
+    <tr height="16.80" style='height:16.80pt;'>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
     <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
         <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
-    <td class="xl69" x:str>float32</td>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RNNT</td>
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-   </tr>
-        <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>RNNT</td>
-    <td class="xl69" x:str>float32</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
+            <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Llama2-7B</td>
-    <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-   </tr>
-    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Aquila-7B</td>
-    <td class="xl69" x:str>float16</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Aquila-33B</td>
+    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str>N/A</td>
+    <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
 </table>
+
 
 ### 训练部署及启动说明
 
@@ -490,7 +440,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
 
 ### 贡献代码
 
-本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore共同建设中。
+本项目目前由北京智源人工智能研究院、天数智芯、百度PaddlePaddle、昆仑芯、华为昇腾、华为昇思MindSpore、摩尔线程、腾讯九霄共同建设中。
 诚邀各框架、芯片、编译器团队与个人参与！
 
 ![cooperation](assets/imgs/logos.png)

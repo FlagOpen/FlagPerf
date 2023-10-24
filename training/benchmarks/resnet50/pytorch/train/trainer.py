@@ -63,6 +63,8 @@ class Trainer:
         device = self.device
         epoch = self.training_state.epoch
         scaler = self.scaler
+        criterion = torch.nn.CrossEntropyLoss()
+        
         print("Epoch " + str(epoch + 1))
         if self.config.distributed:
             train_dataloader.batch_sampler.sampler.set_epoch(epoch)
@@ -76,6 +78,7 @@ class Trainer:
 
             batch = self.process_batch(batch, device)
 
+            dist_pytorch.barrier(self.config.vendor)
             pure_start_time = time.time()
             optimizer.zero_grad()
 
@@ -83,8 +86,6 @@ class Trainer:
             if scaler is not None:
                 with torch.cuda.amp.autocast(enabled=True):
                     output = model(images)
-
-                    criterion = torch.nn.CrossEntropyLoss()
                     loss = criterion(output, target)
 
                 scaler.scale(loss).backward()
@@ -102,6 +103,7 @@ class Trainer:
                 print("Train Step " + str(step) + "/" + str(len(data_loader)) +
                       ", Loss : " + str(float(loss)))
 
+            dist_pytorch.barrier(self.config.vendor)
             self.training_state.purecomputetime += time.time(
             ) - pure_start_time
 
@@ -126,6 +128,7 @@ class Trainer:
 
     @torch.no_grad()
     def evaluate(self, model, data_loader, device):
+        model.eval()
         acc1_total = 0.0
         steps = 0
         for step, batch in enumerate(data_loader):

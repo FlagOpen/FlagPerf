@@ -1,10 +1,7 @@
-vendor = 'kunlunxin'
-fp16 = False
+from config_common import *
 
-train_batch_size = 4
-eval_batch_size = 6
-
-dist_backend = "xccl"
+train_batch_size = 5
+eval_batch_size = 5
 
 lr = 1e-5
 weight_decay = 0.1
@@ -18,4 +15,3 @@ lr_decay_iters = 4338
 log_freq = 1
 seed = 4096
 max_samples_termination = 5553080
-training_event = None
