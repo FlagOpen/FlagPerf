@@ -109,8 +109,6 @@ benchmark_warmup_steps: int = 0
 base_device = "cuda"
 # If True the script will use Automatic Mixed Precision
 amp = True
-# Use CUDA Graphs
-cuda_graphs = True
 
 # =========================================================
 # utils

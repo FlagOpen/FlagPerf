@@ -12,7 +12,6 @@ mutable_params = [
     'dist_backend',
     'num_workers',
     'amp',
-    'cuda_graphs',
     'cudnn_benchmark',
     'cudnn_deterministic',
     'local_rank',
