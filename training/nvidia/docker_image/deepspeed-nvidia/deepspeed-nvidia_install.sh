@@ -1,2 +1,2 @@
 #!/bin/bash
-pip install deepspeed
+pip install deepspeed==0.11.1
