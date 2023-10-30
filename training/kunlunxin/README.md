@@ -77,9 +77,9 @@ R480-X8基于多芯片间高速互联技术，单机可提供高达1 Peta Ops @F
 
 经过测试的软件版本记录在每个模型适配文档的`软件环境`一节，找到xmlir与xacc的下载链接，并在`<model>/config/environment_variables.sh`结尾添加如下代码：
 ```bash
-pip install --force-reinstall https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/latest/xacc-0.1.0-cp38-cp38-linux_x86_64.whl
+pip install --no-cache-dir --no-deps --force-reinstall https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/latest/xacc-0.1.0-cp38-cp38-linux_x86_64.whl
 
-pip install --force-reinstall https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/latest/xmlir-0.0.1-cp38-cp38-linux_x86_64.whl
+pip install --no-cache-dir --no-deps --force-reinstall https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/latest/xmlir-0.0.1-cp38-cp38-linux_x86_64.whl
 ```
 
 将上述代码中的下载链接替换为README中指定版本的链接即可。
