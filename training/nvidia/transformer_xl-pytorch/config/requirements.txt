@@ -1,0 +1,4 @@
+transformers
+datasets
+psutil
+accelerate
