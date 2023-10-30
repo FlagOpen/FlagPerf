@@ -13,8 +13,8 @@
   - OS kernel版本: 5.4.0-26-generic
   - 加速卡驱动版本：4.0.25
   - Docker镜像和版本：pytorch1.12.1-cpu-ubuntu20.04:v0.01
-  - 训练框架版本：xmlir
-  - 训练编译器版本：xacc
+  - 训练框架版本：xmlir+111e7d45 [xmlir下载](https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/archives/111e7d45/xmlir-0.0.1-cp38-cp38-linux_x86_64.whl)
+  - 训练编译器版本：xacc+111e7d45 [xacc下载](https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/archives/111e7d45/xacc-0.1.0-cp38-cp38-linux_x86_64.whl)
   - 依赖软件版本：pytorch-1.12.1+cpu
 
 ### 运行情况
@@ -33,7 +33,7 @@
 | 端到端时间     | e2e_time,见“性能指标”   | 总时间+Perf初始化等时间                     |
 | 总吞吐量       | p_whole,见“性能指标”    | 实际训练样本数除以总时间(performance_whole) |
 | 训练吞吐量     | p_train,见“性能指标”    | 不包含每个epoch末尾的评估部分耗时           |
-| **计算吞吐量** | **p_core,见“性能指标”** | 不包含数据IO部分的耗时(p3>p2>p1)，单位为samples/s(seq_length=1024)|
+| 计算吞吐量     | p_core,见“性能指标” | 不包含数据IO部分的耗时(p3>p2>p1)，单位为samples/s(seq_length=1024)|
 | 训练结果       | acc,见“性能指标”    | acc任务准确率                         |                                      |
 
 * 性能指标
