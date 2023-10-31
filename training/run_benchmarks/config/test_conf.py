@@ -78,4 +78,6 @@ CASES = {
     # "transformer_xl:pytorch_1.8:A100:1:8:1": "/raid/dataset/transformer_xl/",
     # "t5_small:pytorch_1.8:A100:1:8:1": "/home/datasets_ckpt/t5_small_train",
     # "gpt2:pytorch_1.12:A100:1:8:1": "/raid/dataset/gpt2",
+
+    "longformer:pytorch:R300:1:8:1": "/raid/dataset/longformer_train",
 }
