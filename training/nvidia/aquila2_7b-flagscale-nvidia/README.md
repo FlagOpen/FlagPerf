@@ -12,8 +12,9 @@
    - 加速卡驱动版本：470.141.10
    - Docker 版本：20.10.18
    - 训练框架版本：FlagScale.git@ed55532
-   - 依赖软件版本：sentencepiece
-
+     - 值得注意的是，ed55532版本的flagscale训练框架尚未实现计算通信重叠，因此相比其他框架，降低accumulate steps会极大的降低吞吐量
+- 依赖软件版本：sentencepiece
+   
 - ##### 并行策略
 
    - 并行技术：张量、流水、数据混合并行，具体并行方案见“运行情况”章节
@@ -30,7 +31,7 @@
   1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A100x1x8.py中所写，在本case中默认为1
   2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x1x8.py中所写，在本case中默认为2048
   3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为ds_config.json中所写，在本case中默认为9
-  4. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size，简写为GBS。在本case中，data_parallel_size=world_size/TPsize/PPsize。
+  4. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size。在本case中，data_parallel_size=world_size/TPsize/PPsize。
 
 * 通用指标
 
@@ -51,6 +52,9 @@
 
 | 配置                | parallel |  fix_hp           | token/p/s | loss | mem       | MFU       |
 | ------------------- | ------ | ---------------- | ------ | ------- | --------- | --------- |
-| A800单机8卡（1x8）  | TP1PP1DP8 |  /                |  |    |  |  |
+| A800单机8卡（1x8）  | TP1PP1DP8 |  /                | 3936.8 | 4.70 | 74/80 | 53.0% |
+| A800单机8卡（1x8）  | TP8PP1DP1 |  LBS=8            | 2866.3 | 4.71 | 55/80 | 38.6% |
+| A800单机8卡（1x8）  | TP1PP8DP1 |  LBS=4       | 2093.5 | 4.02 | 57/80 | 28.2% |
+| A800单机8卡（1x8）  | TP2PP2DP2 |  LBS=4       | 3468.3 | 4.72 | 52/80 | 46.7% |
 
 
