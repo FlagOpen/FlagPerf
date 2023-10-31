@@ -42,7 +42,8 @@ if __name__ == "__main__":
 
     train_samples = int((train_tokens * epochs) // seqlength)
     mbs = batchsize
-    gbs = batchsize * args.world_size * accumulate_steps
+    gbs = batchsize * args.world_size * accumulate_steps // (tensor_parallel *
+                                                             pipeline_parallel)
 
     task_log_file = os.path.join(args.log_dir, "flagscale.log.txt")
 
@@ -64,7 +65,14 @@ if __name__ == "__main__":
                              stderr=subprocess.STDOUT)
         p.wait()
 
-    time_per_step = 4.67
+    time_per_step = -1.0
+    with open(task_log_file) as f:
+        for line in f.readlines():
+            if "elapsed time per iteration (ms): " in line:
+                info = line.split("|")[2]
+                steptime = info.split(":")[1]
+                time_per_step = float(steptime) / 1000
+
     whole_tps = gbs * seqlength / time_per_step
     chip_tps = whole_tps / args.world_size
     print("System tokens per second: ", whole_tps)
