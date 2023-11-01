@@ -16,6 +16,6 @@ def analysis_log(logpath):
             max_mem = float(max_mem)
 
     return round(max_usage / 1024.0,
-                 2), round(max_mem / 1024.0, 2), eval("32e12"), eval("128e12")
+                 2), round(max_mem / 1024.0, 2), eval("0"), eval("0")
 
 

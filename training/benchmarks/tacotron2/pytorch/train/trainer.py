@@ -2,11 +2,13 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
 
-import torch
-from torch.types import Device
+import time
 import os
 import sys
+
 import numpy as np
+import torch
+from torch.types import Device
 
 from model import create_model, create_model_config
 from model.loss.loss_function import get_loss_function
@@ -20,8 +22,6 @@ import config
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from driver import Driver, Event
-
-import torch.distributed as dist
 
 
 class Trainer:
@@ -62,15 +62,16 @@ class Trainer:
     def train_one_epoch(self, train_dataloader):
         state = self.training_state
         driver = self.driver
-        state.epoch += 1
         driver.event(Event.EPOCH_BEGIN, state.epoch)
 
         if self.config.distributed:
             self.train_dataloader.sampler.set_epoch(state.epoch)
 
+        no_eval_start_time = time.time()
 
         for batch in train_dataloader:
             self.train_one_step(batch)
+        state.no_eval_time += time.time() - no_eval_start_time
 
         val_loss, _ = self.evaluator.evaluate(self)
         state.val_loss = val_loss
@@ -78,7 +79,9 @@ class Trainer:
         epoch_data = {
             "val_loss": val_loss,
             "epoch": state.epoch,
-            "global_steps": state.global_steps
+            "global_steps": state.global_steps,
+            "num_trained_samples": state.num_mels,
+            "timestamp": int(time.time()),
         }
         print(epoch_data)
 
@@ -89,23 +92,19 @@ class Trainer:
         driver = self.driver
         state = self.training_state
         args = self.config
+        state.global_steps += 1
 
         adjust_learning_rate(self.training_state.epoch, self.optimizer,
                              args.learning_rate, args.lr_anneal_steps,
                              args.lr_anneal_factor)
 
         self.model.zero_grad()
-        x, y, _ = batch_to_gpu(batch)
+        x, y, len_x = batch_to_gpu(batch)
 
-        loss = self.adapter.calculate_loss(self.model, self.config, self.criterion, x, y)    
+        pure_compute_start_time = time.time()
 
-        if args.distributed:
-            reduced_loss = reduce_tensor(loss.data, self.world_size).item()
-        else:
-            reduced_loss = loss.item()
-
-        if np.isnan(reduced_loss):
-            raise Exception("loss is NaN")
+        loss = self.adapter.calculate_loss(self.model, self.config,
+                                           self.criterion, x, y)
 
         if args.amp:
             self.grad_scaler.scale(loss).backward()
@@ -119,13 +118,26 @@ class Trainer:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(),
                                            args.grad_clip_thresh)
             self.optimizer.step()
+        state.pure_compute_time += time.time() - pure_compute_start_time
+
+        if args.distributed:
+            reduced_loss = reduce_tensor(loss.data, self.world_size).item()
+        else:
+            reduced_loss = loss.item()
+
+        if np.isnan(reduced_loss):
+            raise Exception("loss is NaN")
 
         self.model.zero_grad(set_to_none=True)
 
         state.train_loss = reduced_loss
-        step_info = dict(step=state.global_steps, train_loss=reduced_loss)
+        state.num_mels += len_x.item() * self.world_size
+        step_info = dict(
+            step=state.global_steps,
+            train_loss=reduced_loss,
+            num_trained_samples=state.num_mels,
+        )
 
-        self.training_state.global_steps += 1
         print(f"step_info:{step_info}")
         driver.event(Event.STEP_END, state.global_steps)
 
@@ -136,7 +148,7 @@ class Trainer:
         if state.val_loss <= config.target_val_loss:
             state.converged_success()
 
-        if state.epoch > config.max_epochs:
+        if state.epoch >= config.max_epochs:
             state.end_training = True
 
         return state.end_training

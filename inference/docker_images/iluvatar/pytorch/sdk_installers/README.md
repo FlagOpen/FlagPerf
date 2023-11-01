@@ -2,6 +2,6 @@
 
 >联系邮箱: contact-us@iluvatar.com
 
-corex-installer-linux64-3.2.0-20230718_x86_64_10.2.run
+corex-installer-linux64-3.2.1.20231006.892_x86_64_10.2.run
 
 partial_install_cuda_header.tar.gz

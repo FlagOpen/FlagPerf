@@ -47,7 +47,7 @@ def main() -> Tuple[Any, Any]:
     init_helper.set_seed(config.seed, model_driver.config.vendor)
 
     world_size = dist_pytorch.get_world_size()
-    config.distributed = world_size > 1 or config.multiprocessing_distributed
+    config.distributed = world_size > 1
 
     # 构建dataset, dataloader 【train && validate】
     train_dataset = build_train_dataset(config)
@@ -93,19 +93,20 @@ def main() -> Tuple[Any, Any]:
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time  # 训练起始时间，单位为ms
+    raw_train_start_time = time.time()
 
     # 训练过程
+    training_state.epoch = 1
     while not training_state.end_training:
         trainer.train_one_epoch(train_dataloader)
+        training_state.epoch += 1
+        
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time  # 训练结束时间，单位为ms
 
     # 训练时长，单位为秒
-    training_state.raw_train_time = (raw_train_end_time -
-                                     raw_train_start_time) / 1e+3
+    training_state.raw_train_time = time.time() - raw_train_start_time
 
     return config, training_state
 
@@ -119,18 +120,33 @@ if __name__ == "__main__":
     # 训练信息写日志
     e2e_time = time.time() - start
     if config_update.do_train:
-        training_perf = (dist_pytorch.global_batch_size(config_update) *
-                         state.global_steps) / state.raw_train_time
         finished_info = {
-            "e2e_time": e2e_time,
-            "training_samples_per_second": training_perf,
-            "converged": state.converged,
-            "raw_train_time": state.raw_train_time,
-            "init_time": state.init_time,
-            "epoch": state.epoch,
-            "global_steps": state.global_steps,
-            "train_loss": state.train_loss,
-            "val_loss": state.val_loss,
+            "e2e_time":
+            e2e_time,
+            "converged":
+            state.converged,
+            "raw_train_time":
+            state.raw_train_time,
+            "init_time":
+            state.init_time,
+            "epoch":
+            state.epoch,
+            "global_steps":
+            state.global_steps,
+            "train_loss":
+            state.train_loss,
+            "val_loss":
+            state.val_loss,
+            "num_trained_samples":
+            state.num_mels,
+            "pure_training_computing_time":
+            state.pure_compute_time,
+            "throughput(ips)_raw":
+            state.num_mels / state.raw_train_time,
+            "throughput(ips)_no_eval":
+            state.num_mels / state.no_eval_time,
+            "throughput(ips)_pure_compute":
+            state.num_mels / state.pure_compute_time,
         }
     else:
         finished_info = {"e2e_time": e2e_time}

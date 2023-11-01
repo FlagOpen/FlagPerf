@@ -16,9 +16,10 @@ from timm.data import create_transform
 from .cached_image_folder import CachedImageFolder
 from .samplers import SubsetRandomSampler
 
+from driver import dist_pytorch
+
 try:
     from torchvision.transforms import InterpolationMode
-
 
     def _pil_interp(method):
         if method == 'bicubic':
@@ -31,7 +32,6 @@ try:
             # default bilinear, do we want to allow nearest?
             return InterpolationMode.BILINEAR
 
-
     import timm.data.transforms as timm_transforms
 
     timm_transforms._pil_interp = _pil_interp
@@ -43,21 +43,26 @@ def build_loader(config):
     # config.defrost()
     dataset_train, config.model_num_classes = build_dataset(is_train=True, config=config)
     # config.freeze()
-    print(f"local rank {config.local_rank} / global rank {dist.get_rank()} successfully build train dataset")
+    # bugfix for single-card training
+    if dist_pytorch.is_dist_avail_and_initialized():
+        print(f"local rank {config.local_rank} / global rank {dist.get_rank()} successfully build train dataset")
     dataset_val, _ = build_dataset(is_train=False, config=config)
-    print(f"local rank {config.local_rank} / global rank {dist.get_rank()} successfully build val dataset")
 
-    num_tasks = dist.get_world_size()
-    global_rank = dist.get_rank()
+    # bugfix for single-card training
+    if dist_pytorch.is_dist_avail_and_initialized():
+        print(f"local rank {config.local_rank} / global rank {dist.get_rank()} successfully build val dataset")
+
+    num_tasks = dist.get_world_size() if dist_pytorch.is_dist_avail_and_initialized() else 1
+    global_rank = dist.get_rank() if dist_pytorch.is_dist_avail_and_initialized() else 0
     if config.data_zip_mode and config.data_cache_mode == 'part':
-        indices = np.arange(dist.get_rank(), len(dataset_train), dist.get_world_size())
+        indices = np.arange(global_rank, len(dataset_train), num_tasks)
         sampler_train = SubsetRandomSampler(indices)
     else:
         sampler_train = torch.utils.data.DistributedSampler(
             dataset_train, num_replicas=num_tasks, rank=global_rank, shuffle=True
         )
 
-    if config.test_sequential:
+    if config.test_sequential or num_tasks == 1:
         sampler_val = torch.utils.data.SequentialSampler(dataset_val)
     else:
         sampler_val = torch.utils.data.distributed.DistributedSampler(
