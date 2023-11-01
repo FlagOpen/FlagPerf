@@ -1,4 +1,4 @@
-FROM registry.baidubce.com/paddlepaddle/paddle:2.5.2-gpu-cuda11.7-cudnn8.4-trt8.4
+FROM registry.baidubce.com/paddlepaddle/paddle:2.5.1-gpu-cuda11.7-cudnn8.4-trt8.4
 RUN /bin/bash -c "uname -a"
 RUN pip3 uninstall -y pylint
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
