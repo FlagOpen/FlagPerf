@@ -16,15 +16,15 @@ Some of the files in this directory were modified by BAAI in 2023 to support Fla
 
 #### 数据集下载地址
 
- ● 下载地址：`https://drive.google.com/drive/folders/1cywmDnAsrP5-2vsr8GDc6QUc7VWe-M3v`
+ ● 下载地址：`https://model.baai.ac.cn/model-detail/100097`，下载其中的：
 
 ```
 文件列表：
-results_text.tar.gz
-bert_reference_results_text_md5.txt
+openwebtext_bert_10M.npy
+openwebtext_bert_100M.npy
 ```
 
-* 解压后将eval.txt放置在<data_dir>目录下
+* 解压后将两个文件放置在<data_dir>目录下
 
 #### 预训练权重 
 

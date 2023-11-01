@@ -15,7 +15,8 @@ cudnn_deterministic: bool = True
 seq_length = 512
 mask_ratio = 0.10
 weight_dir = "weights"
-dataset_file = "eval.txt"
+datafilename = "openwebtext_bert_100M.npy"
+valdatafilename = "openwebtext_bert_10M.npy"
 train_val_ratio = 0.1
 
 # =========================================================
@@ -30,8 +31,8 @@ train_batch_size: int = 8
 eval_batch_size: int = 8
 gradient_accumulation_steps: int = 4
 
-target_acc1: float = 0.68
-max_epoch: int = 10
+target_acc1: float = 0.655
+max_epoch: int = 3
 
 do_train = True
 fp16 = False
