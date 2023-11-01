@@ -391,21 +391,19 @@ def main():
 
     # Training
     dist_paddle.barrier()
-    try:
-        if training_args.do_train:
-            train_result = trainer.train(resume_from_checkpoint=checkpoint)
-            metrics = train_result.metrics
-            trainer.save_model()
-            trainer.log_metrics("train", metrics)
-            trainer.save_metrics("train", metrics)
-            trainer.save_state()
-            training_state.raw_train_time = metrics["train_runtime"]
-            training_state.training_sequences_per_second = metrics["train_samples_per_second"]
-            training_state.loss = metrics["train_loss"]
-            training_state.effective_tokens_per_second = total_effective_tokens / metrics["train_runtime"]
-    except:
-        training_state.end_training = False
-        
+    if training_args.do_train:
+        train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        metrics = train_result.metrics
+        trainer.save_model()
+        trainer.log_metrics("train", metrics)
+        trainer.save_metrics("train", metrics)
+        trainer.save_state()
+        training_state.raw_train_time = metrics["train_runtime"]
+        training_state.training_sequences_per_second = metrics["train_samples_per_second"]
+        training_state.loss = metrics["train_loss"]
+        training_state.effective_tokens_per_second = total_effective_tokens / metrics["train_runtime"]
+        training_state.end_training = True
+
     # End Evaluation
     # dist_paddle.barrier()
     # eval_metrics = trainer.evaluate()
