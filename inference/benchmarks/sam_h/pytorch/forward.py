@@ -84,7 +84,6 @@ def engine_forward(model, dataloader, evaluator, config):
         for step, (x, y, osize, dsize) in enumerate(dataloader):
             if config.fp16:
                 x = x.to(torch.float16)
-                y = y.to(torch.float16)
             torch_sync(config)
             core_time_start = time.time()
 
@@ -101,7 +100,7 @@ def engine_forward(model, dataloader, evaluator, config):
                 torch_sync(config)
                 core_time += time.time() - core_time_start
 
-                pred = pred[0]
+                pred = pred[1]
                 pred = pred.reshape(config.batch_size, 1, 3, 256, 256).float()
                 pred = pred.cpu()
 

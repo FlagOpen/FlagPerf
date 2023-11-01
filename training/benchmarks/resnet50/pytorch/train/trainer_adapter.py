@@ -26,7 +26,7 @@ def model_to_fp16(model: nn.Module) -> nn.Module:
     # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
     if config.fp16:
         main_proc_print(" > use fp16...")
-        model.half()
+        model.to(torch.bfloat16)
     return model
 
 

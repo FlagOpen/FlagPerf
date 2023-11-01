@@ -78,10 +78,11 @@ def main() -> Tuple[Any, Any]:
 
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time
 
     epoch = -1
     max_accuracy = 0.0
+
+    train_start_time = time.time()
     
     for epoch in range(config.train_start_epoch, config.train_epochs):
         training_state.epoch = epoch
@@ -102,10 +103,8 @@ def main() -> Tuple[Any, Any]:
     
     end_training_state = trainer.detect_training_status(training_state)
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time
 
-    training_state.raw_train_time = (raw_train_end_time -
-                                     raw_train_start_time) / 1e+3
+    training_state.raw_train_time =  time.time() - train_start_time
 
     return config, training_state
 
@@ -131,5 +130,12 @@ if __name__ == "__main__":
             "final_acc5": state.eval_acc5,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
+            "train_no_eval_time": state.no_eval_time,
+            "pure_training_computing_time": state.pure_compute_time,
+            "throughput(ips)_raw": state.num_trained_samples / state.raw_train_time,
+            "throughput(ips)_no_eval":
+            state.num_trained_samples / state.no_eval_time,
+            "throughput(ips)_pure_compute":
+            state.num_trained_samples / state.pure_compute_time,
         }
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
