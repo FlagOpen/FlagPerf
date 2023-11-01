@@ -4,8 +4,6 @@
 
 import os
 import os.path as ospath
-from .dist_pytorch import global_batch_size
-
 
 def get_config_arg(config, name):
     if hasattr(config, name):

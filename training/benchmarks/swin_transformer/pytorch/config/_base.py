@@ -4,6 +4,8 @@
 vendor: str = None
 # model name
 name: str = "swin_transformer"
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
 
 # -----------------------------------------------------------------------------
 # Data settings
