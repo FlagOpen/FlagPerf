@@ -1,0 +1,3 @@
+fp16: false
+compiler: xtcl
+no_validation: true

@@ -36,8 +36,6 @@ Repo README：repo根目录下，一般无需修改
 ├── docs
 │   └── dev
 │       └── run_pretraining.example.py  # run_pretraining模版
-├── flagperf_wechat.png
-├── logo.png
 └── training
     ├── benchmarks
     │   ├── driver

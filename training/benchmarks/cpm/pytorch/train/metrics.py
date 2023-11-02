@@ -1,12 +1,6 @@
-from __future__ import division
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
-
 import numpy as np
 import collections
 
-import torch
 
 __all__ = [
     "CorpusLevelScore",

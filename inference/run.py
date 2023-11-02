@@ -272,7 +272,7 @@ def start_monitors_in_cluster(dp_path, case_log_dir, nnodes):
 
     ven_mon_path = os.path.join(dp_path, "docker_images", config.VENDOR,
                                 config.VENDOR + "_monitor.py")
-    start_mon_cmd = "cd " + dp_path + " && " + sys.executable \
+    start_mon_cmd = "cd " + dp_path + " && sudo " + sys.executable \
                     + " " + ven_mon_path + " -o restart -l "
     logger.debug("Run cmd in the cluster to start vendor's monitors: " +
                  start_mon_cmd)
@@ -299,7 +299,7 @@ def stop_monitors_in_cluster(dp_path, nnodes):
 
     ven_mon_path = os.path.join(dp_path, "docker_images", config.VENDOR,
                                 config.VENDOR + "_monitor.py")
-    stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
+    stop_mon_cmd = "cd " + dp_path + " && sudo " + sys.executable \
                    + " " + ven_mon_path + " -o stop"
     logger.debug("Run cmd in the cluster to stop vendor's monitors: " +
                  stop_mon_cmd)
@@ -336,7 +336,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
                 + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
                 + f" --loglevel " + getattr(config, "FLAGPERF_LOG_LEVEL") \
                 + f" --vendor " + getattr(config, "VENDOR") \
-                + f" --case " + getattr(config, "MODEL")  \
+                + f" --case " + case_config["model"]  \
                 + f" --data_dir " + case_config["data_dir_container"] \
                 + f" --framework " + case_config["framework"] \
                 + f" --log_dir " + curr_log_path  + " 2>&1 | tee "+curr_log_path+"/stdout_err.out.log" + "\""
@@ -446,10 +446,15 @@ def compilation_result(case_log_path, config):
 
     vendor_module = importlib.import_module("docker_images." + config.VENDOR +
                                             "." + config.VENDOR + "_analysis")
-    vendor_usage, vendor_maxmem = vendor_module.analysis_log(vendor_usage_path)
+    vendor_usage, vendor_maxmem, fp32, fp16 = vendor_module.analysis_log(
+        vendor_usage_path)
 
     case_perf["vendor_usage(GiB)"] = vendor_usage
     case_perf["vendor_max_mem(GiB)"] = vendor_maxmem
+
+    theory = fp32 if case_perf["precision"] == "fp32" else fp16
+    mfu = case_perf["flops"] / theory
+    case_perf["*MFU"] = str(round(mfu * 100, 1)) + "%"
 
     for key in case_perf.keys():
         padding_str = str(key).ljust(43) + " : " + str(

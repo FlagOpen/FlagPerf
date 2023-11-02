@@ -14,45 +14,35 @@
   - OS版本：Ubuntu 20.04
   - OS kernel版本: 5.4.0-26-generic
   - 加速卡驱动版本：4.0.25
-  - Docker镜像和版本：pytorch1.12.1-cpu-ubuntu18.04:v0.04
-  - 训练框架版本：xmlir+e70db8f6
+  - Docker镜像和版本：pytorch1.12.1-cpu-ubuntu20.04:v0.01
+  - 训练框架版本：xmlir+111e7d45  【[xmlir下载](https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/archives/111e7d45/xmlir-0.0.1-cp38-cp38-linux_x86_64.whl)】
+  - 训练编译器版本：xacc+111e7d45  【[xacc下载](https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/archives/111e7d45/xacc-0.1.0-cp38-cp38-linux_x86_64.whl)】
   - 依赖软件版本：pytorch-1.12.1+cpu
 
-### 测试运行方法
+#### 运行情况
 
-修改`FlagPerf/training/run_benchmarks/config/test_conf.py`文件里的配置项：
+* 通用指标
 
-```python
-VENDOR = "kunlunxin"
+| 指标名称       | 指标值                         | 特殊说明                                    |
+| -------------- | ------------------------------ | ------------------------------------------- |
+| 任务类别       | 通用语言模型             |                                             |
+| 模型           | glm                            |                                             |
+| 数据集         | ReCoRD              |                                             |
+| 数据精度       | precision,见“性能指标”         | 可选fp32/amp/fp16                           |
+| 超参修改       | fix_hp,见“性能指标”            | 跑满硬件设备评测吞吐量所需特殊超参          |
+| 硬件设备简称   | R300                          |                                             |
+| 硬件存储使用   | mem(actual/total),见“性能指标” | 通常称为“显存”,单位为GiB                    |
+| 端到端时间     | e2e_time,见“性能指标”          | 总时间+Perf初始化等时间                     |
+| 总吞吐量       | p_whole,见“性能指标”           | 实际训练样本数除以总时间(performance_whole) |
+| 训练吞吐量     | p_train,见“性能指标”           | 不包含每个epoch末尾的评估部分耗时           |
+| **计算吞吐量** | **p_core,见“性能指标”**        | 不包含数据IO部分的耗时(p3>p2>p1)            |
+| 训练结果       | acc,见“性能指标”               | 分类准确率(mlm_accuracy)                    |
+| 额外修改项     | 无                             |                                             |
 
-ACCE_CONTAINER_OPT = " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
-    " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
-    " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+* 性能指标
 
-ACCE_VISIBLE_DEVICE_ENV_NAME = "XPU_VISIBLE_DEVICES"
-
-CASES = [
-    "GLM_TORCH_DEMO_R300_1X1",
-    "GLM_TORCH_DEMO_R300_1X2",
-    "GLM_TORCH_DEMO_R300_1X4",
-    "GLM_TORCH_DEMO_R300_1X8",
-    "GLM_TORCH_DEMO_R300_2X8"
-]
-```
-
-剩余步骤按照项目根目录文档下的[“快速启动”](../../../README.md#快速启动)章节进行。
-
-
-### 运行情况参考
-
-| 训练资源 | 配置文件        | 运行时长(s) | 目标精度 | 收敛精度 | Steps数 | 性能(samples/s) |
-|---------| --------------- | ----------- | -------- | -------- | ------- | ---------------- |
-| 单机1卡  | config_R300x1x1 | 121371.25| 0.8 | 0.8021   | 14400(fp32)| 0.50 |
-| 单机2卡  | config_R300x1x2 | 106709.60| 0.8 | 0.8085   | 12000(fp32)| 0.92 |
-| 单机4卡  | config_R300x1x4 | 44162.12 | 0.8 | 0.8027   | 4800(fp32) | 1.79 |
-| 单机8卡  | config_R300x1x8 | 22902.82 | 0.8 | 0.8003   | 2400(fp32) | 3.47 |
-| 两机8卡  | config_R300x2x8 | 16217.80 | 0.8 | 0.8012   | 1500(fp32) | 6.08 |
-
-### 许可证
-
-Apache 2.0 license。
+| 配置                | precision | fix_hp           | e2e_time | p_whole | p_train | p_core | acc   | mem       |
+| ------------------- | --------- | ---------------- | -------- | ------- | ------- | ------ | ----- | --------- |
+| R300单机单卡（1x1） | fp32      | bs=4,lr=1e-05    |          |         |         |         |  80.52%      | 31.8/32.0        |
+| R300单机8卡（1x8）  | fp32      | bs=5,lr=1e-05   |           |        |        |        |  80.52%|  31.8/32.0 |
+| R300两机8卡（2x8）  | fp32      | bs=4,lr=1e-05   |           |         |         |         | 80.31%      | 31.7/32.0 |

@@ -69,6 +69,8 @@ class InitHelper:
         elif lower_vendor == "kunlunxin":
             import torch
             torch.manual_seed(seed)
+            import torch_xmlir
+            torch_xmlir.xpu.manual_seed_all(seed)
         elif lower_vendor == "ascend":
             import mindspore
             mindspore.set_seed(seed)
