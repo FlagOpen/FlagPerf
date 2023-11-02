@@ -105,5 +105,6 @@ CASES = {
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2"
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "glm:pytorch:R300:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
 }
 
