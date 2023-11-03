@@ -77,6 +77,8 @@ class Trainer:
         step_start_time = time.time()
         epoch_start_num_sample = state.num_trained_samples
 
+        no_eval_start = time.time()
+
         if dist_pytorch.is_dist_avail_and_initialized():
             dataloader.sampler.set_epoch(state.epoch)
         for batch_idx, batch in enumerate(dataloader):
@@ -101,6 +103,8 @@ class Trainer:
                 loss_scale = self.optimizer.loss_scaler.loss_scale
                 other_state['loss_scale'] = loss_scale
 
+            state.no_eval_time += time.time() - no_eval_start
+
             eval_result = None
             if self.can_do_eval(state):
                 eval_start = time.time()
@@ -122,6 +126,8 @@ class Trainer:
 
             if eval_result is not None:
                 driver.event(Event.EVALUATE, eval_result)
+
+            no_eval_start = time.time()
 
             if end_training:
                 break
@@ -153,6 +159,9 @@ class Trainer:
         batch = self.process_batch(batch, self.config.device)
         state = self.training_state
         self.model.train()
+
+        pure_compute_start = time.time()
+        
         state.loss, state.acc1, state.acc5 = self.forward(batch)
         self.adapter.backward(self.config, state.global_steps, state.epoch,
                               state.loss, self.model, self.optimizer,
@@ -164,6 +173,7 @@ class Trainer:
             dist.all_reduce(total, dist.ReduceOp.SUM, async_op=False)
             total = total / dist.get_world_size()
             state.loss, state.acc1, state.acc5 = total.tolist()
+        state.pure_compute_time += time.time() - pure_compute_start
         self.driver.event(Event.BACKWARD, state.global_steps, state.loss,
                           self.optimizer, self.scaler)
 
