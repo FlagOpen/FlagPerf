@@ -1,2 +1,4 @@
-export XACC_ENABLE=1
+export XACC=1
+
 export BKCL_PCIE_RING=1
+export BKCL_TIMEOUT=1800
