@@ -1,4 +1,4 @@
 # TODO modify Dockerfile when ready to publish
-FROM sh-harbor.mthreads.com/mt-ai/flagperf-musa-pytorch:test_git8ea3501_env0.16
-
+FROM musa-pytorch:flagperf-py38
 ENV PATH /opt/conda/envs/py38/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/musa/lib/:$LD_LIBRARY_PATH
