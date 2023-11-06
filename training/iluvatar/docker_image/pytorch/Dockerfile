@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN /bin/bash -c "source /root/.bashrc"
 
@@ -37,7 +37,7 @@ RUN apt-get install -y --fix-missing \
      
 
 # Configure anaconda
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64.sh && \
+RUN wget https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64.sh && \
     bash ./Miniconda3-py38_4.10.3-Linux-x86_64.sh -b -p /root/miniconda && \
     /root/miniconda/bin/conda clean -tipsy && \
     ln -s /root/miniconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
