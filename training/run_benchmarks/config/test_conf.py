@@ -105,6 +105,7 @@ CASES = {
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2"
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "mask_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
     # "transformer_xl:pytorch:R300:1:8:1": "/raid/dataset/transformer_xl/",
     # "faster_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017",
