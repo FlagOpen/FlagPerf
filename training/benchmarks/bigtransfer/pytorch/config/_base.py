@@ -5,6 +5,11 @@ vendor: str = "nvidia"
 data_dir: str = None
 name: str = "bigtransfer"
 
+# torch.backends.cudnn.benchmark
+cudnn_benchmark: bool = False
+# torch.backends.cudnn.deterministic
+cudnn_deterministic: bool = True
+
 # Optional paramters
 
 # =========================================================
@@ -36,7 +41,8 @@ train_batch_size: int = batch_size
 eval_batch_size: int = batch_size
 
 target_mAP: float = 0.83
-max_steps: int = 40000
+# max_steps: int = 40000
+max_steps: int = 50
 # step per epoch=1281167/global batchsize
 # 40000 steps with bs==24 1*8 are 4 epoch
 # indeed, transfer model should only fine-tune 1 epoch
@@ -47,10 +53,7 @@ distributed: bool = True
 # utils
 # =========================================================
 seed: int = 0
-# torch.backends.cudnn.benchmark
-cudnn_benchmark: bool = False
-# torch.backends.cudnn.deterministic
-cudnn_deterministic: bool = True
+
 
 dist_backend: str = 'nccl'
 num_workers: int = 8
