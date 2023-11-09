@@ -21,6 +21,10 @@ class TrainingState:
     init_time: float = 0
     raw_train_time: float = 0
 
+    raw_train_time = 0
+    no_eval_time = 0
+    pure_compute_time = 0
+
     global_steps: int = 0
     total_tokens: int = 0
 
