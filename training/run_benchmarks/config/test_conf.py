@@ -111,6 +111,7 @@ CASES = {
     # "faster_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017",
     # "transformer_xl:pytorch:R300:1:8:1": "/raid/dataset/transformer_xl/",
     # "glm:pytorch:R300:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    # "mobilenetv2:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
 }
 
