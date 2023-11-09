@@ -17,7 +17,7 @@ for installer in $search_sdk_results; do
 done
 
 torch_packages_results=`find ${PKG_DIR} -name "torch-*.whl"`
-if [-n "$torch_packages_results"]; then    
+if [ -n "$torch_packages_results" ]; then    
     pip3 install "$torch_packages_results"
 fi
 

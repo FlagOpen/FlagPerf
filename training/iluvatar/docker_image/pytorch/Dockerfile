@@ -1,5 +1,8 @@
 FROM ubuntu:20.04
 
+# copy /etc/apt/source.list . or choose an available one if encountering a problem with the mirror source
+# ADD sources.list /etc/apt/
+
 RUN /bin/bash -c "source /root/.bashrc"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -33,7 +36,9 @@ RUN apt-get install -y --fix-missing \
      pbzip2 \
      pv \
      numactl \
-     ninja-build 
+     ninja-build \
+     gcc-7 \
+     g++-7
      
 
 # Configure anaconda
@@ -49,6 +54,8 @@ RUN wget https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-py38
 
 
 RUN /bin/bash -c "apt-get install -y linux-headers-`uname -r`"
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 10 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
 RUN /bin/bash -c "pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple"
 
