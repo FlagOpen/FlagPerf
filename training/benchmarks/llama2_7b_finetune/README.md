@@ -12,7 +12,7 @@ Llama 2, a collection of pretrained and fine-tuned large language models (LLMs) 
 
 下载后路径填写至【model_name】 字段，具体位置FlagPerf/training/nvidia/llama2_7b_finetune-pytorch/config/config_A100x1x1.py
 
-需要将llama2的max_position_embedding从2048修改为4096。原始的2048是huggingface transformer库的bug。
+需要将llama2的max_position_embedding从2048修改为实际使用值。本项目中Nvidia版本代码为512。
 
 ## 数据准备
 

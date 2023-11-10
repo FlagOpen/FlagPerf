@@ -15,6 +15,7 @@ def get_llama_dataset(train_config):
     dataset_config = generate_dataset_config()
     path = train_config.data_dir + train_config.dataset_dir
     dataset_train = get_preprocessed_dataset(
+        train_config,
         path,
         tokenizer,
         dataset_config,
@@ -22,6 +23,7 @@ def get_llama_dataset(train_config):
     )
 
     dataset_val = get_preprocessed_dataset(
+        train_config,
         path,
         tokenizer,
         dataset_config,
@@ -69,7 +71,7 @@ class Concatenator(object):
         return result
 
 
-def get_preprocessed_samsum(path, tokenizer, split):
+def get_preprocessed_samsum(train_config, path, tokenizer, split):
     # dataset = datasets.load_dataset("samsum", split=split)
     dataset = datasets.load_dataset(path=path, split=split)
     prompt = (
@@ -93,7 +95,7 @@ def get_preprocessed_samsum(path, tokenizer, split):
         lambda sample: tokenizer(sample["text"]),
         batched=True,
         remove_columns=list(dataset.features),
-    ).map(Concatenator(), batched=True)
+    ).map(Concatenator(chunk_size=train_config.seq_length), batched=True)
     return dataset
 
 
@@ -102,7 +104,7 @@ class samsum_dataset:
     dataset: str = "samsum_dataset"
     train_split: str = "train"
     test_split: str = "validation"
-    input_length: int = 4096
+    input_length: int = 512
 
 
 def generate_dataset_config():
@@ -110,7 +112,9 @@ def generate_dataset_config():
     return dataset_config
 
 
-def get_preprocessed_dataset(path,
+def get_preprocessed_dataset(
+                             train_config,
+                             path,
                              tokenizer,
                              dataset_config,
                              split: str = "train"):
@@ -120,6 +124,7 @@ def get_preprocessed_dataset(path,
                 if split == "train" else dataset_config.test_split)
 
     return get_preprocessed_samsum(
+        train_config,
         path,
         tokenizer,
         get_split(),
