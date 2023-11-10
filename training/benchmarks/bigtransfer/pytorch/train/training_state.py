@@ -15,8 +15,12 @@ class TrainingState:
     end_training: bool = False
     converged: bool = False
 
+    num_trained_samples: int = 0
+
     init_time = 0
     raw_train_time = 0
+    no_eval_time = 0.0
+    pure_compute_time = 0.0
 
     def converged_success(self):
         """converged success"""

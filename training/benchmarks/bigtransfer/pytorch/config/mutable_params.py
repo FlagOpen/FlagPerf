@@ -9,6 +9,7 @@ mutable_params = [
     'momentum',
     'lr_steps',
     'lr_gamma',
+    'batch_size',
     'train_batch_size',
     'eval_batch_size',
     'fp16',
