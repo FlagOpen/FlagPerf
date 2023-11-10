@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-# copy /etc/apt/source.list . or choose an available one if encountering a problem with the mirror source
+# copy /etc/apt/sources.list . or choose an available one if encountering a problem with the mirror source
 # ADD sources.list /etc/apt/
 
 RUN /bin/bash -c "source /root/.bashrc"
