@@ -154,7 +154,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69"><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/swin_transformer-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
    </tr>
-<tr height="16.80" style='height:16.80pt;'>
+<!-- <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>DLRM</td>
     <td class="xl69" x:str>PyTorch</td>
     <td class="xl69" x:str>under review</td>
@@ -167,7 +167,7 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>Incoming</td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
-   </tr> 
+   </tr>  -->
 <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" height="33.60" rowspan="1" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_7B" style="text-decoration:none" target="_parent">Llama1-7B</a></td>
     <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_7B/paddle" style="text-decoration:none" target="_parent">Paddle(Hybrid Parallel)</a></td>
@@ -246,14 +246,9 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>Incoming</td>
    </tr> 
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Hybrid Parallel</td>
-    <td class="xl69" x:str>Incoming</td>
-    <td class="xl69" x:str>N/A</td>
-    <td class="xl69" x:str>N/A</td>
-   </tr>
-        <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>PyTorch(lora finetune)</td>
-    <td class="xl69" x:str>under review</td>
+<tr height="16.80" style='height:16.80pt;'>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b_finetune/pytorch" style="text-decoration:none" target="_parent">PyTorch(Lora Finetune)</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b_finetune-pytorch" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
