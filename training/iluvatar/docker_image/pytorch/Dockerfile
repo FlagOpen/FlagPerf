@@ -38,7 +38,8 @@ RUN apt-get install -y --fix-missing \
      numactl \
      ninja-build \
      gcc-7 \
-     g++-7
+     g++-7 \
+     libncursesw5
      
 
 # Configure anaconda
