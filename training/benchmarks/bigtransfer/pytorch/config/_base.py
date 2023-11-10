@@ -41,8 +41,7 @@ train_batch_size: int = batch_size
 eval_batch_size: int = batch_size
 
 target_mAP: float = 0.83
-# max_steps: int = 40000
-max_steps: int = 50
+max_steps: int = 40000
 # step per epoch=1281167/global batchsize
 # 40000 steps with bs==24 1*8 are 4 epoch
 # indeed, transfer model should only fine-tune 1 epoch
