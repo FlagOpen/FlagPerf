@@ -258,21 +258,21 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" rowspan="3" style='height:33.60pt;border-right:none;border-bottom:none;' x:str>Aquila2-7B</td>
-    <td class="xl69" x:str>Megatron-flagscale(TP)</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl65" height="33.60" rowspan="3" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b" style="text-decoration:none" target="_parent">Aquila2-7B</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b/flagscale-nvidia" style="text-decoration:none" target="_parent">Megatron-flagscale(TP)</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7b-flagscale-nvidia" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
         <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Megatron-flagscale(PP)</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b/flagscale-nvidia" style="text-decoration:none" target="_parent">Megatron-flagscale(PP)</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7b-flagscale-nvidia" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl69" x:str>Megatron-flagscale(Hybrid Parallel)</td>
-    <td class="xl69" x:str>under review</td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b/flagscale-nvidia" style="text-decoration:none" target="_parent">Megatron-flagscale(Hybrid Parallel)</a></td>
+    <td class="xl69" x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7b-flagscale-nvidia" style="text-decoration:none" target="_parent">✅</a></td>
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
    </tr>
@@ -291,7 +291,6 @@ under review表示对应case的支持已开发完毕，在review中；Incoming�
     <td class="xl69" x:str>N/A</td>
    </tr>
   </table>
-
 
 #### 推理列表
 
