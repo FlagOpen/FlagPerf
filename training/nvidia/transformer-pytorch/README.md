@@ -47,8 +47,8 @@
 | 配置              | precision | fix_hp | e2e_time | p_whole | p_train | p_core | final_bleu | mem       |
 | ----------------- | --------- | ------ | -------- | ------- | ------- | ------ | ---------- | --------- |
 | A100单机8卡(1x8)  | fp32      | /      | 4337     | 296248  | 324360  | 328478 | 27.08      | 31.2/40.0 |
-| A100单机单卡(1x1) | fp32      | /      |          | 46999   | 47789   | 48398  |            | 32.6/40.0 |
-| A100两机8卡(2x8)  | fp32      | /      |          | 520689  | 582954  | 589793 |            | 37.3/40.0 |
+| A100单机单卡(1x1) | fp32      | /      | /        | 46999   | 47789   | 48398  | /          | 32.6/40.0 |
+| A100两机8卡(2x8)  | fp32      | /      | /        | 520689  | 582954  | 589793 | /          | 37.3/40.0 |
 
 
 [官方精度](https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Translation/Transformer#training-performance-nvidia-dgx-a100-8x-a100-40gb)为27.92，按照[官方配置](https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/Translation/Transformer#training-performance-nvidia-dgx-a100-8x-a100-40gb)，训完得到的精度为27.08
