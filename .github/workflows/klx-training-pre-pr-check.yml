@@ -39,7 +39,7 @@ jobs:
       # TODO: run.py should return error code while the training is failed
       - name: Run test
         run: |
-          pushd &&
+          pushd training &&
           python3 run_benchmarks/run.py &&
           popd
       - name: Restore test_conf.py and cluster_conf.py
