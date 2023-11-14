@@ -1,0 +1,48 @@
+name: klx-training-pre-pr-check
+
+on:
+  workflow_dispatch:
+    inputs:
+      case1x1:
+        description: '1x1 case name that filled into test_conf.py'
+        default: 'model:framework:hardwareID:1:1:1'
+        required: true
+      case1x8:
+        description: '1x8 case name that filled into test_conf.py'
+        default: 'model:framework:hardwareID:1:8:1'
+        required: true
+      dataset_path:
+        description: 'dataset path filled into test_conf.py'
+        default: 'dataset path'
+        required: true
+jobs:
+  run-klx-training-test:
+    runs-on: [ self-hosted, klx, r480 ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Setup test_conf.py
+        run: |
+          echo "VENDOR = 'kunlunxin'" >> training/run_benchmarks/config/test_conf.py &&
+          echo "ACCE_CONTAINER_OPT = '--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl'" >> training/run_benchmarks/config/test_conf.py &&
+          echo "ACCE_VISIBLE_DEVICE_ENV_NAME = 'XPU_VISIBLE_DEVICES'" >> training/run_benchmarks/config/test_conf.py &&
+          echo "PIP_SOURCE = 'https://pypi.tuna.tsinghua.edu.cn/simple'" &&
+          echo "FLAGPERF_PATH = '${PWD}/training'" >> training/run_benchmarks/config/test_conf.py &&
+          echo "CASES = {'${{ inputs.case1x1 }}' : '${{ inputs.dataset_path }}', '${{ inputs.case1x8 }}' : '${{ inputs.dataset_path }}' }" >> training/run_benchmarks/config/test_conf.py &&
+          cat training/run_benchmarks/config/test_conf.py
+      - name: Setup cluster_conf.py
+        run: |
+          echo "HOSTS = ['127.0.0.1']" >> training/run_benchmarks/config/cluster_conf.py &&
+          cat training/run_benchmarks/config/cluster_conf.py
+      # TODO: run.py should return error code while the training is failed
+      - name: Run test
+        run: |
+          pushd &&
+          python3 run_benchmarks/run.py &&
+          popd
+      - name: Restore test_conf.py and cluster_conf.py
+        run: |
+          git checkout training/run_benchmarks/config/test_conf.py &&
+          git checkout training/run_benchmarks/config/cluster_conf.py
