@@ -30,6 +30,7 @@ jobs:
           echo "ACCE_VISIBLE_DEVICE_ENV_NAME = 'XPU_VISIBLE_DEVICES'" >> training/run_benchmarks/config/test_conf.py &&
           echo "PIP_SOURCE = 'https://pypi.tuna.tsinghua.edu.cn/simple'" &&
           echo "FLAGPERF_PATH = '${PWD}/training'" >> training/run_benchmarks/config/test_conf.py &&
+          echo "FLAGPERF_LOG_PATH = '${PWD}/training/results/'" >> training/run_benchmarks/config/test_conf.py &&
           echo "CASES = {'${{ inputs.case1x1 }}' : '${{ inputs.dataset_path }}', '${{ inputs.case1x8 }}' : '${{ inputs.dataset_path }}' }" >> training/run_benchmarks/config/test_conf.py &&
           cat training/run_benchmarks/config/test_conf.py
       - name: Setup cluster_conf.py
