@@ -5,8 +5,6 @@ import time
 from typing import Any, Tuple
 
 # 三方库
-import numpy as np
-
 # benchmarks目录 append到sys.path
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH,
@@ -91,7 +89,7 @@ def main() -> Tuple[Any, Any]:
     # TRAIN_START
     dist_pytorch.barrier(config.vendor)
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time  # 训练起始时间，单位为ms
+    raw_train_start_time = time.time()  # 训练起始时间，单位为ms
 
     # 训练过程
     epoch = -1
@@ -103,11 +101,9 @@ def main() -> Tuple[Any, Any]:
 
     # TRAIN_END事件
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time  # 训练结束时间，单位为ms
 
     # 训练时长，单位为秒
-    training_state.raw_train_time = (raw_train_end_time -
-                                     raw_train_start_time) / 1e+3
+    training_state.raw_train_time = time.time() - raw_train_start_time
 
     return config, training_state
 
@@ -130,5 +126,10 @@ if __name__ == "__main__":
         "final_accuracy": state.eval_mAP,
         "raw_train_time": state.raw_train_time,
         "init_time": state.init_time,
+        "num_trained_samples": state.num_trained_samples,
+        "pure_training_computing_time": state.pure_compute_time,
+        "throughput(ips)_raw": state.num_trained_samples / state.raw_train_time,
+        "throughput(ips)_no_eval": state.num_trained_samples / state.no_eval_time,
+        "throughput(ips)_pure_compute": state.num_trained_samples / state.pure_compute_time,
     }
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
