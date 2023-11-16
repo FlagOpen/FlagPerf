@@ -1,0 +1,1 @@
+from .chatglm_model import get_chatglm_model
