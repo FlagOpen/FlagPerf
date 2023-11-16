@@ -118,7 +118,7 @@ jobs:
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
           cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log
-          grep "FINISHED" "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log"
+          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log"
 
       - name: 7.3 Verify 1x8 case result
         if: ${{ inputs.case1x8 != '' }}
@@ -127,4 +127,4 @@ jobs:
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
           cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log
-          grep "FINISHED" "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
+          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
