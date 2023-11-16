@@ -83,7 +83,7 @@ jobs:
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
         run: |
-          echo "At least one of case1x1 and case1x8 is not empty！" &&
+          echo "At least one of case1x1 and case1x8 is not empty!" &&
           ls non_existent_file.txt
 
       # 5. Setup cluster_conf.py
@@ -117,7 +117,7 @@ jobs:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
-          cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log
+          cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log"
 
       - name: 7.3 Verify 1x8 case result
@@ -126,5 +126,5 @@ jobs:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
-          cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log
+          cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
