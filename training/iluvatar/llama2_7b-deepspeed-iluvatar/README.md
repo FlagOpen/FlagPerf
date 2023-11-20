@@ -25,8 +25,8 @@
 ### 运行情况
 
 * 输入批尺寸
-  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A100x1x8.py中所写，在本case中默认为1
-  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x1x8.py中所写，在本case中默认为4096
+  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_BI-V100x1x8.py中所写，在本case中默认为3
+  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_BI-V100x1x8.py中所写，在本case中默认为1024
   3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为ds_config.json中所写，在本case中默认为1
   4. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size，简写为GBS。在本case中，只存在数据并行，因此data_parallel_size=world_size。
 
@@ -48,4 +48,4 @@
 
 | 配置                |  fix_hp           | token/p/s | loss | mem       | MFU       |
 | ------------------- | ---------------- | ------ | ------- | --------- | --------- |
-| A800单机8卡（1x8）  |  MPE=1024 LBS=3  | / | 4.94 | 30/32 | / |
+| BI-V800单机8卡（1x8）  |  MPE=1024 LBS=3  | / | 4.94 | 30/32 | / |
