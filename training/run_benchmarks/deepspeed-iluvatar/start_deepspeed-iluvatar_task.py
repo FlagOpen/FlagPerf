@@ -106,10 +106,10 @@ def main():
     '''Parse args and start the training task. Support DDP.
     '''
     task_args = parse_args()
-    task_args.framework = "deepspeed-nvidia"
+    task_args.framework = "deepspeed-iluvatar"
 
     task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
-    helper.write_pid_file(task_args.log_dir, "start_deepspeed-nvidia_task.pid")
+    helper.write_pid_file(task_args.log_dir, "start_deepspeed-iluvatar_task.pid")
 
     train_script_path = helper.get_train_script_path(task_args)
     config_dir, config_file = helper.get_config_dir_file(task_args)
