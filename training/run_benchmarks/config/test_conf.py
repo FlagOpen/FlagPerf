@@ -113,5 +113,25 @@ CASES = {
     # "glm:pytorch:R300:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "mobilenetv2:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "bert:pytorch:R300:1:8:1": "/raid/dataset/bert_large/train"
+
+    # iluvatar cases
+    # "resnet50:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "bert:pytorch:BI-V100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    # "mask_rcnn:pytorch:BI-V100:1:8:1": "/raid/dataset/coco2017/",
+    # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "cpm:pytorch:BI-V100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
+    # "efficientnet:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "faster_rcnn:pytorch:BI-V100:1:8:1": "/raid/dataset/coco2017",
+    # "glm:pytorch:BI-V100:1:8:1": "/raid/dataset/glm/train/",
+    # "mask_rcnn:pytorch:BI-V100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
+    # "mobilenetv2:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "retinanet:pytorch:BI-V100:1:8:1": "/raid/dataset/coco2017/",
+    # "swin_transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "tacotron2:pytorch:BI-V100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/train/",
+    # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "llama2_7b:deepspeed-iluvatar:BI-V100:1:8:1":"/raid/dataset/llama2_7b/"
+
+
 }
 
