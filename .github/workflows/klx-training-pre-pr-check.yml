@@ -5,25 +5,29 @@ on:
   workflow_dispatch:
     inputs:
       case1x1:
-        description: '1x1 case name that filled into test_conf.py (empty means not to execute)'
-        default: 'model:framework:hardwareID:1:1:1'
+        description: 'e.g. model:framework:hardwareID:1:1:1 (empty means not to execute)'
       case1x8:
-        description: '1x8 case name that filled into test_conf.py (empty means not to execute)'
-        default: 'model:framework:hardwareID:1:8:1'
+        description: 'e.g. model:framework:hardwareID:1:8:1 (empty means not to execute)'
       dataset_path:
         description: 'dataset path filled into test_conf.py'
-        default: 'dataset path'
         required: true
 jobs:
   run-klx-training-test:
     runs-on: [ self-hosted, klx, r480 ]
     steps:
+      # 0. Display inputs
+      - name: 0. Display inputs
+        run: |
+          echo "case1x1=${{ inputs.case1x1 }}" &&
+          echo "case1x8=${{ inputs.case1x8 }}" &&
+          echo "dataset_path=${{ inputs.dataset_path }}"
+
       # 1. Checkout
       - name: 1. Checkout code
         uses: actions/checkout@master
         with:
           fetch-depth: 1
-      
+
       # 2. Create tmp directory
       - name: 2.1 Retrieve the current timestamp
         id: work-timestamp
@@ -94,8 +98,25 @@ jobs:
           echo "HOSTS = ['127.0.0.1']" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py &&
           cat ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py
 
-      # 6. Run test
-      - name: 6. Run test
+      # 6.1 Get model name
+      - name: 6.1 Get model name
+        id: get-model-name
+        run: echo "MODEL_NAME=$(echo '${{ inputs.case1x1 }}' | cut -d ':' -f1)"  >> "$GITHUB_OUTPUT"
+
+      # 6.2 Generate VERSION for run.py
+      - name: 6.2 Generate VERSION for run.py
+        env:
+          WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
+        run: |
+          export SED_PATTERN="s/VERSION = \"v0.1\"/VERSION = \"v0.1_${MODEL_NAME}_${WORK_TIMESTAMP}\"/g" &&
+          echo "SED_PATTERN=${SED_PATTERN}" &&
+          sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/run_benchmarks/run.py &&
+          echo "IMAGE_NAME=flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME}_${WORK_TIMESTAMP}"
+
+      # 6.3 Run test
+      - name: 6.3 Run test
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
         run: |
@@ -128,3 +149,10 @@ jobs:
         run: |
           cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
+
+      # 8. Remove training image
+      - name: 8. Remove training image
+        env:
+          WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
+          MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
+        run: docker rmi -f flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME}_${WORK_TIMESTAMP} || true
