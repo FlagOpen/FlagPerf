@@ -10,9 +10,9 @@
 - ##### 软件环境
    - OS版本：Ubuntu 20.04
    - OS kernel版本:  4.15.0-156-generic x86_64    
-   - 加速卡驱动版本：3.0.0
+   - 加速卡驱动版本：3.1.0
    - Docker 版本：20.10.8
-   - 训练框架版本：torch-1.10.2+corex.3.0.0
+   - 训练框架版本：torch-1.13.1+corex.3.1.0
    - 依赖软件版本：无
 
 
@@ -20,7 +20,7 @@
 ### 运行情况
 | 训练资源 | 配置文件        | 运行时长(s) | 目标val_loss | 收敛val_loss | 性能(samples/s) |
 | -------- | --------------- | ----------- | ------------ | ------------ | --------------- |
-| 单机8卡  | config_BI-V100x1x8 |   38760.58  |  0.4852     |    0.4833    |     71.98      |
+| 单机8卡  | config_BI-V100x1x8 |   41211.061  |  0.4852     |    0.4833    |     58.43      |
 
 注：
 训练精度来源：https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2#results，根据官方仓库中的脚本，训练1500epoch得到val_loss=0.4852.
