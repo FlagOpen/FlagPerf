@@ -40,7 +40,6 @@
 
 | 配置               | precision|    fix_hp       | e2e_time | p_whole | p_train | p_core | val_loss | mem       |
 |--------------------| ---------| ----------------| ---------| ------- | ------- | ------ | -------- | --------- |
-| BI100单机8卡(1x8)  | tf32     | bs=64, lr=0.001 | 41220    | 33078    | 40684   | 33289  | 0.4833  | 17/32.0   |
+| BI100单机8卡(1x8)  | tf32     | bs=64, lr=0.001 | 41220    | 33082    | 33289   | 33511  | 0.4833  | 18.4/32.0  |
 
-注：
-训练精度来源：https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/SpeechSynthesis/Tacotron2#results，根据官方仓库中的脚本，训练1500epoch得到val_loss=0.4852.
+注：训练精度来源：https://github.com/FlagOpen/FlagPerf/files/13422940/iluvatar.tacotron2.1x8.zip
