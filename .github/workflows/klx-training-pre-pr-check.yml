@@ -61,12 +61,15 @@ jobs:
           cat ${TEST_CONF_FILEPATH}
 
       # 4.1 Get model name
-      - name: 6.1 Get model name
+      - name: 4.1 Get model name
         id: get-model-name
-        run: echo "MODEL_NAME=$(echo '${{ inputs.case1x1 }}' | cut -d ':' -f1)"  >> "$GITHUB_OUTPUT"
+        run: |
+          export MODEL_NAME_1x1=$(echo '${{ inputs.case1x1 }}' | cut -d ':' -f1) &&
+          export MODEL_NAME_1x8=$(echo '${{ inputs.case1x8 }}' | cut -d ':' -f1) &&
+          echo "MODEL_NAME=${MODEL_NAME_1x1:-${MODEL_NAME_1x8}}"  >> "$GITHUB_OUTPUT"
 
       # 4.2 Setup cases in test_conf.py
-      - name: 4.1 Setup 1x1 case and 1x8 case in test_conf.py
+      - name: 4.2 Setup 1x1 case and 1x8 case in test_conf.py
         if: ${{ inputs.case1x1 != '' && inputs.case1x8 != '' }}
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
