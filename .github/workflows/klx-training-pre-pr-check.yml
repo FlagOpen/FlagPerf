@@ -129,7 +129,7 @@ jobs:
           cat ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py
 
       # 6.1 Generate VERSION for run.py
-      - name: 6.2 Generate VERSION for run.py
+      - name: 6.1 Generate VERSION for run.py
         env:
           WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
@@ -141,7 +141,7 @@ jobs:
           echo "IMAGE_NAME=flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME}_${WORK_TIMESTAMP}"
 
       # 6.2 Run test
-      - name: 6.3 Run test
+      - name: 6.2 Run test
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
         run: |
