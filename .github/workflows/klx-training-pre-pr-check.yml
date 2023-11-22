@@ -55,7 +55,7 @@ jobs:
           echo "VENDOR = 'kunlunxin'" >> ${TEST_CONF_FILEPATH} &&
           echo "ACCE_CONTAINER_OPT = '--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl'" >> ${TEST_CONF_FILEPATH} &&
           echo "ACCE_VISIBLE_DEVICE_ENV_NAME = 'XPU_VISIBLE_DEVICES'" >> ${TEST_CONF_FILEPATH} &&
-          echo "PIP_SOURCE = 'https://pypi.tuna.tsinghua.edu.cn/simple'" &&
+          echo "PIP_SOURCE = 'https://pypi.tuna.tsinghua.edu.cn/simple'" >> ${TEST_CONF_FILEPATH} &&
           echo "FLAGPERF_PATH = '${WORK_DIRECTORY}/training'" >> ${TEST_CONF_FILEPATH} &&
           echo "FLAGPERF_LOG_PATH = '${WORK_DIRECTORY}/training/result/'" >> ${TEST_CONF_FILEPATH} &&
           cat ${TEST_CONF_FILEPATH}
