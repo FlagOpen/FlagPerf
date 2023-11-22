@@ -120,12 +120,13 @@ jobs:
           echo "max_samples_termination = 20" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
           cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py
 
-      # 5. Setup cluster_conf.py
-      - name: 5. Setup cluster_conf.py
+      # 5. Setup cluster_conf.py(set random master port between 25000 and 26000)
+      - name: 5. Setup cluster_conf.py(set random master port between 25000 and 26000)
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
         run: |
           echo "HOSTS = ['127.0.0.1']" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py &&
+          echo "MASTER_PORT = '$(shuf -i 25000-26000 -n 1)'" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py &&
           cat ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py
 
       # 6.1 Generate VERSION for run.py
