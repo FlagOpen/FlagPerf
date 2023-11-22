@@ -85,7 +85,7 @@ jobs:
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
         run: |
-          echo "CASES = { '${{ inputs.case1x1 }}' : '${{ inputs.dataset_path }}' }" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/test_conf.py &&
+          echo "CASES = { '${{ inputs.case1x8 }}' : '${{ inputs.dataset_path }}' }" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/test_conf.py &&
           cat ${WORK_DIRECTORY}/training/run_benchmarks/config/test_conf.py
       - name: 4.4 Setup empty cases in test_conf.py
         if: ${{ inputs.case1x1 == '' && inputs.case1x8 == '' }}
