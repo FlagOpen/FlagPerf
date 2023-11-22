@@ -60,7 +60,12 @@ jobs:
           echo "FLAGPERF_LOG_PATH = '${WORK_DIRECTORY}/training/result/'" >> ${TEST_CONF_FILEPATH} &&
           cat ${TEST_CONF_FILEPATH}
 
-      # 4. Setup cases in test_conf.py
+      # 4.1 Get model name
+      - name: 6.1 Get model name
+        id: get-model-name
+        run: echo "MODEL_NAME=$(echo '${{ inputs.case1x1 }}' | cut -d ':' -f1)"  >> "$GITHUB_OUTPUT"
+
+      # 4.2 Setup cases in test_conf.py
       - name: 4.1 Setup 1x1 case and 1x8 case in test_conf.py
         if: ${{ inputs.case1x1 != '' && inputs.case1x8 != '' }}
         env:
@@ -89,6 +94,28 @@ jobs:
         run: |
           echo "At least one of case1x1 and case1x8 is not empty!" &&
           ls non_existent_file.txt
+      
+      # 4.3 Setup config_R300x1x1.py
+      - name: 4.3 Setup config_R300x1x1.py
+        if: ${{ inputs.case1x1 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
+        run: |
+          echo "max_epoch = 1" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
+          echo "max_samples_termination = 20" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
+          cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py
+
+      # 4.4 Setup config_R300x1x8.py
+      - name: 4.4 Setup config_R300x1x8.py
+        if: ${{ inputs.case1x8 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
+        run: |
+          echo "max_epoch = 1" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
+          echo "max_samples_termination = 20" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
+          cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py
 
       # 5. Setup cluster_conf.py
       - name: 5. Setup cluster_conf.py
@@ -98,12 +125,7 @@ jobs:
           echo "HOSTS = ['127.0.0.1']" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py &&
           cat ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py
 
-      # 6.1 Get model name
-      - name: 6.1 Get model name
-        id: get-model-name
-        run: echo "MODEL_NAME=$(echo '${{ inputs.case1x1 }}' | cut -d ':' -f1)"  >> "$GITHUB_OUTPUT"
-
-      # 6.2 Generate VERSION for run.py
+      # 6.1 Generate VERSION for run.py
       - name: 6.2 Generate VERSION for run.py
         env:
           WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
@@ -115,7 +137,7 @@ jobs:
           sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/run_benchmarks/run.py &&
           echo "IMAGE_NAME=flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME}_${WORK_TIMESTAMP}"
 
-      # 6.3 Run test
+      # 6.2 Run test
       - name: 6.3 Run test
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
