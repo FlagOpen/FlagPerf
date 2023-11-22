@@ -178,6 +178,7 @@ jobs:
 
       # 8. Remove training image
       - name: 8. Remove training image
+        if: ${{ always() && (inputs.case1x1 != '' || inputs.case1x8 != '' )}}
         env:
           WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
           MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
