@@ -172,10 +172,11 @@ jobs:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
-          export SED_PATTERN="s/timestamp_log_dir = \"run\" \+ time\.strftime\(\"%Y%m%d%H%M%S\", time\.localtime\(\)\)/timestamp_log_dir = \"${RUN_RESULT_NAME}\"/g" &&
+          export SED_PATTERN="s/timestamp_log_dir = \"run\" + time.strftime(\"%Y%m%d%H%M%S\", time.localtime())/timestamp_log_dir = \"${RUN_RESULT_NAME}\"/g" &&
           echo "SED_PATTERN=${SED_PATTERN}" &&
           sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/run_benchmarks/run.py &&
-          echo "timestamp_log_dir=${RUN_RESULT_NAME}"
+          echo "timestamp_log_dir=${RUN_RESULT_NAME}" &&
+          grep ${RUN_RESULT_NAME} ${WORK_DIRECTORY}/training/run_benchmarks/run.py
 
       # 6.4 Create 1x1 result path
       - name: 6.4 Create 1x1 result path
