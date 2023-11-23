@@ -1,11 +1,13 @@
 ![FlagAI](assets/imgs/logo.png)
 ----------
-### FlagPerf是什么
+## FlagPerf是什么
 [![Lint Code Base](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml/badge.svg)](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml)
 
 **FlagPerf是智源研究院联合AI硬件厂商共建的一体化AI硬件评测引擎，旨在建立以产业实践为导向的指标体系，评测AI硬件在软件栈组合（模型+框架+编译器）下的实际能力。**
 
-### 📣 **评测方案及特性**
+## 📣 FlagPerf评测亮点
+
+![cooperation](assets/imgs/overeview.png)
 
 1. **构建多维度评测指标体系，不止关注“耗时”:**
 
@@ -35,7 +37,7 @@
 
 🎯 未来智源及众多AI硬件、框架团队还将共同拓展FlagPerf的评测场景，如开展集群性能的整体评估，以更全面的评估国产软硬件的性能。
 
-### News 
+## News 
 
 - [31 Oct 2023]支持Torch-Aquila 7B预训练，[#299](https://github.com/FlagOpen/FlagPerf/pull/136)
 - [27 Oct 2023]支持Torch-llama2 7B预训练，[#289](https://github.com/FlagOpen/FlagPerf/pull/136)
@@ -46,7 +48,7 @@
 - [6 Feb 2023]昆仑芯作为合作厂商进入共建生态 [#6](https://github.com/FlagOpen/FlagPerf/pull/6)
 - [Dec 2022]天数智芯、百度PaddlePaddle作为最早一批厂商参与初版共建开发
 
-### 支持列表
+## 支持列表
 
 训练列表：
 
@@ -358,9 +360,9 @@
         <td class="xl69" x:str>N/A</td>
     </tr></table>
 
-### 如何使用FlagPerf进行AI硬件评测
+## 如何使用FlagPerf进行AI硬件评测
 
-#### 基础环境确认
+### 基础环境确认
 
 1. 安装docker，python
 2. 确保硬件驱动、网络、硬件虚拟化等服务器基础配置齐全
@@ -368,7 +370,7 @@
    2. 确保可在容器内找到硬件
    3. 确保各服务器间root帐号的ssh信任关系和sudo免密
 
-#### 训练启动说明
+### 训练启动说明
 
 1. **下载FlagPerf并部署**
 
@@ -442,7 +444,7 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 [PerfLog] {"event": "FINISHED", "value": {"e2e_time": 1661.6114165782928, "training_sequences_per_second": 579.0933420700227, "converged": true, "final_loss": 3.066718101501465, "final_mlm_accuracy": 0.920166015625, "raw_train_time": 1501.713, "init_time": 148.937}, "metadata": {"file": "/workspace/flagperf/training/benchmarks/cpm/pytorch/run_pretraining.py", "lineno": 158, "time_ms": 1669034171646, "rank": 0}}
 ```
 
-#### 推理启动说明
+### 推理启动说明
 
 1. **下载FlagPerf并部署**
 
@@ -509,25 +511,35 @@ sudo python inference/run.py
 
 - 更多训练/推理说明见[训练文档](https://github.com/FlagOpen/FlagPerf/blob/main/training/README.md)和[推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/dev/inference-case-doc.md)
 
-### 如何参与共建FlagPerf
+## 参与共建FlagPerf
 
-- [开发者文章](https://hub.baai.ac.cn/users/43169)：更多操作教程见 docs-zh 文件夹 [4篇内部写的开发文档都在这里，可以提个PR](https://jwolpxeehx.feishu.cn/drive/folder/WfS1flnPplxwJadtU3ccUlX1nnd)
-- 参与共建大概的工作量（5个PR，列一下对应的典型场景）
-  -   为了更直观的展示厂商参与共建的实际工作量，下面给出6个已经合并进FlagPerf，面向不同特征厂商的Pull Request：
 
-  - 当某厂商**第一次参与训练**适配，需要适配的内容较多。除了适配case外，还包括厂商的dockerfile、monitor等，如https://github.com/FlagOpen/FlagPerf/pull/246
-  - 当某厂商**后续参与训练**适配时，如厂商以**cuda兼容**路线设计软硬件，典型适配case如https://github.com/FlagOpen/FlagPerf/pull/170
-  - 当某厂商**后续参与训练**适配时，如厂商**不兼容cuda**，则需要额外修改后端通信方案等等。典型适配case如https://github.com/FlagOpen/FlagPerf/pull/288。当case较复杂时，可能需要重写部分计算方式、半精度接口等，如https://github.com/FlagOpen/FlagPerf/pull/158
-  - 当某厂商**第一次参与推理**适配，需要适配的内容较多。除了适配case外，还包括厂商的dockerfile、编译器实现方式、monitor等，如https://github.com/FlagOpen/FlagPerf/pull/256
-  - 当某厂商**后续参与推理**适配时，通常不需要适配工作量、仅需运行软件完成测试。如https://github.com/FlagOpen/FlagPerf/pull/227
+> 开发者教程：更多操作教程见 [docs-zh](./docs-zh) 
 
-![cooperation](assets/imgs/logo1122.png)
+为了更直观的展示厂商参与共建的实际工作量，下面给出6个已经合并进FlagPerf，面向不同特征厂商的Pull Request。
 
-### 许可证
+1. 模型训练适配适配
+
+    - **第一次参与训练**适配工作的内容较多。除了适配模型case外，还需要适配厂商的dockerfile、monitor等，如[#246](https://github.com/FlagOpen/FlagPerf/pull/246)
+    - **后续参与训练**适配工作量较小：
+        - 如厂商以**cuda兼容**路线设计软硬件，典型适配case [#170](https://github.com/FlagOpen/FlagPerf/pull/170)
+        - 如厂商**不兼容cuda**，则需要额外修改后端通信方案等等，典型适配case [#288](https://github.com/FlagOpen/FlagPerf/pull/288)。当case较复杂时，可能需要重写部分计算方式、半精度接口等，如[#158](https://github.com/FlagOpen/FlagPerf/pull/158)。
+
+2. 模型推理适配
+
+  - **第一次参与推理**适配的工作内容较多。除了适配case外，还包括厂商的dockerfile、编译器实现方式、monitor等，如 [#256](https://github.com/FlagOpen/FlagPerf/pull/256)
+  - **后续参与推理**适配时，通常不需要适配工作量、仅需运行软件完成测试。如 [#227](https://github.com/FlagOpen/FlagPerf/pull/227)
+
+## FlagPerf合作伙伴
+
+
+![cooperation](assets/imgs/logo1123.png)
+
+## 许可证
 
 本项目基于Apache 2.0 license。 
 <br>本项目的代码来源于不同的代码仓库，关于各模型测试Case的情况，请参考各模型测试Case目录的文档。
 
-### 联系我们
+## 联系我们
 
-flagperf@baai.ac.cn
+如有疑问，可以发送邮件至flagperf@baai.ac.cn，或在[issue](https://github.com/FlagOpen/FlagPerf/issues)中说明情况
