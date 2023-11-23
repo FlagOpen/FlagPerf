@@ -195,9 +195,21 @@ jobs:
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
           mkdir -p "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/"
+      
+      # 6.6 Modify xpu_monitor.pid in training/kunlunxin/kunlunxin_monitor.py
+      - name: 6.6 Modify xpu_monitor.pid in training/kunlunxin/kunlunxin_monitor.py
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+        run: |
+          export XPU_MONITOR_PID_FILEPATH="$(realpath ${PWD}/..)/xpu_monitor.pid" &&
+          echo "pid_fn=${XPU_MONITOR_PID_FILEPATH}" &&
+          export XPU_MONITOR_PID_FILEPATH="$(echo ${XPU_MONITOR_PID_FILEPATH} | sed 's/\//\\\//g')" &&
+          export SED_PATTERN="s/pid_fn = str('\/tmp\/xpu_monitor.pid')/pid_fn = str('${XPU_MONITOR_PID_FILEPATH}')/g" &&
+          echo "SED_PATTERN=${SED_PATTERN}" &&
+          sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/kunlunxin/kunlunxin_monitor.py
 
-      # 6.6 Run test
-      - name: 6.6 Run test
+      # 6.7 Run test
+      - name: 6.7 Run test
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
         run: |
@@ -213,7 +225,7 @@ jobs:
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
           echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log" &&
-          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log"
+          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log" > /dev/null
 
       - name: 7.2 Verify 1x8 case result
         if: ${{ inputs.case1x8 != '' }}
@@ -222,9 +234,9 @@ jobs:
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
           echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log" &&
-          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
+          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log" > /dev/null
 
-      # 8.1 Fetch kunlunxin_monitor result
+      # 8.1 Fetch 1x1 kunlunxin_monitor result
       - name: 8.1 Fetch 1x1 kunlunxin_monitor result
         if: ${{ inputs.case1x1 != '' }}
         env:
@@ -232,15 +244,45 @@ jobs:
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
           cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" || true
+        
+      # 8.2 Get 1x1 kunlunxin_monitor max memory usage
+      - name: 8.2 Get 1x1 kunlunxin_monitor max memory usage
+        if: ${{ inputs.case1x1 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" | \
+          grep 'MiB' | \
+          awk '{ print $3 }' | \
+          sed "s/MiB//g" | \
+          sort -n | \
+          tail -n 1 | \
+          xargs -I{} printf "1x1 case max memory usage: {} MB\n" || true
 
-      # 8.2 Fetch kunlunxin_monitor result
-      - name: 8.2 Fetch 1x1 kunlunxin_monitor result
+      # 8.3 Fetch 1x8 kunlunxin_monitor result
+      - name: 8.3 Fetch 1x8 kunlunxin_monitor result
         if: ${{ inputs.case1x8 != '' }}
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
           cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" || true
+
+      # 8.4 Get 1x8 kunlunxin_monitor max memory usage
+      - name: 8.4 Get 1x8 kunlunxin_monitor max memory usage
+        if: ${{ inputs.case1x8 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+            cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" | \
+            grep 'MiB' | \
+            awk '{ print $3 }' | \
+            sed "s/MiB//g" | \
+            sort -n | \
+            tail -n 1 | \
+            xargs -I{} printf "1x8 case max memory usage: {} MB\n" || true
 
       # 9. Remove training container and image
       - name: 9. Remove training container and image
