@@ -543,3 +543,4 @@ sudo python inference/run.py
 ## 联系我们
 
 如有疑问，可以发送邮件至flagperf@baai.ac.cn，或在[issue](https://github.com/FlagOpen/FlagPerf/issues)中说明情况
+
