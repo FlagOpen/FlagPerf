@@ -180,10 +180,14 @@ jobs:
           echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log" &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
 
-      # 8. Remove training image
-      - name: 8. Remove training image
+      # 8. Remove training container and image
+      - name: 8. Remove training container and image
         if: ${{ always() && (inputs.case1x1 != '' || inputs.case1x8 != '' )}}
         env:
           WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
           MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
-        run: docker rmi -f flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME}_${WORK_TIMESTAMP} || true
+        run: |
+          export WORK_IMAGE_NAME=flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME:-unknown}_${WORK_TIMESTAMP:-unknown} &&
+          echo "WORK_IMAGE_NAME=${WORK_IMAGE_NAME}" &&
+          docker rm -f $(docker ps -a -q --filter ancestor=${WORK_IMAGE_NAME}) || true &&
+          docker rmi -f ${WORK_IMAGE_NAME} || true

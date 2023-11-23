@@ -17,4 +17,7 @@ jobs:
 
       - name: Remove kunlunxin training images
         if: ${{ inputs.image_name != '' }}
-        run: docker rmi -f ${{ inputs.image_name }} || true
+        run: |
+          export IMAGE_NAME=${{ inputs.image_name }} &&
+          docker rm -f $(docker ps -a -q --filter ancestor=${IMAGE_NAME}) || true &&
+          docker rmi -f ${IMAGE_NAME} || true
