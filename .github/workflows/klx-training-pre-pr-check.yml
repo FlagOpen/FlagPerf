@@ -15,6 +15,16 @@ on:
         description: 'value of PIP_SOURCE in test_conf.py'
         default: 'https://pypi.tuna.tsinghua.edu.cn/simple'
         required: true
+      max_epoch:
+        description: 'value of max_epoch in config.py'
+        type: number
+        default: 1
+        required: true
+      max_samples_termination:
+        description: 'value of max_samples_termination in config.py'
+        type: number
+        default: 10
+        required: true
 jobs:
   run-klx-training-test:
     runs-on: [ self-hosted, klx, r480 ]
@@ -35,13 +45,13 @@ jobs:
       # 2. Create tmp directory
       - name: 2.1 Retrieve the current timestamp
         id: work-timestamp
-        run: echo "WORK_TIMESTAMP=$(date +"%Y-%m%d-%H%M%S")"  >> "$GITHUB_OUTPUT"
+        run: echo "WORK_TIMESTAMP=$(date +"%Y%m%d%H%M%S")"  >> "$GITHUB_OUTPUT"
 
       - name: 2.2 Set work directory variable
         id: work-directory
         env:
           WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
-        run: echo "WORK_DIRECTORY=$(realpath ${PWD}/..)/FlagPerf-$WORK_TIMESTAMP"  >> "$GITHUB_OUTPUT"
+        run: echo "WORK_DIRECTORY=$(realpath ${PWD}/..)/FlagPerf$WORK_TIMESTAMP"  >> "$GITHUB_OUTPUT"
 
       - name: 2.3 Create work directory and copy the whole directory
         env:
@@ -109,8 +119,8 @@ jobs:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
         run: |
-          echo "max_epoch = 1" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
-          echo "max_samples_termination = 20" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
+          echo "max_epoch = ${{ inputs.max_epoch }}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
+          echo "max_samples_termination = ${{ inputs.max_samples_termination }}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
           cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py
 
       # 4.4 Setup config_R300x1x8.py
@@ -120,8 +130,8 @@ jobs:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           MODEL_NAME: ${{ steps.get-model-name.outputs.MODEL_NAME }}
         run: |
-          echo "max_epoch = 1" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
-          echo "max_samples_termination = 20" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
+          echo "max_epoch = ${{ inputs.max_epoch }}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
+          echo "max_samples_termination = ${{ inputs.max_samples_termination }}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
           cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py
 
       # 5. Setup cluster_conf.py(set random master port between 25000 and 26000)
@@ -133,8 +143,8 @@ jobs:
           echo "MASTER_PORT = '$(shuf -i 25000-26000 -n 1)'" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py &&
           cat ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py
 
-      # 6.1 Generate VERSION for run.py
-      - name: 6.1 Generate VERSION for run.py
+      # 6.1 Modify VERSION in run.py
+      - name: 6.1 Modify VERSION in run.py
         env:
           WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
@@ -145,8 +155,45 @@ jobs:
           sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/run_benchmarks/run.py &&
           echo "IMAGE_NAME=flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME}_${WORK_TIMESTAMP}"
 
-      # 6.2 Run test
-      - name: 6.2 Run test
+      # 6.2 Get run result name
+      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
+      - name: 6.2 Get run result name
+        id: run-result-name
+        env:
+          WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
+        run: echo "RUN_RESULT_NAME=run${WORK_TIMESTAMP}" >> "$GITHUB_OUTPUT"
+
+      # 6.3 Modify timestamp in run.py
+      - name: 6.3 Modify timestamp in run.py
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          export SED_PATTERN="s/timestamp_log_dir = \"run\" \+ time\.strftime\(\"%Y%m%d%H%M%S\", time\.localtime\(\)\)/timestamp_log_dir = \"${RUN_RESULT_NAME}\"/g" &&
+          echo "SED_PATTERN=${SED_PATTERN}" &&
+          sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/run_benchmarks/run.py &&
+          echo "timestamp_log_dir=${RUN_RESULT_NAME}"
+
+      # 6.4 Create 1x1 result path
+      - name: 6.4 Create 1x1 result path
+        if: ${{ inputs.case1x1 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          mkdir -p "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/"
+
+      # 6.5 Create 1x8 result path
+      - name: 6.5 Create 1x8 result path
+        if: ${{ inputs.case1x8 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          mkdir -p "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/"
+
+      # 6.6 Run test
+      - name: 6.6 Run test
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
         run: |
@@ -155,14 +202,7 @@ jobs:
           popd
 
       # 7. Verify test result
-      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
-      - name: 7.1 Get run result name
-        id: run-result-name
-        env:
-          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
-        run: echo "RUN_RESULT_NAME=$(cat ${WORK_DIRECTORY}/training/tmp_run.log | grep 'Initialize logger with log path:' | egrep -o 'run[0-9]+')"  >> "$GITHUB_OUTPUT"
-
-      - name: 7.2 Verify 1x1 case result
+      - name: 7.1 Verify 1x1 case result
         if: ${{ inputs.case1x1 != '' }}
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
@@ -171,7 +211,7 @@ jobs:
           echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log" &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log"
 
-      - name: 7.3 Verify 1x8 case result
+      - name: 7.2 Verify 1x8 case result
         if: ${{ inputs.case1x8 != '' }}
         env:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
@@ -180,8 +220,26 @@ jobs:
           echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log" &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
 
-      # 8. Remove training container and image
-      - name: 8. Remove training container and image
+      # 8.1 Fetch kunlunxin_monitor result
+      - name: 8.1 Fetch 1x1 kunlunxin_monitor result
+        if: ${{ inputs.case1x1 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" || true
+
+      # 8.2 Fetch kunlunxin_monitor result
+      - name: 8.2 Fetch 1x1 kunlunxin_monitor result
+        if: ${{ inputs.case1x8 != '' }}
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" || true
+
+      # 9. Remove training container and image
+      - name: 9. Remove training container and image
         if: ${{ always() && (inputs.case1x1 != '' || inputs.case1x8 != '' )}}
         env:
           WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
