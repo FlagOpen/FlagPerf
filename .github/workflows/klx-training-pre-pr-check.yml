@@ -34,7 +34,10 @@ jobs:
         run: |
           echo "case1x1=${{ inputs.case1x1 }}" &&
           echo "case1x8=${{ inputs.case1x8 }}" &&
-          echo "dataset_path=${{ inputs.dataset_path }}"
+          echo "dataset_path=${{ inputs.dataset_path }}" &&
+          echo "pip_source=${{ inputs.pip_source }}" &&
+          echo "max_epoch=${{ inputs.max_epoch }}" &&
+          echo "max_samples_termination=${{ inputs.max_samples_termination }}"
 
       # 1. Checkout
       - name: 1. Checkout code
