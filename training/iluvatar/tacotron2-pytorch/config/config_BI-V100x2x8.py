@@ -7,5 +7,3 @@ warmup = 0.2
 learning_rate = 1e-3
 
 seed = 23333
-
-max_epochs = 5
