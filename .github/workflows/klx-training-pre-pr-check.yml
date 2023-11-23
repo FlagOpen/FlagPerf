@@ -11,6 +11,10 @@ on:
       dataset_path:
         description: 'dataset path filled into test_conf.py'
         required: true
+      pip_source:
+        description: 'value of PIP_SOURCE in test_conf.py'
+        default: 'https://pypi.tuna.tsinghua.edu.cn/simple'
+        required: true
 jobs:
   run-klx-training-test:
     runs-on: [ self-hosted, klx, r480 ]
@@ -55,7 +59,7 @@ jobs:
           echo "VENDOR = 'kunlunxin'" >> ${TEST_CONF_FILEPATH} &&
           echo "ACCE_CONTAINER_OPT = '--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl'" >> ${TEST_CONF_FILEPATH} &&
           echo "ACCE_VISIBLE_DEVICE_ENV_NAME = 'XPU_VISIBLE_DEVICES'" >> ${TEST_CONF_FILEPATH} &&
-          echo "PIP_SOURCE = 'https://pypi.tuna.tsinghua.edu.cn/simple'" >> ${TEST_CONF_FILEPATH} &&
+          echo "PIP_SOURCE = '${{ inputs.pip_source }}'" >> ${TEST_CONF_FILEPATH} &&
           echo "FLAGPERF_PATH = '${WORK_DIRECTORY}/training'" >> ${TEST_CONF_FILEPATH} &&
           echo "FLAGPERF_LOG_PATH = '${WORK_DIRECTORY}/training/result/'" >> ${TEST_CONF_FILEPATH} &&
           cat ${TEST_CONF_FILEPATH}
@@ -164,7 +168,7 @@ jobs:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
-          cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log &&
+          echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log" &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x1 }}/round1/127.0.0.1_noderank0/rank0.out.log"
 
       - name: 7.3 Verify 1x8 case result
@@ -173,7 +177,7 @@ jobs:
           WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
           RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
         run: |
-          cat ${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log &&
+          echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log" &&
           grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${{ inputs.case1x8 }}/round1/127.0.0.1_noderank0/rank0.out.log"
 
       # 8. Remove training image
