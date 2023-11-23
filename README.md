@@ -7,7 +7,7 @@
 
 ## 📣 FlagPerf评测亮点
 
-![cooperation](assets/imgs/overeview.png)
+![cooperation](assets/imgs/overview.png)
 
 1. **构建多维度评测指标体系，不止关注“耗时”:**
 
