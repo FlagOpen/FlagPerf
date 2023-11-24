@@ -16,12 +16,12 @@ on:
         default: 'https://pypi.tuna.tsinghua.edu.cn/simple'
         required: true
       max_epoch:
-        description: 'value of max_epoch in config.py'
+        description: 'value of max_epoch in config_R300_xxx.py'
         type: number
         default: 1
         required: true
       max_samples_termination:
-        description: 'value of max_samples_termination in config.py'
+        description: 'value of max_samples_termination in config_R300_xxx.py'
         type: number
         default: 10
         required: true
@@ -29,8 +29,8 @@ jobs:
   run-klx-training-test:
     runs-on: [ self-hosted, klx, r480 ]
     steps:
-      # 0. Display inputs
-      - name: 0. Display inputs
+      # 0.1 Display inputs
+      - name: 0.1 Display inputs
         run: |
           echo "case1x1=${{ inputs.case1x1 }}" &&
           echo "case1x8=${{ inputs.case1x8 }}" &&
@@ -38,6 +38,17 @@ jobs:
           echo "pip_source=${{ inputs.pip_source }}" &&
           echo "max_epoch=${{ inputs.max_epoch }}" &&
           echo "max_samples_termination=${{ inputs.max_samples_termination }}"
+
+      # 0.2 Verify inputs
+      - name: 0.2 Verify inputs
+        run: |
+          export CASE1x1="${{ inputs.case1x1 }}" && export CASE1x8="${{ inputs.case1x1 }}" &&
+          echo "Verifying case1x1..." && echo "${CASE1x1:-model:framework:hardwareID:1:1:1}" | egrep "^[0-9a-zA-Z_\-]+:[0-9a-zA-Z_\-\.]+:[0-9a-zA-Z_\-\.]+:1:1:1$" > /dev/null && echo "success!" &&
+          echo "Verifying case1x8..." && echo "${CASE1x8:-model:framework:hardwareID:1:8:1}" | egrep "^[0-9a-zA-Z_\-]+:[0-9a-zA-Z_\-\.]+:[0-9a-zA-Z_\-\.]+:1:8:1$" > /dev/null && echo "success!" &&
+          echo "Verifying dataset_path..." && echo "${{ inputs.dataset_path }}" | egrep "^([0-9a-zA-Z\/\._\-\:]+)$" > /dev/null && echo "success!" &&
+          echo "Verifying pip_source..." && echo "${{ inputs.pip_source }}" | egrep "^((https:\/\/)|(http:\/\/))?(www\.)?[a-zA-Z0-9\.\/]+$" > /dev/null && echo "success!" &&
+          echo "Verifying max_epoch..." && echo "${{ inputs.max_epoch }}" | egrep "^[0-9]+$" > /dev/null && echo "success!" &&
+          echo "Verifying max_samples_termination..." && echo "${{ inputs.max_samples_termination }}" | egrep "^[0-9]+$" > /dev/null && echo "success!"
 
       # 1. Checkout
       - name: 1. Checkout code

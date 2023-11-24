@@ -12,6 +12,10 @@ jobs:
       - name: Display inputs
         run: echo "image_name=${{ inputs.image_name }}"
 
+      - name: Verify inputs
+        if: ${{ inputs.image_name != '' }}
+        run: echo "Verifying image_name..." && echo "${{ inputs.image_name }}" | egrep "^flagperf-kunlunxin-pytorch:[0-9a-zA-Z\.\-_]+$" > /dev/null && echo "success!"
+
       - name: Display docker images list
         run: docker images | grep '^flagperf-kunlunxin-pytorch' || true
 
