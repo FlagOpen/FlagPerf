@@ -13,8 +13,8 @@
   - OS kernel版本: 5.4.0-26-generic
   - 加速卡驱动版本：4.0.25
   - Docker镜像和版本：pytorch1.12.1-cpu-ubuntu20.04:v0.01
-  - 训练框架版本：xmlir+111e7d45  【[xmlir下载](https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/archives/111e7d45/xmlir-0.0.1-cp38-cp38-linux_x86_64.whl)】
-  - 训练编译器版本：xacc+111e7d45  【[xacc下载](https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/archives/111e7d45/xacc-0.1.0-cp38-cp38-linux_x86_64.whl)】
+  - 训练框架版本：xmlir
+  - 训练编译器版本：xacc
   - 依赖软件版本：pytorch-1.12.1+cpu
 
 ### 运行情况
@@ -40,7 +40,7 @@
 
 | 配置                | precision | fix_hp           | e2e_time | p_whole | p_train | p_core | acc | mem       |
 | ------------------- | --------- | ---------------- | -------- | ------- | ------- | ------ | ------- | --------- |
-| R300单机单卡（1x1） |  fp32     | bs=2,lr=5e-05 |     |     |     |  |       | 10.6/32.0 |
-| R300单机8卡（1x8）  |  fp32     | bs=2,lr=5e-05 |     |     |     |  |  0.64 | 12.9/32.0 |
-| R300两机8卡（2x8）  |  fp32     | bs=2,lr=5e-05 |     |     |     |  |       | 13.1/32.0 |
+| R300单机单卡（1x1） |  fp32     | bs=16,lr=5e-05 |     |     |     |  |       | 28.0/32.0 |
+| R300单机8卡（1x8）  |  fp32     | bs=16,lr=5e-05 |     |     |     |  |  0.64 | 30.0/32.0 |
+| R300两机8卡（2x8）  |  fp32     | bs=16,lr=5e-05 |     |     |     |  |       | 27.6/32.0 |
 
