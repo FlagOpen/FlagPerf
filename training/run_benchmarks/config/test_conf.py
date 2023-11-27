@@ -114,5 +114,7 @@ CASES = {
     # "mobilenetv2:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "bert:pytorch:R300:1:8:1": "/raid/dataset/bert_large/train"
     # "longformer:pytorch:R300:1:8:1": "/raid/dataset/longformer_train",
+    # "distilbert:pytorch:R300:1:8:1": "/raid/dataset/distilbert/",
+    # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/"
 }
 
