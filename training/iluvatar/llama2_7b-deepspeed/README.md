@@ -6,10 +6,8 @@
     
 - ##### 软件环境
    - OS版本：Ubuntu 20.04
-   - OS kernel版本: 5.4.0-126-generic     
-   - 加速卡驱动版本：470.141.10
    - Docker 版本：20.10.18
-   - 训练框架版本：deepspeed 0.9.2
+   - 训练框架版本：deepspeed 0.10.0
    - 依赖软件版本：sentencepiece
 
 - ##### 并行策略
@@ -20,7 +18,7 @@
 
 - ##### 优化策略
 
-   - flash attention
+   - flash attention 2
 
 ### 运行情况
 
