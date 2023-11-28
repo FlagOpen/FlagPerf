@@ -77,6 +77,8 @@ def get_deepspeed_engine(args, model_config_dir, flashattn):
                              mem_efficient_linear=False,
                              mpu=None):
         model = get_llama_model(model_config_dir, flashattn)
+        
+    model.gradient_checkpointing_enable()
 
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
