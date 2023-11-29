@@ -6,7 +6,7 @@
     
 - ##### 软件环境
    - OS版本：Ubuntu 20.04
-   - Docker 版本：20.10.18
+   - Docker 版本：20.10.21
    - 训练框架版本：deepspeed 0.10.0
    - 依赖软件版本：sentencepiece
 
