@@ -103,7 +103,7 @@ CASES = {
     # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
 
     # kunlunxin cases
-    # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2"
+    # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
@@ -113,6 +113,9 @@ CASES = {
     # "glm:pytorch:R300:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "mobilenetv2:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-
+    # "bert:pytorch:R300:1:8:1": "/raid/dataset/bert_large/train",
+    # "longformer:pytorch:R300:1:8:1": "/raid/dataset/longformer_train",
+    # "distilbert:pytorch:R300:1:8:1": "/raid/dataset/distilbert/",
+    # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/"
 }
 
