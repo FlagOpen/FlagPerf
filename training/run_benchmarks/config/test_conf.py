@@ -34,7 +34,7 @@ PIP_SOURCE = "https://pypi.tuna.tsinghua.edu.cn/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/yangzhichao/workspace/FlagPerf/training"
+FLAGPERF_PATH = "/home/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
