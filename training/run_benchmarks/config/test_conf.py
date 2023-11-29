@@ -3,7 +3,7 @@
 
 # Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin and ascend.
 # We will run benchmarks in training/<vendor>
-VENDOR = "nvidia"
+VENDOR = "iluvatar"
 
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
@@ -19,7 +19,7 @@ VENDOR = "nvidia"
 #       "--device=/dev/davinciX --device=/dev/davinci_manager + \
 #        --device=/dev/devmm_svm --device=/dev/hisi_hdc + \
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
-ACCE_CONTAINER_OPT = " --gpus all"
+ACCE_CONTAINER_OPT = ' -v /lib/modules:/lib/modules '
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -29,12 +29,12 @@ ACCE_CONTAINER_OPT = " --gpus all"
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
+PIP_SOURCE = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/FlagPerf/training"
+FLAGPERF_PATH = "/home/yangzhichao/workspace/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -54,9 +54,9 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
-    "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
-    "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
+    # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    # "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -116,5 +116,24 @@ CASES = {
     # "longformer:pytorch:R300:1:8:1": "/raid/dataset/longformer_train",
     # "distilbert:pytorch:R300:1:8:1": "/raid/dataset/distilbert/",
     # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/"
+
+    # iluvatar cases
+    # "resnet50:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "bert:pytorch:BI-V100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    # "mask_rcnn:pytorch:BI-V100:1:8:1": "/raid/dataset/coco2017/",
+    # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "cpm:pytorch:BI-V100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
+    # "efficientnet:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "faster_rcnn:pytorch:BI-V100:1:8:1": "/raid/dataset/coco2017",
+    # "glm:pytorch:BI-V100:1:8:1": "/raid/dataset/glm/train/",
+    # "mask_rcnn:pytorch:BI-V100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
+    # "mobilenetv2:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "retinanet:pytorch:BI-V100:1:8:1": "/raid/dataset/coco2017/",
+    # "swin_transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "tacotron2:pytorch:BI-V100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/train/",
+    # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    "llama2_7b:deepspeed:BI-V100:1:8:1":"/data1/"
+
 }
 

@@ -14,7 +14,7 @@
 
    - 并行技术：sharded data parallel
    - 实施者：deepspeed ZeRO-DP
-   - 实施细节：ZeRO-DP O3, DP_SIZE=8
+   - 实施细节：ZeRO-DP O3
 
 - ##### 优化策略
 
