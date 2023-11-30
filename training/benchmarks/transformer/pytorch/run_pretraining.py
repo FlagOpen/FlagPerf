@@ -1,3 +1,6 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 """Transformer Pretraining"""
 
 import os
@@ -20,6 +23,7 @@ logger = None
 
 def main():
     global logger
+    global config
 
     init_helper = InitHelper(config)
     model_driver = init_helper.init_driver(globals(), locals())
@@ -72,15 +76,13 @@ def main():
 
     # 开始训练
     model_driver.event(Event.TRAIN_START)
-    raw_train_start_time = logger.previous_log_time
+    raw_train_start_time = time.time()
     while training_state.epoch < config.epochs and not training_state.end_training:
         trainer.train_one_epoch(train_dataloader, valid_dataloader)
         training_state.epoch += 1
 
     model_driver.event(Event.TRAIN_END)
-    raw_train_end_time = logger.previous_log_time
-    training_state.raw_train_time = (raw_train_end_time - raw_train_start_time) / 1e+3
-
+    training_state.raw_train_time = time.time() - raw_train_start_time
     return config, training_state
 
 
@@ -103,5 +105,8 @@ if __name__ == "__main__":
             "final_acc": state.test_bleu,
             "raw_train_time": state.raw_train_time,
             "init_time": state.init_time,
+            "throughput(ips)_raw": state.total_tokens / state.raw_train_time,
+            "throughput(ips)_no_eval": state.total_tokens / state.no_eval_time,
+            "throughput(ips)_pure_compute": state.total_tokens / state.pure_compute_time,
         }
     logger.log(Event.FINISHED, message=finished_info, stacklevel=0)
