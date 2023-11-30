@@ -26,6 +26,6 @@ Neither the name of the copyright holder nor the names of its contributors may b
 |  ----  | ----  |  ----  | ----  |
 | Nvidia GPU | ✅ |N/A  |N/A|
 | 昆仑芯 XPU | ✅ |N/A  |N/A|
-| 天数智芯GPU｜✅ |N/A  |N/A|
+| 天数智芯GPU|✅ |N/A  |N/A|
 
 
