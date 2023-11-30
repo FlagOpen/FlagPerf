@@ -19,6 +19,7 @@
 - ##### 优化策略
 
    - flash attention 2
+   - checkpointing
 
 ### 运行情况
 
