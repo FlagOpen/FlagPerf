@@ -31,12 +31,12 @@
 | 总吞吐量       | p_whole,见“性能指标”                          | 实际训练样本数除以总时间(performance_whole) |
 | 训练吞吐量     | p_train,见“性能指标”                          | 不包含每个epoch末尾的评估部分耗时           |
 | **计算吞吐量** | **p_core,见“性能指标”**                       | 不包含数据IO部分的耗时(p3>p2>p1)            |
-| 训练结果       | val_loss,见“性能指标”                         | 验证loss                                    |
+| 训练结果       | final_acc1,见“性能指标”                         | 验证准确率                                    |
 | 额外修改项     | 无                                            |                                             |
 
 * 性能指标
 
-| 配置                 | precision| fix_hp | e2e_time | p_whole | p_train | p_core | val_loss | mem       |
+| 配置                 | precision| fix_hp | e2e_time | p_whole | p_train | p_core | final_acc1 | mem       |
 |----------------------| ---------| ------ | ---------| ------- | ------- | ------  | -------- | --------- |
 | BI-V100单机8卡(1x8)  | amp     | bs=352 | /        | /       | /        | /      |    /     | /32.0  |
 | BI-V100单机单卡(1x1)  | amp     | bs=352 | /        | /       | /        | /      | /       | 26.5/32.0  |
