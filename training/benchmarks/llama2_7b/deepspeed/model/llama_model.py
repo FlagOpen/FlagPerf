@@ -1,10 +1,11 @@
-from transformers import LlamaForCausalLM, LlamaConfig
-
+from transformers import LlamaConfig #LlamaForCausalLM, 
+from .llama2_model import LlamaForCausalLM
 
 def get_llama_model(model_config_dir, flashattn):
 
     config = LlamaConfig.from_pretrained(model_config_dir)
     config._flash_attn_2_enabled = flashattn
     model = LlamaForCausalLM(config)
+    model.gradient_checkpointing_enable()
 
     return model
