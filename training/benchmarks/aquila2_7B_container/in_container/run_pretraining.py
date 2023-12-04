@@ -83,6 +83,7 @@ if __name__ == "__main__":
 
         path_cmd = "cd " + os.path.join(args.perf_dir, "training/benchmarks/aquila2_7B_container/in_container")
         env_cmd = config.env_cmd
+        net_cmd = config.net_cmd
         
         f = open(os.path.join(args.log_dir, "noderank" + str(noderank) + ".log.txt"), "w")
         exec_cmd = "bash singlenode_run.sh"
@@ -98,19 +99,12 @@ if __name__ == "__main__":
         exec_cmd = exec_cmd + " " + str(len(args.hosts))
         exec_cmd = exec_cmd + " " + args.hosts[0]
         exec_cmd = exec_cmd + " " + args.master_port
-        exec_cmd = exec_cmd + " " + config.CUDA_DEVICE_MAX_CONNECTIONS
-        exec_cmd = exec_cmd + " " + config.NCCL_SOCKET_IFNAME
-        exec_cmd = exec_cmd + " " + config.NCCL_IB_DISABLE
-        exec_cmd = exec_cmd + " " + config.NCCL_IB_CUDA_SUPPORT
-        exec_cmd = exec_cmd + " " + config.NCCL_IB_GID_INDEX
-        exec_cmd = exec_cmd + " " + config.NCCL_IB_HCA
-        exec_cmd = exec_cmd + " " + config.NCCL_DEBUG
         
         logger.info(ip)
         logger.info(exec_cmd)
         logger.info("")
         
-        wrap_exec_cmd = "\"" + path_cmd + ";" + env_cmd + ";" + exec_cmd + "\""
+        wrap_exec_cmd = "\"" + path_cmd + ";" + env_cmd + ";" + net_cmd + ";" + exec_cmd + "\""
 
         ssh_exec_cmd = ['ssh', '-p', config.SSH_PORT, ip, wrap_exec_cmd]
         ssh_exec_cmd_string = ' '.join(ssh_exec_cmd)
