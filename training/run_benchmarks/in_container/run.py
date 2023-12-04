@@ -47,6 +47,7 @@ def main():
     for ip in hosts:
         exec_cmd = exec_cmd + ip + " "
     exec_cmd = exec_cmd + " --master_port " + str(master_port)
+    exec_cmd = exec_cmd + " --perf_dir " + flagperf_home
     exec_cmd = exec_cmd + " --log_dir " + log_dir_stamp
 
     logger.info(exec_cmd)

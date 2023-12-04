@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ifconfig
+
 SCALEHOME=$1
 
 DATADIR=$2

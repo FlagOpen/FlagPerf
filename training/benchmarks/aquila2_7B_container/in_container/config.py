@@ -1,7 +1,7 @@
 # =========================================================
 # data
 # =========================================================
-DATA_DIR = "/data/aquila2_pretrain"
+DATA_DIR = "/raid/dataset/aquila2_7b_pretrain/aquila2_pretrain"
 DATASET = "pile_wikipedia_demo"
 FLAGSCALE_HOME = "FlagScale"
 TRAINING_TOKENS = 10000000

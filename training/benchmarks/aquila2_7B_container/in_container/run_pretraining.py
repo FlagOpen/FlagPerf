@@ -9,6 +9,7 @@ from collections import namedtuple
 import time
 
 
+
 def parse_args():
 
     parser = ArgumentParser(description="aquila_in_container")
@@ -16,6 +17,7 @@ def parse_args():
     parser.add_argument("--hosts", nargs="+", type=str, required=True)
     parser.add_argument("--master_port", type=str, required=True)
     parser.add_argument("--log_dir", type=str, required=True)
+    parser.add_argument("--perf_dir", type=str, required=True)
     args = parser.parse_args()
     return args
 
@@ -76,8 +78,13 @@ if __name__ == "__main__":
     
     start_time = time.time()
     noderank = 0
+    procs = []
     for ip in args.hosts:
 
+        path_cmd = "cd " + os.path.join(args.perf_dir, "training/benchmarks/aquila2_7B_container/in_container")
+        env_cmd = config.env_cmd
+        
+        f = open(os.path.join(args.log_dir, "noderank" + str(noderank) + ".log.txt"), "w")
         exec_cmd = "bash singlenode_run.sh"
         exec_cmd = exec_cmd + " " + flagscale_home
         exec_cmd = exec_cmd + " " + config.DATA_DIR
@@ -103,14 +110,25 @@ if __name__ == "__main__":
         logger.info(exec_cmd)
         logger.info("")
         
-        with open(os.path.join(args.log_dir, "noderank" + str(noderank) + ".log.txt"), "w") as f:
-            p = subprocess.Popen(exec_cmd,
-                                 shell=True,
-                                 stdout=f,
-                                 stderr=subprocess.STDOUT)
-            p.wait()
+        wrap_exec_cmd = "\"" + path_cmd + ";" + env_cmd + ";" + exec_cmd + "\""
+
+        ssh_exec_cmd = ['ssh', '-p', config.SSH_PORT, ip, wrap_exec_cmd]
+        ssh_exec_cmd_string = ' '.join(ssh_exec_cmd)
+
+        logger.info(ssh_exec_cmd_string)
+
+        p = subprocess.Popen(ssh_exec_cmd_string,
+                             shell=True,
+                             stdout=f,
+                             stderr=subprocess.STDOUT)
+        procs.append((p, f))
         
         noderank += 1
+    
+    for p, f in procs:
+        p.wait()
+        f.close()
+             
     training_time = time.time() - start_time
     system_throughput = float(config.TRAINING_TOKENS) / training_time
     world_size = len(args.hosts) * 8
