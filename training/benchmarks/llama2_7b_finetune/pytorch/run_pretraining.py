@@ -31,6 +31,7 @@ def train(model, train_dataloader, eval_dataloader, tokenizer, optimizer,
     # Create a gradient scaler for fp16
     if train_config.use_fp16 and not train_config.enable_fsdp:
         scaler = torch.cuda.amp.GradScaler()
+        logger.info("Using fp16..")
     autocast = torch.cuda.amp.autocast if train_config.use_fp16 else nullcontext
 
     train_prep = []
@@ -159,8 +160,8 @@ def train(model, train_dataloader, eval_dataloader, tokenizer, optimizer,
 
     mmlu_ret = evaluate_MMLU(model, train_config, tokenizer)
     if mmlu_ret >= train_config.target_MMLU:
-        logger.info("MMLU: {} achieve  the target:{}.".format(
-            train_config.mmlu_ret, train_config.target_MMLU))
+        logger.info("MMLU: {} achieve the target:{}.".format(
+            mmlu_ret, train_config.target_MMLU))
     else:
         logger.warning("MMLU target is not achieved")
     return results, avg_iter_time

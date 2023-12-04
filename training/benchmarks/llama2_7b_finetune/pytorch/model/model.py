@@ -42,6 +42,7 @@ def get_llama_model(train_config):
         peft_config = generate_peft_config(train_config)
         model = get_peft_model(model, peft_config)
         model.print_trainable_parameters()
-
+    if train_config.use_fp16:
+        model.half()
     model.to("cuda")
     return model
