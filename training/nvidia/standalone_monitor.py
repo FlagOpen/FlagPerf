@@ -8,6 +8,9 @@ def run_cmd(cmd, interval, outputstream):
         time.sleep(interval)
 
 def main():
+    
+    log_dir = "./"
+
     cmd = r"echo OS version:;"
     cmd = cmd + r"cat /etc/issue | head -n1 | awk '{print $1, $2, $3}';"
     cmd = cmd + r"echo ;"
@@ -31,7 +34,7 @@ def main():
     cmd = cmd + r"echo Docker version:;"
     cmd = cmd + r"docker -v"
     
-    sys_fn = "sys_info.log.txt"
+    sys_fn = log_dir + "sys_info.log.txt"
     with open(sys_fn, "w") as f:
         p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
         p.wait()
@@ -39,22 +42,22 @@ def main():
     threads = []
     
     mem_cmd = "date;free -g|grep -i mem|awk '{print $3/$2}';echo \"\""
-    mem_file = open("mem.log.txt", "w")
+    mem_file = open(log_dir + "mem.log.txt", "w")
     mem_thread = threading.Thread(target=run_cmd, args=(mem_cmd, 5, mem_file))
     threads.append(mem_thread)
     
     cpu_cmd = "date;mpstat -P ALL 1 1|grep -v Average|grep all|awk '{print (100-$NF)/100}';echo \"\""
-    cpu_file = open("cpu.log.txt", "w")
+    cpu_file = open(log_dir + "cpu.log.txt", "w")
     cpu_thread = threading.Thread(target=run_cmd, args=(cpu_cmd, 5, cpu_file))
     threads.append(cpu_thread)
     
     pwr_cmd = "date;ipmitool sdr list|grep -i Watts|awk 'BEGIN{FS = \"|\"}{for (f=1; f <= NF; f+=1) {if ($f ~ /Watts/) {print $f}}}'|awk '{print $1}'|sort -n -r|head -n1;echo \"\""
-    pwr_file = open("pwr.log.txt", "w")
+    pwr_file = open(log_dir + "pwr.log.txt", "w")
     pwr_thread = threading.Thread(target=run_cmd, args=(pwr_cmd, 120, pwr_file))
     threads.append(pwr_thread)
     
     gpu_cmd = "date;nvidia-smi |grep 'Default'|awk '{print $3,$5,$9,$11,$13}';echo \"\""
-    gpu_file = open("gpu.log.txt", "w")
+    gpu_file = open(log_dir + "gpu.log.txt", "w")
     gpu_thread = threading.Thread(target=run_cmd, args=(gpu_cmd, 5, gpu_file))
     threads.append(gpu_thread)
 

@@ -50,8 +50,9 @@ def main():
     exec_cmd = exec_cmd + " --perf_dir " + flagperf_home
     exec_cmd = exec_cmd + " --log_dir " + log_dir_stamp
 
-    logger.info(exec_cmd)
-
+    logger.debug(exec_cmd)
+    
+    logger.info("Task has been started, waiting...")
     with open(os.path.join(log_dir_stamp, "flagperf.log.txt"), "w") as f:
         p = subprocess.Popen(exec_cmd,
                              shell=True,
