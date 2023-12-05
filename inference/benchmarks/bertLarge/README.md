@@ -74,7 +74,7 @@ bert_reference_results_text_md5.txt
 
 - 推理工具包
 
-   - IXRT: ixrt-0.7.0+corex.3.2.1
+   - IXRT: ixrt-0.8.0+corex.3.2.1
 
 
 ### 4. 运行情况（BERT-Large）
