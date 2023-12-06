@@ -74,7 +74,7 @@ if __name__ == "__main__":
     Config = namedtuple("Config", config.keys())
     config = Config(**config)
     
-    flagscale_home = os.path.join(config.DATA_DIR, config.FLAGSCALE_HOME)
+    flagscale_home = os.path.join(config.FLAGSCALE_HOME)
     
     start_time = time.time()
     noderank = 0
