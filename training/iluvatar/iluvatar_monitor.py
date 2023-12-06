@@ -231,7 +231,7 @@ def get_system_info():
     cmd = cmd + r"echo ;"
     
     cmd = cmd + r"echo Accelerator Model:;"
-    cmd = cmd + r"ixsmi -L;"
+    cmd = cmd + r"export PATH=/usr/local/corex/bin:$PATH; export LD_LIBRARY_PATH=/usr/local/corex/lib; ixsmi -L;"
     cmd = cmd + r"echo ;"
     
     cmd = cmd + r"echo Accelerator Driver version:;"
