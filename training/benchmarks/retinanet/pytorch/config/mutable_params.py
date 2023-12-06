@@ -5,5 +5,5 @@ mutable_params = [
     'device',
     'cudnn_benchmark',
     'cudnn_deterministic',
-    'local_rank'
+    'local_rank', 'seed'
 ]
