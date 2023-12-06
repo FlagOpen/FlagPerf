@@ -9,7 +9,7 @@ def run_cmd(cmd, interval, outputstream):
 
 def main():
     
-    log_dir = "./"
+    log_dir = "./noderank0_192_168_1_2/"
 
     cmd = r"echo OS version:;"
     cmd = cmd + r"cat /etc/issue | head -n1 | awk '{print $1, $2, $3}';"

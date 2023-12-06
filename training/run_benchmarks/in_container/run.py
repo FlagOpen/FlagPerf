@@ -35,7 +35,7 @@ def main():
 
     entrance_path = os.path.dirname(entrance_file)
 
-    log_dir = os.path.join(flagperf_home, "training", logdir)
+    log_dir = os.path.join(flagperf_home, "training", log_dir)
     timestamp_str = (datetime.now()).strftime("%Y%m%d%H%M%S")
     log_dir_stamp = os.path.join(log_dir, "run" + timestamp_str)
     os.makedirs(log_dir_stamp, exist_ok=True)
