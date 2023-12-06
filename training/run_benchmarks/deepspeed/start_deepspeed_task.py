@@ -114,11 +114,16 @@ def main():
     train_script_path = helper.get_train_script_path(task_args)
     config_dir, config_file = helper.get_config_dir_file(task_args)
     config_file = os.path.join(config_dir, config_file)
+    ds_config_file = os.path.join(config_dir, "ds_config.json")
 
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
     exec_cmd = exec_cmd + "deepspeed --num_gpus=" + str(
         task_args.nproc) + " run_pretraining.py"
-    exec_cmd = exec_cmd + " --deepspeed --deepspeed_config ds_config.json --data_dir " + task_args.data_dir
+
+    exec_cmd = exec_cmd + " --deepspeed --deepspeed_config "
+    exec_cmd = exec_cmd + ds_config_file
+    exec_cmd = exec_cmd + " --data_dir " + task_args.data_dir
+
     exec_cmd = exec_cmd + " --flagperf_config " + config_file
     exec_cmd = exec_cmd + " --nproc " + str(
         task_args.nproc) + " --nnodes " + str(task_args.nnodes)
