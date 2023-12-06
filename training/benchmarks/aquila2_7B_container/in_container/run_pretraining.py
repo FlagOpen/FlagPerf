@@ -84,6 +84,9 @@ if __name__ == "__main__":
         path_cmd = "cd " + os.path.join(args.perf_dir, "training/benchmarks/aquila2_7B_container/in_container")
         env_cmd = config.env_cmd
         net_cmd = config.net_cmd
+
+        req_path = os.path.join(os.path.dirname(args.vendor_config), "requirements.txt")
+        req_cmd = "pip install -r " + req_path
         
         f = open(os.path.join(args.log_dir, "noderank" + str(noderank) + ".log.txt"), "w")
         exec_cmd = "bash singlenode_run.sh"
@@ -104,7 +107,7 @@ if __name__ == "__main__":
         logger.info(exec_cmd)
         logger.info("")
         
-        wrap_exec_cmd = "\"" + path_cmd + ";" + env_cmd + ";" + net_cmd + ";" + exec_cmd + "\""
+        wrap_exec_cmd = "\"" + path_cmd + ";" + req_cmd + ";" + env_cmd + ";" + net_cmd + ";" + exec_cmd + "\""
 
         ssh_exec_cmd = ['ssh', '-p', config.SSH_PORT, ip, wrap_exec_cmd]
         ssh_exec_cmd_string = ' '.join(ssh_exec_cmd)
