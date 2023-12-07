@@ -1,17 +1,33 @@
 import subprocess
 import threading
 import time
+from argparse import ArgumentParser
+import os
+
+
+def parse_args():
+    parser = ArgumentParser(description="aquila_monitor")
+    parser.add_argument("--ip", type=str, required=True)
+    args=parser.parse_args()
+    return args
+
 
 def run_cmd(cmd, interval, outputstream):
     while True:
         subprocess.Popen(cmd, shell=True, stdout=outputstream, stderr=subprocess.STDOUT)
         time.sleep(interval)
 
-def main():
-    
-    log_dir = "./noderank0_192_168_1_2/"
 
-    cmd = r"echo OS version:;"
+def main():
+    args = parse_args()
+    ip = args.ip.replace('.','_')
+    log_dir = "./" + ip + "/"
+    os.mkdir(log_dir)
+
+    cmd = r"echo NODE " + args.ip + ";"
+    cmd = cmd + r"echo ;"
+
+    cmd = cmd + r"echo OS version:;"
     cmd = cmd + r"cat /etc/issue | head -n1 | awk '{print $1, $2, $3}';"
     cmd = cmd + r"echo ;"
     
@@ -68,6 +84,7 @@ def main():
         time.sleep(0.1)
 
     print('exit')
+
 
 if __name__ == '__main__':
     main()
