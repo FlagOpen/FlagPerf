@@ -1,15 +1,16 @@
 # =========================================================
 # data
 # =========================================================
-DATA_DIR = "/raid/dataset/aquila2_pretrain"
-DATASET = "pile_wikipedia_demo"
-FLAGSCALE_HOME = "/FlagScale"
-TRAINING_TOKENS = 10000000
+DATA_DIR = "/data/aquila2_pretrain"
+DATASET = "wudao_pretrain_text_document"
+FLAGSCALE_HOME = "/data/aquila2_pretrain/FlagScale"
+# 1B tokens for nnodes=1, model=7B
+TRAINING_TOKENS = 1000000000
 
 # =========================================================
 # parallel
 # =========================================================
-TENSOR_PARALLEL = 8
+TENSOR_PARALLEL = 1
 PIPELINE_PARALLEL = 1
 
 # =========================================================
@@ -17,7 +18,8 @@ PIPELINE_PARALLEL = 1
 # =========================================================
 MICRO_BATCHSIZE = 1
 # globalbs = microbs * gradient_accu_steps * (worldsize/tp/pp)
-GLOBAL_BATCHSIZE = 16
+# gradient_accu_steps is the same as flagscale aquila-7B
+GLOBAL_BATCHSIZE = 72
 # 2k for aquila2-7B, 4k for aquila2-34B and 70B
 SEQLENGTH = 2048
 
