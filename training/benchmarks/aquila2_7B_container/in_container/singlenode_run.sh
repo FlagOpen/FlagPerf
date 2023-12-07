@@ -2,6 +2,8 @@
 
 ifconfig
 
+git log | head -n 5
+
 SCALEHOME=$1
 
 DATADIR=$2
