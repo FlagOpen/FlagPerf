@@ -5,7 +5,8 @@ aquila2是北京人工智能研究院开源的语言模型，包含基础语言�
 ## 模型配置及tokenizer准备
 
 本测试样例为预训练case，需要下载tokenizer，下载链接为https://github.com/FlagOpen/FlagScale/tree/main/examples/aquila/tokenizer
-需要在data_dir下创建tokenizer目录，将上述链接中的三个文件下载到此目录中
+
+此tokenizer需要下载FlagScale仓库ed55532这一commit版本，需要在data_dir下创建tokenizer目录，将上述链接中的三个文件下载到此目录中
 
 ## 数据准备
 
