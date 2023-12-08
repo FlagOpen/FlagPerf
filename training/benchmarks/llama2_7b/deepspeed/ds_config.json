@@ -1,6 +1,6 @@
 {
   "gradient_accumulation_steps": 1,
-  "train_micro_batch_size_per_gpu": 1,
+  "train_micro_batch_size_per_gpu": 2,
   "prescale_gradients": false,
   "zero_allow_untested_optimizer": true,
   "optimizer": {
@@ -16,6 +16,13 @@
     }
   },
   "zero_optimization": {
+  "offload_optimizer": {
+            "device": "cpu",
+            "pin_memory":true
+         },
+        "offload_param": {
+            "device": "cpu"
+       }
     "stage": 3,
     "stage3_max_live_parameters": 1e9,
     "stage3_max_reuse_distance": 1e9,
@@ -26,11 +33,12 @@
     "reduce_bucket_size": 1e7,
     "overlap_comm": true,
     "reduce_scatter": true
+    "zero_hpz_partition_size": 1,
   },
   "steps_per_print": 1,
   "gradient_clipping": 1.0,
   "wall_clock_breakdown": false,
-  "fp16": {
+  "bf16": {
     "enabled": true
   },
   "activation_checkpointing": {
