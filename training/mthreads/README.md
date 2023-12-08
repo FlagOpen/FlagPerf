@@ -13,14 +13,14 @@ MUSA软件栈通过musify CUDA代码迁移工具、计算/通信加速库、mcc�
 ## 环境配置参考
   - 硬件
     - 机器型号： MCCX D800
-    - 加速卡型号: MTT S3000 32GB
-    - CPU型号：Intel(R) Xeon(R) Gold 6330 CPU @ 2.00GHz
+    - 加速卡型号: MTT S4000 48GB
+    - CPU型号：Intel(R) Xeon(R) Gold 6430 CPU @ 2.00GHz
     - 多机网络类型、带宽: InfiniBand，2*200Gbps
   - 软件
     - OS版本：Ubuntu 20.04 LTS
-    - OS kernel版本: 5.4.0-154-generic
+    - OS kernel版本: 5.4.0-42-generic
     - 加速卡驱动版本：2.2.0
-    - Docker 版本: PyTorch2.0_musa1.4_ec6a747fd342 
+    - Docker 版本: 20.10.24
 
 ## 容器镜像信息
 - 容器构建信息
@@ -33,10 +33,10 @@ MUSA软件栈通过musify CUDA代码迁移工具、计算/通信加速库、mcc�
     - PyTorch: v2.0.0
 
   - 其它软件版本
-    - torch_musa: 2.0.0+git8ea3501
-    - musa toolkits: 1.4.0+git4e25703
-    - mcc: 1.4.0+git5a5bcc07
-    - mublas: 1.1.0+gite484aa2
+    - torch_musa: 2.0.0+git8614ba1
+    - musa toolkits: 1.5.0+git3d8791d
+    - mcc: 1.5.2+git3730bdd
+    - mublas: 1.2.0+gitd9867b5
 
 
 ## 加速卡监控采集

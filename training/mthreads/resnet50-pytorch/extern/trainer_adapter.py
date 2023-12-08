@@ -5,20 +5,8 @@ from driver import dist_pytorch
 
 
 def convert_model(model):
-    if config.nhwc:
-        if dist_pytorch.get_rank() == 0:
-            print("convert nhwc model", flush=True)
-        model.to(memory_format=torch.channels_last)
+    model.to(memory_format=torch.channels_last)
     return model
-
-
-#def model_to_fp16(model):
-#    """model_to_fp16"""
-#    # To prevent OOM for model sizes that cannot fit in GPU memory in full precision
-#    if config.fp16:
-#        dist_pytorch.main_proc_print(" > use fp16...")
-#        model.to(torch.bfloat16)
-#    return model
 
 
 def create_grad_scaler():

@@ -6,19 +6,20 @@
 - ##### 硬件环境
     - 硬件
       - 机器型号： MCCX D800
-      - 加速卡型号: MTT S3000 32GB
-      - CPU型号：Intel(R) Xeon(R) Gold 6330 CPU @ 2.00GHz
+      - 加速卡型号: MTT S4000 48GB
+      - CPU型号：Intel(R) Xeon(R) Gold 6430 CPU @ 2.00GHz
       - 多机网络类型、带宽: InfiniBand，2*200Gbps
     
 - ##### 软件环境
    - OS版本：Ubuntu 20.04 LTS
    - OS kernel版本: 5.4.0-42-generic
    - 加速卡驱动版本：2.2.0
-   - Docker镜像和版本: PyTorch2.0_musa1.4_ec6a747fd342 
-   - 训练框架版本：pytorch-2.0.0+torch_musa-git8ea3501
+   - Docker版本: 20.10.24
+   - 训练框架版本：pytorch-2.0.0+torch_musa-git8614ba1
    - 依赖软件版本:
-     - musa toolkits: 1.4.0+git4e25703
-     - mublas: 1.1.0+gite484aa2
+     - musa toolkits: 1.5.0+git3d8791d
+     - mcc: 1.5.2+git3730bdd
+     - mublas: 1.2.0+gitd9867b5
 
 ### 运行情况
 

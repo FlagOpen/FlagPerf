@@ -4,5 +4,5 @@ eval_batch_size = train_batch_size
 
 dist_backend = "mccl"
 amp = False
+fp16 = False
 
-nhwc = True
