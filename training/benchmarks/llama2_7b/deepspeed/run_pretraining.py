@@ -49,6 +49,7 @@ def get_argument_parser():
                         type=int,
                         required=True,
                         help="how many processes will run on each host.")
+
     return parser
 
 
@@ -98,7 +99,6 @@ if __name__ == "__main__":
     flagperf_config = {}
     sys.path.append(os.path.dirname(args.flagperf_config))
     config_file = os.path.basename(args.flagperf_config).split('.')[0]
-
     module = import_module(config_file)
 
     seqlength = getattr(module, 'seqlength')
@@ -123,6 +123,7 @@ if __name__ == "__main__":
     dataloader = DataLoader(dataset,
                             sampler=sampler,
                             batch_size=batchsize,
+                            num_workers=1,
                             pin_memory=True)
 
     epoch = 0
