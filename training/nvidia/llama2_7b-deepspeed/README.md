@@ -1,10 +1,10 @@
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器型号: 
-    - 加速卡型号: 
+    - 机器型号: NVIDIA H800(80G)
+    - 加速卡型号: NVIDIA_H800-80GB
     - CPU型号: Intel(R) Xeon(R) Platinum 8462Y+
-    - 多机网络类型、带宽: 
+    - 多机网络类型、带宽: InfiniBand, 200Gb/s
     
 - ##### 软件环境
    - OS版本：Ubuntu 22.04 LTS
