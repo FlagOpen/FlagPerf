@@ -1,0 +1,2 @@
+kunlunxin/docker_image/deepspeed/packges/deepspeed-0.11.1.0-py3-none-any.whl
+kunlunxin/docker_image/deepspeed/packges/transformers-4.34.0-py3-none-any.whl
