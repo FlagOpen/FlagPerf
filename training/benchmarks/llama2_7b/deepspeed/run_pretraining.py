@@ -100,6 +100,7 @@ if __name__ == "__main__":
     sys.path.append(os.path.dirname(args.flagperf_config))
     config_file = os.path.basename(args.flagperf_config).split('.')[0]
     module = import_module(config_file)
+    print("~~~~",module)
 
     seqlength = getattr(module, 'seqlength')
     batchsize = getattr(module, 'batchsize')
