@@ -33,6 +33,7 @@
     "reduce_bucket_size": 1e7,
     "overlap_comm": true,
     "reduce_scatter": true
+    "zero_hpz_partition_size": 1,
   },
   "steps_per_print": 1,
   "gradient_clipping": 1.0,
