@@ -7,4 +7,3 @@ lr = 0.08
 dist_backend = "mccl"
 
 seed = 42
-nhwc = True

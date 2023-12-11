@@ -18,12 +18,15 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
     - 机器、加速卡型号: S4000
 
 - ##### 软件环境
-   - OS版本：Ubuntu 20.04
-   - OS kernel版本:  
+   - OS版本：Ubuntu 20.04 LTS
+   - OS kernel版本: 5.4.0-42-generic
    - 加速卡驱动版本：
-   - Docker 版本：
-   - 训练框架版本：
-   - 依赖软件版本
+   - Docker 版本：20.10.24
+   - 训练框架版本：pytorch-2.0.0+torch_musa-git8614ba1
+   - 依赖软件版本：
+     - musa toolkits: 1.5.0+git3d8791d
+     - mcc: 1.5.2+git3730bdd
+     - mublas: 1.2.0+gitd9867b5
 
 
 * 通用指标
@@ -50,7 +53,7 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
 
 | 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | mAP    | mem       |
 | ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
-| 单机8卡（1x8）  | fp32      |  |    |      |      |     |  |  |
+| 单机8卡（1x8）  | fp32      | bs=16,lr=0.08 |    |      |      |     | 0.351 | 37.5/48.0 |
 | 单机单卡（1x1） | fp32     |  |         |         |      |        |   |       |
 | 两机8卡（2x8） | fp32     |  |         |         |      |        |   |       |
 
