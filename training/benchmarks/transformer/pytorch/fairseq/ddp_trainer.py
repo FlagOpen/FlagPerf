@@ -27,6 +27,7 @@ Train a network across multiple GPUs.
 import math
 from collections import defaultdict
 from itertools import chain
+import time
 
 import torch
 import torch.nn.functional as F
@@ -110,6 +111,9 @@ class DDPTrainer():
         torch.manual_seed(seed)
         torch.cuda.manual_seed(seed)
 
+
+        state = self.training_state
+
         self.model.train()
         if isinstance(self.model, DDP):
             if last_step:
@@ -117,8 +121,11 @@ class DDPTrainer():
             else:
                 self.model.enable_allreduce()
 
+        
+
         # forward and backward pass
         sample = self._prepare_sample(sample)
+        pure_compute_start = time.time()
         loss, oom_fwd = self._forward(sample)
 
         # If this is a last batch forward pass is skipped on some workers
@@ -139,6 +146,7 @@ class DDPTrainer():
 
         # update parameters
         if update_params and not last_step:
+
             # gather logging outputs from all replicas
             sample_sizes = self._buffered_stats['sample_sizes']
             logging_outputs = self._buffered_stats['logging_outputs']
@@ -186,6 +194,8 @@ class DDPTrainer():
 
 
             self.clear_buffered_stats()
+        state.pure_compute_time += time.time() - pure_compute_start
+            
 
     def _forward(self, sample):
         loss = None

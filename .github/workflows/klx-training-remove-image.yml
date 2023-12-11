@@ -1,0 +1,30 @@
+name: klx-training-remove-image
+on:
+  workflow_dispatch:
+    inputs:
+      image_name:
+        description: 'e.g. flagperf-kunlunxin-pytorch:t_v0.1 (empty means not to remove)'
+jobs:
+  remove-klx-training-image:
+    # 只适用于单台测试机器的场景, 多台测试机器时，只会选择某一台执行
+    runs-on: [ self-hosted, klx, r480 ]
+    steps:
+      - name: Display inputs
+        run: echo "image_name=${{ inputs.image_name }}"
+      
+      # 说明: 
+      #   可以指定image的id, 也可以指定image的tag
+      #   由于只能由仓库成员手动触发该workflow, 因此无需对输入进行校验
+      # - name: Verify inputs
+      #   if: ${{ inputs.image_name != '' }}
+      #   run: echo "Verifying image_name..." && echo "${{ inputs.image_name }}" | egrep "^flagperf-kunlunxin-pytorch:[0-9a-zA-Z\.\-_]+$" > /dev/null && echo "success!"
+
+      - name: Display docker images list
+        run: docker images | grep '^flagperf-kunlunxin-pytorch' || true
+
+      - name: Remove kunlunxin training images
+        if: ${{ inputs.image_name != '' }}
+        run: |
+          export IMAGE_NAME=${{ inputs.image_name }} &&
+          docker rm -f $(docker ps -a -q --filter ancestor=${IMAGE_NAME}) || true &&
+          docker rmi -f ${IMAGE_NAME} || true
