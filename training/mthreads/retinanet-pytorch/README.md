@@ -54,6 +54,6 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
 | 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | mAP    | mem       |
 | ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
 | 单机8卡（1x8）  | fp32      | bs=16,lr=0.08 |    |      |      |     | 0.351 | 37.5/48.0 |
-| 单机单卡（1x1） | fp32     |  |         |         |      |        |   |       |
-| 两机8卡（2x8） | fp32     |  |         |         |      |        |   |       |
+| 单机单卡（1x1） | fp32     | \ |         |         |      |        | \ | \  |
+| 两机8卡（2x8） | fp32     | \ |         |         |      |        | \ |  \  |
 
