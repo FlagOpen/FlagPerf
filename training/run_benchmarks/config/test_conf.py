@@ -3,7 +3,7 @@
 
 # Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend and mthreads.
 # We will run benchmarks in training/<vendor>
-VENDOR = "mthreads"
+VENDOR = "nvidia"
 
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
@@ -21,7 +21,7 @@ VENDOR = "mthreads"
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
 #   mthreads:
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
-ACCE_CONTAINER_OPT = " --env MTHREADS_VISIBLE_DEVICES=all"
+ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -29,7 +29,7 @@ ACCE_CONTAINER_OPT = " --env MTHREADS_VISIBLE_DEVICES=all"
 #   XPU_VISIBLE_DEVICES for kunlunxin
 #   ASCEND_VISIBLE_DEVICES for ascend
 #   MUSA_VISIBLE_DEVICES for mthreads
-ACCE_VISIBLE_DEVICE_ENV_NAME = "MUSA_VISIBLE_DEVICES"
+ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
 PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
@@ -37,7 +37,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/mccxadmin/FlagPerf/training"
+FLAGPERF_PATH = "/home/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -57,9 +57,9 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
-    # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
-    # "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
+    "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
