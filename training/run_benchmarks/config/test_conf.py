@@ -118,13 +118,13 @@ CASES = {
     # "bert:pytorch:R300:1:8:1": "/raid/dataset/bert_large/train",
     # "longformer:pytorch:R300:1:8:1": "/raid/dataset/longformer_train",
     # "distilbert:pytorch:R300:1:8:1": "/raid/dataset/distilbert/",
-    # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/"
+    # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "tacotron2:pytorch:R300:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
     # "retinanet:pytorch_2.0:S4000:1:8:1": "/data/flagperf/coco2017",
     # "bert_hf:pytorch_2.0:S4000:1:8:1": "/data/flagperf/bert_hf",
-    # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext"
-
+    # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 }
 
