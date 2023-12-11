@@ -40,6 +40,7 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.init_dist_training_env(config)
     dist_pytorch.barrier(config.vendor)
     config.distributed = dist_pytorch.get_world_size() > 1
+    print("global size:", dist_pytorch.global_batch_size(config))
     model_driver.event(Event.INIT_START)
 
     # logger

@@ -76,6 +76,7 @@ class Trainer:
 
         # last one will be dropped in the training loop
         steps_per_epoch = len(train_dataloader) - 1
+        print(f"steps_per_epoch: {steps_per_epoch}")
         test_freq = config.test_freq if config.test_freq is not None else steps_per_epoch - 2
 
         # Accumulating loss on GPU to avoid memcpyD2H every step
@@ -97,14 +98,16 @@ class Trainer:
 
         for step in range(max_step):
             no_eval_start_time = time.time()
-            state.global_steps += 1
+            # state.global_steps += 1
+            state.global_steps = steps_per_epoch * state.epoch + step
             numerical_features, categorical_features, click = next(batch_iter)
-            pure_compute_start_time = time.time()
+            
             state.num_trained_samples = state.global_steps * \
                 dist_pytorch.global_batch_size(self.config)
             self.timer.click(synchronize=(device == 'cuda'))
 
-            state.global_steps = steps_per_epoch * state.epoch + step
+            
+            # state.global_steps = steps_per_epoch * state.epoch + step
 
             if step % 10 == 0 or step == max_step - 1:
                 print(
@@ -115,6 +118,7 @@ class Trainer:
             # isn't necessarily a multiple of the batch size. #TODO isn't dropping here a change of behavior
             if click.shape[0] != config.train_batch_size:
                 continue
+            pure_compute_start_time = time.time()
 
             self.lr_scheduler.step()
             loss = trainerWrapper.train_step(numerical_features,
