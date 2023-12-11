@@ -1,0 +1,5 @@
+ixrt_tmp_path: iluvatar_tmp/bertLarge.trt
+compiler: ixrt
+# no_validation: true
+has_dynamic_axis: false
+torchtrt_full_compile: true
