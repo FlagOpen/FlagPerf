@@ -1,3 +1,6 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 import os
 import torch
 from torch.types import Device
@@ -62,6 +65,8 @@ class Trainer(DDPTrainer):
 
         num_batches = len(epoch_itr)
 
+        no_eval_start_time = time.time()
+
         trainer.get_throughput_meter().reset()
         for i, sample in enumerate(itr):
             state.global_steps += 1
@@ -87,6 +92,7 @@ class Trainer(DDPTrainer):
                 break
 
         state.total_tokens += self.throughput_meter.n
+        state.no_eval_time += time.time() - no_eval_start_time
         if epoch_itr.epoch % args.validate_interval == 0:
             state.valid_loss = self.validate(valid_dataloader)
             eval_start = time.time()

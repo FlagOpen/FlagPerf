@@ -218,6 +218,33 @@ def parse_args():
     return args
 
 
+def get_system_info():
+    cmd = r"echo OS version:;"
+    cmd = cmd + r"cat /etc/issue | head -n1 | awk '{print $1, $2, $3}';"
+    cmd = cmd + r"echo ;"
+    
+    cmd = cmd + r"echo OS Kernel version:;"
+    cmd = cmd + r"uname -r;"
+    cmd = cmd + r"echo ;"
+    
+    cmd = cmd + r"echo Hardware Model:;"
+    cmd = cmd + r"sudo dmidecode | grep -A9 'System Information' | tail -n +2 | sed 's/^[ \t]*//';"
+    cmd = cmd + r"echo ;"
+    
+    cmd = cmd + r"echo Accelerator Model:;"
+    cmd = cmd + r"xpu_smi info -m;"
+    cmd = cmd + r"echo ;"
+    
+    cmd = cmd + r"echo Accelerator Driver version:;"
+    cmd = cmd + r"xpu_smi info | grep 'Driver Version' | awk '{print $3}';"
+    cmd = cmd + r"echo ;"
+    
+    cmd = cmd + r"echo Docker version:;"
+    cmd = cmd + r"docker -v"
+    
+    return cmd
+    
+
 def main():
     sample_rate1 = 5
     args = parse_args()
@@ -228,6 +255,15 @@ def main():
     err_fn = str(log_path + '/kunlunxin_monitor.err')
     # result for gpu
     xpu_fn = str(log_path + '/kunlunxin_monitor.log')
+    sys_fn = str(log_path + '/sys_info.log')
+    cmd = get_system_info()
+    with open(sys_fn, "w") as f:
+        try:
+            # this command need sudo privilege, may raise exception
+            p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+            p.wait()
+        except:
+            pass
 
     subdaemon = Daemon(pid_fn,
                        log_fn,

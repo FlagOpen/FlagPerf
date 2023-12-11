@@ -1,8 +1,6 @@
-import math
 import time
 import torch
 import torch.utils.data
-import torchvision
 from torch.types import Device
 import os
 import sys
@@ -15,7 +13,7 @@ from train.training_state import TrainingState
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
-from driver import Driver, Event, dist_pytorch
+from driver import Driver, dist_pytorch
 
 
 class Trainer:
@@ -53,10 +51,10 @@ class Trainer:
         model = self.model
         optimizer = self.optimizer
         device = self.device
-        epoch = self.training_state.epoch
         config = self.config
 
         model.train()
+        no_eval_start_time = time.time()
         mixup = 0.1
         cri = torch.nn.CrossEntropyLoss().to(device)
 
@@ -67,6 +65,7 @@ class Trainer:
             # Schedule sending to GPU(s)
             x = x.to(device)
             y = y.to(device)
+            self.training_state.num_trained_samples += x.size(0) * config.n_device
 
             # Update learning-rate, including stop training if over.
             lr = self.get_lr(step, config)
@@ -77,6 +76,7 @@ class Trainer:
 
             x, y_a, y_b = self.mixup_data(x, y, mixup_l)
 
+            pure_compute_start_time = time.time()
             # compute output
             logits = model(x)
             c = self.mixup_criterion(cri, logits, y_a, y_b, mixup_l)
@@ -97,8 +97,12 @@ class Trainer:
             if need_update:
                 optimizer.step()
                 optimizer.zero_grad()
+
+            self.training_state.pure_compute_time += time.time() - pure_compute_start_time    
             # Sample new mixup ratio for next batch
             mixup_l = np.random.beta(mixup, mixup)
+
+        self.training_state.no_eval_time += time.time() - no_eval_start_time    
 
         all_c, all_top1, all_top5 = self.evaluator.evaluate(model, device)
 

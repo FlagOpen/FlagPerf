@@ -6,6 +6,9 @@ vendor: str = "nvidia"
 name: str = "Transformer"
 data_dir: str = None
 
+cudnn_benchmark: bool = False
+cudnn_deterministic: bool = True
+
 do_train = True
 fp16 = False
 # =========================================================

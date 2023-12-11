@@ -44,11 +44,11 @@ class Trainer:
         self.optimizer = create_optimizer(self.model, self.config)
         self.lr_scheduler = create_scheduler(self.optimizer, train_dataloader,
                                              self.config)
-
-        self.accelerator = Accelerator()
-        self.model, self.optimizer, train_dataloader, eval_dataloader, self.lr_scheduler = self.accelerator.prepare(
-            self.model, self.optimizer, train_dataloader, eval_dataloader,
-            self.lr_scheduler)
+        if self.config.distributed:
+            self.accelerator = Accelerator()
+            self.model, self.optimizer, train_dataloader, eval_dataloader, self.lr_scheduler = self.accelerator.prepare(
+                self.model, self.optimizer, train_dataloader, eval_dataloader,
+                self.lr_scheduler)
 
         return train_dataloader, eval_dataloader
 
@@ -78,7 +78,10 @@ class Trainer:
             outputs = model(**batch)
             loss = outputs.loss
 
-            self.accelerator.backward(loss)
+            if self.config.distributed:
+                self.accelerator.backward(loss)
+            else:
+                loss.backward()
             optimizer.step()
             self.lr_scheduler.step()
             optimizer.zero_grad()
