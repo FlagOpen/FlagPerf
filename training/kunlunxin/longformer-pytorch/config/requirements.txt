@@ -1,0 +1,4 @@
+transformers==4.34.1
+datasets==2.14.6
+psutil==5.9.6
+accelerate==0.24.0

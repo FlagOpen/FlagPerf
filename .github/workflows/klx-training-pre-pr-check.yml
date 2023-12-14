@@ -1,0 +1,318 @@
+# 配置和使用文档请参考: https://github.com/FlagOpen/FlagPerf/pull/318
+name: klx-training-pre-pr-check
+
+on:
+  pull_request:
+    branches: [ "main", "master" ]
+jobs:
+  run-klx-training-test:
+    if:  ${{ startsWith(github.event.pull_request.title, '[kunlunxin]') || startsWith(github.event.pull_request.title, '[klx]') }}
+    runs-on: [ self-hosted, klx, r480 ]
+    steps:
+      # 0.1 Extract inputs
+      - name: 0.1 Extract inputs (The pull request title should be like "[kunlunxin][MODEL_NAME][DATASET_PATH] xxxxxxx")
+        id: extract-inputs
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "github.event.pull_request.title:" && echo ${PR_TITLE} &&
+          echo "github.event.pull_request.body:" && echo ${PR_BODY} &&
+          echo "${PR_TITLE}" | egrep "^\[kunlunxin\]\[[0-9a-zA-Z_\-]+\]\[[0-9a-zA-Z\/\._\-\:]+\].*$" &&
+          export "MODEL_NAME=$(echo ${PR_TITLE} | awk -F '[][]' '{print $4}')" &&
+          export "DATASET_PATH=$(echo ${PR_TITLE} | awk -F '[][]' '{print $6}')" &&
+          export "CASE1x1=${MODEL_NAME}:pytorch:R300:1:1:1" &&
+          export "CASE1x8=${MODEL_NAME}:pytorch:R300:1:8:1" &&
+          export "PIP_SOURCE=$(echo ${PR_BODY} | grep 'PIP_SOURCE=' | head -n 1 | sed 's/PIP_SOURCE=//g')" &&
+          export "MAX_EPOCH=$(echo ${PR_BODY} | grep 'MAX_EPOCH=' | head -n 1 | sed 's/MAX_EPOCH=//g')" &&
+          export "MAX_SAMPLES_TERMINATION=$(echo ${PR_BODY} | grep 'MAX_SAMPLES_TERMINATION=' | head -n 1 | sed 's/MAX_SAMPLES_TERMINATION=//g')" &&
+          echo "MODEL_NAME=${MODEL_NAME}" && echo "MODEL_NAME=${MODEL_NAME}" >> "$GITHUB_OUTPUT" &&
+          echo "DATASET_PATH=${DATASET_PATH}" && echo "DATASET_PATH=${DATASET_PATH}" >> "$GITHUB_OUTPUT" &&
+          echo "CASE1x1=${CASE1x1}" && echo "CASE1x1=${CASE1x1}" >> "$GITHUB_OUTPUT" &&
+          echo "CASE1x8=${CASE1x8}" && echo "CASE1x8=${CASE1x8}" >> "$GITHUB_OUTPUT" &&
+          echo "PIP_SOURCE=${PIP_SOURCE:-https://pypi.tuna.tsinghua.edu.cn/simple}" && echo "PIP_SOURCE=${PIP_SOURCE:-https://pypi.tuna.tsinghua.edu.cn/simple}" >> "$GITHUB_OUTPUT" &&
+          echo "MAX_EPOCH=${MAX_EPOCH:-1}" && echo "MAX_EPOCH=${MAX_EPOCH:-1}" >> "$GITHUB_OUTPUT" &&
+          echo "MAX_SAMPLES_TERMINATION=${MAX_SAMPLES_TERMINATION:-10}" && echo "MAX_SAMPLES_TERMINATION=${MAX_SAMPLES_TERMINATION:-10}" >> "$GITHUB_OUTPUT"
+
+      # 0.2 Display inputs
+      - name: 0.2 Display inputs
+        env:
+          CASE1x1: ${{ steps.extract-inputs.outputs.CASE1x1 }}
+          CASE1x8: ${{ steps.extract-inputs.outputs.CASE1x8 }}
+          DATASET_PATH: ${{ steps.extract-inputs.outputs.DATASET_PATH }}
+          PIP_SOURCE: ${{ steps.extract-inputs.outputs.PIP_SOURCE }}
+          MAX_EPOCH: ${{ steps.extract-inputs.outputs.MAX_EPOCH }}
+          MAX_SAMPLES_TERMINATION: ${{ steps.extract-inputs.outputs.MAX_SAMPLES_TERMINATION }}
+        run: |
+          echo "case1x1=${CASE1x1}" &&
+          echo "case1x8=${CASE1x8}" &&
+          echo "dataset_path=${DATASET_PATH}" &&
+          echo "pip_source=${PIP_SOURCE}" &&
+          echo "max_epoch=${MAX_EPOCH}" &&
+          echo "max_samples_termination=${MAX_SAMPLES_TERMINATION}"
+
+      # 0.3 Verify inputs
+      - name: 0.3 Verify inputs
+        env:
+          CASE1x1: ${{ steps.extract-inputs.outputs.CASE1x1 }}
+          CASE1x8: ${{ steps.extract-inputs.outputs.CASE1x8 }}
+          DATASET_PATH: ${{ steps.extract-inputs.outputs.DATASET_PATH }}
+          PIP_SOURCE: ${{ steps.extract-inputs.outputs.PIP_SOURCE }}
+          MAX_EPOCH: ${{ steps.extract-inputs.outputs.MAX_EPOCH }}
+          MAX_SAMPLES_TERMINATION: ${{ steps.extract-inputs.outputs.MAX_SAMPLES_TERMINATION }}
+        run: |
+          export CASE1x1="${CASE1x1}" && export CASE1x8="${CASE1x8}" &&
+          echo "Verifying case1x1..." && echo "${CASE1x1}" | egrep "^[0-9a-zA-Z_\-]+:[0-9a-zA-Z_\-\.]+:[0-9a-zA-Z_\-\.]+:1:1:1$" > /dev/null && echo "success!" &&
+          echo "Verifying case1x8..." && echo "${CASE1x8}" | egrep "^[0-9a-zA-Z_\-]+:[0-9a-zA-Z_\-\.]+:[0-9a-zA-Z_\-\.]+:1:8:1$" > /dev/null && echo "success!" &&
+          echo "Verifying dataset_path..." && echo "${DATASET_PATH}" | egrep "^([0-9a-zA-Z\/\._\-\:]+)$" > /dev/null && echo "success!" &&
+          echo "Verifying pip_source..." && echo "${PIP_SOURCE}" | egrep "^((https:\/\/)|(http:\/\/))?(www\.)?[a-zA-Z0-9\.\/]+$" > /dev/null && echo "success!" &&
+          echo "Verifying max_epoch..." && echo "${MAX_EPOCH}" | egrep "^[0-9]+$" > /dev/null && echo "success!" &&
+          echo "Verifying max_samples_termination..." && echo "${MAX_SAMPLES_TERMINATION}" | egrep "^[0-9]+$" > /dev/null && echo "success!"
+
+      # 1. Checkout
+      - name: 1. Checkout code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+
+      # 2. Create tmp directory
+      - name: 2.1 Retrieve the current timestamp
+        id: work-timestamp
+        run: echo "WORK_TIMESTAMP=$(date +"%Y%m%d%H%M%S")"  >> "$GITHUB_OUTPUT"
+
+      - name: 2.2 Set work directory variable
+        id: work-directory
+        env:
+          WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
+        run: echo "WORK_DIRECTORY=$(realpath ${PWD}/..)/FlagPerf$WORK_TIMESTAMP"  >> "$GITHUB_OUTPUT"
+
+      - name: 2.3 Create work directory and copy the whole directory
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+        run: |
+          mkdir ${WORK_DIRECTORY} &&
+          cp -r * ${WORK_DIRECTORY}
+
+      # 3. Setup basic information in test_conf.py
+      - name: 3. Setup test_conf.py
+        env:
+          PIP_SOURCE: ${{ steps.extract-inputs.outputs.PIP_SOURCE }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+        run: |
+          export TEST_CONF_FILEPATH=${WORK_DIRECTORY}/training/run_benchmarks/config/test_conf.py
+          echo "VENDOR = 'kunlunxin'" >> ${TEST_CONF_FILEPATH} &&
+          echo "ACCE_CONTAINER_OPT = '--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl'" >> ${TEST_CONF_FILEPATH} &&
+          echo "ACCE_VISIBLE_DEVICE_ENV_NAME = 'XPU_VISIBLE_DEVICES'" >> ${TEST_CONF_FILEPATH} &&
+          echo "PIP_SOURCE = '${PIP_SOURCE}'" >> ${TEST_CONF_FILEPATH} &&
+          echo "FLAGPERF_PATH = '${WORK_DIRECTORY}/training'" >> ${TEST_CONF_FILEPATH} &&
+          echo "FLAGPERF_LOG_PATH = '${WORK_DIRECTORY}/training/result/'" >> ${TEST_CONF_FILEPATH} &&
+          cat ${TEST_CONF_FILEPATH}
+
+      # 4.1 Setup cases in test_conf.py
+      - name: 4.1 Setup 1x1 case and 1x8 case in test_conf.py
+        env:
+          CASE1x1: ${{ steps.extract-inputs.outputs.CASE1x1 }}
+          CASE1x8: ${{ steps.extract-inputs.outputs.CASE1x8 }}
+          DATASET_PATH: ${{ steps.extract-inputs.outputs.DATASET_PATH }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+        run: |
+          echo "CASES = { '${CASE1x1}' : '${DATASET_PATH}', '${CASE1x8}' : '${DATASET_PATH}' }" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/test_conf.py &&
+          cat ${WORK_DIRECTORY}/training/run_benchmarks/config/test_conf.py
+
+      # 4.2 Setup config_R300x1x1.py
+      - name: 4.2 Setup config_R300x1x1.py
+        env:
+          MAX_EPOCH: ${{ steps.extract-inputs.outputs.MAX_EPOCH }}
+          MAX_SAMPLES_TERMINATION: ${{ steps.extract-inputs.outputs.MAX_SAMPLES_TERMINATION }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          MODEL_NAME: ${{ steps.extract-inputs.outputs.MODEL_NAME }}
+        run: |
+          ls ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
+          echo "max_epoch = ${MAX_EPOCH}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
+          echo "max_samples_termination = ${MAX_SAMPLES_TERMINATION}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py &&
+          cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x1.py
+
+      # 4.3 Setup config_R300x1x8.py
+      - name: 4.3 Setup config_R300x1x8.py
+        env:
+          MAX_EPOCH: ${{ steps.extract-inputs.outputs.MAX_EPOCH }}
+          MAX_SAMPLES_TERMINATION: ${{ steps.extract-inputs.outputs.MAX_SAMPLES_TERMINATION }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          MODEL_NAME: ${{ steps.extract-inputs.outputs.MODEL_NAME }}
+        run: |
+          ls ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
+          echo "max_epoch = ${MAX_EPOCH}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
+          echo "max_samples_termination = ${MAX_SAMPLES_TERMINATION}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py &&
+          cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x1x8.py
+
+      # 4.4 Setup config_R300x2x8.py
+      - name: 4.4 Setup config_R300x2x8.py (Check whether config_R300x2x8.py exists)
+        env:
+          MAX_EPOCH: ${{ steps.extract-inputs.outputs.MAX_EPOCH }}
+          MAX_SAMPLES_TERMINATION: ${{ steps.extract-inputs.outputs.MAX_SAMPLES_TERMINATION }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          MODEL_NAME: ${{ steps.extract-inputs.outputs.MODEL_NAME }}
+        run: |
+          ls ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x2x8.py &&
+          echo "max_epoch = ${MAX_EPOCH}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x2x8.py &&
+          echo "max_samples_termination = ${MAX_SAMPLES_TERMINATION}" >> ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x2x8.py &&
+          cat ${WORK_DIRECTORY}/training/kunlunxin/${MODEL_NAME}-pytorch/config/config_R300x2x8.py
+
+      # 5. Setup cluster_conf.py(set random master port between 25000 and 26000)
+      - name: 5. Setup cluster_conf.py(set random master port between 25000 and 26000)
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+        run: |
+          echo "HOSTS = ['127.0.0.1']" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py &&
+          echo "MASTER_PORT = '$(shuf -i 25000-26000 -n 1)'" >> ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py &&
+          cat ${WORK_DIRECTORY}/training/run_benchmarks/config/cluster_conf.py
+
+      # 6.1 Modify VERSION in run.py
+      - name: 6.1 Modify VERSION in run.py
+        env:
+          WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          MODEL_NAME: ${{ steps.extract-inputs.outputs.MODEL_NAME }}
+        run: |
+          export SED_PATTERN="s/VERSION = \"v0.1\"/VERSION = \"v0.1_${MODEL_NAME}_${WORK_TIMESTAMP}\"/g" &&
+          echo "SED_PATTERN=${SED_PATTERN}" &&
+          sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/run_benchmarks/run.py &&
+          echo "IMAGE_NAME=flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME}_${WORK_TIMESTAMP}"
+
+      # 6.2 Get run result name
+      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
+      - name: 6.2 Get run result name
+        id: run-result-name
+        env:
+          WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
+        run: echo "RUN_RESULT_NAME=run${WORK_TIMESTAMP}" >> "$GITHUB_OUTPUT"
+
+      # 6.3 Modify timestamp in run.py
+      - name: 6.3 Modify timestamp in run.py
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          export SED_PATTERN="s/timestamp_log_dir = \"run\" + time.strftime(\"%Y%m%d%H%M%S\", time.localtime())/timestamp_log_dir = \"${RUN_RESULT_NAME}\"/g" &&
+          echo "SED_PATTERN=${SED_PATTERN}" &&
+          sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/run_benchmarks/run.py &&
+          echo "timestamp_log_dir=${RUN_RESULT_NAME}" &&
+          grep ${RUN_RESULT_NAME} ${WORK_DIRECTORY}/training/run_benchmarks/run.py
+
+      # 6.4 Create 1x1 result path
+      - name: 6.4 Create 1x1 result path
+        env:
+          CASE1x1: ${{ steps.extract-inputs.outputs.CASE1x1 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          mkdir -p "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x1}/round1/127.0.0.1_noderank0/"
+
+      # 6.5 Create 1x8 result path
+      - name: 6.5 Create 1x8 result path
+        env:
+          CASE1x8: ${{ steps.extract-inputs.outputs.CASE1x8 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          mkdir -p "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x8}/round1/127.0.0.1_noderank0/"
+
+      # 6.6 Modify xpu_monitor.pid in training/kunlunxin/kunlunxin_monitor.py
+      - name: 6.6 Modify xpu_monitor.pid in training/kunlunxin/kunlunxin_monitor.py
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+        run: |
+          export XPU_MONITOR_PID_FILEPATH="$(realpath ${PWD}/..)/xpu_monitor.pid" &&
+          echo "pid_fn=${XPU_MONITOR_PID_FILEPATH}" &&
+          export XPU_MONITOR_PID_FILEPATH="$(echo ${XPU_MONITOR_PID_FILEPATH} | sed 's/\//\\\//g')" &&
+          export SED_PATTERN="s/pid_fn = str('\/tmp\/xpu_monitor.pid')/pid_fn = str('${XPU_MONITOR_PID_FILEPATH}')/g" &&
+          echo "SED_PATTERN=${SED_PATTERN}" &&
+          sed -i "${SED_PATTERN}" ${WORK_DIRECTORY}/training/kunlunxin/kunlunxin_monitor.py
+
+      # 6.7 Run test
+      - name: 6.7 Run test
+        env:
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+        run: |
+          pushd ${WORK_DIRECTORY}/training &&
+          python3 run_benchmarks/run.py 2>&1 | tee tmp_run.log &&
+          popd
+
+      # 7. Verify test result
+      - name: 7.1 Verify 1x1 case result
+        env:
+          CASE1x1: ${{ steps.extract-inputs.outputs.CASE1x1 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x1}/round1/127.0.0.1_noderank0/rank0.out.log" &&
+          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x1}/round1/127.0.0.1_noderank0/rank0.out.log" > /dev/null
+
+      - name: 7.2 Verify 1x8 case result
+        env:
+          CASE1x8: ${{ steps.extract-inputs.outputs.CASE1x8 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          echo "LOG_FILEPATH=${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x8}/round1/127.0.0.1_noderank0/rank0.out.log" &&
+          grep '"event": "FINISHED"' "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x8}/round1/127.0.0.1_noderank0/rank0.out.log" > /dev/null
+
+      # 8.1 Fetch 1x1 kunlunxin_monitor result
+      - name: 8.1 Fetch 1x1 kunlunxin_monitor result
+        env:
+          CASE1x1: ${{ steps.extract-inputs.outputs.CASE1x1 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x1}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" || true
+
+      # 8.2 Get 1x1 kunlunxin_monitor max memory usage
+      - name: 8.2 Get 1x1 kunlunxin_monitor max memory usage
+        env:
+          CASE1x1: ${{ steps.extract-inputs.outputs.CASE1x1 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x1}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" | \
+          grep 'MiB' | \
+          awk '{ print $3 }' | \
+          sed "s/MiB//g" | \
+          sort -n | \
+          tail -n 1 | \
+          xargs -I{} printf "1x1 case max memory usage: {} MB\n" || true
+
+      # 8.3 Fetch 1x8 kunlunxin_monitor result
+      - name: 8.3 Fetch 1x8 kunlunxin_monitor result
+        env:
+          CASE1x8: ${{ steps.extract-inputs.outputs.CASE1x8 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+          cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x8}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" || true
+
+      # 8.4 Get 1x8 kunlunxin_monitor max memory usage
+      - name: 8.4 Get 1x8 kunlunxin_monitor max memory usage
+        env:
+          CASE1x8: ${{ steps.extract-inputs.outputs.CASE1x8 }}
+          WORK_DIRECTORY: ${{ steps.work-directory.outputs.WORK_DIRECTORY }}
+          RUN_RESULT_NAME: ${{ steps.run-result-name.outputs.RUN_RESULT_NAME }}
+        run: |
+            cat "${WORK_DIRECTORY}/training/result/${RUN_RESULT_NAME}/${CASE1x8}/round1/127.0.0.1_noderank0/kunlunxin_monitor.log" | \
+            grep 'MiB' | \
+            awk '{ print $3 }' | \
+            sed "s/MiB//g" | \
+            sort -n | \
+            tail -n 1 | \
+            xargs -I{} printf "1x8 case max memory usage: {} MB\n" || true
+
+      # 9. Remove training container and image
+      - name: 9. Remove training container and image
+        if: ${{ always() }}
+        env:
+          WORK_TIMESTAMP: ${{ steps.work-timestamp.outputs.WORK_TIMESTAMP }}
+          MODEL_NAME: ${{ steps.extract-inputs.outputs.MODEL_NAME }}
+        run: |
+          export WORK_IMAGE_NAME=flagperf-kunlunxin-pytorch:t_v0.1_${MODEL_NAME:-unknown}_${WORK_TIMESTAMP:-unknown} &&
+          echo "WORK_IMAGE_NAME=${WORK_IMAGE_NAME}" &&
+          docker rm -f $(docker ps -a -q --filter ancestor=${WORK_IMAGE_NAME}) || true &&
+          docker rmi -f ${WORK_IMAGE_NAME} || true

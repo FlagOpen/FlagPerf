@@ -9,7 +9,6 @@ import pycuda.autoinit
 import time
 import subprocess
 
-
 class InferModel:
 
     class HostDeviceMem(object):
@@ -66,27 +65,32 @@ class InferModel:
 
     def build_engine(self, config, onnx_path):
         if config.exist_compiler_path is None:
-            trt_path = config.log_dir + "/" + config.ixrt_tmp_path
+            ixrt_path = config.log_dir + "/" + config.ixrt_tmp_path
 
-            dir_trt_path = os.path.dirname(trt_path)
+            dir_trt_path = os.path.dirname(ixrt_path)
             os.makedirs(dir_trt_path, exist_ok=True)
 
             time.sleep(10)
 
-            trtexec_cmd = "ixrtexec --onnx=" + onnx_path + " --save_engine=" + trt_path
-            if config.fp16:
-                trtexec_cmd += " --precision fp16"
-            if config.has_dynamic_axis:
-                trtexec_cmd += " --minShapes=" + config.minShapes
-                trtexec_cmd += " --optShapes=" + config.optShapes
-                trtexec_cmd += " --maxShapes=" + config.maxShapes
+            onnxsim_cmd = f"onnxsim {onnx_path} {onnx_path}"
 
-            p = subprocess.Popen(trtexec_cmd, shell=True)
+            onnxsim_cmd = subprocess.Popen(onnxsim_cmd, shell=True)
+            onnxsim_cmd.wait()
+
+            ixrtexec_cmd = "ixrtexec --onnx=" + onnx_path + " --save_engine=" + ixrt_path
+            if config.fp16:
+                ixrtexec_cmd += " --precision fp16"
+            if config.has_dynamic_axis:
+                ixrtexec_cmd += " --minShapes=" + config.minShapes
+                ixrtexec_cmd += " --optShapes=" + config.optShapes
+                ixrtexec_cmd += " --maxShapes=" + config.maxShapes
+
+            p = subprocess.Popen(ixrtexec_cmd, shell=True)
             p.wait()
         else:
-            trt_path = config.exist_compiler_path
+            ixrt_path = config.exist_compiler_path
 
-        with open(trt_path, "rb") as f:
+        with open(ixrt_path, "rb") as f:
             return self.runtime.deserialize_cuda_engine(f.read())
 
     def allocate_buffers(self, engine):

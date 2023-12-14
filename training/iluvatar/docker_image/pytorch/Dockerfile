@@ -1,4 +1,7 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+
+# copy /etc/apt/sources.list . or choose an available one if encountering a problem with the mirror source
+# ADD sources.list /etc/apt/
 
 RUN /bin/bash -c "source /root/.bashrc"
 
@@ -33,11 +36,14 @@ RUN apt-get install -y --fix-missing \
      pbzip2 \
      pv \
      numactl \
-     ninja-build 
+     ninja-build \
+     gcc-7 \
+     g++-7 \
+     libncursesw5
      
 
 # Configure anaconda
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64.sh && \
+RUN wget https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64.sh && \
     bash ./Miniconda3-py38_4.10.3-Linux-x86_64.sh -b -p /root/miniconda && \
     /root/miniconda/bin/conda clean -tipsy && \
     ln -s /root/miniconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -49,6 +55,8 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64
 
 
 RUN /bin/bash -c "apt-get install -y linux-headers-`uname -r`"
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 10 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
 RUN /bin/bash -c "pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple"
 
