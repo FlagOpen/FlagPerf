@@ -12,7 +12,7 @@ import sys
 import argparse
 from run_cmd import run_cmd_wait as rcw
 from container_manager import ContainerManager
-
+import time
 
 def _parse_args():
     ''' Check script input parameter. '''
@@ -149,7 +149,7 @@ class ImageManager():
         commit_cmd = "docker commit -a \"baai\" -m \"flagperf training\" " \
                      + tmp_container_name + " " + self.repository + ":" \
                      + self.tag
-
+        time.sleep(5)
         ret, outs = rcw(commit_cmd, 300)
         if ret != 0:
             print("Commit docker image failed.")

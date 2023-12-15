@@ -61,6 +61,7 @@ CASES = {
     "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
+    #"llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -124,6 +125,7 @@ CASES = {
     # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "tacotron2:pytorch:R300:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
     # "transformer:pytorch:R300:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
+    # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
