@@ -29,8 +29,6 @@ Llama 2, a collection of pretrained and fine-tuned large language models (LLMs) 
   - 训练编译器版本：xacc
   - 依赖软件版本：pytorch-2.0.1+cu17
 
-### 运行命令
- bash run_llama.sh
 
 ### 运行情况
 
@@ -53,8 +51,8 @@ Llama 2, a collection of pretrained and fine-tuned large language models (LLMs) 
 
 | 配置                | precision | fix_hp              | tokens/p/s | loss  | memory | MFU |
 | ------------------- | --------- | ------------------- | --------   | ----- | ------- | ------ | ------- | --------- |
-| R300单机8卡（1x8）  |  fp32     | bs=1,seqlength=512  |           |  5.4  |         |        |         |
-| R300单机8卡（1x8）  |  fp32     | bs=2,seqlength=512  |            |  5.4  |         |
-| R300单机8卡（1x8）  |  fp16     | bs=1,seqlength=512  |            |  5.99 |         |        |
+| R300单机8卡（1x8）  |  fp32     | bs=12,seqlength=512  |           |  5.4  |         |        |         |
+| R300单机8卡（1x8）  |  fp32     | bs=8,seqlength=512  |            |  5.4  |         |
+| R300单机8卡（1x8）  |  fp16     | bs=12,seqlength=512  |            |  6.76 |         |        |
 
 

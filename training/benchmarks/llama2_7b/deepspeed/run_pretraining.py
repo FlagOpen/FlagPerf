@@ -57,7 +57,6 @@ def train(model_engine, dataloader):
     model_engine.train()
     ave_loss = 0.0
     for step, data in enumerate(dataloader):
-
         fake_data = torch.tensor(data).long()
         input_ids = fake_data.to(args.local_rank)
         labels = fake_data.to(args.local_rank)
@@ -123,8 +122,8 @@ if __name__ == "__main__":
     dataloader = DataLoader(dataset,
                             sampler=sampler,
                             batch_size=batchsize,
-                            num_workers=1,
-                            pin_memory=True)
+                            num_workers=4,
+                            pin_memory=False)
 
     epoch = 0
     while epoch < epochs:
