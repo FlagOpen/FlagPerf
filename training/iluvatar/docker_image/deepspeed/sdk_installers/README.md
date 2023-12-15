@@ -3,6 +3,6 @@
 
 >联系邮箱: contact-us@iluvatar.com
 
-corex-installer-linux64-3.2.0.20231126.1581_x86_64_10.2.run
+corex-installer-linux64-3.2.0.20231211.1602_x86_64_10.2.run
 
 cuda_10.2.89_440.33.01_linux.run

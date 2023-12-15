@@ -63,7 +63,6 @@ def train(model_engine, dataloader):
         loss = model_engine(input_ids=input_ids, labels=labels).loss
         model_engine.backward(loss)
         model_engine.step()
-
         ave_loss += loss
         if step % 10 == 0 and args.local_rank == 0:
             print('Step {}/{}, Loss: {}'.format(step, len(dataloader),
@@ -71,14 +70,14 @@ def train(model_engine, dataloader):
             ave_loss = 0.0
 
 
-def get_deepspeed_engine(args, model_config_dir, flashattn):
+def get_deepspeed_engine(args, model_config_dir, flashattn, gradient_checkpointing):
     with deepspeed.zero.Init(config_dict_or_path=args.deepspeed_config,
                              enabled=True,
                              mem_efficient_linear=False,
                              mpu=None):
         model = get_llama_model(model_config_dir, flashattn)
-        
-    model.gradient_checkpointing_enable()
+    if gradient_checkpointing:
+        model.gradient_checkpointing_enable()
 
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
@@ -96,7 +95,6 @@ if __name__ == "__main__":
     arg_parser = get_argument_parser()
     arg_parser = deepspeed.add_config_arguments(arg_parser)
     args = arg_parser.parse_args()
-
     flagperf_config = {}
     sys.path.append(os.path.dirname(args.flagperf_config))
     config_file = os.path.basename(args.flagperf_config).split('.')[0]
@@ -109,10 +107,12 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
-
+    gradient_checkpointing = getattr(module, 'gradient_checkpointing')
+    
     deepspeed.init_distributed()
     model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"),
-                                        flashattn)
+                                        flashattn, gradient_checkpointing)
+
     dataset = get_llama_dataset(args, seqlength, datafilename)
 
     logger = logging.getLogger("DeepSpeed")
