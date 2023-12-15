@@ -19,7 +19,7 @@ VENDOR = "nvidia"
 #       "--device=/dev/davinciX --device=/dev/davinci_manager + \
 #        --device=/dev/devmm_svm --device=/dev/hisi_hdc + \
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
-ACCE_CONTAINER_OPT = " --gpus all"
+ACCE_CONTAINER_OPT = "--gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -103,7 +103,8 @@ CASES = {
     # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
 
     # kunlunxin cases
-     "llama2_7b:deepspeed:R300:1:8:1": "/data/zhusonghe",
+    #"llama2_7b:pytorch:R300:1:8:1": "/data/zhusonghe",
+     "llama2_7b:deepspeed:R300:1:8:1": "/data/dataset/llama2-7b",
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
