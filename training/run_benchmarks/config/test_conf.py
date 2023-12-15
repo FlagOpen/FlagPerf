@@ -124,6 +124,7 @@ CASES = {
     # "distilbert:pytorch:R300:1:8:1": "/raid/dataset/distilbert/",
     # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "tacotron2:pytorch:R300:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
