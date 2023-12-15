@@ -8,6 +8,8 @@ class Llama2PretrainDataset(Dataset):
 
     def __init__(self, npy_file, item_length):
         data = np.load(npy_file)
+        #data = data[:294912]
+        #data = data[:12288]
         self.data = torch.from_numpy(data)
         self.item_length = item_length
         self.length = len(data) // item_length * item_length
