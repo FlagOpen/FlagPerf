@@ -1,1 +1,0 @@
-https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/transformer/latest/transformers-4.34.0-py3-none-any.whl

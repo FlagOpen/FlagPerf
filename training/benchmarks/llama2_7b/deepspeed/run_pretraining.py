@@ -126,7 +126,7 @@ if __name__ == "__main__":
     dataloader = DataLoader(dataset,
                             sampler=sampler,
                             batch_size=batchsize,
-                            num_workers=1,
+                            num_workers=4,
                             pin_memory=False)
 
     epoch = 0
