@@ -4,7 +4,7 @@ set -xe
 
 source activate python38_torch201_cuda
 
-wget  -O ~/xmlir-cp38-torch201-ubuntu2004-x64-installer.run  http://10.1.2.158:9998/xpytorch/201_cuda/latest/xmlir-cp38-torch201-ubuntu2004-x64-installer.run && \
+wget  -O ~/xmlir-cp38-torch201-ubuntu2004-x64-installer.run  https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/latest/201_cuda/xmlir-cp38-torch201-ubuntu2004-x64-installer.run && \
     bash ~/xmlir-cp38-torch201-ubuntu2004-x64-installer.run && \
     rm ~/xmlir-cp38-torch201-ubuntu2004-x64-installer.run
 
