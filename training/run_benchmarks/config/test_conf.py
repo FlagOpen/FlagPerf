@@ -3,7 +3,7 @@
 
 # Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend and mthreads.
 # We will run benchmarks in training/<vendor>
-VENDOR = "nvidia"
+VENDOR = "kunlunxin"
 
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
@@ -21,7 +21,9 @@ VENDOR = "nvidia"
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
 #   mthreads:
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
-ACCE_CONTAINER_OPT = " --gpus all"
+ACCE_CONTAINER_OPT = " --device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2" + \
+       " --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5" + \
+       " --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -29,7 +31,7 @@ ACCE_CONTAINER_OPT = " --gpus all"
 #   XPU_VISIBLE_DEVICES for kunlunxin
 #   ASCEND_VISIBLE_DEVICES for ascend
 #   MUSA_VISIBLE_DEVICES for mthreads
-ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
+ACCE_VISIBLE_DEVICE_ENV_NAME = "XPU_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
 PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
@@ -37,7 +39,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/FlagPerf/training"
+FLAGPERF_PATH = "/data/zhusonghe/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -57,9 +59,9 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
-    "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
-    "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
+    #"bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    #"glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    #"cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
     #"llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -111,6 +113,7 @@ CASES = {
 
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
+    "llama2_7b:deepspeed:R300:1:8:1": "/data/zhusonghe",
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",

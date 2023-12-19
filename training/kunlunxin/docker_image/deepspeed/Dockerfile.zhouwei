@@ -1,0 +1,8 @@
+# TODO: this is a temporary docker image from Docker Hub, need update to kunlunxin's Harbor registry.
+#from iregistry.baidu-int.com/xmlir/xmlir_ubuntu_2004_x86_64:v0.27
+FROM 10.1.2.158:9999/xpytorch/xmlir_ubuntu_2004_x86_64:v0.27
+RUN /bin/bash -c "pip config set global.index-url https://mirror.baidu.com/pypi/simple"
+
+WORKDIR /workspace
+
+ENV PATH /root/miniconda/envs/python38_torch201_cuda/bin:$PATH
