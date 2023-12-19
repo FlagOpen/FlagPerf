@@ -263,7 +263,7 @@ def main():
                        verbose=1,
                        rate=sample_rate1)
     if operation == 'start':
-        sys_fn = str(log_path + '/sys_info.log')
+        sys_fn = os.path.join(log_path, 'sys_info.log')
         cmd = get_system_info()
         with open(sys_fn, "w") as f:
             p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
