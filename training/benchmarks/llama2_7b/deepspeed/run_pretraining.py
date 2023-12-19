@@ -71,13 +71,15 @@ def train(model_engine, dataloader):
             ave_loss = 0.0
 
 
-def get_deepspeed_engine(args, model_config_dir, flashattn):
+def get_deepspeed_engine(args, model_config_dir, flashattn, gradient_checkpointing):
     with deepspeed.zero.Init(config_dict_or_path=args.deepspeed_config,
                              enabled=True,
                              mem_efficient_linear=False,
                              mpu=None):
         model = get_llama_model(model_config_dir, flashattn)
 
+    if gradient_checkpointing:
+        model.gradient_checkpointing_enable()
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
     return model_engine
@@ -107,10 +109,11 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
+    gradient_checkpointing = getattr(module, 'gradient_checkpointing')
 
     deepspeed.init_distributed()
     model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"),
-                                        flashattn)
+                                        flashattn,gradient_checkpointing)
     dataset = get_llama_dataset(args, seqlength, datafilename)
 
     logger = logging.getLogger("DeepSpeed")
@@ -123,7 +126,8 @@ if __name__ == "__main__":
     dataloader = DataLoader(dataset,
                             sampler=sampler,
                             batch_size=batchsize,
-                            pin_memory=True)
+                            num_workers=1,
+                            pin_memory=False)
 
     epoch = 0
     while epoch < epochs:

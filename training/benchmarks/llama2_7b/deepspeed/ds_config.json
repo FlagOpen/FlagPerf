@@ -17,6 +17,14 @@
   },
   "zero_optimization": {
     "stage": 3,
+    "offload_optimizer": {
+        "device": "cpu", 
+        "pin_memory": true
+        },
+    "offload_param": {
+        "device": "cpu", 
+        "pin_memory": true
+    },
     "stage3_max_live_parameters": 1e9,
     "stage3_max_reuse_distance": 1e9,
     "stage3_prefetch_bucket_size": 1e7,
@@ -30,8 +38,11 @@
   "steps_per_print": 50,
   "gradient_clipping": 1.0,
   "wall_clock_breakdown": false,
-  "bf16": {
+  "fp32": {
     "enabled": true
+  },
+  "fp16": {
+    "enabled": false
   },
   "activation_checkpointing": {
     "partition_activations": true,
