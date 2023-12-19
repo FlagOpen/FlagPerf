@@ -18,7 +18,8 @@
 
 - ##### 优化策略
 
-   - 无
+   - scaled dot product attention
+   - checkpointing
 
 ### 运行情况
 
