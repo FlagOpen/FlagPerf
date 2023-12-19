@@ -111,7 +111,7 @@ CASES = {
 
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
-    "llama2_7b:deepspeed:R300:1:8:1": "/data/zhusonghe",
+    "llama2_7b:deepspeed:R300:1:8:1": "/data/dataset/llama2-7b",
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
