@@ -74,6 +74,12 @@ class InitHelper:
         elif lower_vendor == "ascend":
             import mindspore
             mindspore.set_seed(seed)
+        elif lower_vendor == "mthreads":
+            import torch
+            import torch_musa
+            torch.manual_seed(seed)
+            torch.musa.manual_seed(seed)
+            torch.musa.manual_seed_all(seed)
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
