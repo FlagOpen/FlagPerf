@@ -10,7 +10,12 @@ Llama 2, a collection of pretrained and fine-tuned large language models (LLMs) 
 
 ## 数据准备
 
-当前目录的data/目录下，存放着数据
+参考run_benckmarks下面的config/test_conf.py文件的路径，存放着数据
+
+## 优化策略
+gradient_checkpointing
+fc优化，参考/data/dataset/llama2-7b/fc_autotune_fp16.log
+
 
 
 ### 昆仑芯XPU配置与运行信息参考
@@ -24,7 +29,7 @@ Llama 2, a collection of pretrained and fine-tuned large language models (LLMs) 
   - OS版本：Ubuntu 20.04
   - OS kernel版本: 5.4.0-26-generic
   - 加速卡驱动版本：4.0.25
-  - Docker镜像和版本：pytorch2.0.1-cu17-ubuntu20.04:v0.01
+  - Docker镜像和版本：XPyTorch2.0.1-cu17-ubuntu20.04:v0.01,如有需要联系周玮获取
   - 训练框架版本：xmlir
   - 训练编译器版本：xacc
   - 依赖软件版本：pytorch-2.0.1+cu17
@@ -37,22 +42,22 @@ Llama 2, a collection of pretrained and fine-tuned large language models (LLMs) 
 | 指标名称       | 指标值                  | 特殊说明                                    |
 | -------------- | ----------------------- | ------------------------------------------- |
 | 任务类别       | 自然语言理解            |                                             |
-| 模型           | deepspeed-llama2-7b      |                                             |
-| 数据集         |         openwebtext      |                                             |
+| 模型           | deepspeed-llama2-7b     |                                             |
+| 数据集         | openwebtext             |                                             |
 | 数据精度       | precision,见“性能指标”  | 可选fp32/amp/fp16                           |
 | 超参修改       | fix_hp,见“性能指标”     | 跑满硬件设备评测吞吐量所需特殊超参          |
-| 硬件设备简称   | R300             |                                             |
-| 硬件存储使用   | memory,见“性能指标”        | 通常称为“显存”,单位为GiB                    |
-| 吞吐量     | token/p/s,见“性能指标”   | 平均单卡每秒处理的token数                     |
-| 损失值       | loss,见“性能指标”    | 训练损失值 |
-| 计算使用率   | MFU,见“性能指标”    | 参见PaLM论文定义           |
+| 硬件设备简称   | R300                    |                                             |
+| 硬件存储使用   | memory,见“性能指标”     | 通常称为“显存”,单位为GiB                    |
+| 吞吐量         | token/p/s,见“性能指标”  | 平均单卡每秒处理的token数                   |
+| 损失值         | loss,见“性能指标”       | 训练损失值                                  |
+| 计算使用率     | MFU,见“性能指标”        | 参见PaLM论文定义                            |
 
 * 性能指标
 
-| 配置                | precision | fix_hp              | tokens/p/s | loss  | memory | MFU |
-| ------------------- | --------- | ------------------- | --------   | ----- | ------- | ------ | ------- | --------- |
-| R300单机8卡（1x8）  |  fp32     | bs=12,seqlength=512  |           |  5.4  |         |        |         |
-| R300单机8卡（1x8）  |  fp32     | bs=8,seqlength=512  |            |  5.4  |         |
-| R300单机8卡（1x8）  |  fp16     | bs=12,seqlength=512  |            |  6.76 |         |        |
+| 配置                | precision | fix_hp              | tokens/p/s | loss  | memory  |   MFU  |
+| ------------------- | --------- | ------------------- | --------   | ----- | ------- | ------ |
+| R300单机8卡（1x8）  |  fp32     | bs=8,seqlength=512  |            |  5.4  |         |        |
+| R300单机8卡（1x8）  |  fp32     | bs=12,seqlength=512 |            |  5.4  |         |        |
+| R300单机8卡（1x8）  |  fp16     | bs=12,seqlength=512 |            |  6.76 | 26G/32G |        |
 
 
