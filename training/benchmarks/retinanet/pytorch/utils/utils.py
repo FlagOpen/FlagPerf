@@ -9,6 +9,32 @@ import torch.distributed as dist
 import errno
 import os
 
+import config
+
+
+def get_device():
+    if config.vendor == "mthreads":
+        return "musa"
+    else:
+        return "cuda"
+
+
+# Maybe this could be implemented in other places (training/benchmarks/utils)
+def is_gpu_available():
+    if config.vendor == "mthreads":
+        import torch_musa
+        return torch.musa.is_available()
+    else:
+        return torch.cuda.is_available()
+
+
+def max_memory_allocated():
+    if config.vendor == "mthreads":
+        import torch_musa
+        return torch.musa.max_memory_allocated()
+    else:
+        return torch.cuda.max_memory_allocated()
+
 
 class SmoothedValue(object):
     """Track a series of values and provide access to smoothed values over a
@@ -36,7 +62,7 @@ class SmoothedValue(object):
             return
         t = torch.tensor([self.count, self.total],
                          dtype=torch.float64,
-                         device='cuda')
+                         device=get_device())
         dist.barrier()
         dist.all_reduce(t)
         t = t.tolist()
@@ -85,14 +111,15 @@ def all_gather(data):
     if world_size == 1:
         return [data]
 
+    device = get_device()
     # serialized to a Tensor
     buffer = pickle.dumps(data)
     storage = torch.ByteStorage.from_buffer(buffer)
-    tensor = torch.ByteTensor(storage).to("cuda")
+    tensor = torch.ByteTensor(storage).to(device)
 
     # obtain Tensor size of each rank
-    local_size = torch.tensor([tensor.numel()], device="cuda")
-    size_list = [torch.tensor([0], device="cuda") for _ in range(world_size)]
+    local_size = torch.tensor([tensor.numel()], device=device)
+    size_list = [torch.tensor([0], device=device) for _ in range(world_size)]
     dist.all_gather(size_list, local_size)
     size_list = [int(size.item()) for size in size_list]
     max_size = max(size_list)
@@ -103,11 +130,11 @@ def all_gather(data):
     tensor_list = []
     for _ in size_list:
         tensor_list.append(
-            torch.empty((max_size, ), dtype=torch.uint8, device="cuda"))
+            torch.empty((max_size, ), dtype=torch.uint8, device=device))
     if local_size != max_size:
         padding = torch.empty(size=(max_size - local_size, ),
                               dtype=torch.uint8,
-                              device="cuda")
+                              device=device)
         tensor = torch.cat((tensor, padding), dim=0)
     dist.all_gather(tensor_list, tensor)
 
@@ -189,7 +216,7 @@ class MetricLogger(object):
         iter_time = SmoothedValue(fmt='{avg:.4f}')
         data_time = SmoothedValue(fmt='{avg:.4f}')
         space_fmt = ':' + str(len(str(len(iterable)))) + 'd'
-        if torch.cuda.is_available():
+        if is_gpu_available():
             log_msg = self.delimiter.join([
                 header, '[{0' + space_fmt + '}/{1}]', 'eta: {eta}', '{meters}',
                 'time: {time}', 'data: {data}', 'max mem: {memory:.0f}'
@@ -207,16 +234,15 @@ class MetricLogger(object):
             if i % print_freq == 0 or i == len(iterable) - 1:
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
-                if torch.cuda.is_available():
+                if is_gpu_available():
                     print(
-                        log_msg.format(
-                            i,
-                            len(iterable),
-                            eta=eta_string,
-                            meters=str(self),
-                            time=str(iter_time),
-                            data=str(data_time),
-                            memory=torch.cuda.max_memory_allocated() / MB))
+                        log_msg.format(i,
+                                       len(iterable),
+                                       eta=eta_string,
+                                       meters=str(self),
+                                       time=str(iter_time),
+                                       data=str(data_time),
+                                       memory=max_memory_allocated() / MB))
                 else:
                     print(
                         log_msg.format(i,

@@ -82,22 +82,7 @@ class Trainer:
             pure_start_time = time.time()
             optimizer.zero_grad()
 
-            images, target = batch
-            if scaler is not None:
-                with torch.cuda.amp.autocast(enabled=True):
-                    output = model(images)
-                    loss = criterion(output, target)
-
-                scaler.scale(loss).backward()
-                scaler.step(optimizer)
-                scaler.update()
-            else:
-                output = model(images)
-
-                criterion = torch.nn.CrossEntropyLoss()
-                loss = criterion(output, target)
-                loss.backward()
-                optimizer.step()
+            loss = self.adapter.train_step(model, batch, optimizer, scaler)
 
             if step % self.config.log_freq == 0:
                 print("Train Step " + str(step) + "/" + str(len(data_loader)) +
