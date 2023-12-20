@@ -11,8 +11,8 @@
   - OS kernel版本: 5.4.0-26-generic
   - 加速卡驱动版本：4.23
   - Docker镜像和版本：xpytorch/kunlunxin-deepspeed:v1.0
-  - 训练框架版本：XPyTorch 2.0.1
-  - 依赖软件版本：transformers 4.32.1  deepspeed 0.10.1
+  - 训练框架版本：XPyTorch 2.0.1 + deepspeed 0.10.1
+  - 依赖软件版本：transformers 4.32.1
 
 - ##### 并行策略
 
