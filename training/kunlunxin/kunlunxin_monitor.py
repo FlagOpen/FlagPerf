@@ -258,8 +258,12 @@ def main():
     sys_fn = str(log_path + '/sys_info.log')
     cmd = get_system_info()
     with open(sys_fn, "w") as f:
-        p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
-        p.wait()
+        try:
+            # this command need sudo privilege, may raise exception
+            p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+            p.wait()
+        except:
+            pass
 
     subdaemon = Daemon(pid_fn,
                        log_fn,

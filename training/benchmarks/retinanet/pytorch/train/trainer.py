@@ -75,8 +75,10 @@ class Trainer:
                                                        self.config.log_freq,
                                                        header):
             images = list(image.to(device) for image in images)
-            targets = [{k: v.to(device)
-                        for k, v in t.items()} for t in targets]
+            targets = [{
+                k: v.to(device)
+                for k, v in t.items()
+            } for t in targets]
 
             pure_compute_start_time = time.time()
             loss_dict = model(images, targets)
@@ -136,13 +138,14 @@ class Trainer:
                                                        self.config.log_freq,
                                                        header):
             images = list(img.to(device) for img in images)
-
-            torch.cuda.synchronize()
+            dist_pytorch.barrier(self.config.vendor)
             model_time = time.time()
             outputs = model(images)
 
-            outputs = [{k: v.to(cpu_device)
-                        for k, v in t.items()} for t in outputs]
+            outputs = [{
+                k: v.to(cpu_device)
+                for k, v in t.items()
+            } for t in outputs]
             model_time = time.time() - model_time
 
             res = {

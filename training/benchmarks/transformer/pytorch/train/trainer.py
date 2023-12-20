@@ -1,3 +1,6 @@
+# Copyright (c) 2023 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
 import os
 import torch
 from torch.types import Device
@@ -35,7 +38,6 @@ class Trainer(DDPTrainer):
         super(Trainer, self).__init__(self.config, self.model)
 
     def init(self, train_dataloader):
-        load_checkpoint(self.config, self, train_dataloader)
         # Send a dummy batch to warm the caching allocator
         src_dict, tgt_dict = data_utils.load_dictionaries(self.config)
         add_extra_items_to_checkpoint({'src_dict': src_dict, 'tgt_dict': tgt_dict})
@@ -62,6 +64,8 @@ class Trainer(DDPTrainer):
 
         num_batches = len(epoch_itr)
 
+        no_eval_start_time = time.time()
+
         trainer.get_throughput_meter().reset()
         for i, sample in enumerate(itr):
             state.global_steps += 1
@@ -87,6 +91,7 @@ class Trainer(DDPTrainer):
                 break
 
         state.total_tokens += self.throughput_meter.n
+        state.no_eval_time += time.time() - no_eval_start_time
         if epoch_itr.epoch % args.validate_interval == 0:
             state.valid_loss = self.validate(valid_dataloader)
             eval_start = time.time()
@@ -101,7 +106,6 @@ class Trainer(DDPTrainer):
                 state.converged_success()
 
         trainer.lr_step(epoch_itr.epoch, state.valid_loss)
-        save_checkpoint(args, trainer, epoch_itr, state.valid_loss)
         torch.cuda.synchronize()
         driver.event(Event.EPOCH_END, state.epoch)
 
