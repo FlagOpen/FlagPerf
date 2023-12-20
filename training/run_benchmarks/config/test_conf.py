@@ -117,5 +117,9 @@ CASES = {
     # "distilbert:pytorch:R300:1:8:1": "/raid/dataset/distilbert/",
     # "swin_transformer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "tacotron2:pytorch:R300:1:8:1": "/raid/dataset/tacotron2/LJSpeech/"
+
+    # iluvatar cases
+    # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/"
+
 }
 
