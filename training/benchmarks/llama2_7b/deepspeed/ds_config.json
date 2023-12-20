@@ -27,7 +27,7 @@
     "overlap_comm": true,
     "reduce_scatter": true
   },
-  "steps_per_print": 1,
+  "steps_per_print": 50,
   "gradient_clipping": 1.0,
   "wall_clock_breakdown": false,
   "fp16": {
