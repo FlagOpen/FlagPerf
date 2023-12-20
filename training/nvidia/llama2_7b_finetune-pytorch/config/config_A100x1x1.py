@@ -1,0 +1,10 @@
+batch_size_training: int=3
+num_epochs: int = 3
+model_name: str = "llama2_7b_hf"
+mmlu_dir = "mmlu_dataset"
+dataset_dir = "samsum_dataset"
+output_dir: str = "PEFT_model"
+weight_dir = model_name
+nproc = 1
+nnodes = 1
+use_fp16 = False

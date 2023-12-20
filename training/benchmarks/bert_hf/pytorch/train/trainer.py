@@ -82,21 +82,7 @@ class Trainer:
             dist_pytorch.barrier(self.config.vendor)
             pure_start_time = time.time()
 
-            if scaler is not None:
-                with torch.cuda.amp.autocast(enabled=True):
-                    output = model(input_ids=input_ids, labels=labels)
-                    loss = output.loss
-
-                scaler.scale(loss).backward()
-                if step % self.config.gradient_accumulation_steps == 0:
-                    scaler.step(optimizer)
-                    scaler.update()
-            else:
-                output = model(input_ids=input_ids, labels=labels)
-                loss = output.loss
-                loss.backward()
-                if step % self.config.gradient_accumulation_steps == 0:
-                    optimizer.step()
+            loss = self.adapter.train_one_step(model, (input_ids, labels), optimizer, step, scaler)
 
             if step % self.config.log_freq == 0:
                 print("Train Step " + str(step) + "/" + str(len(data_loader)) +

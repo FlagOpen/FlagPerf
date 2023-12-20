@@ -38,7 +38,6 @@ class Trainer(DDPTrainer):
         super(Trainer, self).__init__(self.config, self.model)
 
     def init(self, train_dataloader):
-        load_checkpoint(self.config, self, train_dataloader)
         # Send a dummy batch to warm the caching allocator
         src_dict, tgt_dict = data_utils.load_dictionaries(self.config)
         add_extra_items_to_checkpoint({'src_dict': src_dict, 'tgt_dict': tgt_dict})
@@ -107,7 +106,6 @@ class Trainer(DDPTrainer):
                 state.converged_success()
 
         trainer.lr_step(epoch_itr.epoch, state.valid_loss)
-        save_checkpoint(args, trainer, epoch_itr, state.valid_loss)
         torch.cuda.synchronize()
         driver.event(Event.EPOCH_END, state.epoch)
 

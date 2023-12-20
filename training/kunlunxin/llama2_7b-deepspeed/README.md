@@ -23,7 +23,7 @@
 - ##### 优化策略
 
   - gradient_checkpointing
-  - fc融合
+  - FC算子的分块策略调优
 
 
 
