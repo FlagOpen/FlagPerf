@@ -1,6 +1,6 @@
 # TODO: this is a temporary docker image from Docker Hub, need update to kunlunxin's Harbor registry.
 #from dynamicheart/pytorch1.12.1-cpu-ubuntu20.04:v0.01
-from iregistry.baidu-int.com/xmlir/xmlir_ubuntu_2004_x86_64:v0.26
+#from iregistry.baidu-int.com/xmlir/xmlir_ubuntu_2004_x86_64:v0.26
 RUN /bin/bash -c "pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple"
 # This is the original Dockerfile used to build `pytorch1.12.1-cpu-ubuntu18.04:v0.04`.
 # The Dockerfile only installs minimal dependencies for kunlunxin, i.e. numpy and pytorch1.12.1
@@ -58,8 +58,8 @@ RUN wget -O ~/miniconda.sh "https://repo.anaconda.com/miniconda/Miniconda3-lates
     rm ~/miniconda.sh && \
     /root/miniconda/bin/conda config --set show_channel_urls yes && \
     /root/miniconda/bin/conda create --name python38_torch201_cuda python=3.8 -y && \
-    /root/miniconda/bin/conda clean -ya
-
+    /root/miniconda/bin/conda clean -ya && \
+    /root/miniconda/bin/conda  activate python38_torch201_cuda
 
 ENV PATH="/root/miniconda/bin:$PATH"
 ENV LD_LIBRARY_PATH="/root/miniconda/lib/:$LD_LIBRARY_PATH"
@@ -75,14 +75,39 @@ ENV PATH="/usr/local/cuda-11.7/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/cuda-11.7/:$LD_LIBRARY_PATH"
 
 
+
+RUN  wget -O ~/torchvision-0.15.2+cu117-cp38-cp38-linux_x86_64.whl    https://bd.bcebos.com/klx-pytorch-ipipe-bd/docker_conda_dep/torch201_cuda117/torchvision-0.15.2+cu117-cp38-cp38-linux_x86_64.whl && \
+/root/miniconda/envs/python38_torch201_cuda/bin/pip  install ~/torchvision-0.15.2+cu117-cp38-cp38-linux_x86_64.whl && \
+rm ~/torchvision-0.15.2+cu117-cp38-cp38-linux_x86_64.whl
+
+RUN wget -O ~/deepspeed-0.11.1.0-py3-none-any.whl  https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/deepspeed/latest/deepspeed-0.11.1.0-py3-none-any.whl && \
+/root/miniconda/envs/python38_torch201_cuda/bin/pip  install ~/deepspeed-0.11.1.0-py3-none-any.whl && \
+rm ~/deepspeed-0.11.1.0-py3-none-any.whl
+
+RUN wget -O ~/transformers-4.34.0-py3-none-any.whl  https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/transformer/latest/transformers-4.34.0-py3-none-any.whl && \
+/root/miniconda/envs/python38_torch201_cuda/bin/pip  install ~/transformers-4.34.0-py3-none-any.whl && \
+rm ~/transformers-4.34.0-py3-none-any.whl
+
+RUN  wget  -O ~/xmlir-cp38-torch201-ubuntu2004-x64-installer.run  https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/latest/201_cuda/latest/xmlir-cp38-torch201-ubuntu2004-x64-installer.run && \
+bash ~/xmlir-cp38-torch201-ubuntu2004-x64-installer.run && \
+rm ~/xmlir-cp38-torch201-ubuntu2004-x64-installer.run
+
+
+
 # hyperparamer, typing_extensions, numpy requests
 RUN /root/miniconda/envs/python38_torch201_cuda/bin/pip install \
     --no-cache-dir \
     -i https://pypi.tuna.tsinghua.edu.cn/simple \
     hyperparameter \
     typing_extensions \
-    numpy \
-    requests 
+    colorama \
+    regex \
+    accelerate \
+    requests \ 
+    numpy==1.23.1 \
+    pybind11==2.9.2 \
+    wheel==0.37.1 \
+    psutil==5.9.5 
 
 
 
