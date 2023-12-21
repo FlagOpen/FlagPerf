@@ -10,6 +10,11 @@ import sys
 from importlib import import_module
 
 import torch
+try:
+    import torch_musa
+    DEVICE = 'musa'
+except:
+    DEVICE = 'cuda'
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
@@ -54,29 +59,32 @@ def get_argument_parser():
 
 def train(model_engine, dataloader):
     model_engine.train()
+    device = torch.device(f"{DEVICE}:{args.local_rank}")
     ave_loss = 0.0
     for step, data in enumerate(dataloader):
 
         fake_data = torch.tensor(data).long()
-        input_ids = fake_data.to(args.local_rank)
-        labels = fake_data.to(args.local_rank)
+        input_ids = fake_data.to(device)
+        labels = fake_data.to(device)
         loss = model_engine(input_ids=input_ids, labels=labels).loss
         model_engine.backward(loss)
         model_engine.step()
 
         ave_loss += loss
-        if step % 10 == 0 and args.local_rank == 0:
+        if step > 0 and step % 10 == 0 and args.local_rank == 0:
             print('Step {}/{}, Loss: {}'.format(step, len(dataloader),
                                                 ave_loss / 10))
             ave_loss = 0.0
 
 
-def get_deepspeed_engine(args, model_config_dir, flashattn):
+def get_deepspeed_engine(args, model_config_dir):
     with deepspeed.zero.Init(config_dict_or_path=args.deepspeed_config,
                              enabled=True,
                              mem_efficient_linear=False,
                              mpu=None):
-        model = get_llama_model(model_config_dir, flashattn)
+        model = get_llama_model(model_config_dir, args.flashattn)
+    if args.gradient_checkpointing_enable:
+        model.gradient_checkpointing_enable()
 
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
@@ -107,10 +115,12 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
+    gradient_checkpointing_enable = getattr(module, 'gradient_checkpointing_enable', False)
+    args.flashattn = flashattn
+    args.gradient_checkpointing_enable = gradient_checkpointing_enable
 
     deepspeed.init_distributed()
-    model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"),
-                                        flashattn)
+    model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"))
     dataset = get_llama_dataset(args, seqlength, datafilename)
 
     logger = logging.getLogger("DeepSpeed")
@@ -138,4 +148,8 @@ if __name__ == "__main__":
             chip_tps = whole_tps / args.nproc * args.nnodes
             print("System tokens per second: ", whole_tps)
             print("Tokens/p/s: ", chip_tps)
+
+            TFLOPS = int(theoryflops/1000000000000)
+            print("Theory TFLOPS: ", TFLOPS)
+            print("Tokens/TFLOPS: ", chip_tps / TFLOPS)
             print("MFU: ", chip_tps * 7000000000.0 * 6 / theoryflops)
