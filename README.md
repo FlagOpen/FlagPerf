@@ -409,6 +409,7 @@
    1. 确保可连中国大陆可访问网站，速率正常
    2. 确保可在容器内找到硬件
    3. 确保各服务器间root帐号的ssh信任关系和sudo免密
+   4. 确保monitor相关工具已安装:包括cpu(sysstat),mem(free),pwr(ipmitool),sys_info(加速卡状态查看命令)
 
 ### 训练启动说明
 
