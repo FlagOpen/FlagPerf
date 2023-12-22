@@ -139,6 +139,5 @@ CASES = {
 
     # dcu cases
     # "detr:pytorch_1.13:Z100L:1:4:1": "/raid/dataset/detr/coco2017/",
-    # "glm:pytorch_1.8:Z100L:1:2:1": "/raid/home_datasets_ckpt/glm/train/",
 }
 
