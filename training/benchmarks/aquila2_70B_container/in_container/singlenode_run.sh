@@ -110,7 +110,7 @@ LEARNING_RATE_ARGS="
 "
 
 source $VENDOR_SHELL
-cmd="torchrun $DISTRIBUTED_ARGS $SCALEHOME/pretrain_gpt.py \
+cmd="torchrun $DISTRIBUTED_ARGS $SCALEHOME/megatron/pretrain_gpt.py \
               $TRAINING_ARGS \
               $MIXED_PRECISION_ARGS \
               $DATA_ARGS \
