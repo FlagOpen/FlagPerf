@@ -1,0 +1,7 @@
+cython
+pycocotools
+# git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI&egg=pycocotools
+submitit
+scipy
+onnx
+onnxruntime

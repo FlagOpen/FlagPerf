@@ -21,6 +21,8 @@ VENDOR = "nvidia"
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
 #   mthreads:
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
+#   dcu:
+#       " --device=/dev/kfd --device=/dev/dri/ --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -29,6 +31,7 @@ ACCE_CONTAINER_OPT = " --gpus all"
 #   XPU_VISIBLE_DEVICES for kunlunxin
 #   ASCEND_VISIBLE_DEVICES for ascend
 #   MUSA_VISIBLE_DEVICES for mthreads
+#   HIP_VISIBLE_DEVICES for dcu
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
@@ -72,12 +75,12 @@ CASES = {
     #"tacotron2:pytorch_1.13:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
     # "resnet50:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
-    
+
     # "wav2vec2:pytorch_1.13:A100:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
     # "WaveGlow:pytorch_1.13:A100:1:8:1": "/raid/dataset/LJSpeech/",
 
     # "distilbert:pytorch_1.12:A100:1:8:1": "/raid/dataset/distilbert/",
-    
+
     # "transformer:pytorch_1.13:A100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "transformer_xl:pytorch_1.8:A100:1:8:1": "/raid/dataset/transformer_xl/",
@@ -87,10 +90,10 @@ CASES = {
     # "bert_hf:pytorch_1.13:A100:1:8:1": "/raid/dataset/bert_hf_train",
     # "longformer:pytorch_1.12:A100:1:8:1": "/raid/dataset/longformer_train/",
     # "detr:pytorch_1.13:A100:1:8:1": "/raid/dataset/detr/coco2017/",
-    
+
     # "llama2_7b:deepspeed:A100:1:8:1": "/raid/dataset/llama2_7b_pretrain",
     # "aquila2_7b:flagscale:A100:1:8:1": "/raid/dataset/aquila2_7b_pretrain",
-    
+
     # "llama1_7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
@@ -133,5 +136,9 @@ CASES = {
     # "retinanet:pytorch_2.0:S4000:1:8:1": "/data/flagperf/coco2017",
     # "bert_hf:pytorch_2.0:S4000:1:8:1": "/data/flagperf/bert_hf",
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
+
+    # dcu cases
+    # "detr:pytorch_1.13:Z100L:1:4:1": "/raid/dataset/detr/coco2017/",
+    # "glm:pytorch_1.8:Z100L:1:2:1": "/raid/home_datasets_ckpt/glm/train/",
 }
 
