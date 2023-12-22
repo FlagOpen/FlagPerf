@@ -20,11 +20,11 @@ NNODES=${10}
 MASTERADDR=${11}
 MASTERPORT=${12}
 
-export PYTHONPATH=$PYTHONPATH:$SCALEHOME
+export PYTHONPATH=$PYTHONPATH:$SCALEHOME/megatron
 
-VOCAB_FILE=$SCALEHOME/examples/aquila/tokenizer/vocab.json
-MERGE_FILE=$SCALEHOME/examples/aquila/tokenizer/merges.txt
-SPECIAL_TOKENS_FILE=$SCALEHOME/examples/aquila/tokenizer/special_tokens.txt
+VOCAB_FILE=$SCALEHOME/aquila/tokenizer/vocab.json
+MERGE_FILE=$SCALEHOME/aquila/tokenizer/merges.txt
+SPECIAL_TOKENS_FILE=$SCALEHOME/aquila/tokenizer/special_tokens.txt
 
 DISTRIBUTED_ARGS="
     --nproc_per_node 8 \
