@@ -138,4 +138,4 @@ if __name__ == "__main__":
             chip_tps = whole_tps / args.nproc * args.nnodes
             print("System tokens per second: ", whole_tps)
             print("Tokens/p/s: ", chip_tps)
-            print("MFU: ", chip_tps * 7000000000.0 * 6 / theoryflops)
+            print("MFU: ", chip_tps * 6000000000.0 * 6 / theoryflops)
