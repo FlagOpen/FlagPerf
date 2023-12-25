@@ -81,7 +81,7 @@ if __name__ == "__main__":
     procs = []
     for ip in args.hosts:
 
-        path_cmd = "cd " + os.path.join(args.perf_dir, "training/benchmarks/aquila2_7B_container/in_container")
+        path_cmd = "cd " + os.path.join(args.perf_dir, "training/benchmarks/aquila2_70B_container/in_container")
         env_cmd = config.env_cmd
         net_cmd = config.net_cmd
 
