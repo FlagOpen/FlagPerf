@@ -83,7 +83,8 @@ CASES = {
     # "bert_hf:pytorch_1.13:A100:1:8:1": "/raid/dataset/bert_hf_train",
     # "longformer:pytorch_1.12:A100:1:8:1": "/raid/dataset/longformer_train/",
     # "detr:pytorch_1.13:A100:1:8:1": "/raid/dataset/detr/coco2017/",
-    
+    # "chatglm3_6b:deepspeed:A100:1:8:1": "/raid/dataset/chatglm_6b_pretrain",
+
     # "llama1_7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
