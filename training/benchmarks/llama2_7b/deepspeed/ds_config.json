@@ -30,7 +30,7 @@
   "steps_per_print": 50,
   "gradient_clipping": 1.0,
   "wall_clock_breakdown": false,
-  "bf16": {
+  "fp16": {
     "enabled": true
   },
   "activation_checkpointing": {

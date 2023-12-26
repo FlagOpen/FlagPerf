@@ -49,6 +49,7 @@ def get_argument_parser():
                         type=int,
                         required=True,
                         help="how many processes will run on each host.")
+
     return parser
 
 
@@ -56,7 +57,6 @@ def train(model_engine, dataloader):
     model_engine.train()
     ave_loss = 0.0
     for step, data in enumerate(dataloader):
-
         fake_data = torch.tensor(data).long()
         input_ids = fake_data.to(args.local_rank)
         labels = fake_data.to(args.local_rank)
@@ -71,13 +71,15 @@ def train(model_engine, dataloader):
             ave_loss = 0.0
 
 
-def get_deepspeed_engine(args, model_config_dir, flashattn):
+def get_deepspeed_engine(args, model_config_dir, flashattn, gradient_checkpointing):
     with deepspeed.zero.Init(config_dict_or_path=args.deepspeed_config,
                              enabled=True,
                              mem_efficient_linear=False,
                              mpu=None):
         model = get_llama_model(model_config_dir, flashattn)
 
+    if gradient_checkpointing:
+        model.gradient_checkpointing_enable()
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
     return model_engine
@@ -98,7 +100,6 @@ if __name__ == "__main__":
     flagperf_config = {}
     sys.path.append(os.path.dirname(args.flagperf_config))
     config_file = os.path.basename(args.flagperf_config).split('.')[0]
-
     module = import_module(config_file)
 
     seqlength = getattr(module, 'seqlength')
@@ -107,10 +108,10 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
-
+    gradient_checkpointing = getattr(module, 'gradient_checkpointing')
     deepspeed.init_distributed()
     model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"),
-                                        flashattn)
+                                        flashattn,gradient_checkpointing)
     dataset = get_llama_dataset(args, seqlength, datafilename)
 
     logger = logging.getLogger("DeepSpeed")
