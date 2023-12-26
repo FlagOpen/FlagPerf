@@ -81,7 +81,6 @@ NETWORK_ARGS="
     --swiglu \
     --multiple-of 256 \
     --apply-layernorm-rms \
-    --rotary-interleaved-patch \
     --untie-embeddings-and-output-weights
 "
 
