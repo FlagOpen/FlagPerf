@@ -18,7 +18,7 @@ PIPELINE_PARALLEL = 1
 # =========================================================
 MICRO_BATCHSIZE = 1
 # globalbs = microbs * gradient_accu_steps * (worldsize/tp/pp)
-# gradient_accu_steps is the same as flagscale aquila-7B
+# gradient_accu_steps is the same as flagscale aquila-7B(9)
 GLOBAL_BATCHSIZE = 72
 # 2k for aquila2-7B, 4k for aquila2-34B and 70B
 SEQLENGTH = 2048
