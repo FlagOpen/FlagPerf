@@ -21,7 +21,7 @@ logdir = args.log_dir
 path = os.listdir(logdir)
 print(path)
 
-for index in ['温度', '功耗', '存储占用率', '计算占用率']:
+for index in ['温度', '功耗', '显存使用率', 'GPU利用率']:
     plt.figure()
     plt.rcParams['xtick.direction'] = 'in'
     plt.rcParams['ytick.direction'] = 'in'
@@ -33,15 +33,15 @@ for index in ['温度', '功耗', '存储占用率', '计算占用率']:
         file = open(opj(logdir, node_log, 'gpu.log.txt'))
         gpu = {}
         for i in range(8):
-            gpu[i] = {'温度': [], '功耗': [], '存储占用率': [], '计算占用率': []}
+            gpu[i] = {'温度': [], '功耗': [], '显存使用率': [], 'GPU利用率': []}
         next_gpu_id = 0
         for line in file.readlines():
             if 'MiB' in line:
                 info = line.split(' ')
                 gpu[next_gpu_id]['温度'].append(float(info[0].split('C')[0]))
                 gpu[next_gpu_id]['功耗'].append(float(info[1].split('W')[0]))
-                gpu[next_gpu_id]['存储占用率'].append(float(info[2].split('MiB')[0]) / float(info[3].split('MiB')[0]))
-                gpu[next_gpu_id]['计算占用率'].append(float(info[4].split('%')[0]) / 100)
+                gpu[next_gpu_id]['显存使用率'].append(float(info[2].split('MiB')[0]) / float(info[3].split('MiB')[0]))
+                gpu[next_gpu_id]['GPU利用率'].append(float(info[4].split('%')[0]) / 100)
 
                 next_gpu_id = (next_gpu_id + 1) % 8
         for gpu_id in range(8):
