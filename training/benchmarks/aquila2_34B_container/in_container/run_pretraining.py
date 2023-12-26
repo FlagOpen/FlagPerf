@@ -81,7 +81,7 @@ if __name__ == "__main__":
     procs = []
     for ip in args.hosts:
 
-        path_cmd = "cd " + os.path.join(args.perf_dir, "training/benchmarks/aquila2_7B_container/in_container")
+        path_cmd = "cd " + os.path.join(args.perf_dir, "training/benchmarks/aquila2_34B_container/in_container")
         env_cmd = config.env_cmd
         net_cmd = config.net_cmd
 
@@ -102,6 +102,7 @@ if __name__ == "__main__":
         exec_cmd = exec_cmd + " " + str(len(args.hosts))
         exec_cmd = exec_cmd + " " + args.hosts[0]
         exec_cmd = exec_cmd + " " + args.master_port
+        exec_cmd = exec_cmd + " " + os.path.join(req_path, "singlenode_adapt.sh")
         
         logger.info(ip)
         logger.info(exec_cmd)
