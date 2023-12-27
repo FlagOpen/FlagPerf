@@ -134,5 +134,8 @@ CASES = {
     # "retinanet:pytorch_2.0:S4000:1:8:1": "/data/flagperf/coco2017",
     # "bert_hf:pytorch_2.0:S4000:1:8:1": "/data/flagperf/bert_hf",
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
+
+    # iluvatar cases
+    # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 }
 
