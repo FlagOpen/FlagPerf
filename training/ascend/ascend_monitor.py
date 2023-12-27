@@ -254,11 +254,6 @@ def main():
     err_fn = str(log_path + '/ascend.err')
     # result for npu
     npu_fn = str(log_path + '/ascend_monitor.log')
-    sys_fn = str(log_path + '/sys_info.log')
-    cmd = get_system_info()
-    with open(sys_fn, "w") as f:
-        p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
-        p.wait()
 
     subdaemon = Daemon(pid_fn,
                        log_fn,
@@ -268,6 +263,11 @@ def main():
                        verbose=1,
                        rate=sample_rate1)
     if operation == 'start':
+        sys_fn = os.path.join(log_path, 'sys_info.log')
+        cmd = get_system_info()
+        with open(sys_fn, "w") as f:
+            p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+            p.wait()
         subdaemon.start()
     elif operation == 'stop':
         subdaemon.stop()
