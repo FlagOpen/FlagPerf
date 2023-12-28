@@ -255,15 +255,6 @@ def main():
     err_fn = str(log_path + '/kunlunxin_monitor.err')
     # result for gpu
     xpu_fn = str(log_path + '/kunlunxin_monitor.log')
-    sys_fn = str(log_path + '/sys_info.log')
-    cmd = get_system_info()
-    with open(sys_fn, "w") as f:
-        try:
-            # this command need sudo privilege, may raise exception
-            p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
-            p.wait()
-        except:
-            pass
 
     subdaemon = Daemon(pid_fn,
                        log_fn,
@@ -273,6 +264,15 @@ def main():
                        verbose=1,
                        rate=sample_rate1)
     if operation == 'start':
+        sys_fn = os.path.join(log_path, 'sys_info.log')
+        cmd = get_system_info()
+        with open(sys_fn, "w") as f:
+            try:
+                # this command need sudo privilege, may raise exception
+                p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+                p.wait()
+            except:
+                pass
         subdaemon.start()
     elif operation == 'stop':
         subdaemon.stop()
