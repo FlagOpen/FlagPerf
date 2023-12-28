@@ -275,12 +275,12 @@ def stop_monitors_in_cluster(dp_path, nnodes):
     ven_mon_path = os.path.join(dp_path, tc.VENDOR, tc.VENDOR + "_monitor.py")
     stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
                    + " " + ven_mon_path + " -o stop"
-    RUN_LOGGER.debug("Run cmd in the cluster to start vendor's monitors: " +
+    RUN_LOGGER.debug("Run cmd in the cluster to stop vendor's monitors: " +
                      stop_mon_cmd)
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(stop_mon_cmd, nnodes,
                                                    timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't start vendor's monitors: " +
+        RUN_LOGGER.error("Hosts that can't stop vendor's monitors: " +
                          ",".join(bad_hosts.keys()))
 
 
