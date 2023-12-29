@@ -1,3 +1,3 @@
 from config_common import *
 
-batch_size = 16
+batch_size = 14
