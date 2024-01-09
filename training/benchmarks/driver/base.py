@@ -58,7 +58,7 @@ class Driver(object):
                                             self.extern_modules)
 
         if not hasattr(self.config, "local_rank"):
-           self.config.local_rank = 0
+            self.config.local_rank = 0
                                                         
         self.logger = perf_logger.PerfLogger.get_default_logger(
             rank=self.config.local_rank)
