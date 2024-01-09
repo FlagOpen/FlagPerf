@@ -51,7 +51,7 @@ class ResNetImagenetConfig(base_configs.ExperimentConfig):
         epochs_between_evals=1, steps=None)
     model: base_configs.ModelConfig = resnet_config.ResNetModelConfig()
     do_train: str = True
-    target_accuracy: float = 0.1
+    target_accuracy: float = 0.76
 
 
 def get_config(flags_obj: flags.FlagValues, model: str, dataset: str) -> base_configs.ExperimentConfig:
