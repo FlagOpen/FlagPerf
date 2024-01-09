@@ -148,7 +148,6 @@ def check_must_envconfigs(params):
 
     return params
 
-# TODO. config.data_dir 为空！
 def _get_params_from_flags(flags_obj: flags.FlagValues):
     """Get ParamsDict from flags."""
 
@@ -267,8 +266,6 @@ def define_classifier_flags():
     flags.DEFINE_string('vendor',
                         default=None,
                         help='AI chip vendor')
-    print("flags", flags)
-
 
 def serialize_config(params: base_configs.ExperimentConfig, model_dir: str):
     """Serializes and saves the experiment config."""
