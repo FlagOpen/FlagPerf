@@ -16,7 +16,7 @@ def get_models() -> Mapping[str, tf.keras.Model]:
 
 def convert_model(params):
     model_params = params.model.model_params.as_dict()
-    model = get_models()[params.model.name](**model_params)
+    model = get_models()[params.model.name.lower()](**model_params)
     return model
 
 

@@ -17,7 +17,7 @@ runtime = dict(distribution_strategy='mirrored',
                tpu=None,
                batchnorm_spatial_persistent=True)
 train_dataset = dict(name='imagenet2012',
-                     data_dir='/mnt/data/ImageNet2012/tf_records',
+                     data_dir='/raid/dataset/ImageNet2012/tf_records',
                      builder='records',
                      split='train',
                      image_size=224,
@@ -30,7 +30,7 @@ train_dataset = dict(name='imagenet2012',
                      standardize=True)
 validation_dataset = dict(
     name='imagenet2012',
-    data_dir='/mnt/data/ImageNet2012/tf_records',
+    data_dir='/raid/dataset/ImageNet2012/tf_records',
     builder='records',
     split='validation',
     image_size=224,
@@ -52,7 +52,7 @@ train = dict(resume_checkpoint=True,
              epochs=90,
              time_history=dict(log_steps=100),
              callbacks=dict(enable_checkpoint_and_export=False,
-                            enable_backup_and_restore=True))
+                            enable_backup_and_restore=False))
 evaluation = dict(epochs_between_evals=1)
 
 # local_rank for distributed training on gpus
