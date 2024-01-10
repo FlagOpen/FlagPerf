@@ -115,9 +115,6 @@ def main():
     config_file = os.path.join(config_dir, config_file)
 
     START_LOGGER.info("Hello Flagscale")
-    print(train_script_path)
-    # START_LOGGER.info("Hello Flagscale")
-    # os.system("git clone httpsxxxx")
 
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
     exec_cmd = exec_cmd + "python run_pretraining.py"

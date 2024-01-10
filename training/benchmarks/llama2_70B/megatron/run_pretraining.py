@@ -31,6 +31,7 @@ if __name__ == "__main__":
 
     sys.path.append(os.path.dirname(args.flagperf_config_file))
     config_file = os.path.basename(args.flagperf_config_file).split('.')[0]
+    config_dir_path = os.path.dirname(args.flagperf_config_file)
 
     module = import_module(config_file)
 
@@ -65,6 +66,7 @@ if __name__ == "__main__":
     exec_cmd = exec_cmd + " " + str(gbs)
     exec_cmd = exec_cmd + " " + str(seqlength)
     exec_cmd = exec_cmd + " " + str(flashattn)
+    exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
 
     with open(task_log_file, "w") as f:
         p = subprocess.Popen(exec_cmd,

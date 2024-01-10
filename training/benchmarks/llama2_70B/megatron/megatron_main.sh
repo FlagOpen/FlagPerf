@@ -14,6 +14,7 @@ M_BATCHSIZE=${10}
 G_BATCHSIZE=${11}
 SEQLENGTH=${12}
 FLASH_ATTN=${13}
+VENDOR_SHELL=${14}
 
 echo $DATA_DIR
 echo $GPUS_PER_NODE
@@ -28,6 +29,7 @@ echo $M_BATCHSIZE
 echo $G_BATCHSIZE
 echo $SEQLENGTH
 echo $FLASH_ATTN
+echo $VENDOR_SHELL
 
 DATA_PATH=$DATA_DIR/llama_00_text_document
 TOKENIZER_PATH=$DATA_DIR/tokenizer/tokenizer.model
@@ -37,7 +39,7 @@ DISTRIBUTED_ARGS="
     --nnodes $NNODES \
     --node_rank $NODE_RANK \
     --master_addr $MASTER_ADDR \
-    --master_port $MASTER_PORT \
+    --master_port $MASTER_PORT
 "
 
 if [ "$FLASH_ATTN" = "True" ]; then
@@ -66,14 +68,14 @@ else
 fi
 
 MIXED_PRECISION_ARGS="
-    --fp16
+    --bf16
 "
 
 DATA_ARGS="
     --data-path $DATA_PATH \
     --tokenizer-type Llama2Tokenizer \
     --tokenizer-model $TOKENIZER_PATH \
-    --split 949,50,1 \
+    --split 1
 "
 
 NETWORK_ARGS="
@@ -112,9 +114,10 @@ LEARNING_RATE_ARGS="
     --lr 0.00015 \
     --min-lr 1.0e-5 \
     --lr-decay-style cosine \
-    --lr-warmup-fraction .01 \ 
+    --lr-warmup-fraction .01 
 "
 
+source $VENDOR_SHELL
 cmd="torchrun $DISTRIBUTED_ARGS pretrain_llama.py \
               $TRAINING_ARGS \
               $MIXED_PRECISION_ARGS \
