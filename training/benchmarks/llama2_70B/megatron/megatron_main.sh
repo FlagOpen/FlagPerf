@@ -14,7 +14,8 @@ M_BATCHSIZE=${10}
 G_BATCHSIZE=${11}
 SEQLENGTH=${12}
 FLASH_ATTN=${13}
-VENDOR_SHELL=${14}
+RECOMPUTE=${14}
+VENDOR_SHELL=${15}
 
 echo $DATA_DIR
 echo $GPUS_PER_NODE
@@ -29,6 +30,7 @@ echo $M_BATCHSIZE
 echo $G_BATCHSIZE
 echo $SEQLENGTH
 echo $FLASH_ATTN
+echo $RECOMPUTE
 echo $VENDOR_SHELL
 
 DATA_PATH=$DATA_DIR/llama_00_text_document
@@ -96,6 +98,11 @@ NETWORK_ARGS="
     --untie-embeddings-and-output-weights
 "
 
+if [ "$RECOMPUTE" = "True" ]; then
+    RECOMPUTE_ARGS="
+        --recompute-activations
+    "
+
 INITIALIZATION_ARGS="
     --init-method-std 0.02 \
     --seed 1234 
@@ -117,8 +124,12 @@ LEARNING_RATE_ARGS="
     --lr-warmup-fraction .01 
 "
 
+LOGGING_ARGS="
+    --log-interval 1
+"
+
 source $VENDOR_SHELL
-cmd="torchrun $DISTRIBUTED_ARGS pretrain_llama.py \
+cmd="torchrun $DISTRIBUTED_ARGS /workspace/FlagScale/pretrain_llama.py \
               $TRAINING_ARGS \
               $MIXED_PRECISION_ARGS \
               $DATA_ARGS \
@@ -127,6 +138,7 @@ cmd="torchrun $DISTRIBUTED_ARGS pretrain_llama.py \
               $REGULARIZATION_ARGS \
               $LEARNING_RATE_ARGS \
               $CHECKPOINTING_ARGS \
+              $RECOMPUTE_ARGS \
               $LOGGING_ARGS
     "
 echo $cmd

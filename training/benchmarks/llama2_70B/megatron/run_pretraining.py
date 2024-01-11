@@ -42,6 +42,7 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
+    recompute = getattr(module, 'recompute')
     tensor_parallel = getattr(module, 'tensor_parallel')
     pipeline_parallel = getattr(module, 'pipeline_parallel')
 
@@ -66,6 +67,7 @@ if __name__ == "__main__":
     exec_cmd = exec_cmd + " " + str(gbs)
     exec_cmd = exec_cmd + " " + str(seqlength)
     exec_cmd = exec_cmd + " " + str(flashattn)
+    exec_cmd = exec_cmd + " " + str(recompute)
     exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
 
     with open(task_log_file, "w") as f:
@@ -87,4 +89,4 @@ if __name__ == "__main__":
     chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
     print("System tokens per second: ", whole_tps)
     print("Tokens/p/s: ", chip_tps)
-    print("MFU: ", chip_tps * 7000000000.0 * 6 / theoryflops)
+    print("MFU: ", chip_tps * 70000000000.0 * 6 / theoryflops)
