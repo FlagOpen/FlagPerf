@@ -480,7 +480,7 @@ HOSTS = ["10.1.2.3", "10.1.2.4", "10.1.2.5", "10.1.2.6"]
 SSH_PORT = "22"
 ```
 
-3. 修改模型配置文件
+3. **修改模型配置文件**
 
 ```Bash
 cd Flagperf/training/
@@ -496,14 +496,14 @@ CASES={} # 本次运行的测例，按照对应模型readme准备好数据，修
 #如运行"bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/"，需要把:后面的路径替换为本地路径
 ```
 
-4. 启动测试
+4. **启动测试**
 
 ```Bash
 python3 ./run_benchmarks/run.py
 sudo python3 ./run_benchmarks/run.py
 ```
 
-5. 查看日志
+5. **查看日志**
 
 ```Bash
 cd result/run2023XXXX/运行模型/
@@ -555,7 +555,7 @@ CASES:  #待测case，记得修改数据地址
     "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
 ```
 
-3. 用户需要根据评测对象，配置configs/<case>/configuration.yaml，如不修改可用默认配置
+3. **用户需要根据评测对象，配置configs/<case>/configuration.yaml，如不修改可用默认配置**
 
 ```Bash
 batch_size: 256
@@ -585,7 +585,7 @@ CASES={} # 本次运行的测例，按照对应模型readme准备好数据，修
 #如运行"bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/"，需要把:后面的路径替换为本地路径
 ```
 
-4. 启动测试
+4. **启动测试**
 
 ```Bash
 sudo python inference/run.py
