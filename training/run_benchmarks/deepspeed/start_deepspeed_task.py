@@ -113,15 +113,17 @@ def main():
 
     train_script_path = helper.get_train_script_path(task_args)
     config_dir, config_file = helper.get_config_dir_file(task_args)
-    config_file = os.path.join(config_dir, config_file)
-
+    config_file = os.path.join(config_dir, config_file)    
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
-    exec_cmd = exec_cmd + "deepspeed --num_gpus=" + str(
-        task_args.nproc) + " run_pretraining.py"
-    exec_cmd = exec_cmd + " --deepspeed --deepspeed_config ds_config.json --data_dir " + task_args.data_dir
+    exec_cmd = exec_cmd + "export NCCL_DEBUG=INFO;export CUDA_DEVICE_MAX_CONNECTIONS=1;export NCCL_SOCKET_IFNAME=enp;export NCCL_IB_DISABLE=0;export NCCL_IB_CUDA_SUPPORT=1;export NCCL_IB_GID_INDEX=3;export NCCL_IB_HCA=mlx5_0,mlx5_1,mlx5_2,mlx5_3,mlx5_4,mlx5_5,mlx5_6,mlx5_7;"
+    exec_cmd = exec_cmd + "torchrun --nproc_per_node=" + str(task_args.nproc)
+    exec_cmd = exec_cmd + " --nnodes=" + str(task_args.nnodes)
+    exec_cmd = exec_cmd + " --node_rank=" + str(task_args.node_rank)
+    exec_cmd = exec_cmd + " --master_addr=" + str(task_args.master_addr) + " --master_port=29501" + " run_pretraining.py"
     exec_cmd = exec_cmd + " --flagperf_config " + config_file
-    exec_cmd = exec_cmd + " --nproc " + str(
-        task_args.nproc) + " --nnodes " + str(task_args.nnodes)
+    exec_cmd = exec_cmd + " --node_rank " + str(task_args.node_rank)
+    exec_cmd = exec_cmd + " --nproc_per_node " + str(task_args.nproc) + " --nnodes " + str(task_args.nnodes)
+    exec_cmd = exec_cmd + " --deepspeed --deepspeed_config ds_config.json --data_dir " + task_args.data_dir
 
     task_log_file = os.path.join(task_log_dir, "rank0.log.txt")
 
