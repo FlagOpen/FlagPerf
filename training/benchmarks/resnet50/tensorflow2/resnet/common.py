@@ -192,6 +192,7 @@ def build_stats(history, eval_output, callbacks):
             # timestamp_log = callback.timestamp_log
             # stats['step_timestamp_log'] = timestamp_log
             stats['train_finish_time'] = callback.train_finish_time
+            stats['num_trained_samples'] = callback.num_trained_samples
             if callback.epoch_runtime_log:
                 stats[
                     'avg_exp_per_second'] = callback.average_examples_per_second
