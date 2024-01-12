@@ -12,7 +12,7 @@
    - OS kernel版本: 5.15.0-25-generic     
    - 加速卡驱动版本：535.129.03
    - Docker 版本：24.0.7
-   - 训练框架版本：FlagScale.git@6fc099c
+   - 训练框架版本：FlagScale.git@26cd664
    - 依赖软件版本：sentencepiece
 
 - ##### 并行策略
