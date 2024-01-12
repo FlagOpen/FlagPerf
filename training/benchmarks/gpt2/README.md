@@ -27,7 +27,7 @@ train_data.to_json("lambada.train.json", lines=True)
 
 - 预处理
 > The training data requires preprocessing. 
-The loose json is then processed into a binary format for training. To convert the json into mmap format use preprocess_data.py. An example script to prepare data for GPT2 training is:
+The loose json is then processed into a binary format for training. To convert the json into mmap format use [preprocess_data.py](https://github.com/NVIDIA/Megatron-LM/blob/v3.0/tools/preprocess_data.py) from the original code repository. An example script to prepare data for GPT2 training is:
 
 ``` bash
 python tools/preprocess_data.py \
