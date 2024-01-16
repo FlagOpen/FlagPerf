@@ -90,7 +90,7 @@
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert_hf-pytorch">pytorch</a></td>
       <td>N/A</td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/bert_hf-pytorch">pytorch</a></td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/bert_hf-pytorch">pytorch</a></td>
     </tr>
     <tr>
@@ -130,7 +130,16 @@
         <td>N/A</td>
     </tr>
     <tr>
-     <td>8</td>
+      <td>8</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/dlrmt">DLRM</a></td>
+      <td>Recommendation</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/dlrm-pytorch">pytorch</a></td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+     <td>9</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/efficientnet">efficientnet</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/efficientnet-pytorch">pytorch</a></td>
@@ -139,7 +148,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>9</td>
+      <td>10</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn">faster_rcnn</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/faster_rcnn-pytorch">pytorch</a></td>
@@ -148,7 +157,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>10</td>
+      <td>11</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm">glm</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch">pytorch</a></td>
@@ -157,7 +166,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>11</td>
+      <td>12</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt2">gpt2</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt2-pytorch">pytorch</a></td>
@@ -166,7 +175,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-     <td>12</td> 
+     <td>13</td> 
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_13B">gpt3_13B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_13B-paddle">paddle</a></td>
@@ -175,7 +184,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>13</td>
+      <td>14</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_6.7B">gpt3_6.7B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_6.7B-paddle">paddle</a></td>
@@ -184,7 +193,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>14</td>
+      <td>15</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_13B">llama1_13B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama1_13B-paddle">paddle</a></td>
@@ -193,7 +202,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>15</td>
+      <td>16</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_7B">llama1_7B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama1_7B-paddle">paddle</a></td>
@@ -202,7 +211,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>16</td>
+      <td>17</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b">llama2_7b</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-deepspeed">deepspeed</a></td>
@@ -211,7 +220,7 @@
         <td><a href="https://github.com/FlagOpen/FlagPerf/pull/354">deepspeed</a></td>
     </tr>
       <tr>
-      <td>17</td>
+      <td>18</td>
           <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b_finetune">llama2_7b_finetune</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b_finetune-pytorch">pytorch</a></td>
@@ -220,7 +229,16 @@
       <td>N/A</td>
     </tr>
     <tr>
-      <td>18</td>
+      <td>19</td>
+          <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_70B">llama2_70b</a></td>
+      <td>LLM</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_70B-megatron">megatron</a></td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <td>20</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/longformer">longformer</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/longformer-pytorch">pytorch</a></td>
@@ -229,7 +247,7 @@
       <td>N/A</td>
     </tr>
     <tr>
-      <td>19</td>
+      <td>21</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn">mask_rcnn</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mask_rcnn-pytorch">pytorch</a></td>
@@ -238,7 +256,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>20</td>
+      <td>22</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2">mobilenetv2</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mobilenetv2-pytorch">pytorch</a></td>
@@ -247,7 +265,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>21</td>
+      <td>23</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/resnet50">resnet50</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/resnet50-pytorch">pytorch</a>, <a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/resnet50-tensorflow2">tensorflow2</a></td>
@@ -256,16 +274,16 @@
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/resnet50-pytorch">pytorch</a></td>
     </tr>
     <tr>
-      <td>22</td>
+      <td>24</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet">retinanet</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/retinanet-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/retinanet-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/retinanet-pytorch">pytorch</a></td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/retinanet-pytorch">pytorch</a></td>
     </tr>
     <tr>
-      <td>23</td>
+      <td>25</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer">swin_transformer</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/swin_transformer-pytorch">pytorch</a></td>
@@ -274,7 +292,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>24</td>
+      <td>26</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small">t5_small</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/t5_small-pytorch">pytorch</a></td>
@@ -283,7 +301,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>25</td>
+      <td>27</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2">tacotron2</a></td>
       <td>Audio</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/tacotron2-pytorch">pytorch</a></td>
@@ -292,7 +310,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>26</td>
+      <td>28</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer">transformer</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/transformer-pytorch">pytorch</a></td>
@@ -301,7 +319,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>27</td>
+      <td>29</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer_xl">transformer_xl</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/transformer_xl-pytorch">pytorch</a></td>
@@ -310,7 +328,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>28</td>
+      <td>30</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit">vit</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/vit-pytorch">pytorch</a></td>
@@ -319,7 +337,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>29</td>
+      <td>31</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2">wav2vec2</a></td>
       <td>Audio</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/wav2vec2-pytorch">pytorch</a></td>
@@ -328,7 +346,7 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td>30</td>
+      <td>32</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow">WaveGlow</a></td>
       <td>Audio</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/WaveGlow-pytorch">pytorch</a></td>
