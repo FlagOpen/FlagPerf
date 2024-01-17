@@ -73,7 +73,7 @@ def main():
     threads.append(pwr_thread)
 
     xpu_cmd = "date;echo \"Temp(C)|Power(W)|Used HBM(MB)|Total HBM(MB)|UseRate(%):\";"
-    xpu_cmd = xpu_cmd + r"xpu_smi -m | awk -F' ' '{print $7,$9,$18,$19,$20}'; echo "
+    xpu_cmd = xpu_cmd + r"xpu_smi -m | awk -F' ' '{print $7,$9,$18,$19,$20}';echo"
     xpu_file = open(log_dir + "xpu.log.txt", "w")
     xpu_thread = threading.Thread(target=run_cmd, args=(xpu_cmd, 5, xpu_file))
     threads.append(xpu_thread)
