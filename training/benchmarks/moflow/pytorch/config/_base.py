@@ -36,7 +36,7 @@ clip: float = 1.0
 train_batch_size: int = 512
 eval_batch_size: int = 100
 
-target_nuv: float = 85.0
+target_nuv: float = 80
 
 # Frequency for saving checkpoints, expressed in epochs. If -1 is provided, checkpoints will not be saved.
 save_epochs: int = 5
