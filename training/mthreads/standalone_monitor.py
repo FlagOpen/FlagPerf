@@ -40,7 +40,7 @@ def main():
     cmd = cmd + r"echo ;"
     
     cmd = cmd + r"echo Accelerator Model:;"
-    cmd = cmd + r"mthreads-smi -L;"
+    cmd = cmd + r"mthreads-gmi -L;"
     cmd = cmd + r"echo ;"
     
     cmd = cmd + r"echo Accelerator Driver version:;"

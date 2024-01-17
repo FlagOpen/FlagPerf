@@ -21,18 +21,4 @@ MIXED_PRECISION_ARGS="
     --attention-softmax-in-fp32
 "
 
-NETWORK_ARGS="
-    --num-layers 32 \
-    --hidden-size 4096 \
-    --num-attention-heads 32 \
-    --seq-length 4096 \
-    --max-position-embeddings 4096 \
-    --layernorm-epsilon 1e-5 \
-    --use-rotary-position-embeddings \
-    --rotary-position-embeddings-in-fp32 \
-    --no-position-embedding \
-    --swiglu \
-    --multiple-of 256 \
-    --apply-layernorm-rms \
-    --untie-embeddings-and-output-weights
-"
+
