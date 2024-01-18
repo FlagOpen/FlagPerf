@@ -15,7 +15,7 @@ This case includes code from the LLAMA 2 COMMUNITY LICENSE AGREEMENT License ope
 
 ### 模型配置及tokenizer准备
 
-本测试样例为预训练case，需要下载tokenizer，下载链接为 https://github.com/FlagOpen/FlagScale/tree/main/examples/llama2/tokenizer
+本测试样例为预训练case，需要下载tokenizer，下载链接为 https://huggingface.co/meta-llama/Llama-2-70b-hf，注意需要自行向meta申请下载授权。
 
 在data_dir下创建tokenizer目录，将上述链接中的tokenizer.model文件下载到此目录中
 
