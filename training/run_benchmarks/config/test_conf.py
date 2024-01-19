@@ -136,7 +136,8 @@ CASES = {
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
-
+    # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
+    # "t5_small:pytorch:BI-V100:1:8:1": "/raid/dataset/t5_small",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
@@ -144,8 +145,5 @@ CASES = {
     # "bert_hf:pytorch_2.0:S4000:1:8:1": "/data/flagperf/bert_hf",
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
-    # iluvatar cases
-    # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
-    # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
 
 }
