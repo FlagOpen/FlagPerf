@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend and mthreads.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -22,7 +22,7 @@ VENDOR = "nvidia"
 #   mthreads:
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
 #   metax:
-#       " --device=/dev/dri --device=/dev/mxcd --group-add video"
+#       " --env MTHREADS_VISIBLE_DEVICES=all"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:

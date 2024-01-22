@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend and mthreads.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
