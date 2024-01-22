@@ -58,29 +58,21 @@ def get_argument_parser():
 
 def train(model_engine, dataloader):
     model_engine.train()
-    ave_loss = 0.0
     for step, data in enumerate(dataloader):
 
         fake_data = torch.tensor(data).long()
         input_ids = fake_data.to(args.local_rank)
         labels = fake_data.to(args.local_rank)
-        loss = model_engine(input_ids=input_ids, labels=labels).loss
+        y = model_engine(input_ids=input_ids, labels=labels)
+        loss = y.loss
+        if args.local_rank == 0 and step % 1 == 0:
+            print('Step {}/{}, Loss: {}'.format(step//1, len(dataloader)//1, loss))
         model_engine.backward(loss)
         model_engine.step()
 
-        ave_loss += loss
-        if step % 10 == 0 and args.local_rank == 0:
-            print('Step {}/{}, Loss: {}'.format(step, len(dataloader),
-                                                ave_loss / 10))
-            ave_loss = 0.0
 
-
-def get_deepspeed_engine(args, model_config_dir, flashattn):
-    with deepspeed.zero.Init(config_dict_or_path=args.deepspeed_config,
-                             enabled=True,
-                             mem_efficient_linear=False,
-                             mpu=None):
-        model = get_baichuan_model(model_config_dir, flashattn)
+def get_deepspeed_engine(args, model_config_dir):
+    model = get_baichuan_model(model_config_dir)
 
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
@@ -110,19 +102,14 @@ if __name__ == "__main__":
     datafilename = getattr(module, 'datafilename')
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
-    flashattn = getattr(module, 'flashattn')
 
     deepspeed.init_distributed()
-    model_engine = get_deepspeed_engine(args, os.path.join("baichuan2_13b_hf"),
-                                        flashattn)
+    model_engine = get_deepspeed_engine(args, os.path.join(args.data_dir, "baichuan2_13b_hf"))
     dataset = get_baichuan_dataset(args, seqlength, datafilename)
     logger = logging.getLogger("DeepSpeed")
     handler = MyLogHandler()
     logger.addHandler(handler)
-
-    sampler = DistributedSampler(dataset,
-                                 num_replicas=args.nproc_per_node * args.nnodes,
-                                 rank=args.local_rank)
+    sampler = DistributedSampler(dataset)
     dataloader = DataLoader(dataset,
                             sampler=sampler,
                             batch_size=batchsize,
@@ -140,4 +127,4 @@ if __name__ == "__main__":
             chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
             print("System tokens per second: ", whole_tps)
             print("Tokens/p/s: ", chip_tps)
-            print("MFU: ", chip_tps * 13000000000.0 * 6 / (theoryflops * 10))
+            print("MFU: ", chip_tps * 13000000000.0 * 6 / (theoryflops))
