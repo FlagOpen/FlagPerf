@@ -4,7 +4,7 @@ Baichuan 2 is the new generation of large-scale open-source language models laun
 
 ## 模型配置及tokenizer准备
 
-本测试样例为预训练case，需要下载baichuan2\_13B_base模型huggingface所有文件（https://huggingface.co/baichuan-inc/Baichuan2-13B-Base/tree/main）， 存放在data_dir/baichuan2_13b_hf目录。
+本测试样例为预训练case，需要下载baichuan2\_13B_base模型huggingface所有文件（https://huggingface.co/baichuan-inc/Baichuan2-13B-Base/tree/main ）， 存放在data_dir/baichuan2_13b_hf目录。
 
 ## 数据准备
 
