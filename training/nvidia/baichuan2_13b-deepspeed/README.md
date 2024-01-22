@@ -12,8 +12,7 @@
    - 加速卡驱动版本：535.129.03
    - Docker 版本：24.0.7
    - 训练框架版本：deepspeed 0.11.1
-   - 依赖软件版本：sentencepiece
-
+   
 - ##### 并行策略
 
    - 并行技术：sharded data parallel
