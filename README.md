@@ -442,7 +442,7 @@
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>8</td>
-        <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/aquila_7b_mmlu" style="text-decoration:none" target="_parent">Aquila-7B-mmlu</td>
+        <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/Aquila_7b_mmlu" style="text-decoration:none" target="_parent">Aquila-7B-mmlu</td>
         <td class="xl69" x:str>NLP</td>
     <td class="xl69" x:str>fp16</td>
     <td class="xl69" x:str>N/A</td>
@@ -451,7 +451,7 @@
     </tr>
 <tr height="16.80" style='height:16.80pt;'>
    <td class="xl65" x:str>9</td>
-    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/sam" style="text-decoration:none" target="_parent">SegmentAnything</td>
+    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/sam_h" style="text-decoration:none" target="_parent">SegmentAnything</td>
         <td class="xl69" x:str>MultiModal</td>
     <td class="xl69" x:str>fp16</td>
     <td class="xl69" x:str>W32A16</td>

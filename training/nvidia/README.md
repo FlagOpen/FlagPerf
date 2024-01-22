@@ -6,6 +6,8 @@ NVIDIA 是人工智能计算领域的领导者。率先采用加速计算，以�
 在全栈和数据中心级别实现加速计算，英伟达打造的类似于一个计算堆栈或神经网络，其中包含硬件、系统软件、平台软件和应用四层。每一层都对计算机制造商、服务提供商和开发者开放，让他们以更适合的方式集成到其产品当中。
 [来源](https://images.nvidia.cn/nvimages/aem-dam/zh_cn/Solutions/about-us/documents/NVIDIA-Story-zhCN.pdf)
 
+此外，如无特殊说明，使用fp32数制的用户代码，在Ampere芯片上将默认以tf32格式进行计算。
+
 # FlagPerf适配验证环境说明
 ## 环境配置参考
   - 硬件

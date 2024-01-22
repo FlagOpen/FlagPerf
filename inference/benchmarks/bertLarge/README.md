@@ -15,9 +15,9 @@ bert_reference_results_text_md5.txt
 * 模型实现
   * pytorch：transformers.BertForMaskedLM
 * 权重下载
-  * pytorch：BertForMaskedLM.from_pretrained("bert-large/base-uncased")
+  * pytorch：BertForMaskedLM.from_pretrained("bert-large-uncased")
 * 权重选择
-  * 使用save_pretrained将加载的bert-large或bert-base权重保存到<data_dir>/<weight_dir>路径下
+  * 使用save_pretrained将加载的bert-large权重保存到<data_dir>/<weight_dir>路径下
 
 ### 3. 软硬件配置与运行信息参考
 
