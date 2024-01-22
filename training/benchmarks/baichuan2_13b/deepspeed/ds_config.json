@@ -1,5 +1,5 @@
 {
-    "gradient_accumulation_steps": 64,
+    "gradient_accumulation_steps": 8,
     "train_micro_batch_size_per_gpu": 1,
     "optimizer": {
       "type": "AdamW",

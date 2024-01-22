@@ -23,3 +23,10 @@ Baichuan 2 is the new generation of large-scale open-source language models laun
    执行preprocess/data_process.py，配置好其中的4个命令行参数。推荐的默认token数量为100M，即1亿个token。此配置在H800 8卡上预计训练xxx小时
 
 4. 将outputfile（通常为openwebtext_baichuan2_100M.npy）放置在data_dir下
+
+## 厂商特殊配置
+
+本测试样例除基础的config_\<vendor\>x\<nnodes>x\<nproc\>.py（如config_H800x2x8.py）与requirements.txt外，还提供同目录下的ds_config.json与net.sh供厂商适配使用：
+
+1. 厂商可在ds_config.json中新增或改写benchmarks/目录下的ds_config.json，以nv-H800为例，可以将gradient_accu_steps修改为64，以供精度对齐实验
+2. 厂商可在net.sh中**用一行环境变量命令**配置集群网络环境，以nv-H800为例，配置了socket_ifname以及IB相关配置
