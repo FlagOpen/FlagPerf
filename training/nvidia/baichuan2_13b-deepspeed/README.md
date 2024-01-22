@@ -57,7 +57,7 @@
 
 经排查，baichuan2原生模型未添加flashattention2的支持。flashattention2可以极大的降低显存开销，并降低互联需求。llama2，Aquila2等模型均支持此方案。此次实验只能在未支持flashattention2的情况下，开启gradient checkpointing（使用34%的额外计算量来节约显存）。作为对比，llama2-7B在A100机器MFU可以达到约50%，不开启flashattention2可以达到约28%，不开启flashattention2且开启gradient checkpointing能达到21%，同结构的llama2-70B在H800上开启flashattention2且关闭gradient checkpointing也可以达到约40%。
 
-因此参数量变化不是导致baichuan2-13B MFU低的问题，关键原因是baicuan2-13B不支持目前主流算法通用的flashattention2算子，导致计算速度慢且显存开销大，不开启gradient checkpointing会OOM，因为gradient checkpointing是用额外计算换显存，拿时间换空间，所以性能相比仅不开启flashattention2进一步降低。综上，本次实验21.5%的MFU正常。
+因此参数量变化不是导致baichuan2-13B MFU低的问题，关键原因是baicuan2-13B不支持目前主流算法通用的flashattention2算子，导致计算速度慢且显存开销大，不开启gradient checkpointing会OOM，因为gradient checkpointing是用额外计算换显存，拿时间换空间，所以性能相比仅不开启flashattention2进一步降低。综上，本次实验21.4%的MFU正常。
 
 附表：各类实验MFU对比（均已在并行方案等其他可能影响性能的配置上达到较优）
 
