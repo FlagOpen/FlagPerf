@@ -3,6 +3,5 @@ transformers==4.34.1
 accelerate
 colorama
 cpm_kernels
-sentencepiece
 streamlit
 transformers_stream_generator
