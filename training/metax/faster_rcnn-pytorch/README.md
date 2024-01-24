@@ -17,15 +17,16 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
 ### 沐曦集成电路 C500 GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器、加速卡型号: MXC 500 64GB
+    - 机器、加速卡型号: 曦云®C500 64G
+    - 多机网络类型、带宽: InfiniBand，2x200 Gb/s
 
 - ##### 软件环境
    - OS版本：Ubuntu 20.04.6
    - OS kernel版本:  5.4.0-26-generic
    - 加速卡驱动版本：2.2.0
-   - Docker 版本：20.10.8
+   - Docker 版本：24.0.7
    - 训练框架版本：pytorch-2.0.0+mc2.18.0.8-cp38-cp38-linux_x86_64.whl
-   - 依赖软件版本：24.0.7
+   - 依赖软件版本：无
 
 
 
@@ -55,5 +56,6 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
 | --------------------- | --------- | ------------ | -------- | ------- | ------- | ------ | --- | --- |
 | MXC500 单机8卡（1x8） | fp32      | /            |         |         |         |        |    |     |
 | MXC500单机8卡（1x8）  | fp32      | bs=16,lr=0.16 |          |         |         |        |     |     |
-| MXC500 单机单卡（1x1） | fp32      | bs=16, lr=0.16| /           |         |         |         |        | /   |     |
+| MXC500 单机单卡（1x1）| fp32      | /             | /           |         |         |         |        | /   |     |
+| MXC500 两机8卡（2x8） | fp32      | /             | /           |         |         |         |        | /   |     |
 

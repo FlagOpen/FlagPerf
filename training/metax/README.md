@@ -13,13 +13,14 @@
 # FlagPerf适配验证环境说明
 ## 环境配置参考
 - 硬件
-  - 机器型号: 
-  - 加速卡型号: MX C500
-
+  - 机器型号: 同泰怡 G658V3
+  - 加速卡型号: 曦云®C500 64G  
+  - 多机网络类型、带宽: InfiniBand，2x200 Gb/s
 - 软件
   - OS版本：Ubuntu 20.04.6
   - OS kernel版本: 5.4.0-26-generic
-  - 加速卡驱动版本：2.2.0
+  - 加速卡驱动版本：2.18.0.8
+  - VBIOS：1.0.102.0
   - Docker版本：24.0.7
 
 
@@ -30,8 +31,8 @@
 
 - 核心软件信息 
   - AI框架&相关版本：  
-    torch: pytorch-2.0  
-    torchvision: torchvision-0.15  
+    torch: pytorch-2.0-mc  
+    torchvision: torchvision-0.15-mc  
     maca: 2.18.0.8  
 
 
