@@ -102,6 +102,9 @@ if [ "$RECOMPUTE" = "True" ]; then
     RECOMPUTE_ARGS="
         --recompute-activations
     "
+else
+    RECOMPUTE_ARGS=""
+fi
 
 INITIALIZATION_ARGS="
     --init-method-std 0.02 \
