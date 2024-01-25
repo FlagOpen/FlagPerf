@@ -82,7 +82,7 @@ for i in range(8):
     gpu[i] = {'温度': [], '功耗': [], '存储占用率': [], '计算占用率': []}
 next_gpu_id = 0
 for line in file.readlines():
-    if 'MiB' in line:
+    if 'MiB' in line and 'N/A' not in line:
         info = line.split(' ')
         gpu[next_gpu_id]['温度'].append(float(info[0].split('C')[0]))
         gpu[next_gpu_id]['功耗'].append(float(info[1].split('W')[0]))
