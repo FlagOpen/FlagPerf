@@ -150,4 +150,6 @@ CASES = {
     # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
 
+    # metax cases
+    # "faster_rcnn:C500:pytorch_2.0:1:8:1": "/dataset/coco2017/",
 }
