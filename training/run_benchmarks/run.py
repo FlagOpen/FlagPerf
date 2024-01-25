@@ -293,7 +293,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
         framework_sub_path = framework_sub_path.split("_")[0]
     env_file = os.path.join(
         tc.FLAGPERF_PATH, tc.VENDOR,
-        case_config["model"] + "-" + case_config["framework"],
+        case_config["model"] + "-" + framework_sub_path,
         "config/environment_variables.sh")
     framework = case_config["framework"].split("_")[0]
     if (os.path.isfile(env_file)):
