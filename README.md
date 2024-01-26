@@ -77,7 +77,7 @@
     </tr>
     <tr>
       <td>2</td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/baichuan2_7b">baichuan2_13b</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/baichuan2_13b">baichuan2_13b</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/baichuan2_13b-deepspeed">deepspeed</a></td>
       <td>N/A</td>
