@@ -151,6 +151,6 @@ CASES = {
     # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
 
     # metax cases
-    # "faster_rcnn:C500:pytorch_2.0:1:8:1": "/dataset/coco2017/",
-    # "retinanet:pytorch_2.0:C500:2:8:1": "/dataset/coco2017/",
+    # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/dataset/coco2017/",
+    # "retinanet:pytorch_2.0:C500:1:8:1": "/dataset/coco2017/",
 }
