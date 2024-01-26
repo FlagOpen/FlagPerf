@@ -615,7 +615,7 @@ sudo python inference/run.py
 ## 参与共建FlagPerf
 
 
-> 开发者教程：更多操作教程见 [docs-zh](./docs-zh) 
+> 开发者教程：更多操作教程见 [docs-zh](./docs_zh) 
 
 为了更直观的展示厂商参与共建的实际工作量，下面给出6个已经合并进FlagPerf，面向不同特征厂商的Pull Request。
 
