@@ -33,7 +33,7 @@ echo $FLASH_ATTN
 echo $RECOMPUTE
 echo $VENDOR_SHELL
 
-DATA_PATH=$DATA_DIR/llama_00_text_document
+DATA_PATH=$DATA_DIR/pile_wikipedia_demo
 TOKENIZER_PATH=$DATA_DIR/tokenizer/tokenizer.model
 
 DISTRIBUTED_ARGS="
@@ -102,6 +102,9 @@ if [ "$RECOMPUTE" = "True" ]; then
     RECOMPUTE_ARGS="
         --recompute-activations
     "
+else
+    RECOMPUTE_ARGS=""
+fi
 
 INITIALIZATION_ARGS="
     --init-method-std 0.02 \

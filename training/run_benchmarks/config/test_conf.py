@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend and mthreads.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -21,6 +21,8 @@ VENDOR = "nvidia"
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
 #   mthreads:
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
+#   metax:
+#       " --device=/dev/dri --device=/dev/mxcd --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -148,4 +150,6 @@ CASES = {
     # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
 
+    # metax cases
+    # "faster_rcnn:C500:pytorch_2.0:1:8:1": "/dataset/coco2017/",
 }
