@@ -83,3 +83,8 @@ class InitHelper:
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
+
+        if os.environ.get("METAX_USE_TF32"):
+            import torch
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
