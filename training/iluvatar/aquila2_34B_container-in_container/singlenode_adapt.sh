@@ -43,14 +43,6 @@ TRAINING_ARGS="
     --sequence-parallel
 "
 
-MIXED_PRECISION_ARGS="
-    --bf16 \
-    --attention-softmax-in-fp32 \
-    --embedding-weights-in-fp32 \
-    --rotary-position-embeddings-in-fp32 \
-    --accumulate-allreduce-grads-in-fp32
-"
-
 DATA_ARGS="
     --data-path $DATADIR/$DATASET \
     --tokenizer-type AquilaTokenizer \
@@ -86,15 +78,6 @@ INITIALIZATION_ARGS="
     --seed 42 
 "
 
-REGULARIZATION_ARGS="
-    --attention-dropout 0.0 \
-    --hidden-dropout 0.0 \
-    --weight-decay 0.1 \
-    --adam-beta1 0.9 \
-    --adam-beta2 0.95 \
-    --clip-grad 1.0
-"
-
 LEARNING_RATE_ARGS="
     --lr 9.65e-6 \
     --lr-decay-style linear \
@@ -107,7 +90,7 @@ LOG_ARGS="
     --tensorboard-dir $TB_PATH \
     --tensorboard-log-interval 1
 "
-# for iluvatar performance testing, we need change corresponding singlenode_run.sh :
+# for iluvatar performance testing, we need to change corresponding singlenode_run.sh :
 # cmd="torchrun $DISTRIBUTED_ARGS $SCALEHOME/megatron/pretrain_gpt.py \
 #               $TRAINING_ARGS \
 #               $MIXED_PRECISION_ARGS \

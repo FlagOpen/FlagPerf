@@ -2,6 +2,8 @@
 # network
 # =========================================================
 SSH_PORT = "10020"
+# for iluvatar performance testing, we need to change SSH_PORT 
+# SSH_PORT = "10022"
 
 net_cmd = "export CUDA_DEVICE_MAX_CONNECTIONS=1; \
         export NCCL_SOCKET_IFNAME=`ip -4 addr show | grep inet | grep 10.31.12. | sed -e 's/^.*global *//g'`; \

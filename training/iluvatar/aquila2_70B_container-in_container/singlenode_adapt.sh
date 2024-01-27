@@ -30,72 +30,48 @@ TRAINING_ARGS="
     --global-batch-size $GBS \
     --disable-bias-linear \
     --use-distributed-optimizer \
+    --sequence-parallel \
     --use-flash-attn \
-    --num-layers-per-virtual-pipeline-stage 5 \
+    --no-global-file-system \
     --recompute-granularity full \
-    --recompute-method uniform \
-    --recompute-num-layers 1 \
-    --recompute-method-per-stage 11 0 1 1 \
-    --recompute-num-layers-per-stage 11 1 1 1 \
-    --sequence-parallel
+    --recompute-method uniform 
 "
 
 MIXED_PRECISION_ARGS="
     --bf16 \
-    --attention-softmax-in-fp32 \
+    --initial-loss-scale 65536 \
+    --min-loss-scale 1.0 \
+    --loss-scale-window 1024 \
+    --attention-softmax-in-fp32\
     --embedding-weights-in-fp32 \
-    --rotary-position-embeddings-in-fp32 \
     --accumulate-allreduce-grads-in-fp32
 "
 
-DATA_ARGS="
-    --data-path $DATADIR/$DATASET \
-    --tokenizer-type AquilaTokenizer \
-    --vocab-file $VOCAB_FILE \
-    --vocab-size 100008\
-    --merge-file $MERGE_FILE \
-    --special-tokens-file $SPECIAL_TOKENS_FILE \
-"
-
 NETWORK_ARGS="
-    --num-layers 60 \
-    --hidden-size 6144 \
-    --num-attention-heads 48 \
+    --num-layers 80 \
+    --hidden-size 8192 \
+    --num-attention-heads 64 \
     --group-query-attention \
     --num-query-groups 8 \
     --hidden-dim-multiplier 1.3 \
-    --swiglu \
-    --multiple-of 4096\
     --seq-length 4096 \
     --max-position-embeddings 4096 \
     --layernorm-epsilon 1e-5 \
-    --layernorm-init-weight 0.3 \
     --use-rotary-position-embeddings \
+    --rotary-position-embeddings-in-fp32 \
     --no-position-embedding \
+    --swiglu \
+    --multiple-of 4096 \
     --apply-layernorm-rms \
     --make-vocab-size-divisible-by 64 \
-    --untie-embeddings-and-output-weights
+    --untie-embeddings-and-output-weights \
+    --standalone-embedding-stage \
+    --num-layers-of-first-stage 1 
 "
 
 INITIALIZATION_ARGS="
     --init-method-std 0.02 \
     --seed 42 
-"
-
-REGULARIZATION_ARGS="
-    --attention-dropout 0.0 \
-    --hidden-dropout 0.0 \
-    --weight-decay 0.1 \
-    --adam-beta1 0.9 \
-    --adam-beta2 0.95 \
-    --clip-grad 1.0
-"
-
-LEARNING_RATE_ARGS="
-    --lr 9.65e-6 \
-    --lr-decay-style linear \
-    --lr-warmup-fraction 0.1 \
-    --min-lr 0.0 \
 "
 
 LOG_ARGS="
