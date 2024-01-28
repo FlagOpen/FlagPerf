@@ -76,7 +76,7 @@ for index in ['cpu', 'mem', 'pwr']:
         file = open(opj(logdir, node_log, index + '.log.txt'))
         result = []
         for line in file.readlines():
-            if 'UTC' in line or len(line) < 2:
+            if 'UTC' in line or len(line) < 2 or 'sudo' in line or 'CST' in line:
                 continue
             result.append(float(line))
         results[index] = result

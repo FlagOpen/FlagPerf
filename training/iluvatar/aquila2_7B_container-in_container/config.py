@@ -2,8 +2,10 @@
 # network
 # =========================================================
 SSH_PORT = "10020"
-# for iluvatar performance testing, we need to change SSH_PORT 
+# for iluvatar performance testing, we need to change SSH_PORT:
 # SSH_PORT = "10022"
+# and change ssh_exec_cmd in run_pretraining.py line 114 to:
+# ssh_exec_cmd = ['ssh', '-p', config.SSH_PORT, ip, '-o IdentityFile=/home/fuzhiwen/workspace/ae-bj-dashboard/projects/atyx2023q2/dot_ssh/fuzw4atyx-c1-dev@storage4/id_rsa -o User=fuzhiwen', wrap_exec_cmd]
 
 net_cmd = "export CUDA_DEVICE_MAX_CONNECTIONS=1; \
         export NCCL_SOCKET_IFNAME=`ip -4 addr show | grep inet | grep 10.31.12. | sed -e 's/^.*global *//g'`; \
