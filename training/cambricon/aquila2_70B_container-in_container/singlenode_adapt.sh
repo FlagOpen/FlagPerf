@@ -1,1 +1,1 @@
-echo "[Prompt] nvidia adaption is NULL, for other Vendors"
+echo "[Prompt] cambricon adaption is NULL, for other Vendors"

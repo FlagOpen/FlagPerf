@@ -75,7 +75,7 @@ class Daemon:
 
         def mlu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "cnmon |grep 'Default'|awk '{print $3,$4,$5,$9,$10,$11,$2}'"
+            cmd = "cnmon |grep 'Default'|awk '{print $3,$4,$5,$9,$10,$11,$2}' && cnmon |grep 'MLU590-M9'|awk '{print $9}';"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,

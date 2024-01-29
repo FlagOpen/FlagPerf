@@ -72,7 +72,7 @@ def main():
     pwr_thread = threading.Thread(target=run_cmd, args=(pwr_cmd, 120, pwr_file))
     threads.append(pwr_thread)
     
-    mlu_cmd = "date;cnmon |grep 'Default'|awk '{print $3,$4,$5,$9,$10,$11,$2}';echo \"\""
+    mlu_cmd = "date;cnmon |grep 'Default'|awk '{print $3,$4,$5,$9,$10,$11,$2}' && cnmon |grep 'MLU590-M9'|awk '{print $9}';echo \"\""
     mlu_file = open(log_dir + "mlu.log.txt", "w")
     mlu_thread = threading.Thread(target=run_cmd, args=(mlu_cmd, 5, mlu_file))
     threads.append(mlu_thread)
