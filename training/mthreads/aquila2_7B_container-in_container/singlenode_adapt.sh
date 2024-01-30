@@ -12,8 +12,7 @@ TRAINING_ARGS="
     --use-distributed-optimizer \
     --distributed-backend mccl \
     --use-flash-attn \
-    --device-type mthreads \
-    --recompute-num-layers 100
+    --device-type mthreads
  "
 
 MIXED_PRECISION_ARGS="
