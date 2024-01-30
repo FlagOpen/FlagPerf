@@ -135,7 +135,7 @@ if __name__ == "__main__":
             tokens = seqlength * batchsize
             perf = get_metric(handler.texts)
             whole_tps = tokens * perf
-            chip_tps = whole_tps / args.nproc * args.nnodes
+            chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
             print("System tokens per second: ", whole_tps)
             print("Tokens/p/s: ", chip_tps)
             print("MFU: ", chip_tps * 6000000000.0 * 6 / theoryflops)
