@@ -102,7 +102,7 @@ if __name__ == "__main__":
         exec_cmd = exec_cmd + " " + str(len(args.hosts))
         exec_cmd = exec_cmd + " " + args.hosts[0]
         exec_cmd = exec_cmd + " " + args.master_port
-        exec_cmd = exec_cmd + " " + os.path.join(req_path, "singlenode_adapt.sh")
+        exec_cmd = exec_cmd + " " + os.path.join(os.path.dirname(args.vendor_config), "singlenode_adapt.sh")
         
         logger.info(ip)
         logger.info(exec_cmd)
