@@ -73,7 +73,7 @@ DATA_ARGS="
     --train-data-path $TRAIN_DATA_PATH \
     --tokenizer-type AquilaTokenizer \
     --vocab-file $VOCAB_FILE \
-    --vocab-size 100008\
+    --vocab-size 100008 \
     --special-tokens-file $SPECIAL_TOKENS_FILE \
     --merge-file $MERGE_FILE
 "
