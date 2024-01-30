@@ -14,7 +14,7 @@ def parse_args():
 
 def run_cmd(cmd, interval, outputstream):
     while True:
-        subprocess.Popen(cmd, shell=True, stdout=outputstream, stderr=subprocess.STDOUT)
+        subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=outputstream, stderr=subprocess.STDOUT)
         time.sleep(interval)
 
 
@@ -52,7 +52,7 @@ def main():
     
     sys_fn = log_dir + "sys_info.log.txt"
     with open(sys_fn, "w") as f:
-        p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=f, stderr=subprocess.STDOUT)
         p.wait()
         
     threads = []
@@ -72,7 +72,7 @@ def main():
     pwr_thread = threading.Thread(target=run_cmd, args=(pwr_cmd, 120, pwr_file))
     threads.append(pwr_thread)
     
-    mlu_cmd = "date;cnmon |grep 'Default'|awk '{print $3,$4,$5,$9,$10,$11,$2}' && cnmon |grep 'MLU590-M9'|awk '{print $9}';echo \"\""
+    mlu_cmd = "date;paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU590-M9') | awk '{print $3,$4,$5,$9,$10,$11,$25}';echo \"\""
     mlu_file = open(log_dir + "mlu.log.txt", "w")
     mlu_thread = threading.Thread(target=run_cmd, args=(mlu_cmd, 5, mlu_file))
     threads.append(mlu_thread)
