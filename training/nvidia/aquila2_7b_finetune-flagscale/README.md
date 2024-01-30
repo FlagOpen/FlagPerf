@@ -13,7 +13,6 @@
    - Docker 版本：20.10.18
    - 训练框架版本：FlagScale.git@ed55532
      - 值得注意的是，ed55532版本的flagscale训练框架尚未实现计算通信重叠，因此相比其他框架，降低accumulate steps会极大的降低吞吐量
-- 依赖软件版本：sentencepiece
    
 - ##### 并行策略
 
