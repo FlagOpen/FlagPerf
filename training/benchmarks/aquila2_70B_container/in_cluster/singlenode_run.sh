@@ -50,15 +50,12 @@ TRAINING_ARGS="
     --use-distributed-optimizer \
     --recompute-granularity full \
     --recompute-method uniform \
-    --recompute-num-layers 1
+    --recompute-num-layers 1 \
+    --sequence-parallel
 "
 
 MIXED_PRECISION_ARGS="
-    --fp16 \
-    --embedding-weights-in-fp32 \
-    --rotary-position-embeddings-in-fp32 \
-    --attention-softmax-in-fp32 \
-    --accumulate-allreduce-grads-in-fp32
+    --fp16
 "
 
 DATA_ARGS="
