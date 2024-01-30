@@ -13,4 +13,5 @@ PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
-    "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
+    # "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
+    "vit_l_16:pytorch_2.1": "/raid/dataset/ImageNet_1k_2012/val"
