@@ -14,7 +14,7 @@ class SamInferDataset(Dataset):
         processor = SamProcessor.from_pretrained(config.data_dir + "/" +
                                                  config.weights)
 
-        img_url = "https://huggingface.co/ybelkada/segment-anything/resolve/main/assets/car.png"
+        img_url = "https://hf-mirror.com/ybelkada/segment-anything/resolve/main/assets/car.png"
         raw_image = Image.open(requests.get(img_url,
                                             stream=True).raw).convert("RGB")
         input_points = [[[450, 600]]]

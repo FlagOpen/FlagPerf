@@ -132,13 +132,13 @@ CASES = {
     # "transformer:pytorch:R300:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-
   
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
-
+    # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
+    # "t5_small:pytorch:BI-V100:1:8:1": "/raid/dataset/t5_small",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
@@ -146,10 +146,10 @@ CASES = {
     # "bert_hf:pytorch_2.0:S4000:1:8:1": "/data/flagperf/bert_hf",
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
-    # iluvatar cases
-    # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
-    # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
 
     # metax cases
-    # "faster_rcnn:C500:pytorch_2.0:1:8:1": "/dataset/coco2017/",
+    # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 }
