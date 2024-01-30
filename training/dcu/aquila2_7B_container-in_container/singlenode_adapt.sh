@@ -1,4 +1,3 @@
-echo "[Prompt] nvidia adaption is NULL, for other Vendors"
 TRAINING_ARGS="
     --train-samples $TRAININGSAMPLES \
     --eval-iters 0 \
