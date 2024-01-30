@@ -29,7 +29,7 @@
 * 输入批尺寸
   1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A100x1x8.py中所写，在本case中默认为1
   2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x1x8.py中所写，在本case中默认为2048
-  3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为ds_config.json中所写，在本case中默认为9
+  3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为ds_config.json中所写，在本case中默认为4
   4. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size。在本case中，data_parallel_size=world_size/TPsize/PPsize。
 
 * 通用指标
@@ -51,6 +51,6 @@
 
 | 配置                | parallel |  fix_hp           | token/p/s | loss | mem       | MFU       |
 | ------------------- | ------ | ---------------- | ------ | ------- | --------- | --------- |
-| A800单机8卡（1x8）  | TP1PP1DP8 |  /                | 4173.4 | 2.66 | 75/80 | 56.2% |
+| A800单机8卡（1x8）  | TP1PP1DP8 |  /                | 3813.2 | 2.61 | 75/80 | 51.3% |
 
 
