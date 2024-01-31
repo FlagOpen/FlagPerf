@@ -36,7 +36,7 @@ for index in ['温度', '功耗', '显存使用率', 'GPU利用率']:
             gpu[i] = {'温度': [], '功耗': [], '显存使用率': [], 'GPU利用率': []}
         next_gpu_id = 0
         for line in file.readlines():
-            if 'MiB' in line:
+            if 'MiB' in line and 'N/A' not in line:
                 info = line.split(' ')
                 gpu[next_gpu_id]['温度'].append(float(info[0].split('C')[0]))
                 gpu[next_gpu_id]['功耗'].append(float(info[1].split('W')[0]))
@@ -76,7 +76,7 @@ for index in ['cpu', 'mem', 'pwr']:
         file = open(opj(logdir, node_log, index + '.log.txt'))
         result = []
         for line in file.readlines():
-            if 'UTC' in line or len(line) < 2:
+            if 'UTC' in line or len(line) < 2 or 'sudo' in line or 'CST' in line:
                 continue
             result.append(float(line))
         results[index] = result
