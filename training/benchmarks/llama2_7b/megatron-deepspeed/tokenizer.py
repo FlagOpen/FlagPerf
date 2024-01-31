@@ -18,6 +18,7 @@ def build_tokenizer(args):
               flush=True)
 
     # Select and instantiate the tokenizer.
+    args.tokenizer_type = 'HFTokenizer'
     if args.tokenizer_type == 'BertWordPieceLowerCase':
         assert args.vocab_file is not None
         tokenizer = _BertWordPieceTokenizer(vocab_file=args.vocab_file,

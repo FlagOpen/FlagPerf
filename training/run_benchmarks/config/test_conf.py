@@ -3,7 +3,7 @@
 
 # Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
 # We will run benchmarks in training/<vendor>
-VENDOR = "nvidia"
+VENDOR = "metax"
 
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
@@ -23,7 +23,7 @@ VENDOR = "nvidia"
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
 #   metax:
 #       " --device=/dev/dri --device=/dev/mxcd --group-add video"
-ACCE_CONTAINER_OPT = " --gpus all"
+ACCE_CONTAINER_OPT = " --device=/dev/dri --device=/dev/mxcd --group-add video"#" --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -39,7 +39,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/yanguangyu/plin/FlagPerf/training"
+FLAGPERF_PATH = "/home/metax/plin/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -58,8 +58,9 @@ CLEAR_CACHES = True
     "model:framework:hardwareID:nnodes:nproc:repeat": "dataset path"}
 '''
 CASES = {
-    "llama2_7b:megatron-deepspeed:A100:1:8:1": "/raid/dataset/RedPajama-Data-1T-Sample/",
+    "llama2_7b:megatron-deepspeed:C500:1:8:1": "/home/metax/plin/dataset/llama2_7b/RedPajama-Data-1T-Sample/",
     # nvidia cases
+    # "llama2_7b:megatron-deepspeed:A100:1:8:1": "/raid/dataset/RedPajama-Data-1T-Sample/"
     #"bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
     #"glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     #"cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
@@ -153,4 +154,5 @@ CASES = {
     # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "llama2_7b:megatron-deepspeed:C500:1:8:1": "/raid/dataset/RedPajama-Data-1T-Sample/"
 }
