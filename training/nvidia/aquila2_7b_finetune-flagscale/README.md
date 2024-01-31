@@ -27,8 +27,8 @@
 ### 运行情况
 
 * 输入批尺寸
-  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A100x1x8.py中所写，在本case中默认为1
-  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x1x8.py中所写，在本case中默认为2048
+  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A800x1x8.py中所写，在本case中默认为1
+  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A800x1x8.py中所写，在本case中默认为2048
   3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为ds_config.json中所写，在本case中默认为4
   4. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size。在本case中，data_parallel_size=world_size/TPsize/PPsize。
 
@@ -38,7 +38,7 @@
 | ------------ | -------------------------- | ---------------------------------- |
 | 任务类别     | 自然语言理解               |                                    |
 | 模型         | aquila2_7b                  |                                    |
-| 数据集       | alpaca_data_train.jsonl   |                                    |
+| 数据集       | alpaca微调数据集   |                                    |
 | 数据精度     | amp                        |                                    |
 | 超参修改     | parallel,见“性能指标” | 格式为TPxPPyDPz，例如TP2PP1DP4 |
 | 超参修改     | fix_hp,见“性能指标”        | 跑满硬件设备评测吞吐量所需特殊超参 |
@@ -49,10 +49,12 @@
 
 * 性能指标
 
+值得注意的是，下列第3组实验的global_batchsize与FlagScale仓库中的finetune_aquila_7b相同, 训练381 step，此项实验也将作为精度对齐所用实验。
+
 | 配置                | parallel |  fix_hp           | token/p/s | loss | mem       | MFU       |
 | ------------------- | ------ | ---------------- | ------ | ------- | --------- | --------- |
 | A800单机8卡（1x8）  | TP1PP1DP8 |  /                | 3813.2 | 2.61 | 75/80 | 51.3% |
 | A800单机8卡（1x8）  | TP2PP1DP4 |  GAS=8                | 3639.8 | 2.49 | 41/80 | 49.0% |
-| A800单机8卡（1x8）  | TP1PP1DP8 |  GAS=16                | 4318.9 | 2.90 | 75/80 | 58.1% |
+| A800单机8卡（1x8）  | TP1PP1DP8 |  GAS=16(GBS=128=2M tokens)                | 4318.9 | 2.90 | 75/80 | 58.1% |
 
 
