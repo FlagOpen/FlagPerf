@@ -86,6 +86,7 @@ if __name__ == "__main__":
         net_cmd = config.net_cmd
 
         vendor_path = os.path.dirname(args.vendor_config)
+
         req_path = os.path.join(vendor_path, "requirements.txt")
         req_cmd = "pip install -r " + req_path
         
