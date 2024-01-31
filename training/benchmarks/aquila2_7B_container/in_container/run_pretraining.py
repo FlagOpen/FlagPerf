@@ -85,6 +85,7 @@ if __name__ == "__main__":
         env_cmd = config.env_cmd
         net_cmd = config.net_cmd
 
+        vendor_path = os.path.dirname(args.vendor_config)
         req_path = os.path.join(os.path.dirname(args.vendor_config), "requirements.txt")
         req_cmd = "pip install -r " + req_path
         
@@ -102,7 +103,7 @@ if __name__ == "__main__":
         exec_cmd = exec_cmd + " " + str(len(args.hosts))
         exec_cmd = exec_cmd + " " + args.hosts[0]
         exec_cmd = exec_cmd + " " + args.master_port
-        exec_cmd = exec_cmd + " " + os.path.join(os.path.dirname(args.vendor_config), "singlenode_adapt.sh")
+        exec_cmd = exec_cmd + " " + os.path.join(vendor_path, "singlenode_adapt.sh")
         
         logger.info(ip)
         logger.info(exec_cmd)
