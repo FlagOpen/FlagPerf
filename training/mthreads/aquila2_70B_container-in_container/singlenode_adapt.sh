@@ -42,9 +42,18 @@ LEARNING_RATE_ARGS="
     --load $CHECKPOINT_PATH \
     --save-interval 10
 "
+# for 1024 gpus
+# --recompute-num-layers 6 
 # --save $CHECKPOINT_PATH \
 # --load $CHECKPOINT_PATH \
 # --save-interval 10
+
+# for 256 gpus
+# --recompute-num-layers 4
+
+# for 128 gpus
+# --recompute-num-layers 3
+
 # --lr-warmup-samples 7680 #for 128 gpus warmup step 5
 # --lr-warmup-samples 15360 #for 256 gpus warmup step 5
 # --lr-warmup-samples 4853760 #for 1024 gpus warmup step 395

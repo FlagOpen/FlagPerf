@@ -22,7 +22,7 @@ FLAGSCALE_HOME = "/home/dist/zhiyuan-test/FlagScale"
 # TRAINING_TOKENS = 10000000000
 # TRAINING_TOKENS = 176160768 # for 256 gpus, 14 steps 3072 * 14 * 4096 = 176160768
 # TRAINING_TOKENS = 88080384 # for 128 gpus
-TRAINING_TOKENS = 20000000000 # for 1024 gpus
+TRAINING_TOKENS = int(os.environ.get('TRAINING_TOKENS', default=20000000000)) # for 1024 gpus
 # =========================================================
 # parallel
 # =========================================================
