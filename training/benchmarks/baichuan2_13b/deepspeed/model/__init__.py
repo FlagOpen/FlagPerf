@@ -1,0 +1,1 @@
+from .baichuan_model import get_baichuan_model

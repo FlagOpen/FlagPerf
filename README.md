@@ -12,13 +12,13 @@
 1. **构建多维度评测指标体系，不止关注“耗时”:**
 
    FlagPerf 指标体系除了衡量“芯片能否支持特定模型训练”的功能正确性指标之外，还包含更多维度的性能指标、资源使用指标以及生态适配能力指标等。
-   
+
    > 指标详细介绍见 [这篇文章](https://mp.weixin.qq.com/s/rwTFsthioBty5W2P-Lg9iw)
 
 2. **支持多样例场景及任务，覆盖大模型训练推理场景**
 
    FlagPerf 已经涵盖计算机视觉、自然语言处理、语音、多模态等领域的**30余个经典模型，80余个训练样例，**支持评测AI硬件的训练和推理能力，以及大模型场景的推理任务评测。
-   
+
 3. **支持多训练框架及推理引擎，灵活连接AI硬件与软件生态**
 
    **在训练任务场景中**，除了支持 PyTorch、TensorFlow，FlagPerf 还在积极与 PaddlePaddle、MindSpore 研发团队密切配合。作为国产训练框架的领军者，百度 Paddle团队、华为昇思MindSpore 团队正在将 Llama、GPT3 等明星模型集成至 FlagPerf 测试样例集。
@@ -39,9 +39,10 @@
 
 ## News 
 
-- [31 Oct 2023]支持Torch-Aquila 7B预训练，[#299](https://github.com/FlagOpen/FlagPerf/pull/136)
-- [27 Oct 2023]支持Torch-llama2 7B预训练，[#289](https://github.com/FlagOpen/FlagPerf/pull/136)
-- [7 Oct 2023]支持Paddle-GPT3 预训练，[#233](https://github.com/FlagOpen/FlagPerf/pull/136)
+- [15 Jan 2024]支持megatron-Llama 70B预训练. [#389](https://github.com/FlagOpen/FlagPerf/pull/389)
+- [31 Oct 2023]支持Torch-Aquila 7B预训练，[#299](https://github.com/FlagOpen/FlagPerf/pull/299)
+- [27 Oct 2023]支持Torch-llama2 7B预训练，[#289](https://github.com/FlagOpen/FlagPerf/pull/289)
+- [7 Oct 2023]支持Paddle-GPT3 预训练，[#233](https://github.com/FlagOpen/FlagPerf/pull/233)
 - [27 Sep 2023]发布v1.0版本，支持20余个经典模型，50余个训练样例，支持多家芯片厂商的训练或推理评测 [#v1.0](https://github.com/FlagOpen/FlagPerf/releases/tag/1.0)
 - [3 Aug 2023]支持推理框架, 支持常见基础模型的离线批推理评测 [#136](https://github.com/FlagOpen/FlagPerf/pull/136)
 - [8 Feb 2023]支持Tensorflow框架[#7](https://github.com/FlagOpen/FlagPerf/pull/7)
@@ -55,7 +56,8 @@
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: left;">
-      <th>模型名称</th>
+      <th>编号</th>
+        <th>模型名称</th>
       <th>模型类型</th>
       <th>英伟达</th>
       <th>昆仑芯</th>
@@ -65,7 +67,8 @@
   </thead>
   <tbody>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b">aquila2_7b</a></td>
+      <td>1</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b">aquila2_7b</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7b-flagscale">flagscale（megatron）</a></td>
       <td>N/A</td>
@@ -73,7 +76,17 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert">bert</a></td>
+      <td>2</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/baichuan2_13b">baichuan2_13b</a></td>
+      <td>LLM</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/baichuan2_13b-deepspeed">deepspeed</a></td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+      <td>3</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert">bert</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert-paddle">paddle</a>, <a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bert-paddle">paddle</a>, <a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bert-pytorch">pytorch</a></td>
@@ -81,15 +94,17 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert_hf">bert_hf</a></td>
+      <td>4</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bert_hf">bert_hf</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bert_hf-pytorch">pytorch</a></td>
       <td>N/A</td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/bert_hf-pytorch">pytorch</a></td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/bert_hf-pytorch">pytorch</a></td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer">bigtransfer</a></td>
+      <td>5</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/bigtransfer">bigtransfer</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/bigtransfer-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bigtransfer-pytorch">pytorch</a></td>
@@ -97,7 +112,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/cpm">cpm</a></td>
+      <td>6</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/cpm">cpm</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/cpm-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/cpm-pytorch">pytorch</a></td>
@@ -105,7 +121,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/detr">detr</a></td>
+      <td>7</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/detr">detr</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/detr-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/detr-pytorch">pytorch</a></td>
@@ -113,7 +130,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/distilbert">distilbert</a></td>
+      <td>8</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/distilbert">distilbert</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/distilbert-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/distilbert-pytorch">pytorch</a></td>
@@ -121,7 +139,17 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/efficientnet">efficientnet</a></td>
+      <td>9</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/dlrmt">DLRM</a></td>
+      <td>Recommendation</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/dlrm-pytorch">pytorch</a></td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+     <td>10</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/efficientnet">efficientnet</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/efficientnet-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/efficientnet-pytorch">pytorch</a></td>
@@ -129,7 +157,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn">faster_rcnn</a></td>
+      <td>11</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/faster_rcnn">faster_rcnn</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/faster_rcnn-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/faster_rcnn-pytorch">pytorch</a></td>
@@ -137,7 +166,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm">glm</a></td>
+      <td>12</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/glm">glm</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/glm-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/glm-pytorch">pytorch</a></td>
@@ -145,7 +175,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt2">gpt2</a></td>
+      <td>13</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt2">gpt2</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt2-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/gpt2-pytorch">pytorch</a></td>
@@ -153,7 +184,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_13B">gpt3_13B</a></td>
+     <td>14</td> 
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_13B">gpt3_13B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_13B-paddle">paddle</a></td>
       <td>N/A</td>
@@ -161,7 +193,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_6.7B">gpt3_6.7B</a></td>
+      <td>15</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/gpt3_6.7B">gpt3_6.7B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/gpt3_6.7B-paddle">paddle</a></td>
       <td>N/A</td>
@@ -169,7 +202,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_13B">llama1_13B</a></td>
+      <td>16</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_13B">llama1_13B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama1_13B-paddle">paddle</a></td>
       <td>N/A</td>
@@ -177,7 +211,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_7B">llama1_7B</a></td>
+      <td>17</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama1_7B">llama1_7B</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama1_7B-paddle">paddle</a></td>
       <td>N/A</td>
@@ -185,7 +220,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b">llama2_7b</a></td>
+      <td>18</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b">llama2_7b</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-deepspeed">deepspeed</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/pull/348">deepspeed</a></td>
@@ -193,7 +229,8 @@
         <td><a href="https://github.com/FlagOpen/FlagPerf/pull/354">deepspeed</a></td>
     </tr>
       <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b_finetune">llama2_7b_finetune</a></td>
+      <td>19</td>
+          <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b_finetune">llama2_7b_finetune</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b_finetune-pytorch">pytorch</a></td>
       <td>N/A</td>
@@ -201,7 +238,17 @@
       <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/longformer">longformer</a></td>
+      <td>20</td>
+          <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_70B">llama2_70b</a></td>
+      <td>LLM</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_70B-megatron">megatron</a></td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <td>21</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/longformer">longformer</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/longformer-pytorch">pytorch</a></td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/longformer-pytorch">pytorch</a></td>
@@ -209,7 +256,8 @@
       <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn">mask_rcnn</a></td>
+      <td>22</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mask_rcnn">mask_rcnn</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mask_rcnn-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/mask_rcnn-pytorch">pytorch</a></td>
@@ -217,7 +265,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2">mobilenetv2</a></td>
+      <td>23</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/mobilenetv2">mobilenetv2</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/mobilenetv2-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/mobilenetv2-pytorch">pytorch</a></td>
@@ -225,7 +274,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/resnet50">resnet50</a></td>
+      <td>24</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/resnet50">resnet50</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/resnet50-pytorch">pytorch</a>, <a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/resnet50-tensorflow2">tensorflow2</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/resnet50-pytorch">pytorch</a></td>
@@ -233,15 +283,17 @@
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/resnet50-pytorch">pytorch</a></td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet">retinanet</a></td>
+      <td>25</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/retinanet">retinanet</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/retinanet-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/retinanet-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/retinanet-pytorch">pytorch</a></td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/retinanet-pytorch">pytorch</a></td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer">swin_transformer</a></td>
+      <td>26</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/swin_transformer">swin_transformer</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/swin_transformer-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/swin_transformer-pytorch">pytorch</a></td>
@@ -249,7 +301,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small">t5_small</a></td>
+      <td>27</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/t5_small">t5_small</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/t5_small-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/t5_small-pytorch">pytorch</a></td>
@@ -257,7 +310,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2">tacotron2</a></td>
+      <td>28</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/tacotron2">tacotron2</a></td>
       <td>Audio</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/tacotron2-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/tacotron2-pytorch">pytorch</a></td>
@@ -265,7 +319,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer">transformer</a></td>
+      <td>29</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer">transformer</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/transformer-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/transformer-pytorch">pytorch</a></td>
@@ -273,7 +328,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer_xl">transformer_xl</a></td>
+      <td>30</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/transformer_xl">transformer_xl</a></td>
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/transformer_xl-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/transformer_xl-pytorch">pytorch</a></td>
@@ -281,7 +337,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit">vit</a></td>
+      <td>31</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/vit">vit</a></td>
       <td>CV</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/vit-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/vit-pytorch">pytorch</a></td>
@@ -289,7 +346,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2">wav2vec2</a></td>
+      <td>32</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/wav2vec2">wav2vec2</a></td>
       <td>Audio</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/wav2vec2-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/wav2vec2-pytorch">pytorch</a></td>
@@ -297,7 +355,8 @@
         <td>N/A</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow">WaveGlow</a></td>
+      <td>33</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/WaveGlow">WaveGlow</a></td>
       <td>Audio</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/WaveGlow-pytorch">pytorch</a></td>
       <td>N/A</td>
@@ -306,7 +365,6 @@
     </tr>
   </tbody>
 </table>
-
 
 
 推理列表：
@@ -320,7 +378,8 @@
    <tr height="16.80" class="xl65" style='height:16.80pt;'>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" x:str>模型名称</td>
+    <td class="xl65" x:str>编号</td>
+       <td class="xl65" x:str>模型名称</td>
        <td class="xl65" x:str>模型类型</td>
     <td class="xl65" x:str>英伟达</td>
     <td class="xl65" x:str>昆仑芯</td>
@@ -328,7 +387,8 @@
     <td class="xl65" x:str>腾讯九霄</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/resnet50" style="text-decoration:none" target="_parent">resnet50</a></td>
+    <td class="xl65" x:str>1</td>
+       <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/resnet50" style="text-decoration:none" target="_parent">resnet50</a></td>
        <td class="xl69" x:str>CV</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>f32/f16</td>
@@ -336,15 +396,17 @@
        <td class="xl69" x:str>f16</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/bertLarge" style="text-decoration:none" target="_parent">BertLarge</a></td>
+    <td class="xl65" x:str>2</td>
+        <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/bertLarge" style="text-decoration:none" target="_parent">BertLarge</a></td>
         <td class="xl69" x:str>NLP</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>W32A16</td>
-    <td class="xl69" x:str>Incoming</td>
+    <td class="xl69" x:str>f16</td>
         <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/vit_l_16" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
+    <td class="xl65" x:str>3</td>
+        <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/vit_l_16" style="text-decoration:none" target="_parent">VisionTransformer</a></td>
         <td class="xl69" x:str>CV</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>W32A16</td>
@@ -352,7 +414,8 @@
         <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/yolov5" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
+    <td class="xl65" x:str>4</td>
+        <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/yolov5" style="text-decoration:none" target="_parent">Yolov5_large</a></td>
         <td class="xl69" x:str>CV</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>f32</td>
@@ -360,7 +423,8 @@
         <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/stable_diffusion_v1_4" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
+    <td class="xl65" x:str>5</td>
+       <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/stable_diffusion_v1_4" style="text-decoration:none" target="_parent">Stable Diffusion v1.4</a></td>
        <td class="xl69" x:str>MultiModal</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>f32</td>
@@ -368,7 +432,8 @@
        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/swinTransformer" style="text-decoration:none" target="_parent">SwinTransformer</td>
+    <td class="xl65" x:str>6</td>
+        <td class="xl65" height="33.60"  style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/swinTransformer" style="text-decoration:none" target="_parent">SwinTransformer</td>
         <td class="xl69" x:str>CV</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>W32A16</td>
@@ -376,7 +441,8 @@
         <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/llama2_7b_mmlu" style="text-decoration:none" target="_parent">Llama2-7B-mmlu</td>
+    <td class="xl65" x:str>7</td>
+        <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/llama2_7b_mmlu" style="text-decoration:none" target="_parent">Llama2-7B-mmlu</td>
         <td class="xl69" x:str>NLP</td>
     <td class="xl69" x:str>f32/f16</td>
     <td class="xl69" x:str>N/A</td>
@@ -384,7 +450,8 @@
         <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/aquila_7b_mmlu" style="text-decoration:none" target="_parent">Aquila-7B-mmlu</td>
+    <td class="xl65" x:str>8</td>
+        <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/Aquila_7b_mmlu" style="text-decoration:none" target="_parent">Aquila-7B-mmlu</td>
         <td class="xl69" x:str>NLP</td>
     <td class="xl69" x:str>fp16</td>
     <td class="xl69" x:str>N/A</td>
@@ -392,13 +459,15 @@
         <td class="xl69" x:str>N/A</td>
     </tr>
 <tr height="16.80" style='height:16.80pt;'>
-    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/sam" style="text-decoration:none" target="_parent">SegmentAnything</td>
+   <td class="xl65" x:str>9</td>
+    <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/sam_h" style="text-decoration:none" target="_parent">SegmentAnything</td>
         <td class="xl69" x:str>MultiModal</td>
     <td class="xl69" x:str>fp16</td>
     <td class="xl69" x:str>W32A16</td>
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
     </tr></table>
+
 
 ## 如何使用FlagPerf进行AI硬件评测
 
@@ -409,6 +478,7 @@
    1. 确保可连中国大陆可访问网站，速率正常
    2. 确保可在容器内找到硬件
    3. 确保各服务器间root帐号的ssh信任关系和sudo免密
+   4. 确保monitor相关工具已安装:包括cpu(sysstat)、内存(free)、功耗(ipmitool)、系统信息(加速卡状态查看命令)。例如ubuntu系统中，使用apt install [sysstat/ipmitool]安装
 
 ### 训练启动说明
 
@@ -438,7 +508,7 @@ HOSTS = ["10.1.2.3", "10.1.2.4", "10.1.2.5", "10.1.2.6"]
 SSH_PORT = "22"
 ```
 
-3. 修改模型配置文件
+3. **修改模型配置文件**
 
 ```Bash
 cd Flagperf/training/
@@ -454,14 +524,14 @@ CASES={} # 本次运行的测例，按照对应模型readme准备好数据，修
 #如运行"bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/"，需要把:后面的路径替换为本地路径
 ```
 
-4. 启动测试
+4. **启动测试**
 
 ```Bash
 python3 ./run_benchmarks/run.py
 sudo python3 ./run_benchmarks/run.py
 ```
 
-5. 查看日志
+5. **查看日志**
 
 ```Bash
 cd result/run2023XXXX/运行模型/
@@ -513,7 +583,7 @@ CASES:  #待测case，记得修改数据地址
     "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
 ```
 
-3. 用户需要根据评测对象，配置configs/<case>/configuration.yaml，如不修改可用默认配置
+3. **用户需要根据评测对象，配置configs/<case>/configuration.yaml，如不修改可用默认配置**
 
 ```Bash
 batch_size: 256
@@ -543,7 +613,7 @@ CASES={} # 本次运行的测例，按照对应模型readme准备好数据，修
 #如运行"bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/"，需要把:后面的路径替换为本地路径
 ```
 
-4. 启动测试
+4. **启动测试**
 
 ```Bash
 sudo python inference/run.py
@@ -554,7 +624,7 @@ sudo python inference/run.py
 ## 参与共建FlagPerf
 
 
-> 开发者教程：更多操作教程见 [docs-zh](./docs-zh) 
+> 开发者教程：更多操作教程见 [docs-zh](./docs_zh) 
 
 为了更直观的展示厂商参与共建的实际工作量，下面给出6个已经合并进FlagPerf，面向不同特征厂商的Pull Request。
 
@@ -573,7 +643,7 @@ sudo python inference/run.py
 ## FlagPerf合作伙伴
 
 
-![cooperation](assets/imgs/logo1123.png)
+![cooperation](assets/imgs/coop.png)
 
 ## 许可证
 

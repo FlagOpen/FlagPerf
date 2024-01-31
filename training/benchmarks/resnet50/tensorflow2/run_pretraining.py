@@ -38,7 +38,6 @@ from core import dataset_factory
 from configs import base_configs
 from configs import configs
 from resnet import common
-from resnet import resnet_model
 from modeling import hyperparams
 from modeling import performance
 from core import trainer_adapter
@@ -46,7 +45,6 @@ from utils import hyperparams_flags
 from utils.misc import keras_utils
 
 logger = None
-
 
 def get_dtype_map() -> Mapping[str, tf.dtypes.DType]:
     """Returns the mapping from dtype string representations to TF dtypes."""
@@ -140,24 +138,23 @@ def check_must_envconfigs(params):
                          ", ".join(must_configs))
     params.local_rank = int(os.environ['FLAGPERF_NODE_RANK'])
     params.runtime.num_gpus = int(os.environ["FLAGPERF_NPROC"])
+
     if params.runtime.distribution_strategy == 'multi_worker_mirrored':
         hosts = os.environ["FLAGPERF_HOSTS"].split(",")
         ports = os.environ["FLAGPERF_HOSTS_PORTS"].split(",")
         params.runtime.worker_hosts = ",".join(
-            [hosts[i] + ":" + ports[i] for i in range(len(hosts))])
+            [hosts[i] + ":" + ports[0] for i in range(len(hosts))])
         params.runtime.task_index = int(os.environ['FLAGPERF_NODE_RANK'])
 
     return params
-
 
 def _get_params_from_flags(flags_obj: flags.FlagValues):
     """Get ParamsDict from flags."""
 
     global logger
     pp = pprint.PrettyPrinter()
-
-    params = configs.get_config(model='resnet', dataset='imagenet')
-    logging.info('Base params: %s', pp.pformat(params.as_dict()))
+    params = configs.get_config(flags_obj, model='resnet', dataset='imagenet')
+    logging.info('_get_params_from_flags Base params: %s', pp.pformat(params.as_dict()))
 
     driver = Driver(params, [])
     driver.setup_config(argparse.ArgumentParser("renset50"))
@@ -230,7 +227,6 @@ def initialize(params: base_configs.ExperimentConfig,
         if params.runtime.batchnorm_spatial_persistent:
             os.environ['TF_USE_CUDNN_BATCHNORM_SPATIAL_PERSISTENT'] = '1'
 
-
 def define_classifier_flags():
     """Defines common flags for image classification."""
     hyperparams_flags.initialize_common_flags()
@@ -267,7 +263,9 @@ def define_classifier_flags():
     flags.DEFINE_string('extern_module_dir',
                         default=None,
                         help='The extern module dir.')
-
+    flags.DEFINE_string('vendor',
+                        default=None,
+                        help='AI chip vendor')
 
 def serialize_config(params: base_configs.ExperimentConfig, model_dir: str):
     """Serializes and saves the experiment config."""
@@ -341,7 +339,8 @@ def train_and_eval(params: base_configs.ExperimentConfig,
                       steps_per_execution=steps_per_loop)
 
         initial_epoch = 0
-        if params.train.resume_checkpoint:
+        print("params.train.resume_checkpoint", params.train.resume_checkpoint)
+        if hasattr(params.train, "resume_checkpoint") and params.train.resume_checkpoint:
             initial_epoch = resume_from_checkpoint(
                 model=model,
                 model_dir=params.model_ckpt_dir,
@@ -374,9 +373,12 @@ def train_and_eval(params: base_configs.ExperimentConfig,
     driver.event(Event.INIT_END)
     init_end_time = logger.previous_log_time
     params.init_time = (init_end_time - init_start_time) / 1e+3
-
-    raw_train_start_time = logger.previous_log_time
+    
+    # train
+    stats_training = dict()
+    raw_train_start_time = time.time()
     driver.event(Event.TRAIN_START)
+    # model.fit()一次性加载整个数据集到内存中，适用于数据集较小，不会导致内存溢出的情况。
     history = model.fit(train_dataset,
                         epochs=train_epochs,
                         steps_per_epoch=train_steps,
@@ -384,9 +386,11 @@ def train_and_eval(params: base_configs.ExperimentConfig,
                         callbacks=callbacks,
                         verbose=2,
                         **validation_kwargs)
+    stats_training['no_eval_time'] = time.time() - raw_train_start_time
 
     driver.event(Event.TRAIN_END)
 
+    # evaluate
     validation_output = None
     if not params.evaluation.skip_eval:
         validation_output = model.evaluate(validation_dataset,
@@ -395,8 +399,11 @@ def train_and_eval(params: base_configs.ExperimentConfig,
 
     # TODO(dankondratyuk): eval and save final test accuracy
     stats = common.build_stats(history, validation_output, callbacks)
-    raw_train_end_time = logger.previous_log_time
-    params.raw_train_time = (raw_train_end_time - raw_train_start_time) / 1e+3
+    params.raw_train_time = time.time() - raw_train_start_time
+    stats['no_eval_time'] = stats_training['no_eval_time']
+    stats['raw_train_time'] = params.raw_train_time
+    stats['pure_compute_time'] = stats_training['no_eval_time']
+
     return stats, params
 
 
@@ -427,7 +434,6 @@ def run(flags_obj: flags.FlagValues,
   """
 
     params, driver = _get_params_from_flags(flags_obj)
-
     if params.mode == 'train_and_eval':
         return train_and_eval(params, strategy_override, driver)
     elif params.mode == 'export_only':
@@ -446,7 +452,13 @@ def main(_):
     if params.do_train:
         finished_info = {
             "e2e_time": e2e_time,
-            "training_sequences_per_second": stats['avg_exp_per_second'],
+            "num_trained_samples": stats['num_trained_samples'],
+            "train_time": stats['raw_train_time'],
+            "train_no_eval_time": stats['no_eval_time'],
+            "pure_training_computing_time": stats['pure_compute_time'],
+            "throughput(ips)_raw": stats['num_trained_samples'] / stats['raw_train_time'],
+            "throughput(ips)_no_eval": stats['num_trained_samples'] / stats['no_eval_time'],
+            "throughput(ips)_pure_compute": stats['num_trained_samples'] / stats['pure_compute_time'],
             "converged": stats["converged"],
             "final_accuracy": stats["accuracy_top_1"],
             "final_loss": stats["eval_loss"],

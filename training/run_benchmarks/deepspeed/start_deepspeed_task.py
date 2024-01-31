@@ -7,6 +7,7 @@ import os
 import sys
 import subprocess
 from argparse import ArgumentParser
+import json
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
@@ -113,16 +114,44 @@ def main():
 
     train_script_path = helper.get_train_script_path(task_args)
     config_dir, config_file = helper.get_config_dir_file(task_args)
-    config_file = os.path.join(config_dir, config_file)
+    config_file = os.path.join(config_dir, config_file)    
+    
+    base_ds_config = os.path.join(os.path.dirname(train_script_path), "ds_config.json")
+    vendor_ds_config = os.path.join(config_dir, "ds_config.json")
+    START_LOGGER.info("Begin Merge Deepspeed Config")
+    if task_args.node_rank == 0:# should change to "if True" if you have no shared memory system 
+        with open(base_ds_config) as file:
+            base_ds_data = json.load(file)
+
+        with open(vendor_ds_config) as file:
+            vendor_ds_data = json.load(file)
+
+        base_ds_data.update(vendor_ds_data)
+        START_LOGGER.info(base_ds_data) 
+        tmp_json = os.path.join(os.path.dirname(train_script_path), "ds_config_tmp.json")
+        with open(tmp_json, "w") as file:
+            json.dump(base_ds_data, file)
+    
+    import time
+    time.sleep(5) # waiting noderank0 finish writing ds_config_tmp.json
+
+    START_LOGGER.info("Begin Merge Network Config")
+
+    net_cmd = ""
+    net_file_path = os.path.join(config_dir, "net.sh")
+    net_cmd = open(net_file_path).readline()
 
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
-    exec_cmd = exec_cmd + "deepspeed --num_gpus=" + str(
-        task_args.nproc) + " run_pretraining.py"
-    exec_cmd = exec_cmd + " --deepspeed --deepspeed_config ds_config.json --data_dir " + task_args.data_dir
+    exec_cmd = exec_cmd + net_cmd
+    exec_cmd = exec_cmd + "torchrun --nproc_per_node=" + str(task_args.nproc)
+    exec_cmd = exec_cmd + " --nnodes=" + str(task_args.nnodes)
+    exec_cmd = exec_cmd + " --node_rank=" + str(task_args.node_rank)
+    exec_cmd = exec_cmd + " --master_addr=" + str(task_args.master_addr) + " --master_port=29501" + " run_pretraining.py"
     exec_cmd = exec_cmd + " --flagperf_config " + config_file
-    exec_cmd = exec_cmd + " --nproc " + str(
-        task_args.nproc) + " --nnodes " + str(task_args.nnodes)
-
+    exec_cmd = exec_cmd + " --node_rank " + str(task_args.node_rank)
+    exec_cmd = exec_cmd + " --nproc_per_node " + str(task_args.nproc) + " --nnodes " + str(task_args.nnodes)
+    exec_cmd = exec_cmd + " --deepspeed --deepspeed_config ds_config_tmp.json --data_dir " + task_args.data_dir
+    START_LOGGER.info(exec_cmd)
     task_log_file = os.path.join(task_log_dir, "rank0.log.txt")
 
     with open(task_log_file, "w") as f:

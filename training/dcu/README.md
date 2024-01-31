@@ -26,7 +26,7 @@
     - torch: 1.13.1
 
   - 其它软件版本
-    - dtk: 23.04.1
+    - dtk: 23.10.1
 
 
 ## 加速卡监控采集
@@ -35,7 +35,7 @@
   dcu_monitor.py中79行需要修改为实际source的地址
 
   ```
-  source path/of/dtk-23.04/env.sh
+  source path/of/dtk/env.sh
   rocm-smi
   ```
 

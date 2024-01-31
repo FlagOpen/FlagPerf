@@ -76,7 +76,7 @@ class Daemon:
         def dcu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             # 修改本地DTK路径
-            cmd = "source /path/of/dtk-23.04/env.sh; rocm-smi"
+            cmd = "source /path/of/dtk/env.sh; rocm-smi"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,

@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend and mthreads.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -21,8 +21,10 @@ VENDOR = "nvidia"
 #        -v /usr/local/Ascend/driver -v /usr/local/dcmi -v /usr/local/bin/npu-smi"
 #   mthreads:
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
+#   metax:
+#       " --device=/dev/dri --device=/dev/mxcd --group-add video"
 #   dcu:
-#       " --device=/dev/kfd --device=/dev/dri/ --group-add video"
+#       " -v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -72,12 +74,14 @@ CASES = {
     # "faster_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/fasterrcnn/coco2017/",
     # "bigtransfer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
-    #"tacotron2:pytorch_1.13:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
+    # "tacotron2:pytorch_1.13:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
     # "resnet50:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
+    # "dlrm:pytorch_1.10:A100:1:8:1": "/raid/dataset/criteo_1TB_click_logs/binary_dataset/",
 
     # "wav2vec2:pytorch_1.13:A100:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
     # "WaveGlow:pytorch_1.13:A100:1:8:1": "/raid/dataset/LJSpeech/",
+    "resnet50:tensorflow2:A100:1:8:1": "/raid/dataset/ImageNet2012/tf_records/",
 
     # "distilbert:pytorch_1.12:A100:1:8:1": "/raid/dataset/distilbert/",
 
@@ -93,7 +97,7 @@ CASES = {
 
     # "llama2_7b:deepspeed:A100:1:8:1": "/raid/dataset/llama2_7b_pretrain",
     # "aquila2_7b:flagscale:A100:1:8:1": "/raid/dataset/aquila2_7b_pretrain",
-
+    # "llama2_70B:megatron:H800:4:8:1": "/raid/dataset/llama2_70B_pretrain",
     # "llama1_7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/llama/"
     # "llama1_7B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/llama/"
@@ -130,6 +134,14 @@ CASES = {
     # "tacotron2:pytorch:R300:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
     # "transformer:pytorch:R300:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
+    # iluvatar cases
+    # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
+    # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
+    # "t5_small:pytorch:BI-V100:1:8:1": "/raid/dataset/t5_small",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
@@ -137,7 +149,12 @@ CASES = {
     # "bert_hf:pytorch_2.0:S4000:1:8:1": "/data/flagperf/bert_hf",
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
+    # metax cases
+    # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
     # dcu cases
     # "detr:pytorch_1.13:Z100L:1:4:1": "/raid/dataset/detr/coco2017/",
 }
-

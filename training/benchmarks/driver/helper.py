@@ -80,6 +80,17 @@ class InitHelper:
             torch.manual_seed(seed)
             torch.musa.manual_seed(seed)
             torch.musa.manual_seed_all(seed)
+        elif lower_vendor == "dcu":
+            import torch
+            torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = True
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
+
+        if os.environ.get("METAX_USE_TF32"):
+            import torch
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True

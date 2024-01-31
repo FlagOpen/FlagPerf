@@ -1,1 +1,5 @@
+# change it to local weights folder if you encounter network issues accessing Hugging Face. 
+# example: 
+# weights: "<path_to_flagperf>/inference/vit-weights"
+# weights-related files are available at https://huggingface.co/google/vit-large-patch16-224/tree/main
 weights: "google/vit-large-patch16-224"

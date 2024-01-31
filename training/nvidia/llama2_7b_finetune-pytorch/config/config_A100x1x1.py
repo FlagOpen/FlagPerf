@@ -1,4 +1,4 @@
-batch_size_training: int=3
+batch_size_training: int = 2
 num_epochs: int = 3
 model_name: str = "llama2_7b_hf"
 mmlu_dir = "mmlu_dataset"

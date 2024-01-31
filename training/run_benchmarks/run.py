@@ -275,12 +275,12 @@ def stop_monitors_in_cluster(dp_path, nnodes):
     ven_mon_path = os.path.join(dp_path, tc.VENDOR, tc.VENDOR + "_monitor.py")
     stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
                    + " " + ven_mon_path + " -o stop"
-    RUN_LOGGER.debug("Run cmd in the cluster to start vendor's monitors: " +
+    RUN_LOGGER.debug("Run cmd in the cluster to stop vendor's monitors: " +
                      stop_mon_cmd)
     bad_hosts = CLUSTER_MGR.run_command_some_hosts(stop_mon_cmd, nnodes,
                                                    timeout)
     if len(bad_hosts) != 0:
-        RUN_LOGGER.error("Hosts that can't start vendor's monitors: " +
+        RUN_LOGGER.error("Hosts that can't stop vendor's monitors: " +
                          ",".join(bad_hosts.keys()))
 
 
@@ -288,9 +288,12 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
                            count, curr_log_path):
     '''Start tasks in cluster, and NOT wait.'''
     nnodes = case_config["nnodes"]
+    framework_sub_path = case_config["framework"]
+    if "_" in framework_sub_path:
+        framework_sub_path = framework_sub_path.split("_")[0]
     env_file = os.path.join(
         tc.FLAGPERF_PATH, tc.VENDOR,
-        case_config["model"] + "-" + case_config["framework"],
+        case_config["model"] + "-" + framework_sub_path,
         "config/environment_variables.sh")
     framework = case_config["framework"].split("_")[0]
     if (os.path.isfile(env_file)):

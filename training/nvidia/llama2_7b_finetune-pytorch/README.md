@@ -39,7 +39,7 @@
 
 * 输入批尺寸
   1. local_batchsize(batch_size_training)，简写为LBS，即实际进入模型的张量批尺寸，为config_A100x1x1.py中所写，在本case中默认为2
-  2. seq_length(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x1x8.py中所写，在本case中默认为4096
+  2. seq_length(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x1x1.py中所写，在本case中默认为512
   3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为ds_config.json中所写，在本case中默认为1
   4. global_batchsize恒等于local_batchsize*world_size，本case单卡运行因此为2.
 
@@ -52,7 +52,7 @@
 | 数据集       | openwebtext                | 如无特殊说明，训练前1亿个token |
 | 数据精度     |fp32                        |                                    |
 | 超参修改     | fix_hp,见“性能指标”        | 运行必要特殊超参，例如需要改小seqlength避免OOM |
-| 硬件设备简称 | nvidia A800                |                                    |
+| 硬件设备简称 | nvidia A100                |                                    |
 | 硬件存储使用 | mem,见“性能指标”           | 通常称为“显存”,单位为GiB           |
 | 计算使用率 | MFU,见“性能指标”           | 参见PaLM论文定义 |
 | **吞吐量**   | **token/p/s,见“性能指标”** | 平均单卡每秒处理的token数          |
@@ -61,7 +61,7 @@
 
 | 配置                |  fix_hp           | token/p/s | loss | mem       |acc(MMLU) |MFU       |
 | ------------------- | ---------------- | ------ | ------- | --------- | --------- |--------- |
-| A100单机单卡（1x1）  |  MPE=512 LBS=2  | 2788 | 1.64 | 36/40 | 0.38 |/|
+| A100单机单卡（1x1）  |  /  | 2788 | 1.64 | 37.3/40 | 0.38 |/|
 
 >注：
 >finetune训练数据集为samsum_dataset,MMLU数据集在这里只做配合lora-finetune后功能测试使用，MMLU评测结果无finetune结果指导意义，这里关注吞吐量即可。

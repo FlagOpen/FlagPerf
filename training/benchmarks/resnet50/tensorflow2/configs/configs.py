@@ -18,6 +18,7 @@ import dataclasses
 from core import dataset_factory
 from . import base_configs
 from resnet import resnet_config
+from absl import flags
 
 
 @dataclasses.dataclass
@@ -36,11 +37,11 @@ class ResNetImagenetConfig(base_configs.ExperimentConfig):
                                        mean_subtract=True,
                                        standardize=True)
     train: base_configs.TrainConfig = base_configs.TrainConfig(
-        resume_checkpoint=True,
+        resume_checkpoint=False,
         epochs=90,
         steps=None,
         callbacks=base_configs.CallbacksConfig(
-            enable_checkpoint_and_export=True, enable_tensorboard=True),
+            enable_checkpoint_and_export=False, enable_tensorboard=True),
         metrics=['accuracy', 'top_5'],
         time_history=base_configs.TimeHistoryConfig(log_steps=100),
         tensorboard=base_configs.TensorBoardConfig(track_lr=True,
@@ -49,14 +50,29 @@ class ResNetImagenetConfig(base_configs.ExperimentConfig):
     evaluation: base_configs.EvalConfig = base_configs.EvalConfig(
         epochs_between_evals=1, steps=None)
     model: base_configs.ModelConfig = resnet_config.ResNetModelConfig()
+    do_train: str = True
+    target_accuracy: float = 0.76
 
 
-def get_config(model: str, dataset: str) -> base_configs.ExperimentConfig:
+def get_config(flags_obj: flags.FlagValues, model: str, dataset: str) -> base_configs.ExperimentConfig:
     """Given model and dataset names, return the ExperimentConfig."""
+    resnet_config =  ResNetImagenetConfig(  mode="train_and_eval", 
+                                            model_dir="result", 
+                                            train_dataset=dataset_factory.ImageNetConfig(
+                                                split='train',
+                                                data_dir = flags_obj.data_dir,                                       
+                                                one_hot=False,
+                                                mean_subtract=True,
+                                                standardize=True),
+                                            validation_dataset=dataset_factory.ImageNetConfig(
+                                                split='validation',
+                                                data_dir = flags_obj.data_dir,                                                
+                                                one_hot=False,
+                                                mean_subtract=True,
+                                                standardize=True),
+                                         )
     dataset_model_config_map = {
-        'imagenet': {
-            'resnet': ResNetImagenetConfig(),
-        }
+        'imagenet': { 'resnet': resnet_config }
     }
     try:
         return dataset_model_config_map[dataset][model]
