@@ -13,8 +13,7 @@ TRAINING_ARGS="
     --distributed-backend mccl \
     --use-flash-attn \
     --sequence-parallel \
-    --device-type mthreads \
-    --recompute-num-layers 100
+    --device-type mthreads
  "
 
 # --recompute-granularity full \

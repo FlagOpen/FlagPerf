@@ -12,15 +12,15 @@ flops_16bit = "98000000000000"
 # =========================================================
 # env attribute
 # =========================================================
-# env_cmd = "export LD_LIBRARY_PATH=/usr/local/musa/lib:$LD_LIBRARY_PATH;export CUDA_DEVICE_MAX_CONNECTIONS=1"
+env_cmd = "export LD_LIBRARY_PATH=/usr/local/musa/lib:$LD_LIBRARY_PATH"
 
 DATA_DIR = "/home/dist/dataset/wudao_pretrain"
 DATASET = "wudao_pretrain_text_document"
 FLAGSCALE_HOME = "/home/dist/zhiyuan-test/FlagScale"
 # 1B tokens for nnodes=1, model=7B
-TRAINING_TOKENS = 385875968 # for 256 gpu 23 steps, 23 * 4096(gbs) * 4096(seq_len) = 385875968
+# TRAINING_TOKENS = 385875968 # for 256 gpu 23 steps, 23 * 4096(gbs) * 4096(seq_len) = 385875968
 # TRAINING_TOKENS = 69206016 # for 48 gpu
-
+TRAINING_TOKENS = int(os.environ.get('TRAINING_TOKENS', default=69206016))
 # =========================================================
 # parallel
 # =========================================================

@@ -12,7 +12,7 @@ flops_16bit = "98000000000000"
 # =========================================================
 # env attribute
 # =========================================================
-env_cmd = "export LD_LIBRARY_PATH=/usr/local/musa/lib:$LD_LIBRARY_PATH;export CUDA_DEVICE_MAX_CONNECTIONS=1"
+env_cmd = "export LD_LIBRARY_PATH=/usr/local/musa/lib:$LD_LIBRARY_PATH"
 
 DATA_DIR = "/home/dist/dataset/wudao_pretrain"
 DATASET = "wudao_pretrain_text_document"
