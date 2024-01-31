@@ -14,7 +14,7 @@ def parse_args():
 
 def run_cmd(cmd, interval, outputstream):
     while True:
-        subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=outputstream, stderr=subprocess.STDOUT)
+        subprocess.Popen(cmd, shell=True, stdout=outputstream, stderr=subprocess.STDOUT)
         time.sleep(interval)
 
 
@@ -40,11 +40,11 @@ def main():
     cmd = cmd + r"echo ;"
     
     cmd = cmd + r"echo Accelerator Model:;"
-    cmd = cmd + r"cnmon -l;"
+    cmd = cmd + r"mthreads-gmi -L;"
     cmd = cmd + r"echo ;"
     
     cmd = cmd + r"echo Accelerator Driver version:;"
-    cmd = cmd + r"cnmon | grep 'CNMON' | awk '{print $3}';"
+    cmd = cmd + r"mthreads-gmi | grep 'Driver Version' | awk -F ':' '{print $3}';"
     cmd = cmd + r"echo ;"
     
     cmd = cmd + r"echo Docker version:;"
@@ -52,7 +52,7 @@ def main():
     
     sys_fn = log_dir + "sys_info.log.txt"
     with open(sys_fn, "w") as f:
-        p = subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=f, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
         p.wait()
         
     threads = []
@@ -72,10 +72,10 @@ def main():
     pwr_thread = threading.Thread(target=run_cmd, args=(pwr_cmd, 120, pwr_file))
     threads.append(pwr_thread)
     
-    mlu_cmd = "date;paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU590-M9') | awk '{print $3,$4,$5,$9,$10,$11,$25}';echo \"\""
-    mlu_file = open(log_dir + "mlu.log.txt", "w")
-    mlu_thread = threading.Thread(target=run_cmd, args=(mlu_cmd, 5, mlu_file))
-    threads.append(mlu_thread)
+    gpu_cmd = "date;mthreads-gmi -q | grep -E 'GPU Current Temp|Power Draw|Used|Total|Gpu' | awk -F ': *' '/GPU Current Temp|Power Draw|Used|Total|Gpu/ { values[(NR-1)%5+1] = $2; } NR % 5 == 0 { print values[4], values[5], values[2], values[1], values[3]; }'"
+    gpu_file = open(log_dir + "gpu.log.txt", "w")
+    gpu_thread = threading.Thread(target=run_cmd, args=(gpu_cmd, 5, gpu_file))
+    threads.append(gpu_thread)
 
     for thread in threads:
         thread.start()
