@@ -49,12 +49,12 @@
 
 * 性能指标
 
-值得注意的是，下列第3组实验的global_batchsize与FlagScale仓库中的finetune_aquila_7b相同, 训练381 step，此项实验也将作为精度对齐所用实验。
+值得注意的是，下列第3组实验的global_batchsize与FlagScale仓库中的finetune_aquila_7b相同, 训练1亿token，此项实验也将作为精度对齐所用实验。
 
 | 配置                | parallel |  fix_hp           | token/p/s | loss | mem       | MFU       |
 | ------------------- | ------ | ---------------- | ------ | ------- | --------- | --------- |
 | A800单机8卡（1x8）  | TP1PP1DP8 |  /                | 3813.2 | 2.61 | 75/80 | 51.3% |
 | A800单机8卡（1x8）  | TP2PP1DP4 |  GAS=8                | 3639.8 | 2.49 | 41/80 | 49.0% |
-| A800单机8卡（1x8）  | TP1PP1DP8 |  GAS=16(GBS=128=2M tokens)                | 4318.9 | 2.90 | 75/80 | 58.1% |
+| A800单机8卡（1x8）  | TP1PP1DP8 |  GAS=16(GBS=128=256K tokens)                | 4318.9 | 2.90 | 75/80 | 58.1% |
 
 
