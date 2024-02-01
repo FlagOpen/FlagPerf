@@ -1,3 +1,6 @@
+### 测试数据集下载
+[测试数据集下载](../../benchmarks/llama2_7b/magatron-deepspeed)
+
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
