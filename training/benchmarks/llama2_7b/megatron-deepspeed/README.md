@@ -20,4 +20,4 @@ Llama 2, a collection of pretrained and fine-tuned large language models (LLMs) 
 
    cd preprocess && bash preprocess.sh data_dir your_preprocessed_dir/RedPajama-Data-1T-Sample
 
-3. 设置training/run_benchmarks/config/test_config.py对应模型的数据目录
+3. 设置training/run_benchmarks/config/test_config.py对应模型的数据目录为your_preprocessed_dir
