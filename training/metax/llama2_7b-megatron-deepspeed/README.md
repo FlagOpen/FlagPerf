@@ -1,5 +1,5 @@
 ### 测试数据集下载
-[测试数据集下载](../../benchmarks/llama2_7b/magatron-deepspeed)
+[测试数据集下载](../../benchmarks/llama2_7b/megatron-deepspeed)
 
 ### 沐曦集成电路 C500 GPU配置与运行信息参考
 #### 环境配置
