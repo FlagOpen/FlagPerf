@@ -150,7 +150,7 @@
     <tr>
       <td>9</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/dlrmt">DLRM</a></td>
-      <td>Recommendation</td>
+      <td>RS</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/dlrm-pytorch">pytorch</a></td>
       <td>N/A</td>
       <td>N/A</td>
