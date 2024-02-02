@@ -53,7 +53,6 @@ NETWORK_ARGS="
     --multiple-of 256 \
     --apply-layernorm-rms \
     --untie-embeddings-and-output-weights \
-    --log-interval 1
 "
 
 LEARNING_RATE_ARGS="
