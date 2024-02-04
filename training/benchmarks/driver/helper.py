@@ -85,6 +85,7 @@ class InitHelper:
             torch.manual_seed(seed)
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = getattr(config, "cudnn_benchmark")
             torch.backends.cudnn.deterministic = getattr(
                 config, "cudnn_deterministic")
         else:
