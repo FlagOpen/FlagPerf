@@ -1,3 +1,5 @@
+export MEGFATRON_DS_HOME="/workspace/Megatron-DeepSpeed"
+
 DATA_DIR=$1
 GPUS_PER_NODE=$2
 NNODES=$3
@@ -26,7 +28,7 @@ echo $ACCUMULATE_STEPS
 echo $SEQ_LENGTH
 echo $TRAIN_STEPS
 
-cp ./tokenizer.py /workspace/Megatron-DeepSpeed/megatron/tokenizer/tokenizer.py
+cp ./tokenizer.py ${MEGFATRON_DS_HOME}/megatron/tokenizer/tokenizer.py
 BASE_PATH=`pwd`
 DS_CONFIG=${BASE_PATH}/ds_config.json
 

@@ -114,8 +114,6 @@ def main():
     config_dir, config_file = helper.get_config_dir_file(task_args)
     config_file = os.path.join(config_dir, config_file)
 
-    START_LOGGER.info("Hello Flagscale")
-
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
     exec_cmd = exec_cmd + "python run_pretraining.py"
     exec_cmd = exec_cmd + " --nproc_per_node=" + str(task_args.nproc)
