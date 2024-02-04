@@ -2,6 +2,7 @@ import subprocess
 from argparse import ArgumentParser
 import os
 import sys
+import json
 from importlib import import_module
 
 
@@ -23,6 +24,15 @@ def parse_args():
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
+
+def prepare_ds_config(ds_config_path, gbs, mbs, accumulate_steps):
+    with open(ds_config_path) as f:
+        config = json.load(f)
+    config["train_batch_size"] = gbs
+    config["train_micro_batch_size_per_gpu"] = mbs
+    config["gradient_accumulation_steps"] = accumulate_steps
+    with open("./ds_config.json", "w") as f:
+        json.dump(config, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
     args = parse_args()
@@ -46,6 +56,9 @@ if __name__ == "__main__":
     gbs = batchsize * args.nproc_per_node * args.nnodes * accumulate_steps // (tensor_parallel *
                                                              pipeline_parallel)
     task_log_file = os.path.join(args.log_dir, "megatron-deepspeed.log.txt")
+    ds_config_path = os.path.join(config_dir_path, "ds_config.json")
+    
+    prepare_ds_config(ds_config_path, gbs, mbs, accumulate_steps)
 
     exec_cmd = "bash megatron-deepspeed_main.sh"
     exec_cmd = exec_cmd + " " + args.data_dir

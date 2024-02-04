@@ -37,8 +37,6 @@ DS_CONFIG=${BASE_PATH}/ds_config.json
 DATASET=$DATA_DIR/RedPajama-Data-1T-Sample_text_document
 TOKENIZER_PATH=${BASE_PATH}/preprocess/tokenizer.json
 
-ZERO_STAGE=1
-
 HIDDEN_SIZE=4096 # e.g. llama-13b: 5120
 FFN_HIDDEN_SIZE=11008 # e.g. llama-13b: 13824
 NUM_LAYERS=32 # e.g. llama-13b: 40
@@ -52,32 +50,6 @@ WEIGHT_DECAY=0.1
 GRAD_CLIP=1
 
 USE_DEEPSPEED=True
-######################################
-
-cat <<EOT > $DS_CONFIG
-{
-  "deepspeed": true,
-  "train_batch_size" : $GLOBAL_BATCH_SIZE,
-  "train_micro_batch_size_per_gpu": $MICRO_BATCH_SIZE,
-  "steps_per_print": 1,
-  "gradient_accumulation_steps": $ACCUMULATE_STEPS,
-  "zero_optimization": {
-    "stage": $ZERO_STAGE,
-    "cpu_offload": false,
-    "contiguous_gradients": false,
-    "overlap_comm": false,
-    "reduce_bucket_size": 5000000,
-    "allgather_bucket_size": 5000000
-  },
-  "bf16": {
-    "enabled": true
-  },
-  "data_types": {
-    "grad_accum_dtype": "bf16"
-  }
-}
-EOT
-
 #
 
 ds_args=""
