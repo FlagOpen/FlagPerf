@@ -89,7 +89,7 @@ ds_args=" --deepspeed-activation-checkpointing ${ds_args}"
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_port $MASTER_PORT"
 
 cmd="torchrun $DISTRIBUTED_ARGS \
-       /workspace/Megatron-DeepSpeed/pretrain_gpt.py \
+       $MEGFATRON_DS_HOME/pretrain_gpt.py \
        --tensor-model-parallel-size $TP \
        --pipeline-model-parallel-size $PP \
        --num-layers $NUM_LAYERS \
