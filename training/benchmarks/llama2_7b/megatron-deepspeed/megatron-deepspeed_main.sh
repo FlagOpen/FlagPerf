@@ -13,6 +13,7 @@ GLOBAL_BATCH_SIZE=${10}
 ACCUMULATE_STEPS=${11}
 SEQ_LENGTH=${12}
 TRAIN_STEPS=${13}
+VENDOR_SHELL=${14}
 
 echo $DATA_DIR
 echo $GPUS_PER_NODE
@@ -27,6 +28,7 @@ echo $GLOBAL_BATCH_SIZE
 echo $ACCUMULATE_STEPS
 echo $SEQ_LENGTH
 echo $TRAIN_STEPS
+echo $VENDOR_SHELL
 
 cp ./tokenizer.py ${MEGFATRON_DS_HOME}/megatron/tokenizer/tokenizer.py
 BASE_PATH=`pwd`
@@ -87,6 +89,8 @@ ds_args=" --deepspeed-activation-checkpointing ${ds_args}"
 
 
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_port $MASTER_PORT"
+
+source $VENDOR_SHELL
 
 cmd="torchrun $DISTRIBUTED_ARGS \
        $MEGFATRON_DS_HOME/pretrain_gpt.py \

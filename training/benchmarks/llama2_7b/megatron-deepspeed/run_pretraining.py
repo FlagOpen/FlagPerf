@@ -61,6 +61,7 @@ if __name__ == "__main__":
     exec_cmd = exec_cmd + " " + str(accumulate_steps)
     exec_cmd = exec_cmd + " " + str(seqlength)
     exec_cmd = exec_cmd + " " + str(train_steps)
+    exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
 
     print("Exec CMD: ", exec_cmd)
 
