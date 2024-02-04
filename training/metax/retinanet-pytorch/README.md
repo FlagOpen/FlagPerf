@@ -51,7 +51,7 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
 
 | 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | mAP    | mem       |
 | ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
-| MXC500 单机8卡（1x8）  | fp32    | /             |         |          |        |        | 0.3485 | 37.5/64.0 |
+| MXC500 单机8卡（1x8）  | fp32    | /             |         |          |        |        | 0.3517 | 37.5/64.0 |
 | MXC500 单机单卡（1x1） | fp32    | /             | /       |          |        |        | /      | 25.1/64.0 |
 | MXC500 两机8卡（2x8）  | fp32    | /             | /       |          |        |        | /      | 59.6/64.0 |
 
