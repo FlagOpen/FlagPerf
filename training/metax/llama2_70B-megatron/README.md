@@ -50,7 +50,7 @@
 
 值得注意的是，下列第4组实验的global_batchsize与llama2原始论文相同, 训练100 step，此项实验也将作为精度对齐所用实验。
 
-| 配置                | precision | parallel  | fix_hp                       | token/p/s | loss | mem   | MFU |
+| 配置                | precision | parallel  | fix_hp                       | token/p/s | 是否精度对齐 | mem   | MFU |
 | ------------------- | --------- | --------- | ---------------------------- | --------- | ---- | ----- | --- |
 | C500四机32卡（4x8） | fp32      | TP8PP4DP1 | /                            | /         | /    | /     | /   |
 | C500四机32卡（4x8） | amp       | TP8PP4DP1 | /                            | /         | /    | /     | /   |
