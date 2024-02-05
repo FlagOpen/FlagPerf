@@ -1,0 +1,10 @@
+seqlength = 4096
+batchsize = 1
+accumulate_steps = 44
+train_tokens = 100000000
+theoryflops = 240000000000000.0
+epochs = 1
+flashattn = True
+recompute = True
+tensor_parallel = 4
+pipeline_parallel = 8
