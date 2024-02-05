@@ -16,14 +16,14 @@ env_cmd = "export LD_LIBRARY_PATH=/usr/local/musa/lib:$LD_LIBRARY_PATH"
 
 DATA_DIR = "/home/dist/dataset/wudao_pretrain"
 DATASET = "wudao_pretrain_text_document"
-FLAGSCALE_HOME = "/home/dist/zhiyuan-test/FlagScale"                                 
+FLAGSCALE_HOME = "/home/dist/zhiyuan-test/FlagScale"
 # 1B tokens for nnodes=1, model=7B
-TRAINING_TOKENS = 1000000000
+TRAINING_TOKENS = 109977600
 
 # =========================================================
 # parallel
 # =========================================================
-TENSOR_PARALLEL = 4
+TENSOR_PARALLEL = 2
 PIPELINE_PARALLEL = 2
 
 # =========================================================

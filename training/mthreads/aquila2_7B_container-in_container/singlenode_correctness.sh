@@ -1,5 +1,5 @@
 #!/bin/bash
-SCALEHOME=/home/dist/xiaokang/FlagScale
+SCALEHOME=/home/dist/zhiyuan-test/FlagScale
 export OMP_NUM_THREADS=4
 export MUSA_KERNEL_TIMEOUT=3600000
 export CUDA_DEVICE_MAX_CONNECTIONS=1
