@@ -55,10 +55,6 @@ TRAINING_ARGS="
 
 MIXED_PRECISION_ARGS="
     --fp16 \
-    --embedding-weights-in-fp32 \
-    --rotary-position-embeddings-in-fp32 \
-    --attention-softmax-in-fp32 \
-    --accumulate-allreduce-grads-in-fp32
 "
 
 DATA_ARGS="
