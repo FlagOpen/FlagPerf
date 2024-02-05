@@ -61,7 +61,7 @@ def main():
     cpu_thread = threading.Thread(target=run_cmd, args=(cpu_cmd, 5, cpu_file))
     threads.append(cpu_thread)
     
-    pwr_cmd = "date;ipmitool sdr list|grep -i Watts|awk 'BEGIN{FS = \"|\"}{for (f=1; f <= NF; f+=1) {if ($f ~ /Watts/) {print $f}}}'|awk '{print $1}'|sort -n -r|head -n1;echo \"\""
+    pwr_cmd = "date;ipmitool sdr list|grep -i Watts|grep -E 'Node_Pwr_N1'|grep -oP '\d+ Watts';echo \"\""
     pwr_file = open(log_dir + "pwr.log.txt", "w")
     pwr_thread = threading.Thread(target=run_cmd, args=(pwr_cmd, 120, pwr_file))
     threads.append(pwr_thread)

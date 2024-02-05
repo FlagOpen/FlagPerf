@@ -51,6 +51,7 @@ TRAINING_ARGS="
     --recompute-granularity full \
     --recompute-method uniform \
     --recompute-num-layers 1 \
+    --use-flash-attn \
     --sequence-parallel
 "
 

@@ -43,7 +43,7 @@ for index in ['cpu', 'mem', 'pwr']:
     for line in file.readlines():
         if 'CST' in line or len(line) < 2:
             continue
-        result.append(float(line))
+        result.append(float(line.split(' ')[0]))
     results[index] = result
 
     plt.figure(figsize=(8, 6))
