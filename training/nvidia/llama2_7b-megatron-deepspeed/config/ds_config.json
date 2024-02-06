@@ -1,0 +1,21 @@
+{
+    "deepspeed": true,
+    "train_batch_size" : 256,
+    "train_micro_batch_size_per_gpu": 1,
+    "steps_per_print": 1,
+    "gradient_accumulation_steps": 32,
+    "zero_optimization": {
+      "stage": 1,
+      "cpu_offload": false,
+      "contiguous_gradients": false,
+      "overlap_comm": false,
+      "reduce_bucket_size": 5000000,
+      "allgather_bucket_size": 5000000
+    },
+    "bf16": {
+      "enabled": true
+    },
+    "data_types": {
+      "grad_accum_dtype": "bf16"
+    }
+  }
