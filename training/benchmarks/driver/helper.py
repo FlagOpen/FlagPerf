@@ -80,6 +80,14 @@ class InitHelper:
             torch.manual_seed(seed)
             torch.musa.manual_seed(seed)
             torch.musa.manual_seed_all(seed)
+        elif lower_vendor == "metax":
+            import torch
+            torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = getattr(config, "cudnn_benchmark")
+            torch.backends.cudnn.deterministic = getattr(
+                config, "cudnn_deterministic")
         else:
             # TODO 其他厂商设置seed，在此扩展
             pass
