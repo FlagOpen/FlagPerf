@@ -4,25 +4,50 @@ import time
 from argparse import ArgumentParser
 import os
 
-
 def parse_args():
     parser = ArgumentParser(description="aquila_monitor")
-    parser.add_argument("--ip", type=str, required=True)
+    parser.add_argument("--ip", type=str, help="use hostname -i to find ip address", required=True)
     args=parser.parse_args()
     return args
 
-
 def run_cmd(cmd, interval, outputstream):
     while True:
-        subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=outputstream, stderr=subprocess.STDOUT)
+        subprocess.Popen(cmd, shell=True,executable="/bin/bash", stdout=outputstream, stderr=subprocess.STDOUT)
         time.sleep(interval)
 
+def run_pwr_cmd(cmd, interval, file_name):
+    with open(file_name,"w") as f:
+        while True:
+            process = subprocess.Popen(cmd, shell=True,executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            _out, error = process.communicate()
+            _out = _out.decode()
+            out = _out.strip().split("\n")
+            _hex = out[1].split(" ")
+            hex_string = _hex[2] + _hex[1]
+            int_string = str(int(hex_string,16))
+            ret = out[0] + "\n" + int_string
+            f.write(ret + "\n" + " " + "\n")
+            f.flush()
+            time.sleep(interval)
 
+# get full machine power using bmp ip address
+# but not valid for every machine,please pay attention it !
+# you should calculate your bmc ip by change this code!
+def get_bmc_ip(host_ip):
+    _host_ip = host_ip.split(".")
+    _host_ip[1] = '4'
+    return ".".join(_host_ip)
+
+# python standalone_monitor.py --ip "`hostname -i`"
 def main():
     args = parse_args()
+    args.ip =  args.ip.split(" ")[0]
+    print("IP:",args.ip)
+    print("Running......:",args.ip)
     ip = args.ip.replace('.','_')
     log_dir = "./" + ip + "/"
-    os.mkdir(log_dir)
+    if not os.path.exists(log_dir):
+        os.mkdir(log_dir)
 
     cmd = r"echo NODE " + args.ip + ";"
     cmd = cmd + r"echo ;"
@@ -52,7 +77,7 @@ def main():
     
     sys_fn = log_dir + "sys_info.log.txt"
     with open(sys_fn, "w") as f:
-        p = subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=f, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
         p.wait()
         
     threads = []
@@ -67,12 +92,11 @@ def main():
     cpu_thread = threading.Thread(target=run_cmd, args=(cpu_cmd, 5, cpu_file))
     threads.append(cpu_thread)
     
-    pwr_cmd = "date;ipmitool sdr list|grep -i Watts|awk 'BEGIN{FS = \"|\"}{for (f=1; f <= NF; f+=1) {if ($f ~ /Watts/) {print $f}}}'|awk '{print $1}'|sort -n -r|head -n1;echo \"\""
-    pwr_file = open(log_dir + "pwr.log.txt", "w")
-    pwr_thread = threading.Thread(target=run_cmd, args=(pwr_cmd, 120, pwr_file))
+    pwr_cmd = "date;ipmitool -H " + get_bmc_ip(args.ip) + " -I lanplus -U admin -P admin raw 0x3a 0x26"
+    pwr_thread = threading.Thread(target=run_pwr_cmd, args=(pwr_cmd,5,log_dir + "pwr.log.txt"))
     threads.append(pwr_thread)
     
-    mlu_cmd = "date;paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU590-M9') | awk '{print $3,$4,$5,$9,$10,$11,$25}';echo \"\""
+    mlu_cmd = "date; paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU590-M9') | awk '{print $3,$4,$5,$9,$10,$11,$25}'; echo \"\""
     mlu_file = open(log_dir + "mlu.log.txt", "w")
     mlu_thread = threading.Thread(target=run_cmd, args=(mlu_cmd, 5, mlu_file))
     threads.append(mlu_thread)
@@ -85,8 +109,5 @@ def main():
 
     print('exit')
 
-
 if __name__ == '__main__':
     main()
-
-
