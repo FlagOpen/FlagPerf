@@ -1,11 +1,16 @@
 # =========================================================
+# network
+# =========================================================
+SSH_PORT = "8888"
+
+# =========================================================
 # env attribute
 # =========================================================
-env_cmd = "source /usr/local/Ascend/ascend-toolkit/set_env.sh"
+env_cmd = "source /root/miniconda3/bin/activate Aquila; source /usr/local/Ascend/driver/bin/setenv.bash; source /usr/local/Ascend/ascend-toolkit/set_env.sh"
 
-DATA_DIR = "/data/aquila2_pretrain"
+DATA_DIR = "/data/wudao_pretrain"
 DATASET = "wudao_pretrain_text_document"
-FLAGSCALE_HOME = "/data/aquila2_pretrain/FlagScale"
+FLAGSCALE_HOME = "/mnt/baai_test/wspace/FlagScale"
 # 1B tokens for nnodes=1, model=7B
 TRAINING_TOKENS = 1000000000
 
@@ -33,4 +38,4 @@ flops_16bit = "313000000000000"
 # =========================================================
 # network
 # =========================================================
-net_cmd ="export HCCL_CONNECT_TIMEOUT=3600;export HCCL_EXEC_TIMEOUT=0;"
+net_cmd ="export HCCL_CONNECT_TIMEOUT=3600;export HCCL_EXEC_TIMEOUT=0;export GLOO_SOCKET_IFNAME=bond0;export HCCL_SOCKET_IFNAME=bond0;export CUDA_DEVICE_MAX_CONNECTIONS=1"

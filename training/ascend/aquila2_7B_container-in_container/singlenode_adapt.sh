@@ -3,7 +3,6 @@ TRAINING_ARGS="
     --eval-iters 0 \
     --tensor-model-parallel-size $TP \
     --pipeline-model-parallel-size $PP \
-    --tensor-model-parallel-size 8 \
     --sequence-parallel \
     --micro-batch-size $MBS \
     --global-batch-size $GBS \
@@ -12,15 +11,19 @@ TRAINING_ARGS="
     --no-shared-fs \
     --no-gradient-accumulation-fusion \
     --use-flash-attn \
-    --pre-tokens 2048 \
-    --next-tokens 0 \
-    --shape-order SBH \
-    --use-npu-mc2 \
-    --use-npu-swiglu
+    --npu-fa-pre-tokens 2048 \
+    --npu-fa-next-tokens 0 \
+    --npu-fa-shape-order SBH \
+    --use-npu-swiglu \
+    --make-vocab-size-divisible-by 8 \
+    --device-type ascend \
+    --log-interval 1 
 "
 
 MIXED_PRECISION_ARGS="
     --bf16 \
+    --initial-loss-scale 522893 \
+    --min-loss-scale 1.0 \
     --embedding-weights-in-fp32 \
     --attention-softmax-in-fp32 \
     --accumulate-allreduce-grads-in-fp32
@@ -36,4 +39,11 @@ DATA_ARGS="
     --data-impl mmap \
     --split 1 \
     --distributed-timeout-minutes 120
+"
+
+LEARNING_RATE_ARGS="
+    --lr 2.0e-5 \
+    --min-lr 2.0e-6 \
+    --lr-decay-style cosine \
+    --lr-warmup-samples 7200
 "

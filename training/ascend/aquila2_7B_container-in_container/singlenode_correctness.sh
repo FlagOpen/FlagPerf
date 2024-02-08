@@ -49,11 +49,12 @@ TRAINING_ARGS="
     --no-shared-fs \
     --no-gradient-accumulation-fusion \
     --use-flash-attn \
-    --pre-tockens 2048 \
-    --next-tockens 0 \
-    --shape-order SBH \
+    --npu-fa-pre-tokens 2048 \
+    --npu-fa-next-tokens 0 \
+    --npu-fa-shape-order SBH \
     --use-npu-mc2 \
-    --use-npu-swiglu
+    --use-npu-swiglu \
+    --device-type ascend
 "
 
 MIXED_PRECISION_ARGS="
