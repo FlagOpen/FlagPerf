@@ -15,6 +15,7 @@ TRAINING_ARGS="
     --npu-fa-next-tokens 0 \
     --npu-fa-shape-order SBH \
     --use-npu-swiglu \
+    --use-npu-mc2 \
     --make-vocab-size-divisible-by 8 \
     --device-type ascend \
     --log-interval 1 
