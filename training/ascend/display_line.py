@@ -87,8 +87,8 @@ for line in file.readlines():
         npu[next_npu_id]['温度'].append(float(info[7]))
         npu[next_npu_id]['功耗'].append(float(info[6]))
     if '65536' in line:
-        info = line.split()
-        npu[next_npu_id]['HBM占用率'].append(float(info[9]) / float(info[11]))
+        info = line.replace('/', ' ').split()
+        npu[next_npu_id]['HBM占用率'].append(float(info[8]) / float(info[9]))
         npu[next_npu_id]['计算占用率'].append(float(info[5]))
         next_npu_id = (next_npu_id + 1) % 8
 
