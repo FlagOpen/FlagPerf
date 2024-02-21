@@ -2,3 +2,4 @@
 # Export variables
 # =================================================
 
+export METAX_USE_TF32=1
