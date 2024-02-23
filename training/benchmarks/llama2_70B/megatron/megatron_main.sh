@@ -33,7 +33,7 @@ echo $FLASH_ATTN
 echo $RECOMPUTE
 echo $VENDOR_SHELL
 
-DATA_PATH=$DATA_DIR/pile_wikipedia_demo
+DATA_PATH=$DATA_DIR/llama_00_text_document
 TOKENIZER_PATH=$DATA_DIR/tokenizer/tokenizer.model
 
 DISTRIBUTED_ARGS="

@@ -7,7 +7,7 @@
 
 import torch
 import torch.distributed as dist
-from torch._six import inf
+from torch import inf
 
 
 def reduce_tensor(tensor):

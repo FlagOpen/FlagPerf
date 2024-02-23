@@ -147,10 +147,8 @@ CASES = {
     # "bert_hf:pytorch_2.0:S4000:1:8:1": "/data/flagperf/bert_hf",
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
-
     # metax cases
     # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-}
