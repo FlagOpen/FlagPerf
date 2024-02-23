@@ -125,7 +125,7 @@ def main():
     exec_cmd = exec_cmd + " --log_dir=" + task_log_dir
     exec_cmd = exec_cmd + " --flagperf_config_file=" + config_file
 
-    task_log_file = os.path.join(task_log_dir, "rank0.log.txt")
+    task_log_file = os.path.join(task_log_dir, "rank0.out.log")
 
     with open(task_log_file, "w") as f:
         p = subprocess.Popen(exec_cmd,
