@@ -19,10 +19,9 @@ class TrainingState:
     end_training: bool = False
     converged: bool = False
 
-    train_time = 0.001
-    no_eval_time = 0.001
-    pure_compute_time = 0.001
-
+    train_time = 0
+    no_eval_time = 0
+    pure_compute_time = 0
     num_trained_samples = 0
 
     def status(self):
