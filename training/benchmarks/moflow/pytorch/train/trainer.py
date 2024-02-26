@@ -55,7 +55,7 @@ class Trainer:
     def init(self):
         args = self.args
         dist_pytorch.main_proc_print("Init progress:")
-        self.config = CONFIGS[self.args.config_name]
+        self.config = CONFIGS[self.args.dataset_name]
         self.model = create_model(self.config)
         self.model.to(self.device)
         device = args.device

@@ -22,7 +22,7 @@ from runtime.logger import LOGGING_LEVELS
 
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument('--data_dir', type=str, default='/data', help='Location for the dataset.')
-PARSER.add_argument('--config_name', type=str, default='zinc250k', choices=list(CONFIGS),
+PARSER.add_argument('--dataset_name', type=str, default='zinc250k', choices=list(CONFIGS),
                     help='The config to choose. This parameter allows one to switch between different datasets '
                          'and their dedicated configurations of the neural network. By default, a pre-defined "zinc250k" config is used.')
 PARSER.add_argument('--results_dir', type=str, default='/results', help='Directory where checkpoints are stored.')

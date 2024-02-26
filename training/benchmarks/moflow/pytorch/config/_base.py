@@ -14,7 +14,7 @@ cudnn_deterministic: bool = True
 # =========================================================
 # The config to choose. This parameter allows one to switch between different datasets.
 # and their dedicated configurations of the neural network. By default, a pre-defined "zinc250k" config is used.
-config_name: str = "zinc250k"
+dataset_name: str = "zinc250k"
 # Number of workers in the data loader.
 num_workers: int = 4
 

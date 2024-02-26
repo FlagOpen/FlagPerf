@@ -57,7 +57,7 @@ if __name__ == '__main__':
         smiles_writer = SmilesWriter(args.predictions_path)
 
     snapshot_path = get_newest_checkpoint(args.results_dir)
-    config = CONFIGS[args.config_name]
+    config = CONFIGS[args.dataset_name]
     model = MoFlow(config)
 
     device = get_device(args.local_rank)

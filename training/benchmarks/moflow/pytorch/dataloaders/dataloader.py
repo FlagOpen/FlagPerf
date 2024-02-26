@@ -12,8 +12,8 @@ from misc.config import CONFIGS
 def build_datasets(args):
 
     # Model configuration
-    assert args.config_name in CONFIGS
-    config = CONFIGS[args.config_name]
+    assert args.dataset_name in CONFIGS
+    config = CONFIGS[args.dataset_name]
     data_file = config.dataset_config.dataset_file
     transform_fn = functools.partial(transform.transform_fn, config=config)
     valid_idx = transform.get_val_ids(config, args.data_dir)
