@@ -1,0 +1,21 @@
+TRAINING_ARGS="
+    --train-samples $TRAININGSAMPLES \
+    --eval-iters 0 \
+    --tensor-model-parallel-size $TP \
+    --pipeline-model-parallel-size $PP \
+    --micro-batch-size $MBS \
+    --global-batch-size $GBS \
+    --sequence-parallel \
+    --disable-bias-linear \
+    --use-distributed-optimizer \
+    --no-gradient-accumulation-fusion \
+    --no-shared-fs \
+    --use-flash-attn \
+    --npu-fa-pre-tokens 65536 \
+    --npu-fa-next-tokens 0 \
+    --npu-fa-shape-order SBH \
+    --use-npu-swiglu \
+    --device-type ascend \
+    --log-interval 1 \
+    --distributed-timeout-minutes 120
+"
