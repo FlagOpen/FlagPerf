@@ -132,7 +132,9 @@ LOGGING_ARGS="
 "
 
 source $VENDOR_SHELL
-cmd="torchrun $DISTRIBUTED_ARGS /workspace/FlagScale/pretrain_llama.py \
+CODE_PATH="/workspace/FlagScale/pretrain_llama.py"
+
+cmd="torchrun $DISTRIBUTED_ARGS $CODE_PATH \
               $TRAINING_ARGS \
               $MIXED_PRECISION_ARGS \
               $DATA_ARGS \
