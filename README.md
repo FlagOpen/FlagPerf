@@ -51,7 +51,7 @@
 
 ## 支持列表
 
-训练列表：
+【训练列表（请在表格下方向右滑动查看更多厂商）：】
 
 <table border="1" class="dataframe">
   <thead>
