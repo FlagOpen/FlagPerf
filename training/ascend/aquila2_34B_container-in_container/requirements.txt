@@ -1,0 +1,15 @@
+regex
+pybind11
+six
+torchvision==0.16.0
+decorator
+sympy
+scipy
+attrs
+einops
+nltk
+transformers==4.32.0
+uvicorn
+fastapi
+wandb>=0.15.7
+loguru==0.7.2
