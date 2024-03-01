@@ -8,8 +8,6 @@ SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
 SHM_SIZE: "32G"
-#   metax:
-#       " --device=/dev/dri --device=/dev/mxcd --group-add video"
 ACCE_CONTAINER_OPT: " --gpus all"
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
@@ -17,4 +15,3 @@ ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
     # "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
     "vit_l_16:pytorch_2.1": "/raid/dataset/ImageNet_1k_2012/val"
-    #"stable_diffusion_v1_4:pytorch_2.0": "/software/home/szhao/stablediffusion/dataroot/"
