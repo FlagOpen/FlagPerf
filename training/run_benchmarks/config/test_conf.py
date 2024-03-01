@@ -133,7 +133,8 @@ CASES = {
     # "transformer:pytorch:R300:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-  
+    # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
+
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
