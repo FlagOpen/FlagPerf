@@ -97,6 +97,8 @@ def main() -> Tuple[Any, Any]:
     dist_pytorch.barrier(args.vendor)
 
     if not args.do_train:
+        res = evaluator.evaluate(args, trainer.config, acc_logger)
+        dist_pytorch.main_proc_print(f"evaluate results: {res}")
         return args, training_state
 
     model_driver.event(Event.INIT_END)
@@ -122,7 +124,6 @@ def main() -> Tuple[Any, Any]:
         first_epoch = 0
         step = 0
 
-
     if first_epoch > args.epochs:
         dist_pytorch.main_proc_print(
             f'Model was already trained for {first_epoch} epochs, skip pretraining'
@@ -132,9 +133,9 @@ def main() -> Tuple[Any, Any]:
     epoch = first_epoch
     while epoch < args.epochs:
         training_state.epoch = epoch
-        step = trainer.train_one_epoch(train_dataloader, step)
+        trainer.train_one_epoch(train_dataloader, step)
         epoch += 1
-        if step >= args.steps:
+        if training_state.global_steps >= args.steps:
             break
     # TRAIN_END事件
     training_state.train_time = time.time() - train_start_time

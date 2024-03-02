@@ -1,2 +1,2 @@
-rdkit==2023.9.3
+rdkit-pypi
 git+https://github.com/NVIDIA/dllogger#egg=dllogger

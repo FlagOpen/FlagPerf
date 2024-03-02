@@ -40,7 +40,6 @@ class Evaluator:
             raise RuntimeError(
                 'Generating molecules from an untrained network! '
                 'If this was intentional, pass --allow_untrained flag.')
-        dist_pytorch.main_proc_print(f"ln_var ===> {ln_var}")
 
         model.to(device)
         model.eval()
@@ -48,7 +47,7 @@ class Evaluator:
         if args.steps == -1:
             args.steps = 1
         else:
-            args.steps = 100
+            args.steps = 1000
 
         dist_pytorch.main_proc_print(f"ln_var ===> {ln_var}. args.steps:{args.steps}")
 
@@ -58,7 +57,6 @@ class Evaluator:
             transform=partial(transform.transform_fn, config=config),
         )
         train_idx = [t for t in range(len(dataset)) if t not in valid_idx]
-        n_train = len(train_idx)
         train_dataset = torch.utils.data.Subset(dataset, train_idx)
         train_x = torch.Tensor(np.array([a[0] for a in train_dataset]))
         train_adj = torch.Tensor(np.array([a[1] for a in train_dataset]))
@@ -80,7 +78,6 @@ class Evaluator:
                     correct_validity=args.correct_validity,
                 )
                 validity_info = check_validity(mols_batch)
-
                 novel_r, abs_novel_r = check_novelty(
                     validity_info['valid_smiles'],
                     train_smiles,
@@ -99,12 +96,8 @@ class Evaluator:
                     'abs_uniqueness': validity_info['abs_unique_ratio'],
                     'nuv': nuv,
                 }
-                dist_pytorch.main_proc_print(f"step:{i} metrics:{metrics}")
-                if args.local_rank == 0:
-                    acc_logger.update(metrics)
+                dist_pytorch.main_proc_print("metrics", i, metrics)
+                acc_logger.update(metrics)
 
-        if args.local_rank == 0:
-            stats = acc_logger.summarize(step=tuple())
-            return stats
-
-        return None
+        stats = acc_logger.summarize(step=tuple())
+        return stats

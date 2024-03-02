@@ -59,24 +59,23 @@ class Trainer:
         self.model = create_model(self.config)
         self.model.to(self.device)
         device = args.device
-        model = self.model
         x, adj, *_ = next(iter(self.train_dataloader))
         x = x.to(device)
         adj = adj.to(device)
         with autocast(enabled=args.amp):
             initialize(self.model, (adj, x))
 
-        model.to(memory_format=torch.channels_last)
+        self.model.to(memory_format=torch.channels_last)
         adj.to(memory_format=torch.channels_last)
 
         if args.jit:
-            model.bond_model = torch.jit.script(model.bond_model)
-            model.atom_model = torch.jit.script(model.atom_model)
+            self.model.bond_model = torch.jit.script(self.model.bond_model)
+            self.model.atom_model = torch.jit.script(self.model.atom_model)
 
         # make one pass in both directions to make sure that model works
         with torch.no_grad():
-            _ = model(adj, x)
-            _ = model.reverse(
+            _ = self.model(adj, x)
+            _ = self.model.reverse(
                 torch.randn(args.train_batch_size,
                             self.config.z_dim,
                             device=device))
@@ -107,7 +106,7 @@ class Trainer:
             loss_callable = self.loss_module
         return model_callable, loss_callable
 
-    def train_one_epoch(self, train_dataloader, step) -> int:
+    def train_one_epoch(self, train_dataloader, step):
         model = self.model
         args = self.args
         device = self.device
@@ -117,6 +116,8 @@ class Trainer:
         local_rank = self.args.local_rank
         is_distributed = args.distributed
 
+        if step > 0 and step > self.training_state.global_steps:
+            self.training_state.global_steps = step
 
         if local_rank == 0:
             self.acc_logger.reset()
@@ -131,7 +132,7 @@ class Trainer:
         for i, batch in enumerate(train_dataloader):
             if local_rank == 0:
                 self.perf_logger.update()
-            step += 1
+            self.training_state.global_steps += 1
             self.optimizer.zero_grad()
             x = batch[0].to(device)
             adj = batch[1].to(device=device, memory_format=torch.channels_last)
@@ -139,8 +140,10 @@ class Trainer:
             pure_compute_start_time = time.time()
 
             # Forward, backward and optimize
-            with_cuda_graph = (args.cuda_graph and step >= args.warmup_steps
-                               and x.size(0) == args.train_batch_size)
+            with_cuda_graph = (
+                args.cuda_graph
+                and self.training_state.global_steps >= args.warmup_steps
+                and x.size(0) == args.train_batch_size)
 
             with autocast(enabled=args.amp, cache_enabled=not with_cuda_graph):
                 output = model(adj, x, with_cuda_graph=with_cuda_graph)
@@ -158,7 +161,8 @@ class Trainer:
                 clip_grad_norm_(model.parameters(), args.clip)
                 self.optimizer.step()
 
-            self.training_state.pure_compute_time += time.time() - pure_compute_start_time
+            self.training_state.pure_compute_time += time.time(
+            ) - pure_compute_start_time
 
             # Print log info
             if (i + 1) % args.log_interval == 0:
@@ -176,19 +180,21 @@ class Trainer:
                     self.acc_logger.summarize(step=(epoch, i, i))
                     self.perf_logger.summarize(step=(epoch, i, i))
 
-
-            if step >= args.steps:
+            if self.training_state.global_steps >= args.steps:
                 break
 
-        self.training_state.num_trained_samples += len(train_dataloader.dataset)
+        self.training_state.num_trained_samples += len(
+            train_dataloader.dataset)
         self.training_state.no_eval_time += time.time() - noeval_start_time
 
         if (epoch + 1) % args.eval_epochs == 0:
             with autocast(enabled=args.amp):
                 metrics = run_validation(self.model, self.config,
-                                         self.loss_callable.ln_var.item(), args,
-                                         is_distributed, world_size, device)
-                dist_pytorch.main_proc_print(f"epoch:{epoch+1}, metrics:{metrics}")
+                                         self.loss_callable.ln_var.item(),
+                                         args, is_distributed, world_size,
+                                         device)
+                dist_pytorch.main_proc_print(
+                    f"epoch:{epoch+1}, metrics:{metrics}")
 
             if local_rank == 0:
                 self.acc_logger.update(metrics)
@@ -206,8 +212,8 @@ class Trainer:
                            self.optimizer,
                            self.loss_callable.ln_var.item(),
                            epoch,
-                           keep=5)
-        return step
+                           keep=3)
+
 
 def run_validation(model: MoFlow, config: Config, ln_var: float,
                    args: argparse.Namespace, is_distributed: bool,
