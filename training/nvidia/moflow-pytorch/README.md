@@ -53,5 +53,6 @@
 
 > 注
 > 原始仓库中的[NUV](https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/DrugDiscovery/MoFlow#results)取了**20**个不同的随机种子，进行了**20**次实验的平均值。
-> 由于实验机器资源所限，我们无法进行大量的实验验证。本实验结果与上述的值相比，可能会有一定差异。
+> 此模型本身的实验结果对随机性比较敏感。seed, temperature等都会影响nuv的值，参考[training-stability-test]一节的说明。(https://github.com/NVIDIA/DeepLearningExamples/tree/master/PyTorch/DrugDiscovery/MoFlow#training-stability-test)。
+> 如厂商一次无法收敛，需尝试运行**若干次**。
 
