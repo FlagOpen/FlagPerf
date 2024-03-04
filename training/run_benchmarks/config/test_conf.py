@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads, metax and dcu.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -23,6 +23,8 @@ VENDOR = "nvidia"
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
 #   metax:
 #       " --device=/dev/dri --device=/dev/mxcd --group-add video"
+#   dcu:
+#       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -31,6 +33,7 @@ ACCE_CONTAINER_OPT = " --gpus all"
 #   XPU_VISIBLE_DEVICES for kunlunxin
 #   ASCEND_VISIBLE_DEVICES for ascend
 #   MUSA_VISIBLE_DEVICES for mthreads
+#   HIP_VISIBLE_DEVICES for dcu
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
@@ -157,5 +160,8 @@ CASES = {
     # "bert_hf:pytorch_2.0:C500:1:8:1": "/raid/dataset/bert_hf_train",
     # "glm:pytorch_2.0:C500:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "mobilenetv2:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
+    # dcu cases
+    # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
 }
 
