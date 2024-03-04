@@ -157,5 +157,7 @@ CASES = {
     # "bert_hf:pytorch_2.0:C500:1:8:1": "/raid/dataset/bert_hf_train",
     # "glm:pytorch_2.0:C500:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "mobilenetv2:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "mask_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "detr:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
 }
 
