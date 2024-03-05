@@ -131,8 +131,10 @@ LOGGING_ARGS="
     --log-interval 1
 "
 
+CODE_PATH="/workspace/FlagScale/pretrain_llama.py"
+
 source $VENDOR_SHELL
-cmd="torchrun $DISTRIBUTED_ARGS /workspace/FlagScale/pretrain_llama.py \
+cmd="torchrun $DISTRIBUTED_ARGS $CODE_PATH \
               $TRAINING_ARGS \
               $MIXED_PRECISION_ARGS \
               $DATA_ARGS \
