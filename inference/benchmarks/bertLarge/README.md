@@ -77,6 +77,20 @@ bert_reference_results_text_md5.txt
    - IXRT: ixrt-0.8.0+corex.3.2.1
 
 
+####  2.4 沐曦集成电路 C500 
+
+- ##### 硬件环境
+    - 机器、加速卡型号: 曦云®C500 64G
+    - 多机网络类型、带宽: InfiniBand，2x200 Gb/s
+- ##### 软件环境
+   - OS版本：Ubuntu 20.04.6
+   - OS kernel版本:  5.4.0-26-generic
+   - 加速卡驱动版本：2.2.0
+   - Docker 版本：24.0.7
+   - 推理框架版本：pytorch-2.0.0+mc2.18.0.8-cp38-cp38-linux_x86_64.whl
+
+
+
 ### 4. 运行情况（BERT-Large）
 
 * 指标列表
