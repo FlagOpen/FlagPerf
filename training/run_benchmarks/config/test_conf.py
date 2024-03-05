@@ -134,7 +134,8 @@ CASES = {
     # "transformer:pytorch:R300:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-  
+    # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
+
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -154,6 +155,10 @@ CASES = {
     # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "WaveGlow:pytorch_2.0:C500:1:8:1": "/raid/dataset/LJSpeech/",
+    # "bert_hf:pytorch_2.0:C500:1:8:1": "/raid/dataset/bert_hf_train",
+    # "glm:pytorch_2.0:C500:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "mobilenetv2:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "mask_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "detr:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
 }
 
