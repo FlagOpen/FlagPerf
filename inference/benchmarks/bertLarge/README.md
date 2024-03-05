@@ -81,7 +81,6 @@ bert_reference_results_text_md5.txt
 
 - ##### 硬件环境
     - 机器、加速卡型号: 曦云®C500 64G
-    - 多机网络类型、带宽: InfiniBand，2x200 Gb/s
 - ##### 软件环境
    - OS版本：Ubuntu 20.04.6
    - OS kernel版本:  5.4.0-26-generic
