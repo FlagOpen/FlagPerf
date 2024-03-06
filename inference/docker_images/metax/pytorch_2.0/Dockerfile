@@ -13,5 +13,4 @@ RUN pip install timm
 RUN pip install munch
 RUN pip install schedule
 RUN pip install loguru
-RUN pip install accelerate
 RUN /bin/bash -c "uname -a"
