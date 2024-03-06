@@ -1,3 +1,2 @@
 pycocotools
 opencv-python
-opencv-python-headless
