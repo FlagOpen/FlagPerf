@@ -792,12 +792,12 @@ CASES={} # 本次运行的测例，按照对应模型readme准备好数据，修
 sudo python inference/run.py
 ```
 
-- 更多训练/推理说明见[训练文档](https://github.com/FlagOpen/FlagPerf/blob/main/training/README.md)和[推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/dev/inference-case-doc.md)
+- 更多训练/推理说明见[训练文档](https://github.com/FlagOpen/FlagPerf/blob/main/training/README.md)和[推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/inference/inference-case-doc.md)
 
 ## 参与共建FlagPerf
 
 
-> 开发者教程：更多操作教程见 [docs-zh](./docs_zh) 
+> 开发者教程：更多操作教程见 [docs-zh](./docs/PR/) 
 
 为了更直观的展示厂商参与共建的实际工作量，下面给出6个已经合并进FlagPerf，面向不同特征厂商的Pull Request。
 
