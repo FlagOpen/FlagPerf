@@ -163,6 +163,10 @@ CASES = {
     # "mobilenetv2:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "detr:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "cpm:pytorch_2.0:A100:1:8:1": "/raid/dataset/cpm/train/",
+    # "distilbert:pytorch_2.0:A100:1:8:1": "/raid/dataset/distilbert/",
+    
+    
 
     # dcu cases
     # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
