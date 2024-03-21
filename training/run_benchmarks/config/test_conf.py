@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads, metax and dcu.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -23,6 +23,8 @@ VENDOR = "nvidia"
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
 #   metax:
 #       " --device=/dev/dri --device=/dev/mxcd --group-add video"
+#   dcu:
+#       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -31,6 +33,7 @@ ACCE_CONTAINER_OPT = " --gpus all"
 #   XPU_VISIBLE_DEVICES for kunlunxin
 #   ASCEND_VISIBLE_DEVICES for ascend
 #   MUSA_VISIBLE_DEVICES for mthreads
+#   HIP_VISIBLE_DEVICES for dcu
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
@@ -79,14 +82,15 @@ CASES = {
     
     # "wav2vec2:pytorch_1.13:A100:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
     # "WaveGlow:pytorch_1.13:A100:1:8:1": "/raid/dataset/LJSpeech/",
-    "resnet50:tensorflow2:A100:1:8:1": "/raid/dataset/ImageNet2012/tf_records/",
+    # "resnet50:tensorflow2:A100:1:8:1": "/raid/dataset/ImageNet2012/tf_records/",
+    # "moflow:pytorch_1.13:A100:1:8:1": "/raid/dataset/MoFlow/data/",
 
     # "distilbert:pytorch_1.12:A100:1:8:1": "/raid/dataset/distilbert/",
     
     # "transformer:pytorch_1.13:A100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "transformer_xl:pytorch_1.8:A100:1:8:1": "/raid/dataset/transformer_xl/",
-    "t5_small:pytorch_1.12:A100:1:8:1": "/raid/dataset/t5_small_train",
+    # "t5_small:pytorch_1.12:A100:1:8:1": "/raid/dataset/t5_small_train",
     # "gpt2:pytorch_1.12:A100:1:8:1": "/raid/dataset/gpt2",
 
     # "bert_hf:pytorch_1.13:A100:1:8:1": "/raid/dataset/bert_hf_train",
@@ -133,7 +137,8 @@ CASES = {
     # "transformer:pytorch:R300:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-  
+    # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
+
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -152,6 +157,19 @@ CASES = {
     # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+
     # "transformer_xl:pytorch_2.0:C500:1:8:1": "/raid/dataset/transformer_xl/",
-    #"wav2vec2:pytorch_2.0:C500:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
+    # "wav2vec2:pytorch_2.0:C500:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
     # "WaveGlow:pytorch_2.0:C500:1:8:1": "/raid/dataset/LJSpeech/",
+    # "bert_hf:pytorch_2.0:C500:1:8:1": "/raid/dataset/bert_hf_train",
+    # "glm:pytorch_2.0:C500:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    # "mobilenetv2:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "mask_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "detr:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+
+    # dcu cases
+    # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
+    
+}
+
+
