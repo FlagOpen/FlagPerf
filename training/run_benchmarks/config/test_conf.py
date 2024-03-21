@@ -154,3 +154,4 @@ CASES = {
     # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "transformer_xl:pytorch_2.0:C500:1:8:1": "/raid/dataset/transformer_xl/",
     #"wav2vec2:pytorch_2.0:C500:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
+    # "WaveGlow:pytorch_2.0:C500:1:8:1": "/raid/dataset/LJSpeech/",
