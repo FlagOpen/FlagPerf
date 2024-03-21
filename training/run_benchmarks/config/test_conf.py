@@ -165,6 +165,7 @@ CASES = {
     # "detr:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "cpm:pytorch_2.0:A100:1:8:1": "/raid/dataset/cpm/train/",
     # "distilbert:pytorch_2.0:A100:1:8:1": "/raid/dataset/distilbert/",
+    # "bigtransfer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     
     
 
