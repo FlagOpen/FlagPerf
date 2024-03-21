@@ -3,7 +3,7 @@
 
 ### 2. 设置test_conf.py
 
-为了使得`training/nvidia/distilbert-pytorch/config/requirements.txt`里的依赖库均能被下载，需要将`training/run_benchmarks/config/test_conf.py`里的`PIP_SOURCE`的值修改为`https://pypi.tuna.tsinghua.edu.cn/simple`
+为了使得`training/metax/distilbert-pytorch/config/requirements.txt`里的依赖库均能被下载，需要将`training/run_benchmarks/config/test_conf.py`里的`PIP_SOURCE`的值修改为`https://pypi.tuna.tsinghua.edu.cn/simple`
 
 ###  3. 沐曦集成电路 C500 GPU配置与运行信息参考
 #### 环境配置
