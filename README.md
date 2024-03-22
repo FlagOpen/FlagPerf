@@ -578,7 +578,7 @@
     <td class="xl69" x:str>W32A16</td>
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
-        <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>f32/f16</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>4</td>
@@ -588,7 +588,7 @@
     <td class="xl69" x:str>f32</td>
     <td class="xl69" x:str>f16</td>
         <td class="xl69" x:str>N/A</td>
-        <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>f32/f16</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>5</td>
@@ -638,7 +638,7 @@
     <td class="xl69" x:str>W32A16</td>
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
-        <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>f32/f16</td>
     </tr></table>
 
 
