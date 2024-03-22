@@ -73,44 +73,44 @@
       <td>1</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7B_container">aquila2_7b</a></td>
       <td>NLP</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7B_container-in_container">flagscale<br>（megatron）</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7B_container-in_container">flagscale<br>(megatron)</a></td>
       <td>N/A</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/aquila2_7B_container-in_container">flagscale（megatron）</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/aquila2_7B_container-in_container">flagscale（megatron）</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/aquila2_7B_container-in_container">flagscale<br>(megatron)</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/aquila2_7B_container-in_container">flagscale<br>(megatron)</a></td>
         <td>N/A</td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/ascend/aquila2_7B_container-in_container">flagscale（megatron）</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/dcu/aquila2_7B_container-in_container">flagscale（megatron）</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/ascend/aquila2_7B_container-in_container">flagscale<br>(megatron)</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/dcu/aquila2_7B_container-in_container">flagscale<br>(megatron)</a></td>
     </tr>
     <tr>
       <td>2</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_34B_container">aquila2_34b</a></td>
       <td>NLP</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_34B_container-in_container">flagscale<br>（megatron）</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_34B_container-in_container">flagscale<br>(megatron)</a></td>
       <td>N/A</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/aquila2_34B_container-in_container">flagscale（megatron）</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/aquila2_34B_container-in_container">flagscale（megatron）</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/aquila2_34B_container-in_container">flagscale<br>(megatron)</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/aquila2_34B_container-in_container">flagscale<br>(megatron)</a></td>
         <td>N/A</td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/ascend/aquila2_34B_container-in_container">flagscale（megatron）</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/dcu/aquila2_34B_container-in_container">flagscale（megatron）</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/ascend/aquila2_34B_container-in_container">flagscale<br>(megatron)</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/dcu/aquila2_34B_container-in_container">flagscale<br>(megatron)</a></td>
     </tr>
     <tr>
       <td>3</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_70B_container">aquila2_70b</a></td>
       <td>NLP</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_70B_container-in_container">flagscale<br>（megatron）</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_70B_container-in_container">flagscale<br>(megatron)</a></td>
       <td>N/A</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/aquila2_70B_container-in_container">flagscale（megatron）</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/aquila2_70B_container-in_container">flagscale（megatron）</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/aquila2_70B_container-in_container">flagscale<br>(megatron)</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/aquila2_70B_container-in_container">flagscale<br>(megatron)</a></td>
         <td>N/A</td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/ascend/aquila2_70B_container-in_container">flagscale（megatron）</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/dcu/aquila2_70B_container-in_container">flagscale（megatron）</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/ascend/aquila2_70B_container-in_container">flagscale<br>(megatron)</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/dcu/aquila2_70B_container-in_container">flagscale<br>(megatron)</a></td>
     </tr>
     <tr>
     <tr>
       <td>4</td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b_finetune">aquila2_7b(finetune)</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/aquila2_7b_finetune">aquila2_7b<br>(finetune)</a></td>
       <td>NLP</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7b_finetune-flagscale">flagscale<br>（megatron）</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/aquila2_7b_finetune-flagscale">flagscale<br>(megatron)</a></td>
       <td>N/A</td>
       <td>N/A</td>
         <td>N/A</td>
@@ -326,7 +326,7 @@
       <td>22</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b">llama2_7b</a></td>
       <td>LLM</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-deepspeed">deepspeed</a><br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-megatron-deepspeed">megatron-deepspeed</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-deepspeed">deepspeed</a><br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-megatron-deepspeed">megatron-<br>deepspeed</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/pull/348">deepspeed</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/pull/343">deepspeed</a></td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/pull/354">deepspeed</a></td>
@@ -336,7 +336,7 @@
     </tr>
       <tr>
       <td>23</td>
-          <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b_finetune">llama2_7b_finetune</a></td>
+          <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b_finetune">llama2_7b<br>finetune</a></td>
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b_finetune-pytorch">pytorch</a></td>
       <td>N/A</td>
