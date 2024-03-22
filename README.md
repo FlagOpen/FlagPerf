@@ -122,7 +122,7 @@
       <td>5</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/baichuan2_13b">baichuan2<br>13b</a></td>
       <td>LLM</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/baichuan2_13b-deepspeed">deepspeed</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/baichuan2_13b-deepspeed">deep<br>speed</a></td>
       <td>N/A</td>
       <td>N/A</td>
         <td>N/A</td>
@@ -170,7 +170,7 @@
       <td>9</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/chatglm3_6b">chatglm3_6b</a></td>
       <td>LLM</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/chatglm3_6b-deepspeed">deepspeed</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/chatglm3_6b-deepspeed">deep<br>speed</a></td>
       <td>N/A</td>
       <td>N/A</td>
         <td>N/A</td>
@@ -326,11 +326,11 @@
       <td>22</td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/benchmarks/llama2_7b">llama2_7b</a></td>
       <td>LLM</td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-deepspeed">deepspeed</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-megatron-deepspeed">megatron-<br>deepspeed</a></td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/pull/348">deepspeed</a></td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/pull/343">deepspeed</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/pull/354">deepspeed</a></td>
-        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/llama2_7b-megatron-deepspeed">megatron-deepspeed</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-deepspeed">deep<br>speed</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/llama2_7b-megatron-deepspeed">megatron-<br>deep<br>speed</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/pull/348">deep<br>speed</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/pull/343">deep<br>speed</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/pull/354">deep<br>speed</a></td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/llama2_7b-megatron-deepspeed">megatron-deep<br>speed</a></td>
          <td>N/A</td>
         <td>N/A</td>
     </tr>
