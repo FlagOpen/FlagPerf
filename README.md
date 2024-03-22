@@ -186,7 +186,7 @@
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/cpm-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/cpm-pytorch">pytorch</a></td>
         <td>N/A</td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/cpm-pytorch">pytorch</a></td>
         <td>N/A</td>
         <td>N/A</td>
     </tr>
@@ -210,7 +210,7 @@
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/distilbert-pytorch">pytorch</a></td>
       <td>N/A</td>
         <td>N/A</td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/distilbert-pytorch">pytorch</a></td>
         <td>N/A</td>
         <td>N/A</td>
     </tr>
@@ -270,7 +270,7 @@
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/gpt2-pytorch">pytorch</a></td>
       <td>N/A</td>
         <td>N/A</td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/gpt2-pytorch">pytorch</a></td>
          <td>N/A</td>
         <td>N/A</td>
     </tr>
@@ -474,7 +474,7 @@
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/transformer-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/transformer-pytorch">pytorch</a></td>
         <td>N/A</td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/transformer-pytorch">pytorch</a></td>
         <td>N/A</td>
         <td>N/A</td>
     </tr>
@@ -510,7 +510,7 @@
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/wav2vec2-pytorch">pytorch</a></td>
       <td>N/A</td>
         <td>N/A</td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/wav2vec2-pytorch">pytorch</a></td>
         <td>N/A</td>
         <td>N/A</td>
     </tr>
