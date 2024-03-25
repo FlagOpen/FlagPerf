@@ -6,7 +6,7 @@
 
 算力、存储、互联角度均具有若干评测项，每个评测项包含3条结果记录：**PyTorch算子或原语评测结果**、**厂商专用工具评测结果**和**厂商公布理论值**。其中：
 
-1. **PyTorch算子或原语评测结果**：本方案仅基于PyTorch的基本算子或通信原语，实现与英伟达硬件无关的标准程序，并提供英伟达运行配置、英伟达硬件相关接口实现。**厂商需实现硬件相关接口，并提供自身运行配置**。每个评测项均会针对其所有从属配置给出调整约束，厂商可在约束内自由调整相关配置以达到更适应自身硬件特点的评测结果。**PyTorch算子或原语评测结果体现了上层用户使用时的实际情况**。厂商以**适配**的形式
+1. **PyTorch算子或原语评测结果**：本方案仅基于PyTorch的基本算子或通信原语，实现与英伟达硬件无关的标准程序，并提供英伟达运行配置、英伟达硬件相关接口实现。**厂商需实现硬件相关接口，并提供自身运行配置**。每个评测项均会针对其所有从属配置给出调整约束，厂商可在约束内自由调整相关配置以达到更适应自身硬件特点的评测结果。**PyTorch算子或原语评测结果体现了上层用户使用时的实际情况**。
 2. **厂商专用工具评测结果**：本方案引用英伟达及相关供应商-提供的二进制可执行文件或CUDA C/C++源码及Makefile，在英伟达机器上运行并获取结果。在此基础上，本方案将规定精简且信息完整的结果输出格式，并提供针对英伟达相关工具的结果处理程序（parser）。**厂商需提供自身用于评测基础规格的二进制可执行文件或C/C++级别源码及Makefile，并提供结果处理程序**，解析整理自身工具输出。**厂商专用工具评测结果体现了运行时厂商自认可合理的实际情况**。
 3. **厂商公布理论值**：本方案将引用英伟达产品相关白皮书，填写所有评测项对应的理论值。**厂商在本次评测方案中可自由选择公布或保密理论值**。
 
@@ -106,7 +106,7 @@
 FLAGPERF_PATH: "/home/FlagPerf/base"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
-FLAGPERF_LOG_LEVEL: "DEBUG"
+FLAGPERF_LOG_LEVEL: "debug"
 BENCHMARKS_OR_TOOLKITS: "TOOLKIT"
 HOSTS: ["192.168.1.2"]
 NPROC_PER_NODE: 8
@@ -128,7 +128,7 @@ CASES:
 1. FLAGPERF_PATH，为FlagPerf/base/所在绝对路径
 2. FLAGPERF_LOG_PATH，为填写日志目录相对于FlagPerf/base/的相对路径，需要具有write权限
 3. VENDOR，为厂商名称
-4. FLAGPERF_LOG_LEVEL，为日志记录等级，可选DEBUG、INFO、WARNING、ERROR等
+4. FLAGPERF_LOG_LEVEL，为日志记录等级，可选debug、info、error等
 5. BENCHMARKS_OR_TOOLKITS，填写BENCHMARK(注意没有复数s)时表示使用**PyTorch算子或原语**评测，填写TOOLKIT时表示使用**厂商专用工具**评测。
 6. HOSTS，为一个字符串数组，包含若干主机的IP。数组0位置填写的IP为MASTER
 7. NPROC_PER_NODE，表示每台主机启动的AI芯片数量
@@ -152,7 +152,9 @@ CASES:
 4. run.py在每一个主机的容器内自动启动container_main.py并自动给定所需命令行参数
 5. container_main.py根据配置，执行torchrun benchmarks/....../main.py --args或bash toolkits/....../main.sh启动评测任务
 6. 容器内评测任务结束后，run.py关闭所有运行时容器，关闭监控
-7. run.py调用各厂商提供analysis.py文件，根据日志记录解析并打印规格化结果
+7. run.py将所有主机的log文件复制到master节点
+8. run.py调用各厂商提供analysis.py文件，获取规格化结果
+9. run.py将评测指标结果打印到标准输出，将详细规格化结果以json形式保存至master节点的log目录
 
 ## 厂商适配文档
 
