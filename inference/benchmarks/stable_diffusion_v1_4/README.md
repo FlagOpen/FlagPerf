@@ -1,5 +1,6 @@
 ### 1. 推理数据集
 
+* 采用vizwiz的image captioning验证数据集，下载链接为https://vizwiz.cs.colorado.edu/VizWiz_final/images/val.zip
 
 ### 2. 模型与权重
 
