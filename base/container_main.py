@@ -114,6 +114,7 @@ if __name__ == "__main__":
         # for flagperf
         start_cmd += " main.py"
         start_cmd += " --vendor=" + config.vendor
+        start_cmd += " --node_size=" + str(config.nproc_per_node)
         
         script_log_file = os.path.join(os.path.dirname(logfile), "benchmark.log.txt")  
     elif config.bench_or_tool == "TOOLKIT":
