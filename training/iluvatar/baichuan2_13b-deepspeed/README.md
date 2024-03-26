@@ -54,5 +54,5 @@
 
 * 补充说明
 
-经排查，baichuan2原生模型未添加flashattention2的支持。flashattention2可以极大的降低显存开销，并降低互联需求。llama2，Aquila2等模型均支持此方案。此次实验只能在未支持flashattention2的情况下，同时本case内存开销较大，测试机的内存只有500G,满足不了满状态MFU测试，因此选择两机四卡提交测试。deepspeed内存释放问题issue：https://github.com/microsoft/DeepSpeed/issues/5290。
+经排查，baichuan2原生模型未添加flashattention2的支持。flashattention2可以极大的降低显存开销，并降低互联需求。llama2，Aquila2等模型均支持此方案。同时，本case内存开销较大，与每台机器的卡数成正比。测试机的内存只有500GiB，无法使用单机8卡，因此每机降为4卡，采用2机4卡近似代替单机8卡完成测试。deepspeed内存释放问题issue：https://github.com/microsoft/DeepSpeed/issues/5290。
 
