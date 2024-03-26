@@ -4,11 +4,11 @@ import transformers
 
 @dataclass
 class ModelArguments_pretrain:
-    model_name_or_path: Optional[str] = field(default="/root/llava1.5_pretrain/data/LLaVA-Pretrain/checkpoints/vicuna-13b-v1.5")
+    model_name_or_path: Optional[str] = field(default="LLaVA-Pretrain/checkpoints/vicuna-13b-v1.5")
     version: Optional[str] = field(default="plain")
     freeze_backbone: bool = field(default=False)
     tune_mm_mlp_adapter: bool = field(default=True)
-    vision_tower: Optional[str] = field(default="/root/llava1.5_pretrain/data/LLaVA-Pretrain/openai/clip-vit-large-patch14-336")
+    vision_tower: Optional[str] = field(default="LLaVA-Pretrain/openai/clip-vit-large-patch14-336")
     mm_vision_select_layer: Optional[int] = field(default=-2)
     pretrain_mm_mlp_adapter: Optional[str] = field(default=None)
     mm_projector_type: Optional[str] = field(default='mlp2x_gelu')
@@ -19,10 +19,10 @@ class ModelArguments_pretrain:
 
 @dataclass
 class DataArguments_pretrain:
-    data_path: str = field(default="/root/llava1.5_pretrain/data/LLaVA-Pretrain/blip_laion_cc_sbu_558k.json", metadata={"help": "Path to the training data."})
+    data_path: str = field(default="LLaVA-Pretrain/blip_laion_cc_sbu_558k.json", metadata={"help": "Path to the training data."})
     lazy_preprocess: bool = field(default=True)
     is_multimodal: bool = field(default=False)
-    image_folder: Optional[str] = field(default="/root/llava1.5_pretrain/data/LLaVA-Pretrain/images")
+    image_folder: Optional[str] = field(default="LLaVA-Pretrain/images")
     image_aspect_ratio: str = field(default='square')
 
 
@@ -33,24 +33,6 @@ class TrainingArguments_pretrain(transformers.TrainingArguments):
     remove_unused_columns: bool = field(default=False)
     freeze_mm_mlp_adapter: bool = field(default=False)
     mpt_attn_impl: Optional[str] = field(default="triton")
-    double_quant: bool = field(
-        default=True,
-        metadata={"help": "Compress the quantization statistics through double quantization."}
-    )
-    quant_type: str = field(
-        default="nf4",
-        metadata={"help": "Quantization data type to use. Should be one of `fp4` or `nf4`."}
-    )
-    bits: int = field(
-        default=16,
-        metadata={"help": "How many bits to use."}
-    )
-    lora_enable: bool = False
-    lora_r: int = 64
-    lora_alpha: int = 16
-    lora_dropout: float = 0.05
-    lora_weight_path: str = ""
-    lora_bias: str = "none"
     mm_projector_lr: Optional[float] = None
     group_by_modality_length: bool = field(default=False)
     output_dir: str = field(default="./checkpoints/llava-v1.5-13b-pretrain")
@@ -73,7 +55,5 @@ class TrainingArguments_pretrain(transformers.TrainingArguments):
     log_level: str = field(default="info")
     model_max_length: int = field(default=2048)
     gradient_checkpointing: bool = field(default=True)
-    include_tokens_per_second: bool = field(default=True)
     dataloader_num_workers: int = field(default=4)
-    deepspeed: str = field(default="./zero2.json")
     report_to: str = field(default="none")

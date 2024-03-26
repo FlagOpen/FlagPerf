@@ -1,7 +1,6 @@
-from dataclasses import dataclass
 from importlib import import_module
-import logging
 import pathlib
+import time
 import torch
 import transformers
 import tokenizers
@@ -16,28 +15,11 @@ from config.arguments_pretrain import DataArguments_pretrain, ModelArguments_pre
 from config.arguments_finetune import DataArguments_finetune, ModelArguments_finetune, TrainingArguments_finetune
 from utils.model_save import safe_save_model_for_hf_trainer
 from dataset.llava_dataset import make_supervised_data_module
+
+from evaluate.evaluator import eval_mmlu_llava
+
 import os
 import sys
-
-
-class MyLogHandler(logging.Handler, object):
-
-    def __init__(self):
-        logging.Handler.__init__(self)
-        self.texts = []
-
-    def emit(self, record):
-        msg = self.format(record)
-        if 'train_samples_per_second' in msg:
-            self.texts.append(msg)
-
-
-def get_metric(texts):
-    msg = texts[-1]
-    meaningful_msg = msg.split('train_samples_per_second=')[1]
-    pure_msg = meaningful_msg.split(',')[0]
-    return float(pure_msg)
-
 
 def get_argument_parser():
     parser = argparse.ArgumentParser()
@@ -64,10 +46,8 @@ def get_argument_parser():
     return parser
 
 
-def train(parser, remaining_argv=None, attn_implementation=None):
+def train(model_args, data_args, training_args, attn_implementation=None):
     global local_rank
-
-    model_args, data_args, training_args = parser.parse_args_into_dataclasses(args=remaining_argv)
     local_rank = training_args.local_rank
 
     bnb_model_from_pretrained_args = {}
@@ -149,10 +129,6 @@ def train(parser, remaining_argv=None, attn_implementation=None):
 
     data_module = make_supervised_data_module(tokenizer=tokenizer,
                                               data_args=data_args)
-    trainset = data_module[0]
-    print(len(trainset))
-    print(len(trainset[0]))
-    trainset=trainset[:512]
     trainer = LLaVATrainer(model=model,
                     tokenizer=tokenizer,
                     args=training_args,
@@ -169,71 +145,90 @@ def train(parser, remaining_argv=None, attn_implementation=None):
                                     output_dir=training_args.output_dir)
 
 if __name__ == "__main__":
-
+    # torchrun --nproc_per_node=8 --nnodes=1 --node_rank=0 run_pretraining.py --nproc_per_node 8 --nnodes 1 --node_rank 0 --deepspeed ./zero2.json
     arg_parser = get_argument_parser()
     args, remaining_argv = arg_parser.parse_known_args()
 
     sys.path.append(os.path.dirname(args.flagperf_config))
     config_file = os.path.basename(args.flagperf_config).split('.')[0]
-
     module = import_module(config_file)
-
-    seqlength = getattr(module, 'seqlength')
-    batchsize = getattr(module, 'batchsize')
-    datafilename = getattr(module, 'datafilename')
     theoryflops = getattr(module, 'theoryflops')
-    epochs = getattr(module, 'epochs')
+
+    # stage-1 pretrain
+    # args.deepspeed = "ds_config_pretrain.json"
+    # parser_pretrain = transformers.HfArgumentParser(
+    #     (ModelArguments_pretrain, DataArguments_pretrain, TrainingArguments_pretrain))
+    # model_args, data_args, training_args = parser_pretrain.parse_args_into_dataclasses(args=remaining_argv)
+    # model_args.model_name_or_path = getattr(module, 'model_name_or_path')
+    # model_args.vision_tower = getattr(module, 'vision_tower')
+    # data_args.data_path = getattr(module, 'pretrain_data_path')
+    # data_args.image_folder = getattr(module, 'pretrain_image_folder')
     
-    logger = logging.getLogger("hf_trainer")
-    handler_pretrain = MyLogHandler()
-    logger.addHandler(handler_pretrain)
+    # start_time_pretrain = time.time()
+    # train(model_args, data_args, training_args, attn_implementation="flash_attention_2")
+    # end_time_pretrain = time.time()
 
-    parser_pretrain = transformers.HfArgumentParser(
-        (ModelArguments_pretrain, DataArguments_pretrain, TrainingArguments_pretrain))
-    # train(parser_pretrain, attn_implementation="flash_attention_2")
-    train(parser_pretrain, remaining_argv, attn_implementation="flash_attention_2")
+    # pretrain_time = end_time_pretrain - start_time_pretrain
 
-    # torchrun --nproc_per_node=8 --nnodes=1 --node_rank=0 run_pretraining.py --nproc_per_node 8 --nnodes 1 --node_rank 0 --deepspeed ./zero2.json
+    # stage-2: finetune
+    # finetune需要pretrain阶段生成的权重来进行指令微调->指定第一阶段生成的权重到特定位置(40mb左右的权重)
+    args.deepspeed = "ds_config_finetune.json"
+    parser_finetune = transformers.HfArgumentParser(
+        (ModelArguments_finetune, DataArguments_finetune, TrainingArguments_finetune))
+    model_args, data_args, training_args = parser_finetune.parse_args_into_dataclasses(args=remaining_argv)
+    model_args.model_name_or_path = getattr(module, 'model_name_or_path')
+    model_args.vision_tower = getattr(module, 'vision_tower')
+    model_args.pretrain_mm_mlp_adapter = getattr(module, 'pretrain_mm_mlp_adapter')
+    data_args.data_path = getattr(module, 'finetune_data_path')
+    data_args.image_folder = getattr(module, 'finetune_image_folder')
+    training_args.output_dir = getattr(module, 'output_dir_finetune')
+    start_time_finetune = time.time()
+    train(model_args, data_args, training_args, attn_implementation="flash_attention_2")
+    end_time_finetune = time.time()
+    finetune_time = end_time_finetune - start_time_finetune
 
-    # # TODO stage-2: finetune
-    # # finetune需要pretrain阶段生成的权重来进行指令微调->指定第一阶段生成的权重到特定位置(40mb左右的权重)
-    # parser_finetune = transformers.HfArgumentParser(
-    #     (ModelArguments_finetune, DataArguments_finetune, TrainingArguments_finetune))
-    # train(parser_finetune, remaining_argv, attn_implementation="flash_attention_2")
+    # evaluate model
+    mmmu_model_path = getattr(module, 'output_dir_finetune')
+    mmmu_data_path = getattr(module, 'mmmu_data_path')
+    mmmu_config_path = getattr(module, 'mmmu_config_path')
+    mmmu_output_path = getattr(module, 'mmmu_output_path')
+    mmmu = eval_mmlu_llava(mmmu_model_path, mmmu_data_path, mmmu_config_path, mmmu_output_path)
 
     if local_rank == 0:
-        tokens = seqlength * batchsize
-        perf = get_metric(handler_pretrain.texts)
-        whole_tps = tokens * perf
-        chip_tps = whole_tps / args.nproc_per_node * args.nnodes
-        print("Pretrain stage")
-        print("System tokens per second: ", whole_tps)
-        print("Tokens/p/s: ", chip_tps)
+        # print(pretrain_time)
+        # tokens_pretrain = 606.9 # awk '{ total += $1; count++ } END { print total/count }' shape.txt
+        # whole_tps_pretrain = (tokens_pretrain * 558128) / pretrain_time
+        # chip_tps_pretrain = whole_tps_pretrain / args.nproc_per_node * args.nnodes
+        # print("Pretrain stage")
+        # print("System tokens per second: ", whole_tps_pretrain)
+        # print("Tokens/p/s: ", chip_tps_pretrain)
+        # TFLOPS = int(theoryflops/1000000000000)
+        # print("Theory TFLOPS: ", TFLOPS)
+        # print("Tokens/TFLOPS: ", chip_tps_pretrain / TFLOPS)
+        # print("MFU: ", chip_tps_pretrain * 13000000000.0 * 2 / theoryflops)
+
+
+        print(finetune_time)
+        tokens_finetune = 1150
+        whole_tps_finetune = (tokens_finetune * 665000) / finetune_time
+        chip_tps_finetune = whole_tps_finetune / args.nproc_per_node * args.nnodes
+        print("Finetune stage")
+        print("System tokens per second: ", whole_tps_finetune)
+        print("Tokens/p/s: ", chip_tps_finetune)
         TFLOPS = int(theoryflops/1000000000000)
         print("Theory TFLOPS: ", TFLOPS)
-        print("Tokens/TFLOPS: ", chip_tps / TFLOPS)
-        print("MFU: ", chip_tps * 13000000000.0 * 6 / theoryflops)
+        print("Tokens/TFLOPS: ", chip_tps_finetune / TFLOPS)
+        print("MFU: ", chip_tps_finetune * 13000000000.0 * 6 / theoryflops)
 
-        # print("finetune stage")
-        # print("System tokens per second: ", whole_tps)
-        # print("Tokens/p/s: ", chip_tps)
-        # TFLOPS = int(theoryflops/1000000000000)
-        # print("Theory TFLOPS: ", TFLOPS)
-        # print("Tokens/TFLOPS: ", chip_tps / TFLOPS)
-        # print("MFU: ", chip_tps * 13000000000.0 * 6 / theoryflops)
-
-        # print("two stage")
-        # print("System tokens per second: ", whole_tps)
-        # print("Tokens/p/s: ", chip_tps)
-        # TFLOPS = int(theoryflops/1000000000000)
-        # print("Theory TFLOPS: ", TFLOPS)
-        # print("Tokens/TFLOPS: ", chip_tps / TFLOPS)
-        # print("MFU: ", chip_tps * 13000000000.0 * 6 / theoryflops)
+        # total_time = pretrain_time + finetune_time
+        # mfu_average = (tokens_pretrain * 558128 * 13000000000.0 * 2 + 
+        #                tokens_finetune * 665000 * 13000000000.0 * 6) / total_time / (args.nproc_per_node * args.nnodes) / TFLOPS
+        # print("two-stage average")
+        # print("MFU: ", mfu_average)
+        # print("Actual computing power: ", mfu_average * TFLOPS)
+        
+        # print("MMMU: ", mmmu)
 
 
-    # TODO 通过trainer TrainingArguments等来指定pretrain和finetune阶段不同的参数
-    #      MFU的计算：stage1 MFU stage2 MFU all:MFU 计算三个指标
-    # TODO eval: mmmu
-    # eval_mmlu_llava()
 
 

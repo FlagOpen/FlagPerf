@@ -7,6 +7,10 @@
         "hysteresis": 2,
         "min_loss_scale": 1
     },
+    "logging": {
+        "log_level": "INFO"
+    },
+    
     "bf16": {
         "enabled": "auto"
     },
