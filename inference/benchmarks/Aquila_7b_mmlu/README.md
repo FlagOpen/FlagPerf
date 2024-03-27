@@ -40,7 +40,7 @@ We use Validation Images:
    - 依赖软件版本：
      - cuda: 11.8
     
-
+-
 - 推理工具包
    - None
 
