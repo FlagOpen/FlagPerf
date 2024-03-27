@@ -153,6 +153,7 @@ CASES = {
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
     # metax cases
+    # "aquila2_7b:flagscale:C500:1:8:1": "/raid/dataset/Aquila2_7b_data"
     # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
