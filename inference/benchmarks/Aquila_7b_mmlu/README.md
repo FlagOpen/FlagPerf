@@ -39,6 +39,10 @@ We use Validation Images:
    - 训练框架版本：pytorch-1.13.0a0+937e930
    - 依赖软件版本：
      - cuda: 11.8
+    
+
+- 推理工具包
+   - None
 
 ####  2.2 沐曦集成电路 C500 
 
