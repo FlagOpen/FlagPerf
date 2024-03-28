@@ -87,18 +87,6 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
                 images,
                 image_sizes
             )
-        # print(inputs_embeds.shape)
-        tensor_shape = inputs_embeds.shape
-
-        # 你想要提取并写入的维度是第二个维度（Python索引从0开始，所以这里是索引1）
-        dimension_value = tensor_shape[1]
-
-        # 将这个值转换为字符串
-        dimension_str = str(dimension_value)
-
-        # 打开文件并以追加模式写入这个维度的值
-        with open('shape2.txt', 'a') as file:
-            file.write(dimension_str + '\n')  # 追加维度值并换行
 
         return super().forward(
             input_ids=input_ids,
