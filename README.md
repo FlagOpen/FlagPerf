@@ -124,7 +124,7 @@
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/baichuan2_13b-deepspeed">deep<br>speed</a></td>
       <td>N/A</td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/baichuan2_13b-deepspeed">deep<br>speed</a></td>
         <td>N/A</td>
         <td>N/A</td>
         <td>N/A</td>
