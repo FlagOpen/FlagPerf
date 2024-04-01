@@ -2,8 +2,17 @@ import os
 
 import torch
 from torch.types import Device
-
+import torch.distributed as dist
 from driver import dist_pytorch
+
+def reduce_tensor(tensor):
+    rt = tensor.clone()
+    if dist.is_available() and dist.is_initialized():
+        dist.all_reduce(rt, op=dist.ReduceOp.SUM)
+        rt /= dist.get_world_size()
+    else:
+        return tensor
+    return rt
 
 class Evaluator:
     """Evaluator"""
@@ -40,4 +49,5 @@ class Evaluator:
 
                 total_output += output
         acc = total_output / num_examples
+        acc = reduce_tensor(acc)
         return acc.item()
