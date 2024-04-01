@@ -47,13 +47,13 @@
 - [27 Sep 2023]发布v1.0版本，支持20余个经典模型，50余个训练样例，支持多家芯片厂商的训练或推理评测 [#v1.0](https://github.com/FlagOpen/FlagPerf/releases/tag/1.0)
 - [3 Aug 2023]支持推理框架, 支持常见基础模型的离线批推理评测 [#136](https://github.com/FlagOpen/FlagPerf/pull/136)
 
-  <details><summary>Full News</summary>
+<details><summary>Full News</summary>
 
 - [8 Feb 2023]支持Tensorflow框架[#7](https://github.com/FlagOpen/FlagPerf/pull/7)
 - [6 Feb 2023]昆仑芯作为合作厂商进入共建生态 [#6](https://github.com/FlagOpen/FlagPerf/pull/6)
 - [Dec 2022]天数智芯、百度PaddlePaddle作为最早一批厂商参与初版共建开发
 
-  </details>
+</details>
 
 ## 支持列表
 
@@ -61,10 +61,9 @@
 
 <table border="1" class="dataframe">
   <thead>
-    <tr style="text-align: left;">
+    <tr>
       <th>编号</th>
         <th>规格名称</th>
-        <th>规格中文名称</th>
       <th>规格类型</th>
       <th>英伟达</th>
     </tr>
@@ -72,11 +71,9 @@
   <tbody>
   <tr>
       <td>1</td>
-        <td>computation-FP32</td>
         <td>FP32算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/nvidia">厂商专用工具</a></td>
-
     </tr>
   </tbody>
   </table>  
