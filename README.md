@@ -849,8 +849,7 @@ sudo python inference/run.py
 
 ## 参与共建FlagPerf
 
-
-> 开发者教程：更多操作教程见 [docs-zh](./docs/PR/) 
+如需参与共建FlagPerf基础规格、训练、推理评测，请参考详细文档，依次位于[基础规格文档目录](https://github.com/shh2000/FlagPerf/tree/ud0401/docs/base)、[训练文档目录](https://github.com/shh2000/FlagPerf/tree/ud0401/docs/training)、[推理文档目录](https://github.com/shh2000/FlagPerf/tree/ud0401/docs/inference)。
 
 为了更直观的展示厂商参与共建的实际工作量，下面给出6个已经合并进FlagPerf，面向不同特征厂商的Pull Request。
 
