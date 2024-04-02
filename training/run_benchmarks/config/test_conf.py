@@ -174,6 +174,7 @@ CASES = {
     # dcu cases
     # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
     # "bigtransfer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "longformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/longformer_train/",
     
 }
 
