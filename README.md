@@ -39,17 +39,44 @@
 
 ## News 
 
+- [1 Apr 2024]支持基础规格评测板块. [#496](https://github.com/FlagOpen/FlagPerf/pull/496)
 - [15 Jan 2024]支持megatron-Llama 70B预训练. [#389](https://github.com/FlagOpen/FlagPerf/pull/389)
 - [31 Oct 2023]支持Torch-Aquila 7B预训练，[#299](https://github.com/FlagOpen/FlagPerf/pull/299)
 - [27 Oct 2023]支持Torch-llama2 7B预训练，[#289](https://github.com/FlagOpen/FlagPerf/pull/289)
 - [7 Oct 2023]支持Paddle-GPT3 预训练，[#233](https://github.com/FlagOpen/FlagPerf/pull/233)
 - [27 Sep 2023]发布v1.0版本，支持20余个经典模型，50余个训练样例，支持多家芯片厂商的训练或推理评测 [#v1.0](https://github.com/FlagOpen/FlagPerf/releases/tag/1.0)
 - [3 Aug 2023]支持推理框架, 支持常见基础模型的离线批推理评测 [#136](https://github.com/FlagOpen/FlagPerf/pull/136)
+
+<details><summary>Full News</summary>
+
 - [8 Feb 2023]支持Tensorflow框架[#7](https://github.com/FlagOpen/FlagPerf/pull/7)
 - [6 Feb 2023]昆仑芯作为合作厂商进入共建生态 [#6](https://github.com/FlagOpen/FlagPerf/pull/6)
 - [Dec 2022]天数智芯、百度PaddlePaddle作为最早一批厂商参与初版共建开发
 
+</details>
+
 ## 支持列表
+
+基础规格列表：
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th>编号</th>
+        <th>规格名称</th>
+      <th>规格类型</th>
+      <th>英伟达</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+      <td>1</td>
+        <td>FP32算力</td>
+      <td>算力</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/nvidia">厂商专用工具</a></td>
+    </tr>
+  </tbody>
+  </table>  
 
 训练列表（**请在表格下方向右滑动查看更多厂商**）：
 
@@ -77,7 +104,7 @@
       <td>N/A</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/aquila2_7B_container-in_container">flagscale<br>megatron</a></td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/mthreads/aquila2_7B_container-in_container">flagscale<br>megatron</a></td>
-        <td>N/A</td>
+        <td><a href="https://github.com/shh2000/FlagPerf/tree/ud0401/training/metax/aquila2_7b-flagscale">flagscale<br>megatron</a></td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/ascend/aquila2_7B_container-in_container">flagscale<br>megatron</a></td>
         <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/dcu/aquila2_7B_container-in_container">flagscale<br>megatron</a></td>
     </tr>
@@ -124,7 +151,7 @@
       <td>LLM</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/baichuan2_13b-deepspeed">deep<br>speed</a></td>
       <td>N/A</td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/baichuan2_13b-deepspeed">deep<br>speed</a></td>
         <td>N/A</td>
         <td>N/A</td>
         <td>N/A</td>
@@ -162,7 +189,7 @@
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/bigtransfer-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/bigtransfer-pytorch">pytorch</a></td>
         <td>N/A</td>
-        <td>N/A</td>
+        <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/bigtransfer-pytorch">pytorch</a></td>
         <td>N/A</td>
         <td>N/A</td>
     </tr>
@@ -448,7 +475,7 @@
       <td>NLP</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/nvidia/t5_small-pytorch">pytorch</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/kunlunxin/t5_small-pytorch">pytorch</a></td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/iluvatar/t5_small-pytorch">pytorch</td>
         <td>N/A</td>
          <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/training/metax/t5_small-pytorch">pytorch</a></td>
          <td>N/A</td>
@@ -618,7 +645,7 @@
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
-        <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>f32/f16</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>8</td>
@@ -628,7 +655,7 @@
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
-        <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>f16</td>
     </tr>
 <tr height="16.80" style='height:16.80pt;'>
    <td class="xl65" x:str>9</td>
@@ -653,7 +680,33 @@
    3. 确保各服务器间root帐号的ssh信任关系和sudo免密
    4. 确保monitor相关工具已安装:包括cpu(sysstat)、内存(free)、功耗(ipmitool)、系统信息(加速卡状态查看命令)。例如ubuntu系统中，使用apt install [sysstat/ipmitool]安装
 
-### 训练启动说明
+## 基础规格评测启动说明
+
+1. **下载FlagPerf并部署**
+
+```bash
+# 先各服务器间root帐号的ssh信任关系和sudo免密配置
+git clone https://github.com/FlagOpen/FlagPerf.git
+cd FlagPerf/base/
+```
+
+2. **修改机器配置文件**
+
+```bash
+cd FlagPerf/base/
+vim configs/host.yaml
+```
+
+具体项修改方式及原则见[基础规格文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/base/base-case-doc.md)中的**运行时流程**章节
+
+3. **启动测试**
+
+```bash
+cd FlagPerf/base/
+sudo python3 run.py
+```
+
+### 训练评测启动说明
 
 1. **下载FlagPerf并部署**
 
@@ -727,7 +780,7 @@ nvidia_monitor.log  rank1.out.log    rank4.out.log  rank7.out.log
 [PerfLog] {"event": "FINISHED", "value": {"e2e_time": 1661.6114165782928, "training_sequences_per_second": 579.0933420700227, "converged": true, "final_loss": 3.066718101501465, "final_mlm_accuracy": 0.920166015625, "raw_train_time": 1501.713, "init_time": 148.937}, "metadata": {"file": "/workspace/flagperf/training/benchmarks/cpm/pytorch/run_pretraining.py", "lineno": 158, "time_ms": 1669034171646, "rank": 0}}
 ```
 
-### 推理启动说明
+### 推理评测启动说明
 
 1. **下载FlagPerf并部署**
 
@@ -792,12 +845,11 @@ CASES={} # 本次运行的测例，按照对应模型readme准备好数据，修
 sudo python inference/run.py
 ```
 
-- 更多训练/推理说明见[训练文档](https://github.com/FlagOpen/FlagPerf/blob/main/training/README.md)和[推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/inference/inference-case-doc.md)
+- 更多基础规格/训练/推理说明见[基础规格文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/base/base-case-doc.md)，[训练文档](https://github.com/FlagOpen/FlagPerf/blob/main/training/README.md)和[推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/inference/inference-case-doc.md)
 
 ## 参与共建FlagPerf
 
-
-> 开发者教程：更多操作教程见 [docs-zh](./docs/PR/) 
+如需参与共建FlagPerf基础规格、训练、推理评测，请参考详细文档，依次位于[基础规格文档目录](https://github.com/shh2000/FlagPerf/tree/ud0401/docs/base)、[训练文档目录](https://github.com/shh2000/FlagPerf/tree/ud0401/docs/training)、[推理文档目录](https://github.com/shh2000/FlagPerf/tree/ud0401/docs/inference)。
 
 为了更直观的展示厂商参与共建的实际工作量，下面给出6个已经合并进FlagPerf，面向不同特征厂商的Pull Request。
 
