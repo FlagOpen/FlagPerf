@@ -4,7 +4,7 @@ import transformers
 
 @dataclass
 class ModelArguments_pretrain:
-    model_name_or_path: Optional[str] = field(default="LLaVA-Pretrain/checkpoints/vicuna-13b-v1.5")
+    model_name_or_path: Optional[str] = field(default="LLaVA-Pretrain/checkpoints/vicuna-7b-v1.5")
     version: Optional[str] = field(default="plain")
     freeze_backbone: bool = field(default=False)
     tune_mm_mlp_adapter: bool = field(default=True)
@@ -35,7 +35,7 @@ class TrainingArguments_pretrain(transformers.TrainingArguments):
     mpt_attn_impl: Optional[str] = field(default="triton")
     mm_projector_lr: Optional[float] = None
     group_by_modality_length: bool = field(default=False)
-    output_dir: str = field(default="./checkpoints/llava-v1.5-13b-pretrain")
+    output_dir: str = field(default="./checkpoints/llava-v1.5-7b-pretrain")
     num_train_epochs: int = field(default=1)
     per_device_train_batch_size: int = field(default=32)
     per_device_eval_batch_size: int = field(default=4)
@@ -57,3 +57,22 @@ class TrainingArguments_pretrain(transformers.TrainingArguments):
     gradient_checkpointing: bool = field(default=True)
     dataloader_num_workers: int = field(default=4)
     report_to: str = field(default="none")
+    deepspeed: str = field(default="config/ds_config_pretrain.json")
+    double_quant: bool = field(
+        default=True,
+        metadata={"help": "Compress the quantization statistics through double quantization."}
+    )
+    quant_type: str = field(
+        default="nf4",
+        metadata={"help": "Quantization data type to use. Should be one of `fp4` or `nf4`."}
+    )
+    bits: int = field(
+        default=16,
+        metadata={"help": "How many bits to use."}
+    )
+    lora_enable: bool = False
+    lora_r: int = 64
+    lora_alpha: int = 16
+    lora_dropout: float = 0.05
+    lora_weight_path: str = ""
+    lora_bias: str = "none"

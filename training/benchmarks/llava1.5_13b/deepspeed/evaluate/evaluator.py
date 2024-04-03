@@ -1,3 +1,5 @@
+import os
+import sys
 import torch
 import random
 import json
@@ -5,6 +7,9 @@ import numpy as np
 from tqdm import tqdm
 
 from datasets import load_dataset, concatenate_datasets
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 from model.builder import load_pretrained_model
 from utils.mm_utils import get_model_name_from_path
 
@@ -123,8 +128,8 @@ def main_eval(output_path, answer_path):
     # print(printable_results['Overall']['acc'])
     return printable_results['Overall']['acc']
 
-def eval_mmlu_llava(model_path, data_path, config_path, output_path, answer_path):
-
+def eval_mmmu_llava(model_path, data_path, config_path, output_path, answer_path):
+    torch.cuda.empty_cache()
     device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
     set_seed(42)
 
@@ -168,5 +173,8 @@ def eval_mmlu_llava(model_path, data_path, config_path, output_path, answer_path
     out_samples = run_model(samples, model, call_model_engine, tokenizer, processor)
     save_json(output_path, out_samples)
     mmmu = main_eval(output_path, answer_path)
+    print("MMMU :", mmmu)
 
-    return mmmu
+if __name__ == "__main__":
+    _, model_path, data_path, config_path, output_path, answer_path = sys.argv
+    eval_mmmu_llava(model_path, data_path, config_path, output_path, answer_path)

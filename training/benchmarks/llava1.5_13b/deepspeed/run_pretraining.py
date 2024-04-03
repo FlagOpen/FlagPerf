@@ -1,5 +1,6 @@
 from importlib import import_module
 import pathlib
+import subprocess
 import time
 import torch
 import transformers
@@ -16,7 +17,6 @@ from config.arguments_finetune import DataArguments_finetune, ModelArguments_fin
 from utils.model_save import safe_save_model_for_hf_trainer
 from dataset.llava_dataset import make_supervised_data_module
 
-from evaluate.evaluator import eval_mmlu_llava
 
 import os
 import sys
@@ -145,7 +145,6 @@ def train(model_args, data_args, training_args, attn_implementation=None):
                                     output_dir=training_args.output_dir)
 
 if __name__ == "__main__":
-
     arg_parser = get_argument_parser()
     args, remaining_argv = arg_parser.parse_known_args()
 
@@ -155,7 +154,6 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
 
     # stage-1 pretrain
-    args.deepspeed = "ds_config_pretrain.json"
     parser_pretrain = transformers.HfArgumentParser(
         (ModelArguments_pretrain, DataArguments_pretrain, TrainingArguments_pretrain))
     model_args, data_args, training_args = parser_pretrain.parse_args_into_dataclasses(args=remaining_argv)
@@ -164,17 +162,16 @@ if __name__ == "__main__":
     data_args.data_path = os.path.join(args.data_dir, getattr(module, 'pretrain_data_path'))
     data_args.image_folder = os.path.join(args.data_dir, getattr(module, 'pretrain_image_folder'))
     training_args.output_dir = os.path.join(args.data_dir, getattr(module, 'output_dir_pretrain'))
+    training_args.model_max_length = os.path.join(args.data_dir, getattr(module, 'model_max_length'))
+    training_args.per_device_train_batch_size = os.path.join(args.data_dir, getattr(module, 'pretrain_per_device_train_batch_size'))
+    training_args.gradient_accumulation_steps = os.path.join(args.data_dir, getattr(module, 'pretrain_gradient_accumulation_steps'))
     
     start_time_pretrain = time.time()
     train(model_args, data_args, training_args, attn_implementation="flash_attention_2")
     end_time_pretrain = time.time()
-
     pretrain_time = end_time_pretrain - start_time_pretrain
 
-    time.sleep(30) # waiting for saving model
-
     # stage-2: finetune
-    args.deepspeed = "ds_config_finetune.json"
     parser_finetune = transformers.HfArgumentParser(
         (ModelArguments_finetune, DataArguments_finetune, TrainingArguments_finetune))
     model_args, data_args, training_args = parser_finetune.parse_args_into_dataclasses(args=remaining_argv)
@@ -184,17 +181,31 @@ if __name__ == "__main__":
     data_args.data_path = os.path.join(args.data_dir, getattr(module, 'finetune_data_path'))
     data_args.image_folder = os.path.join(args.data_dir, getattr(module, 'finetune_image_folder'))
     training_args.output_dir = os.path.join(args.data_dir, getattr(module, 'output_dir_finetune'))
+    training_args.model_max_length = os.path.join(args.data_dir, getattr(module, 'model_max_length'))
+    training_args.per_device_train_batch_size = os.path.join(args.data_dir, getattr(module, 'finetune_per_device_train_batch_size'))
+    training_args.gradient_accumulation_steps = os.path.join(args.data_dir, getattr(module, 'finetune_gradient_accumulation_steps'))
+
     start_time_finetune = time.time()
     train(model_args, data_args, training_args, attn_implementation="flash_attention_2")
     end_time_finetune = time.time()
     finetune_time = end_time_finetune - start_time_finetune
-
-    time.sleep(600) # waiting for saving model
-    
+        
     if local_rank == 0:
-        print(pretrain_time)
-        tokens_pretrain = 606.9 # awk '{ total += $1; count++ } END { print total/count }' shape.txt
-        whole_tps_pretrain = (tokens_pretrain * 558128) / pretrain_time
+        # evaluate model in rank0
+        mmmu_model_path = os.path.join(args.data_dir, getattr(module, 'output_dir_finetune'))
+        mmmu_data_path = os.path.join(args.data_dir, getattr(module, 'mmmu_data_path'))
+        mmmu_config_path = "./config/llava1.5.yaml"
+        mmmu_output_path = "./config/llava1.5_13b.json"
+        mmmu_answer_path = "./config/answer_dict_val.json"
+        torch.cuda.empty_cache()
+        # to solve problem "DeepSpeed Zero-3 is not compatible with `low_cpu_mem_usage=True` or with passing a `device_map`."
+        subprocess.run([
+            "python3", "evaluate/evaluator.py", mmmu_model_path, mmmu_data_path, mmmu_config_path, 
+            mmmu_output_path, mmmu_answer_path
+        ])
+
+        tokens_pretrain = 606.9
+        whole_tps_pretrain = (tokens_pretrain * 558128) / pretrain_time # 714
         chip_tps_pretrain = whole_tps_pretrain / args.nproc_per_node * args.nnodes
         print("Pretrain stage")
         print("System tokens per second: ", whole_tps_pretrain)
@@ -204,7 +215,6 @@ if __name__ == "__main__":
         print("Tokens/TFLOPS: ", chip_tps_pretrain / TFLOPS)
         print("MFU: ", chip_tps_pretrain * 13000000000.0 * 2 / theoryflops)
 
-        print(finetune_time)
         tokens_finetune = 1283.66
         whole_tps_finetune = (tokens_finetune * 665344) / finetune_time
         chip_tps_finetune = whole_tps_finetune / args.nproc_per_node * args.nnodes
@@ -222,13 +232,4 @@ if __name__ == "__main__":
         print("two-stage average")
         print("MFU: ", mfu_average)
         print("Actual computing power: ", mfu_average * TFLOPS)
-    
-        # evaluate model
-        mmmu_model_path = os.path.join(args.data_dir, getattr(module, 'output_dir_finetune'))
-        mmmu_data_path = os.path.join(args.data_dir, getattr(module, 'mmmu_data_path'))
-        mmmu_config_path = "./config/llava1.5.yaml"
-        mmmu_output_path = "./config/llava1.5_13b.json"
-        mmmu_answer_path = "./config/answer_dict_val.json"
-        mmmu = eval_mmlu_llava(mmmu_model_path, mmmu_data_path, mmmu_config_path, mmmu_output_path, mmmu_answer_path)
-        print("MMMU ", mmmu)
 
