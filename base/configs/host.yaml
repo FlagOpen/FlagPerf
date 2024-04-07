@@ -24,3 +24,4 @@ CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
     "computation-FP32": "pytorch_2.3"
+   #"computation-FP16": "pytorch_2.3"
