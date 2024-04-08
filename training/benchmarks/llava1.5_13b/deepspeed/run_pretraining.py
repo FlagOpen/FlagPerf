@@ -147,13 +147,15 @@ def train(model_args, data_args, training_args, attn_implementation=None):
 if __name__ == "__main__":
     arg_parser = get_argument_parser()
     args, remaining_argv = arg_parser.parse_known_args()
-
+    script_path = os.path.abspath(__file__)
+    script_dir = os.path.dirname(script_path)
     sys.path.append(os.path.dirname(args.flagperf_config))
     config_file = os.path.basename(args.flagperf_config).split('.')[0]
     module = import_module(config_file)
     theoryflops = getattr(module, 'theoryflops')
 
     # stage-1 pretrain
+    TrainingArguments_pretrain.deepspeed = os.path.join(script_dir, "config/ds_config_pretrain.json")
     parser_pretrain = transformers.HfArgumentParser(
         (ModelArguments_pretrain, DataArguments_pretrain, TrainingArguments_pretrain))
     model_args, data_args, training_args = parser_pretrain.parse_args_into_dataclasses(args=remaining_argv)
@@ -162,16 +164,25 @@ if __name__ == "__main__":
     data_args.data_path = os.path.join(args.data_dir, getattr(module, 'pretrain_data_path'))
     data_args.image_folder = os.path.join(args.data_dir, getattr(module, 'pretrain_image_folder'))
     training_args.output_dir = os.path.join(args.data_dir, getattr(module, 'output_dir_pretrain'))
-    training_args.model_max_length = os.path.join(args.data_dir, getattr(module, 'model_max_length'))
-    training_args.per_device_train_batch_size = os.path.join(args.data_dir, getattr(module, 'pretrain_per_device_train_batch_size'))
-    training_args.gradient_accumulation_steps = os.path.join(args.data_dir, getattr(module, 'pretrain_gradient_accumulation_steps'))
+    training_args.model_max_length = getattr(module, 'model_max_length')
+    training_args.per_device_train_batch_size = getattr(module, 'pretrain_per_device_train_batch_size')
+    training_args.gradient_accumulation_steps = getattr(module, 'pretrain_gradient_accumulation_steps')
     
     start_time_pretrain = time.time()
     train(model_args, data_args, training_args, attn_implementation="flash_attention_2")
     end_time_pretrain = time.time()
+    with open('tokens.txt', 'r') as file:
+        lines = file.readlines()
+    numbers = [int(line.strip()) for line in lines if line.strip()]
+    if numbers:
+        tokens_pretrain = sum(numbers) / len(numbers)    
     pretrain_time = end_time_pretrain - start_time_pretrain
+    if local_rank == 0:
+        with open("tokens.txt", "w") as f:
+            pass
 
     # stage-2: finetune
+    TrainingArguments_finetune.deepspeed = os.path.join(script_dir, "config/ds_config_finetune.json")
     parser_finetune = transformers.HfArgumentParser(
         (ModelArguments_finetune, DataArguments_finetune, TrainingArguments_finetune))
     model_args, data_args, training_args = parser_finetune.parse_args_into_dataclasses(args=remaining_argv)
@@ -181,30 +192,33 @@ if __name__ == "__main__":
     data_args.data_path = os.path.join(args.data_dir, getattr(module, 'finetune_data_path'))
     data_args.image_folder = os.path.join(args.data_dir, getattr(module, 'finetune_image_folder'))
     training_args.output_dir = os.path.join(args.data_dir, getattr(module, 'output_dir_finetune'))
-    training_args.model_max_length = os.path.join(args.data_dir, getattr(module, 'model_max_length'))
-    training_args.per_device_train_batch_size = os.path.join(args.data_dir, getattr(module, 'finetune_per_device_train_batch_size'))
-    training_args.gradient_accumulation_steps = os.path.join(args.data_dir, getattr(module, 'finetune_gradient_accumulation_steps'))
+    training_args.model_max_length = getattr(module, 'model_max_length')
+    training_args.per_device_train_batch_size = getattr(module, 'finetune_per_device_train_batch_size')
+    training_args.gradient_accumulation_steps = getattr(module, 'finetune_gradient_accumulation_steps')
 
     start_time_finetune = time.time()
     train(model_args, data_args, training_args, attn_implementation="flash_attention_2")
     end_time_finetune = time.time()
+    with open('tokens.txt', 'r') as file:
+        lines = file.readlines()
+    numbers = [int(line.strip()) for line in lines if line.strip()]
+    if numbers:
+        tokens_finetune = sum(numbers) / len(numbers)
     finetune_time = end_time_finetune - start_time_finetune
         
     if local_rank == 0:
         # evaluate model in rank0
         mmmu_model_path = os.path.join(args.data_dir, getattr(module, 'output_dir_finetune'))
         mmmu_data_path = os.path.join(args.data_dir, getattr(module, 'mmmu_data_path'))
-        mmmu_config_path = "./config/llava1.5.yaml"
-        mmmu_output_path = "./config/llava1.5_13b.json"
-        mmmu_answer_path = "./config/answer_dict_val.json"
+        mmmu_config_path = os.path.join(script_dir, "config/llava1.5.yaml")
+        mmmu_output_path = os.path.join(script_dir, "config/llava1.5_13b.yaml")
+        mmmu_answer_path = os.path.join(script_dir, "config/answer_dict_val.yaml")
         torch.cuda.empty_cache()
         # to solve problem "DeepSpeed Zero-3 is not compatible with `low_cpu_mem_usage=True` or with passing a `device_map`."
         subprocess.run([
             "python3", "evaluate/evaluator.py", mmmu_model_path, mmmu_data_path, mmmu_config_path, 
             mmmu_output_path, mmmu_answer_path
         ])
-
-        tokens_pretrain = 606.9
         whole_tps_pretrain = (tokens_pretrain * 558128) / pretrain_time # 714
         chip_tps_pretrain = whole_tps_pretrain / args.nproc_per_node * args.nnodes
         print("Pretrain stage")
@@ -214,8 +228,6 @@ if __name__ == "__main__":
         print("Theory TFLOPS: ", TFLOPS)
         print("Tokens/TFLOPS: ", chip_tps_pretrain / TFLOPS)
         print("MFU: ", chip_tps_pretrain * 13000000000.0 * 2 / theoryflops)
-
-        tokens_finetune = 1283.66
         whole_tps_finetune = (tokens_finetune * 665344) / finetune_time
         chip_tps_finetune = whole_tps_finetune / args.nproc_per_node * args.nnodes
         print("Finetune stage")
