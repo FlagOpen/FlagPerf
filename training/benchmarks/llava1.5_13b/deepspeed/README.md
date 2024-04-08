@@ -1,6 +1,6 @@
 ## 模型信息
 
-LLaVA is an open-source chatbot trained by fine-tuning LLaMA/Vicuna on GPT-generated multimodal instruction-following data. It is an auto-regressive language model, based on the transformer architecture.
+LLaVA is an open-source chatbot trained by fine-tuning LLaMA/Vicuna on GPT-generated multimodal instruction-following data. It is an auto-regressive language model, based on the transformer architecture.The official code repository is https://github.com/haotian-liu/LLaVA
 
 Compared with older predecessors such as diffusion and CLIP, LLaVA is an LMM rather than a simple multi-modal model. 
 
