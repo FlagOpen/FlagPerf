@@ -29,3 +29,5 @@ ChatGLM3 是智谱AI和清华大学 KEG 实验室联合发布的新一代对话�
    执行preprocess/data_process.py，配置好其中的4个命令行参数。推荐的默认token数量为100M，即1亿个token。此配置在A800 8卡上预计训练1小时
 
 4. 将outputfile（通常为openwebtext_chatglm3_100M.npy）放置在data_dir下
+
+值得注意的是，由于原始Google Drive存储内容变动，自2024.03起，可忽略上述第1步骤，从链接中下载20个子压缩目录，随后全部解压到同一个目录，继续执行第3、4步骤。
