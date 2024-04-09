@@ -162,7 +162,7 @@ def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes):
     return True
 
 
-def prepare_running_env(dp_path, container_name, case_config):
+def prepare_running_env(dp_path, container_name, case_config, env_flag):
     '''Install extensions and setup env before start task in container.
     '''
     nnodes = case_config["nnodes"]
@@ -170,7 +170,7 @@ def prepare_running_env(dp_path, container_name, case_config):
     framework = case_config["framework"]
     prepare_cmd = "cd " + dp_path + " && " + sys.executable \
                   + " utils/container_manager.py -o runcmdin -c " \
-                  + container_name + " -t 1800 -r \"python3 " \
+                  + container_name + " -m " + env_flag + " -t 1800 -r \"python3 " \
                   + tc.FLAGPERF_PATH + "/" \
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
@@ -197,7 +197,7 @@ def prepare_running_env_cluster(dp_path, case_config):
                   + tc.FLAGPERF_PATH + "/" \
                   + "/run_benchmarks/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
-                  + tc.VENDOR + " --pipsource " + tc.PIP_SOURCE + "\""
+                  + tc.VENDOR + " --pipsource " + tc.PIP_SOURCE
     timeout = 1800
     RUN_LOGGER.debug(
         "Run cmd in the cluster to prepare running environment: " +
@@ -331,7 +331,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
         if (os.path.isfile(env_file)):
             start_cmd = "cd " + dp_path + " && " + sys.executable \
                     + " utils/container_manager.py -o runcmdin -c " \
-                    + container_name + " -d -r \"source " + env_file \
+                    + container_name + " -m " + env_flag + " -d -r \"source " + env_file \
                     + " > " + curr_log_path + "/source_env.log.txt " \
                     + "2>&1 && " \
                     + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
@@ -340,21 +340,25 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, base_args,
         else:
             start_cmd = "cd " + dp_path + " && " + sys.executable \
                     + " utils/container_manager.py -o runcmdin -c " \
-                    + container_name + " -d -r \"" \
+                    + container_name + " -m " + env_flag + " -d -r \"" \
                     + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
                     + framework + "/start_" + framework + "_task.py " \
                     + base_args + " --round " + str(count)
     if env_flag == "container":
         if (os.path.isfile(env_file)):
-            start_cmd = "cd " + dp_path + " && " + "source " + env_file \
+            start_cmd = "cd " + dp_path + " && " + sys.executable \
+                    + " utils/container_manager.py -o runcmdin -c " \
+                    + container_name + " -m " + env_flag + " -d -r \"source " + env_file \
                     + " > " + curr_log_path + "/source_env.log.txt " \
                     + "2>&1 && " \
                     + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
                     + framework + "/start_" + framework + "_task.py " \
                     + base_args + " --round " + str(count)
         else:
-            start_cmd = "cd " + dp_path + " && " + "python3 " \
-                    + tc.FLAGPERF_PATH + "/run_benchmarks/" \
+            start_cmd = "cd " + dp_path + " && " + sys.executable \
+                    + " utils/container_manager.py -o runcmdin -c " \
+                    + container_name + " -m " + env_flag + " -d -r \"" \
+                    + "python3 " + tc.FLAGPERF_PATH + "/run_benchmarks/" \
                     + framework + "/start_" + framework + "_task.py " \
                     + base_args + " --round " + str(count)
     if tc.ACCE_VISIBLE_DEVICE_ENV_NAME is not None:
@@ -396,7 +400,7 @@ def wait_for_finish(dp_path, container_name, pid_file_path, nnodes, env_flag):
     # Aussme pid of start_xxx_task.py won't loop in a short time.
     check_cmd = "cd " + dp_path + "; " + sys.executable \
                 + " utils/container_manager.py -o pidrunning -c " \
-                + container_name + " -f " + pid_file_path
+                + container_name + " -f " + pid_file_path + " -m " + env_flag
     # if env_flag == "container":
     #     # TODO 如果原本就在容器内，如何判断？
     #     # Aussme pid of start_xxx_task.py won't loop in a short time.
@@ -417,7 +421,7 @@ def wait_for_finish(dp_path, container_name, pid_file_path, nnodes, env_flag):
 
 
 def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
-                                   image_name, case_config):
+                                   image_name, case_config, env_flag):
     '''Prepare containers environments in the cluster. It will start
        containers, setup environments, start monitors, and clear caches.'''
     nnodes = case_config["nnodes"]
@@ -445,16 +449,16 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
     RUN_LOGGER.info("b) Start container(s) in the cluster.......[SUCCESS]")
 
     RUN_LOGGER.info("c) Prepare running environment.")
-    if not prepare_running_env(dp_path, container_name, case_config):
+    if not prepare_running_env(dp_path, container_name, case_config, env_flag):
         RUN_LOGGER.error("c) Prepare running environment......"
                          "[FAILED]. Ignore this round.")
         RUN_LOGGER.info("Stop containers in cluster.")
         stop_container_in_cluster(dp_path, container_name, nnodes)
         return False
     RUN_LOGGER.info("c) Prepare running environment......[SUCCESS]")
-    RUN_LOGGER.info("d) Start monitors......")
-    start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
-    RUN_LOGGER.info("e) Clear system caches if it set......")
+    # RUN_LOGGER.info("d) Start monitors......")
+    # start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
+    RUN_LOGGER.info("d) Clear system caches if it set......")
     clear_caches_cluster(tc.CLEAR_CACHES, nnodes)
     return True
 
@@ -695,10 +699,14 @@ def main():
             RUN_LOGGER.info("1) Prepare container environments in cluster...")
             case_log_dir = os.path.join(curr_log_path, case,
                                         "round" + str(count))
+            # 将监控启动从准备容器环境中解耦
+            # 如果本身就是在容器启动，不需要再启动monitor
+            RUN_LOGGER.info("Start monitors......")
+            start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
             if env_flag == "baremetal":
                 if not prepare_containers_env_cluster(dp_path, case_log_dir,
                                                     container_name, image_name,
-                                                    case_config):
+                                                    case_config, env_flag):
                     RUN_LOGGER.error("1) Prepare container environments in cluster"
                                     "...[FAILED]. Ignore case " + case +
                                     " round " + str(count))
@@ -711,21 +719,21 @@ def main():
             RUN_LOGGER.info("2) Start tasks in the cluster...")
             start_tasks_in_cluster(dp_path, container_name, case_config,
                                    base_args, count, curr_log_path, env_flag)
-
+            # if env_flag == 'baremetal':
             # Wait until start_xxx_task.py finished.
             RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
             pid_file_path = os.path.join(
                 log_dir_container, "start_" +
                 case_config["framework"].split("_")[0] + "_task.pid")
-            # NOTE 不论是裸机启动的容器还是一开始在容器内都可以这样检测
             wait_for_finish(dp_path, container_name, pid_file_path, nnodes, env_flag)
             RUN_LOGGER.info("3) Training tasks end in the cluster...")
             RUN_LOGGER.info("4) Clean container environments in cluster...")
             clean_containers_env_cluster(dp_path, container_name, nnodes, env_flag)
             RUN_LOGGER.info("-== Testcase " + case + " Round " + str(count) +
                             " finished ==-")
-        RUN_LOGGER.info("=== 2.3 Setup container and run testcases finished."
+        RUN_LOGGER.info("=== 2.3 Configure container and run testcases finished."
                         " ===")
+    
     RUN_LOGGER.info("========= Step 3: Collect logs in the cluster. =========")
     collect_and_merge_logs(curr_log_path, cases)
 

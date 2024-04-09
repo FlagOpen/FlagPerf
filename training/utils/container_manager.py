@@ -51,6 +51,14 @@ class ContainerManager():
         print("ret:", ret, " outs:", outs[0])
         return ret, outs
 
+    def run_cmd_in_container_version(self, cmd_in_container, timeout=5):
+        '''Start a new docker container with <container_run_args>'''
+        exec_cmd = "bash -c \"" + cmd_in_container + "\""
+        print("run cmd in:", exec_cmd)
+        ret, outs = run_cmd.run_cmd_wait(exec_cmd, timeout)
+        print("ret:", ret, " outs:", outs[0])
+        return ret, outs
+
     def start(self):
         '''Start the stopped container. Useless now.'''
         exists = self.exists()
@@ -98,21 +106,27 @@ class ContainerManager():
                 exists = False
         return exists
 
-    def is_pid_running(self, pid_file_path):
+    def is_pid_running(self, pid_file_path, env_flag):
         '''Return whether the process with pid is running in container.
            Return value:
                True: It is running.
                False: It isn't running.
         '''
         get_pid_cmd = "cat " + pid_file_path
-        ret, outs = self.run_cmd_in(get_pid_cmd, detach=False)
+        if env_flag == 'baremetal':
+            ret, outs = self.run_cmd_in(get_pid_cmd, detach=False)
+        else:
+            ret, outs = self.run_cmd_in_container_version(get_pid_cmd)
         if ret == 0:
             task_pid = int(outs[0])
         else:
             print("Can't find pid file ", pid_file_path, "in container.")
             return False
         check_cmd = "ls /proc/" + str(task_pid) + "/cmdline"
-        ret, outs = self.run_cmd_in(check_cmd, detach=False)
+        if env_flag == 'baremetal':
+            ret, outs = self.run_cmd_in(check_cmd, detach=False)
+        else:
+            ret, outs = self.run_cmd_in_container_version(check_cmd)
         if ret == 0:
             print("The process is running.")
             return True
@@ -164,11 +178,19 @@ def _parse_args():
                             type=int,
                             default=60,
                             help="timeout of running")
+        parser.add_argument("-m",
+                    type=str,
+                    required=True,
+                    help="Start from metal machine or container")
     elif args.o == 'pidrunning':
         parser.add_argument("-f",
                             type=str,
                             required=True,
                             help="pid file path in container.")
+        parser.add_argument("-m",
+                    type=str,
+                    required=True,
+                    help="Start from metal machine or container")
     args = parser.parse_args()
     return args
 
@@ -190,7 +212,7 @@ def main():
         sys.exit(1)
 
     if operation == "pidrunning":
-        if container_mgr.is_pid_running(args.f):
+        if container_mgr.is_pid_running(args.f, args.m):
             sys.exit(0)
         sys.exit(1)
 
@@ -204,7 +226,11 @@ def main():
         cmd = args.r
         detach = args.d
         timeout = args.t
-        ret, outs = container_mgr.run_cmd_in(cmd, timeout, detach)
+        env_flag = args.m
+        if env_flag == "baremetal":
+            ret, outs = container_mgr.run_cmd_in(cmd, timeout, detach)
+        else:
+            ret, outs = container_mgr.run_cmd_in_container_version(cmd, timeout)
     elif operation == "runnew":
         run_args = args.a
         docker_image = args.i
