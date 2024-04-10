@@ -30,3 +30,4 @@ CASES:
 # nvidia "computation-FP16":"pytorch_2.3"
 # nvidia "computation-FP64":"pytorch_2.3"
 # nvidia "computation-BF16":"pytorch_2.3"
+# nvidia "computation-INT8":"pytorch_2.3"
