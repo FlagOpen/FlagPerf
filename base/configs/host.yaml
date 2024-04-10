@@ -28,3 +28,5 @@ CASES:
 # nvidia "computation-FP32":"pytorch_2.3"
 # nvidia "computation-TF32":"pytorch_2.3"
 # nvidia "computation-FP16":"pytorch_2.3"
+# nvidia "computation-FP64":"pytorch_2.3"
+# nvidia "computation-BF16":"pytorch_2.3"
