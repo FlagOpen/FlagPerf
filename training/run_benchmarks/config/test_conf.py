@@ -138,6 +138,7 @@ CASES = {
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
+    # "baichuan2_13b:deepspeed:R300:1:8:1": "/raid/dataset/baichuan_data/",
 
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
