@@ -106,7 +106,7 @@ void test(const PrecisionConfig& config) {
 int main() {
     PrecisionConfig bf16 = {
         CUDA_R_16BF,
-        CUBLAS_COMPUTE_16F,
+        CUBLAS_COMPUTE_32F,
         2,
         "BF16",
         50000,
