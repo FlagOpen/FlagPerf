@@ -20,9 +20,6 @@
    - 实施者：deepspeed ZeRO-DP
    - 实施细节：ZeRO-DP O3
 
-- ##### 优化策略
-
-   - gradient checkpointing
 
 ### 运行情况
 
