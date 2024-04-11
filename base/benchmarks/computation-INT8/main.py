@@ -1,5 +1,8 @@
 import torch
+import torch.nn as nn
 import torch.distributed as dist
+import torch.nn.functional as F
+import torch.quantization
 import os
 import time
 from argparse import ArgumentParser, Namespace
@@ -25,6 +28,14 @@ def parse_args():
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
+
+class QuantizedMatMulModel(nn.Module):
+    def __init__(self, input_features, output_features):
+        super(QuantizedMatMulModel, self).__init__()
+        self.fc = nn.Linear(input_features, output_features)
+    
+    def forward(self, x):
+        return self.fc(x)
     
 
 def main(config, case_config, rank, world_size, local_rank):    
@@ -35,9 +46,20 @@ def main(config, case_config, rank, world_size, local_rank):
     n = case_config.N
     k = case_config.K
     
+    torch.cuda.set_device(local_rank)
+    device = torch.device("cuda", local_rank)
     
-    matrixA = torch.randn(m, n, dtype=torch.int8).to(local_rank)
-    matrixB = torch.randn(n, k, dtype=torch.int8).to(local_rank)
+    model = QuantizedMatMulModel(n, k).to(device)
+    model.eval()
+
+    model.qconfig = torch.quantization.get_default_qconfig('fbgemm')
+    model_prepared = torch.quantization.prepare(model, inplace = False)
+
+    x = torch.randn(m, n).to(device)
+    model_prepared(x)
+
+    model_quantized = torch.quantization.convert(model_prepared, inplace = False)
+
     
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -45,7 +67,7 @@ def main(config, case_config, rank, world_size, local_rank):
         print("start warmup")
     
     for _ in range(case_config.WARMUP):
-        _result = torch.mm(matrixA, matrixB)
+        _result = model_quantized(x)
     
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -57,7 +79,7 @@ def main(config, case_config, rank, world_size, local_rank):
     start_time = time.perf_counter()
     
     for _ in range(case_config.ITERS):
-        _result = torch.mm(matrixA, matrixB)
+        _result = model_quantized(x)
     
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -66,9 +88,9 @@ def main(config, case_config, rank, world_size, local_rank):
     exec_time = end_time - start_time
     
     operations = case_config.ITERS * 2 * m * n * k
-    tflops = operations / exec_time / 1e12
+    tops = operations / exec_time / 1e12
     
-    return round(tflops, 2)
+    return round(tops, 2)
 
 
 if __name__ == "__main__":    
@@ -90,7 +112,7 @@ if __name__ == "__main__":
     multi_device_sync(config.vendor)
     for output_rank in range(config.node_size):
         if local_rank == output_rank:
-            print(r"[FlagPerf Result]Rank {}'s computation-INT8=".format(dist.get_rank()) + str(result) + "TFLOPS")
+            print(r"[FlagPerf Result]Rank {}'s computation-INT8=".format(dist.get_rank()) + str(result) + "TOPS")
         multi_device_sync(config.vendor)
         
     dist.destroy_process_group()
