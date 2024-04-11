@@ -2,7 +2,7 @@
 #include <cuda_runtime.h>
 #include <chrono>
 #include <iostream>
-#include <cstdint>
+
 
 constexpr int M = 8192;
 constexpr int N = 8192;
@@ -18,7 +18,7 @@ struct PrecisionConfig {
 };
 
 void test(const PrecisionConfig& config) {
-    int8_t  *d_A, *d_B, *d_C;
+    void  *d_A, *d_B, *d_C;
 
     cudaMallocManaged(&d_A, M * K * config.bytesPerElement);
     cudaMallocManaged(&d_B, K * N * config.bytesPerElement);
@@ -31,8 +31,8 @@ void test(const PrecisionConfig& config) {
     cublasHandle_t handle;
     cublasCreate(&handle);
 
-    int8_t alpha = 1;
-    int8_t beta = 0;
+    float alpha = 1.0;
+    float beta = 0.0;
 
     for (int i = 0; i < config.WARMUP_ITERATIONS; ++i) {
         if (config.cudaType == CUDA_R_8I) {
@@ -90,11 +90,11 @@ void test(const PrecisionConfig& config) {
     std::cout << "Average " << config.name << " Single Op Duration: " << duration.count() / config.NUM_ITERATIONS << " us" << std::endl;
 
     double time_second = duration.count() / 1.0e6;
-    double flops = 2.0 * M * N * K * config.NUM_ITERATIONS;
-    double FLOPS = flops / time_second;
-    double TFLOPS = FLOPS / 1.0e12;
+    double ops = 2.0 * M * N * K * config.NUM_ITERATIONS;
+    double OPS = ops / time_second;
+    double TOPS = OPS / 1.0e12;
 
-    std::cout << "[FlagPerf Result]" << "computation-INT8=" << TFLOPS << "TFLOPS" << std::endl;
+    std::cout << "[FlagPerf Result]" << "computation-INT8=" << TOPS << "TOPS" << std::endl;
 
     cudaFree(d_A);
     cudaFree(d_B);
