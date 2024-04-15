@@ -40,3 +40,7 @@
 # 厂商测试工具原理说明
 
 使用GEMM算子进行computation-bound的计算任务，从而测得实际INT8算力
+
+注：
+INT8常被用于量化模型，目的是减小模型的存储需求和加快推理速度，同时尽量保持模型的精度。
+在使用NVIDIA cuBLAS库进行INT8计算时，为防止矩阵乘法计算过程中发生溢出，cuBLAS库只提供8*8=32，即两个INT8数相乘结果存储为INT32的接口。因此在使用GEMM算子进行INT8计算时，不只使用了INT8 Tensor Core，INT8 GEMM的理论计算峰值也不是标定的624TOPS，此case评测结果仅供参考。
