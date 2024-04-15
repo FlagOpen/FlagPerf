@@ -18,7 +18,8 @@ struct PrecisionConfig {
 };
 
 void test(const PrecisionConfig& config) {
-    void  *d_A, *d_B, *d_C;
+    int8_t  *d_A, *d_B;
+    int32_t *d_C;
 
     cudaMallocManaged(&d_A, M * K * config.bytesPerElement);
     cudaMallocManaged(&d_B, K * N * config.bytesPerElement);
@@ -31,8 +32,8 @@ void test(const PrecisionConfig& config) {
     cublasHandle_t handle;
     cublasCreate(&handle);
 
-    float alpha = 1.0;
-    float beta = 0.0;
+    int alpha = 1;
+    int beta = 0;
 
     for (int i = 0; i < config.WARMUP_ITERATIONS; ++i) {
         if (config.cudaType == CUDA_R_8I) {
@@ -109,7 +110,7 @@ int main() {
         CUBLAS_COMPUTE_32I,
         1,
         "INT8",
-        100000,
+        50000,
         10
     };
 
