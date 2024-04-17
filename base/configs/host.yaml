@@ -28,3 +28,4 @@ CASES:
 # nvidia "computation-FP32":"pytorch_2.3"
 # nvidia "computation-TF32":"pytorch_2.3"
 # nvidia "computation-FP16":"pytorch_2.3"
+# nvidia "main_memory-bandwidth":"pytorch_2.3"
