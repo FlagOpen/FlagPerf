@@ -71,21 +71,39 @@
   <tbody>
   <tr>
       <td>1</td>
+        <td>FP64算力</td>
+      <td>算力</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP64/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP64/nvidia">厂商专用工具</a></td>
+    </tr>
+    <tr>
+      <td>2</td>
         <td>FP32算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/nvidia">厂商专用工具</a></td>
     </tr>
     <tr>
-      <td>2</td>
+      <td>3</td>
         <td>TF32算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-TF32/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-TF32/nvidia">厂商专用工具</a></td>
     </tr>
     <tr>
-      <td>3</td>
+      <td>4</td>
         <td>FP16算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP16/nvidia">厂商专用工具</a></td>
+    </tr>
+    <tr>
+      <td>5</td>
+        <td>BF16算力</td>
+      <td>算力</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-BF16/nvidia">厂商专用工具</a></td>
+    </tr>
+    <tr>
+      <td>6</td>
+        <td>INT8算力</td>
+      <td>算力</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-INT8/nvidia">厂商专用工具</a></td>
     </tr>
   </tbody>
   </table>  
