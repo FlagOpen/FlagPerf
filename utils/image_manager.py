@@ -11,6 +11,7 @@ import os
 import sys
 import argparse
 from run_cmd import run_cmd_wait as rcw
+print(rcw)
 from container_manager import ContainerManager
 import time
 
