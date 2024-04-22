@@ -1,3 +1,4 @@
+import torch
 
 def evaluator(pred, y, dataloader):
     tokenizer = dataloader.tokenizer
