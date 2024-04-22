@@ -1,9 +1,12 @@
 #!/bin/bash
 # Runs Qwen1.5 14B(8*1.8B) MoE model on 8xA800 GPUs
-
-set -e
+MEGATRON_PATCH_PATH="/workspace/Pai-Megatron-Patch"
+MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240405
+export PYTHONPATH=${MEGATRON_PATH}:${MEGATRON_PATCH_PATH}:$PYTHONPATH
+export CUDA_DEVICE_MAX_CONNECTIONS=1
+export NVTE_APPLY_QK_LAYER_SCALING=True
 DATA_PATH=$1
-DATASET_PATH="${DATA_PATH}llama_00_text_document"
+DATASET_PATH="${DATA_PATH}llama_00_text_document/llama_00_text_document"
 TOKENIZER_PATH="${DATA_PATH}tokenizer"
 
 GPUS_PER_NODE=$2
@@ -12,13 +15,13 @@ NODE_RANK=$4
 MASTER_ADDR=$5
 MASTER_PORT=$6
 
-BATCH_SIZE=$9
-GLOBAL_BATCH_SIZE=$10
-SEQ_LEN=$11
-PAD_LEN=$12
-PR=$13
-TP=$14
-PP=$15
+BATCH_SIZE=$7
+GLOBAL_BATCH_SIZE=$8
+SEQ_LEN=$9
+PAD_LEN=$10
+PR=$11
+TP=$12
+PP=$13
 
 DISTRIBUTED_ARGS="
     --nproc_per_node $GPUS_PER_NODE \
@@ -63,7 +66,7 @@ MODEL_ARGS=" \
 "
 
 MOE_ARGS=" \
-    --moe-router-topk 1 \
+    --moe-router-topk 2 \
     --num-experts 8 \
     --moe-aux-loss-coeff 1e-2 \
     --expert-model-parallel-size 1 \
@@ -98,7 +101,7 @@ TRAINING_ARGS=" \
     --use-flash-attn \
     --micro-batch-size ${BATCH_SIZE} \
     --global-batch-size ${GLOBAL_BATCH_SIZE} \
-    --train-iters 20000 \
+    --train-iters 97656 \
     --tensor-model-parallel-size ${TP} \
     --pipeline-model-parallel-size ${PP} \
     --transformer-impl transformer_engine \
@@ -108,7 +111,6 @@ TRAINING_ARGS=" \
 EVAL_ARGS=" \
     --eval-interval 10000 \
     --eval-iters 10 \
-
 "
 
 MODEL_PARALLEL_ARGS=" \
@@ -116,9 +118,8 @@ MODEL_PARALLEL_ARGS=" \
     --sequence-parallel \
 "
 
-run_cmd="torchrun ${DISTRIBUTED_ARGS} ${EXECPATH}/pretrain_mcore_qwen.py 
+run_cmd="torchrun ${DISTRIBUTED_ARGS} /workspace/Pai-Megatron-Patch/examples/qwen1_5/pretrain_mcore_qwen.py 
     ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 
 echo ${run_cmd}
 eval ${run_cmd}
-set +x

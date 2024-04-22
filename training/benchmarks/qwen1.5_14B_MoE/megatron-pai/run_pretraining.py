@@ -48,9 +48,9 @@ if __name__ == "__main__":
 
 
     mbs = batchsize
-    task_log_file = os.path.join(args.log_dir, "megatron.log.txt")
+    task_log_file = os.path.join(args.log_dir, "megatron-pai.log.txt")
 
-    exec_cmd = "bash megatron_main.sh"
+    exec_cmd = "bash megatron-pai_main.sh"
     exec_cmd = exec_cmd + " " + args.data_dir
     exec_cmd = exec_cmd + " " + str(args.nproc_per_node)
     exec_cmd = exec_cmd + " " + str(args.nnodes)
@@ -64,8 +64,7 @@ if __name__ == "__main__":
     exec_cmd = exec_cmd + " " + str(pr)
     exec_cmd = exec_cmd + " " + str(tensor_parallel)
     exec_cmd = exec_cmd + " " + str(pipeline_parallel)
-    
-    # exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
+    exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
 
     with open(task_log_file, "w") as f:
         p = subprocess.Popen(exec_cmd,

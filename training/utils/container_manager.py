@@ -26,7 +26,7 @@ class ContainerManager():
         if exists is True:
             return 1, ["Conatiner exists.", None]
 
-        run_new_cmd = "docker run " + container_run_args + \
+        run_new_cmd = "docker run -e NVTE_APPLY_QK_LAYER_SCALING=1" + container_run_args + \
                       " --name=" + self.name + " \"" + docker_image + "\" " + \
                       "sleep infinity"
         print(run_new_cmd)
