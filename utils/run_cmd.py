@@ -20,8 +20,8 @@ def run_cmd_wait(cmd, timeout):
         process.kill()
         output = process.communicate()
 
-    print(f"{cmd} returncode: {process.returncode}")
-    print(f"{cmd} stdout: {output[0]}")
-    print(f"{cmd} stderr: {output[1]}")
+    #print(f"{cmd} returncode: {process.returncode}")
+    #print(f"{cmd} stdout: {output[0]}")
+    #print(f"{cmd} stderr: {output[1]}")
 
     return process.returncode, output

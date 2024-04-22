@@ -349,7 +349,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
                 curr_log_path + "/container.out.log")
     logger.info("Check task stderr & stdout in real time from container: " +
                 curr_log_path + "/stdout_err.out.log")
-    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15, "inference")
     # Wait a moment for starting tasks.
     time.sleep(10)
 
@@ -387,6 +387,8 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, config,
                            + " --shm-size=" + config.SHM_SIZE \
                            + " -v " + dp_path + ":" \
                            + config.FLAGPERF_PATH \
+                           + " -v " + os.path.join(dp_path, "..") + ":" \
+                           + os.path.join(config.FLAGPERF_PATH, "..") \
                            + " -v " + case_config["data_dir_host"] + ":" \
                            + case_config["data_dir_container"]
     if config.ACCE_CONTAINER_OPT is not None:
@@ -563,7 +565,7 @@ def main(config):
     check_test_host_config(config)
 
     # Check test environment and configs from host.yaml.
-    CLUSTER_MGR.init(config.HOSTS, config.SSH_PORT, getpass.getuser())
+    CLUSTER_MGR.init(config.HOSTS, config.SSH_PORT, getpass.getuser(), logger)
     check_cluster_health()
     dp_path = _get_deploy_path(config)
     check_cluster_deploy_path(dp_path)

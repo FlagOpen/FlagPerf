@@ -231,7 +231,7 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
     start_cmd += " \""
 
     RUN_LOGGER.debug("Run cmd in the cluster to start tasks, cmd=" + start_cmd)
-    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15, "base")
     # Wait a moment for starting tasks.
     time.sleep(60)
 
