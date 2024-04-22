@@ -17,7 +17,6 @@ import numpy as np
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 from utils import cluster_manager
 from utils import flagperf_logger
 from utils import image_manager
