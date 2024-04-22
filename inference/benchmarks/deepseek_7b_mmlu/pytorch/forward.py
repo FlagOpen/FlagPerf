@@ -49,7 +49,7 @@ def model_forward(model, dataloader, evaluator, config):
                 token_cnt += len(tokens[0])
                 
                 pred = y[0]
-                r = evaluator(pred, item["answer"])
+                r = evaluator(pred, item["answer"], dataloader)
             
                 correct += r
                 whole += 1
@@ -103,7 +103,7 @@ def engine_forward(model, dataloader, evaluator, config):
                 
                 y = model_outputs[0]
                 pred = y[0]
-                r = evaluator(pred, item["answer"])
+                r = evaluator(pred, item["answer"], dataloader)
             
                 correct += r
                 whole += 1

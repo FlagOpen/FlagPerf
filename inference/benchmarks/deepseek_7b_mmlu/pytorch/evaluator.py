@@ -1,22 +1,14 @@
-import torch
 
-def adjust_token_id(token_id):
-    
-    replacement_map = {
-        338.0: 32.0,
-        380.0: 33.0,
-        339.0: 34.0,
-        414.0: 35.0
-    }
-    
-    return replacement_map.get(token_id, token_id)
-
-def evaluator(pred, y):
-    gt = float(y[0][0][1])
+def evaluator(pred, y, dataloader):
+    tokenizer = dataloader.tokenizer
+    gt = y[0][0][1]
     predict = pred[:,-1,:]
-    answer = float(torch.argmax(predict, dim=1))
-    answer = adjust_token_id(answer)
-    if answer == gt:
+    answer = torch.argmax(predict, dim=1)
+    answer_str = tokenizer.decode(answer)
+    valid_answers=['A','B','C','D']
+    answer_str=''.join([c for c in answer_str if c in valid_answers])
+    gt_str = tokenizer.decode(gt)
+    if answer_str == gt_str:
         return 1
     else:
         return 0
