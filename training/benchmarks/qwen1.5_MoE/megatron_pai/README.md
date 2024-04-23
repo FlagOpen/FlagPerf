@@ -1,4 +1,4 @@
-# Qwen1.5-MoE-A2.7B 
+# Qwen1.5-MoE
 ## 模型信息
 - Introduction
 
@@ -16,10 +16,16 @@ Researcher build the Qwen1.5-MoE models with a specially designed MoE architectu
 >
 > Routing mechanism, with shared and routing experts
 
+In terms of model structure, Qwen1.5-MoE introduces a specially designed MoE architecture, optimizes the MoE layer configuration in the existing transformer block, including using 64 finegrained experts, improving the initialization process, and introducing a new Flexible routing mechanism. In particular, the finegrained experts technology generates more experts by dividing the FFN layer, allowing Qwen1.5-MoE to effectively enhance the model's computing power without increasing the number of parameters.
 
 - Performance
 
 Detailed evaluation results are reported in this [blog](https://qwenlm.github.io/blog/qwen-moe/)
+
+- Details
+
+*的*
+
 
 ## 数据准备
 
