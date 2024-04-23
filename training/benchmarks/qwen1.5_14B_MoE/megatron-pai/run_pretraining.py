@@ -65,7 +65,7 @@ if __name__ == "__main__":
     exec_cmd = exec_cmd + " " + str(tensor_parallel)
     exec_cmd = exec_cmd + " " + str(pipeline_parallel)
     #exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
-
+ 
     with open(task_log_file, "w") as f:
         p = subprocess.Popen(exec_cmd,
                              shell=True,

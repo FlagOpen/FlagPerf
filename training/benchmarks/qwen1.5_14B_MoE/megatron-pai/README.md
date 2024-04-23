@@ -1,8 +1,34 @@
+# Qwen1.5-MoE-A2.7B 
 ## 模型信息
 - Introduction
-todo
+
+Since the surge in interest sparked by Mixtral, research on mixture-of-expert (MoE) models has gained significant momentum. Both researchers and practitioners are keenly interested in understanding how to effectively train such models and assessing their efficiency and effectiveness. Today, Qwen1.5-MoE-A2.7B, a small MoE model with only 2.7 billion activated parameters yet matching the performance of state-of-the-art 7B models like Mistral 7B and Qwen1.5-7B.
+
+Compared to Qwen1.5-7B, which contains 6.5 billion non-embedding parameters, Qwen1.5-MoE-A2.7B contains only 2.0 billion non-embedding parameters, approximately one-third of Qwen1.5-7B’s size. Notably, it achieves a 75% decrease in training expenses and accelerates inference speed by a factor of 1.74, offering substantial improvements in resource utilization without compromising performance.
+
+- Architecture
+
+Researcher build the Qwen1.5-MoE models with a specially designed MoE architecture. Typically, as seen in methods like Mixtral, MoE layers within each transformer block employ eight experts and utilize a top-2 gating strategy for routing purposes. This configuration, while straightforward and efficacious, presents ample scope for enhancement. Consequently, there are some modifications to this architecture:
+
+> Finegrained experts
+> 
+> Initialization, which we call it “upcycling”
+>
+> Routing mechanism, with shared and routing experts
+
+
+- Performance
+
+Detailed evaluation results are reported in this [blog](https://qwenlm.github.io/blog/qwen-moe/)
 
 ## 数据准备
+
+### 模型配置及tokenizer准备
+
+本测试样例`继续预训练`case，需要在[通义千问1.5-1.8B](https://modelscope.cn/models/qwen/Qwen1.5-1.8B/files)下载除模型权重外的其他文件。
+
+在data_dir下创建dataset目录，将上述两个文件放置于data_dir/tokenizer下。
+
 ### 数据集准备
 
 本测试样例数据使用FlagScale-llama2预处理好的数据集，下载链接为
@@ -11,10 +37,54 @@ https://bd.bcebos.com/v1/klx-pytorch-work-bd/training/wurui04/llama_00_text_docu
 
 https://bd.bcebos.com/v1/klx-pytorch-work-bd/training/wurui04/llama_00_text_document.idx
 
-在data_dir下创建dataset目录，将上述两个文件放置于data_dir/dataset下。
+在data_dir下创建llama_00_text_document目录，将上述两个文件放置于data_dir/llama_00_text_document下。
 
 ### 目录树
-todo
+
+#### Docker 容器
+```
+.
+├── FlagPerf
+│   └── training
+│       ├── README.md
+│       ├── ascend
+│       ├── benchmarks
+│       ├── cambricon
+│       ├── dcu
+│       ├── iluvatar
+│       ├── kunlunxin
+│       ├── metax
+│       ├── mthreads
+│       ├── nvidia
+│       ├── requirements.txt
+│       ├── result
+│       ├── run_benchmarks
+│       └── utils
+└── datasets
+    └── qwen1.5_14B_MoE
+        ├── llama_00_text_document
+        └── tokenizer
+```
+
+#### Dataset 数据集
+```
+└── datasets
+    └── qwen1.5_14B_MoE
+        ├── llama_00_text_document
+        │   ├── llama_00_text_document
+        │   ├── llama_00_text_document.bin
+        │   └── llama_00_text_document.idx
+        └── tokenizer
+            ├── LICENSE
+            ├── README.md
+            ├── config.json
+            ├── configuration.json
+            ├── generation_config.json
+            ├── merges.txt
+            ├── tokenizer.json
+            ├── tokenizer_config.json
+            └── vocab.json
+```
 
 ### 数据集引用
 

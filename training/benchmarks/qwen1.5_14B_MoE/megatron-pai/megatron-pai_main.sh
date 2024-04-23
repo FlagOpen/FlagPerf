@@ -25,21 +25,6 @@ PR=${11}
 TP=${12}
 PP=${13}
 
-echo "DATA_PATH: $1"
-echo "GPUS_PER_NODE: $2"
-echo "NNODES: $3"
-echo "NODE_RANK: $4"
-echo "MASTER_ADDR: $5"
-echo "MASTER_PORT: $6"
-echo "BATCH_SIZE: $7"
-echo "GLOBAL_BATCH_SIZE: $8"
-echo "SEQ_LEN: $9"
-echo "PAD_LEN: $10"
-echo "PR: $11"
-echo "TP: $12"
-echo "PP: $13"
-
-
 DISTRIBUTED_ARGS="
     --nproc_per_node $GPUS_PER_NODE \
     --nnodes $NNODES \
