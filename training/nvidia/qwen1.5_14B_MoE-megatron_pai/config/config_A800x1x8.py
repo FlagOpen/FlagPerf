@@ -1,7 +1,7 @@
 batchsize = 1
-gbs = 8
-seqlength = 4096
-padlength = 4096
+gbs = 32
+seqlength = 32768
+padlength = 32768
 pr = 'bf16'
 tensor_parallel = 8
 pipeline_parallel = 1

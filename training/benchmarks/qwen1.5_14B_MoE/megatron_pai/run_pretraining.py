@@ -48,9 +48,9 @@ if __name__ == "__main__":
 
 
     mbs = batchsize
-    task_log_file = os.path.join(args.log_dir, "megatron-pai.log.txt")
+    task_log_file = os.path.join(args.log_dir, "megatron_pai.log.txt")
 
-    exec_cmd = "bash megatron-pai_main.sh"
+    exec_cmd = "bash megatron_pai_main.sh"
     exec_cmd = exec_cmd + " " + args.data_dir
     exec_cmd = exec_cmd + " " + str(args.nproc_per_node)
     exec_cmd = exec_cmd + " " + str(args.nnodes)
