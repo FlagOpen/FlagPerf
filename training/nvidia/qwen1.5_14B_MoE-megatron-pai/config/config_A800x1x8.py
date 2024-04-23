@@ -1,9 +1,9 @@
 batchsize = 1
 gbs = 8
-seqlength = 128
-padlength = 128
+seqlength = 4096
+padlength = 4096
 pr = 'bf16'
-tensor_parallel = 1
+tensor_parallel = 8
 pipeline_parallel = 1
 accumulate_steps = 1
 theoryflops = 312000000000000.0

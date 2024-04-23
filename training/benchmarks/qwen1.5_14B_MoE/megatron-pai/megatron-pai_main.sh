@@ -103,7 +103,7 @@ TRAINING_ARGS=" \
     --use-flash-attn \
     --micro-batch-size ${BATCH_SIZE} \
     --global-batch-size ${GLOBAL_BATCH_SIZE} \
-    --train-iters 10000 \
+    --train-iters 100 \
     --tensor-model-parallel-size ${TP} \
     --pipeline-model-parallel-size ${PP} \
     --transformer-impl transformer_engine \
@@ -111,7 +111,7 @@ TRAINING_ARGS=" \
 "
 
 EVAL_ARGS=" \
-    --eval-interval 5000 \
+    --eval-interval 50 \
     --eval-iters 10 \
 "
 
