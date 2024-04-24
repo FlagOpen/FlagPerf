@@ -33,34 +33,36 @@ def model_forward(model, dataloader, evaluator, config):
             if step % config.log_freq == 0:
                 logger.debug("Step: " + str(step) + " / " +
                              str(len(dataloader)))
-                             
-            tokens = item["prompt"].input_ids.cuda()[0]       
-                     
-            with torch.no_grad():                
-                
+
+            tokens = item["prompt"].input_ids.cuda()[0]
+
+            with torch.no_grad():
+
                 torch_sync(config)
-                core_time_start = time.time() 
-                  
+                core_time_start = time.time()
+
                 y = model(tokens)
-                
+
                 torch_sync(config)
                 core_time += time.time() - core_time_start
-                
+
                 token_cnt += len(tokens[0])
-                
+
                 pred = y[0]
                 r = evaluator(pred, item["answer"], dataloader)
-            
+
                 correct += r
                 whole += 1
 
-    logger.info("MMLU" + str(config.few_shots) + "-shots Acc: " + str(correct / whole))
+    logger.info("MMLU" + str(config.few_shots) + "-shots Acc: " +
+                str(correct / whole))
 
     duration = time.time() - start
     model_forward_perf, model_forward_core_perf = cal_perf(
         config, token_cnt, duration, core_time, "Validation")
 
-    return model_forward_perf, model_forward_core_perf, round(correct / whole, 3)
+    return model_forward_perf, model_forward_core_perf, round(
+        correct / whole, 3)
 
 
 def engine_forward(model, dataloader, evaluator, config):
@@ -82,36 +84,38 @@ def engine_forward(model, dataloader, evaluator, config):
             if step % config.log_freq == 0:
                 logger.debug("Step: " + str(step) + " / " +
                              str(len(dataloader)))
-                             
-            tokens = item["prompt"].input_ids[0]     
-            model_inputs = [tokens]  
-                     
-            with torch.no_grad():                
-                
+
+            tokens = item["prompt"].input_ids[0]
+            model_inputs = [tokens]
+
+            with torch.no_grad():
+
                 torch_sync(config)
-                core_time_start = time.time() 
-                  
+                core_time_start = time.time()
+
                 y = model(model_inputs)
-                
+
                 torch_sync(config)
                 core_time += time.time() - core_time_start
-                
+
                 foo_time += y[1]
                 model_outputs = y[0]
-                
+
                 token_cnt += len(tokens[0])
-                
+
                 y = model_outputs[0]
                 pred = y[0]
                 r = evaluator(pred, item["answer"], dataloader)
-            
+
                 correct += r
                 whole += 1
 
-    logger.info("MMLU" + str(config.few_shots) + "-shots Acc: " + str(correct / whole))
+    logger.info("MMLU" + str(config.few_shots) + "-shots Acc: " +
+                str(correct / whole))
 
     duration = time.time() - start
     model_forward_perf, model_forward_core_perf = cal_perf(
         config, token_cnt, duration, core_time - foo_time, "Inference")
 
-    return model_forward_perf, model_forward_core_perf, round(correct / whole, 3)
+    return model_forward_perf, model_forward_core_perf, round(
+        correct / whole, 3)
