@@ -42,7 +42,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/chenglongkai/FlagPerf/training"
+FLAGPERF_PATH = "/home/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -62,9 +62,9 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    #"bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
-    #"glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
-    #"cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
+    "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
     #"llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
     #"aquila2_7b_finetune:flagscale:A800:1:8:1": "/raid/dataset/aquila2_7b_finetune",
@@ -118,7 +118,7 @@ CASES = {
     # "gpt3_13B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
     # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
     
-    "qwen1.5_MoE:megatron_pai:A800:1:8:1":"/home/chenglongkai/datasets/qwen1.5_14B_MoE/"
+    # "qwen1.5_MoE:megatron_pai:A800:1:8:1":"/raid/datasets/qwen1.5_MoE/"
 
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
