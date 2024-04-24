@@ -15,7 +15,7 @@
 
 - ##### 并行策略
 
-   - 并行技术：Tensor parallelism
+   - 并行技术：Pipeline parallel
    - 实施者：Pai-Megatron-Patch
 
 - ##### 优化策略

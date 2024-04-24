@@ -12,7 +12,7 @@ Researcher build the Qwen1.5-MoE models with a specially designed MoE architectu
 
 > Finegrained experts
 > 
-> Initialization, which we call it “upcycling”
+> Initialization, which is called “upcycling”
 >
 > Routing mechanism, with shared and routing experts
 
@@ -30,7 +30,7 @@ Detailed evaluation results are reported in this [blog](https://qwenlm.github.io
 
 ### 模型配置及tokenizer准备
 
-本测试样例`继续预训练`case，需要在[通义千问1.5-1.8B](https://modelscope.cn/models/qwen/Qwen1.5-1.8B/files)下载除模型权重外的其他文件。
+本测试样例`预训练`case，需要在[通义千问1.5-1.8B](https://modelscope.cn/models/qwen/Qwen1.5-1.8B/files)下载除模型权重外的其他文件。
 
 在data_dir下创建dataset目录，将上述两个文件放置于data_dir/tokenizer下。
 
@@ -45,31 +45,6 @@ https://bd.bcebos.com/v1/klx-pytorch-work-bd/training/wurui04/llama_00_text_docu
 在data_dir下创建llama_00_text_document目录，将上述两个文件放置于data_dir/llama_00_text_document下。
 
 ### 目录树
-
-#### Docker 容器
-```
-.
-├── FlagPerf
-│   └── training
-│       ├── README.md
-│       ├── ascend
-│       ├── benchmarks
-│       ├── cambricon
-│       ├── dcu
-│       ├── iluvatar
-│       ├── kunlunxin
-│       ├── metax
-│       ├── mthreads
-│       ├── nvidia
-│       ├── requirements.txt
-│       ├── result
-│       ├── run_benchmarks
-│       └── utils
-└── datasets
-    └── qwen1.5_14B_MoE
-        ├── llama_00_text_document
-        └── tokenizer
-```
 
 #### Dataset 数据集
 ```
