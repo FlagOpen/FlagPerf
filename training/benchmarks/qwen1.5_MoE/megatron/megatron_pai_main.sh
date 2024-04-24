@@ -24,6 +24,7 @@ PAD_LEN=${10}
 PR=${11}
 TP=${12}
 PP=${13}
+VENDOR_SHELL=${14}
 
 DISTRIBUTED_ARGS="
     --nproc_per_node $GPUS_PER_NODE \
@@ -120,6 +121,7 @@ MODEL_PARALLEL_ARGS=" \
     --sequence-parallel \
 "
 
+source $VENDOR_SHELL
 run_cmd="torchrun ${DISTRIBUTED_ARGS} /workspace/Pai-Megatron-Patch/examples/qwen1_5/pretrain_mcore_qwen.py 
     ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 
