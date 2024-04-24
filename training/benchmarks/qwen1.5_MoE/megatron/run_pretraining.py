@@ -85,4 +85,4 @@ if __name__ == "__main__":
     chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
     print("System tokens per second: ", whole_tps)
     print("Tokens/p/s: ", chip_tps)
-    print("MFU: ", chip_tps * 2300000000.0 * 6 / theoryflops)
+    print("MFU: ", chip_tps * 2300000000.0 * 6 / theoryflops) # 2.3B=layer_num * hidden_size * hidden_size *（4+8）+causalLM（vocab_size*2048）= 24*2048*2048*(2*8+4)+151936*2048
