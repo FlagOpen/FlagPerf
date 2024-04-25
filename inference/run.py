@@ -16,6 +16,8 @@ import getpass
 from loguru import logger
 from collections import namedtuple
 
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
 from utils import cluster_manager, image_manager
 
 VERSION = "v0.1"
@@ -164,7 +166,7 @@ def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes,
     logger.debug("Prepare docker image in cluster. image_name=" + image_name +
                  " image_vendor_dir=" + image_vendor_dir)
     prepare_image_cmd = "cd " + dp_path + " && " + sys.executable \
-                        + " utils/image_manager.py -o build -i " \
+                        + " ../utils/image_manager.py -o build -i " \
                         + image_mgr.repository + " -t " + image_mgr.tag \
                         + " -d " + image_vendor_dir + " -f " + framework
     timeout = 1200
@@ -186,10 +188,10 @@ def prepare_running_env(dp_path, container_name, case_config):
     model = case_config["model"]
     framework = case_config["framework"]
     prepare_cmd = "cd " + dp_path + " && " + sys.executable \
-                  + " utils/container_manager.py -o runcmdin -c " \
+                  + " ../utils/container_manager.py -o runcmdin -c " \
                   + container_name + " -t 1800 -r \"python3 " \
                   + config.FLAGPERF_PATH + "/" \
-                  + "/utils/prepare_in_container.py --framework " \
+                  + "/tools/prepare_in_container.py --framework " \
                   + framework + " --model " + model + " --vendor " \
                   + config.VENDOR + " --pipsource " + config.PIP_SOURCE + "\""
     timeout = 1800
@@ -208,7 +210,7 @@ def start_container_in_cluster(dp_path, run_args, container_name, image_name,
                                nnodes):
     '''Call CLUSTER_MGR tool to start containers.'''
     start_cmd = "cd " + dp_path + " && " + sys.executable \
-                + " utils/container_manager.py -o runnew " \
+                + " ../utils/container_manager.py -o runnew " \
                 + " -c " + container_name + " -i " + image_name + " -a \"" \
                 + run_args + "\""
     logger.debug("Run cmd in the cluster to start container: " + start_cmd)
@@ -223,7 +225,7 @@ def start_container_in_cluster(dp_path, run_args, container_name, image_name,
 def stop_container_in_cluster(dp_path, container_name, nnodes):
     '''Call CLUSTER_MGR tool to stop containers.'''
     stop_cont_cmd = "cd " + dp_path + " && " + sys.executable \
-                    + " utils/container_manager.py -o stop" \
+                    + " ../utils/container_manager.py -o stop" \
                     + " -c " + container_name
     logger.debug("Run cmd to stop container(s) in the cluster:" +
                  stop_cont_cmd)
@@ -259,7 +261,7 @@ def clear_caches_cluster(clear, nnodes):
 def start_monitors_in_cluster(dp_path, case_log_dir, nnodes):
     '''Start sytem and vendor's monitors.'''
     start_mon_cmd = "cd " + dp_path + " && " + sys.executable \
-                    + " utils/sys_monitor.py -o restart -l "
+                    + " ../utils/sys_monitor.py -o restart -l "
     timeout = 60
     logger.debug("Run cmd in the cluster to start system monitors: " +
                  start_mon_cmd)
@@ -287,7 +289,7 @@ def start_monitors_in_cluster(dp_path, case_log_dir, nnodes):
 def stop_monitors_in_cluster(dp_path, nnodes):
     '''Stop sytem and vendor's monitors.'''
     stop_mon_cmd = "cd " + dp_path + " && " + sys.executable \
-                   + " utils/sys_monitor.py -o stop"
+                   + " ../utils/sys_monitor.py -o stop"
     timeout = 60
     logger.debug("Run cmd in the cluster to stop system monitors: " +
                  stop_mon_cmd)
@@ -330,7 +332,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
         new_case_config[cfg] = getattr(config, cfg)
 
     start_cmd = "cd " + dp_path + " && " + sys.executable \
-                + " utils/container_manager.py -o runcmdin -c " \
+                + " ../utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -r \"" \
                 + f"python3 run_inference.py" \
                 + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
@@ -347,7 +349,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
                 curr_log_path + "/container.out.log")
     logger.info("Check task stderr & stdout in real time from container: " +
                 curr_log_path + "/stdout_err.out.log")
-    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15)
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15, "inference")
     # Wait a moment for starting tasks.
     time.sleep(10)
 
@@ -357,7 +359,7 @@ def wait_for_finish(dp_path, container_name, pid_file_path, nnodes):
     '''
     # Aussme pid of start_xxx_task.py won't loop in a short time.
     check_cmd = "cd " + dp_path + "; " + sys.executable \
-                + " utils/container_manager.py -o pidrunning -c " \
+                + " ../utils/container_manager.py -o pidrunning -c " \
                 + container_name + " -f " + pid_file_path
 
     logger.debug("Run cmd to check whether the training tasks is running: " +
@@ -385,6 +387,8 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, config,
                            + " --shm-size=" + config.SHM_SIZE \
                            + " -v " + dp_path + ":" \
                            + config.FLAGPERF_PATH \
+                           + " -v " + os.path.join(dp_path, "..") + ":" \
+                           + os.path.join(config.FLAGPERF_PATH, "..") \
                            + " -v " + case_config["data_dir_host"] + ":" \
                            + case_config["data_dir_container"]
     if config.ACCE_CONTAINER_OPT is not None:
@@ -561,7 +565,7 @@ def main(config):
     check_test_host_config(config)
 
     # Check test environment and configs from host.yaml.
-    CLUSTER_MGR.init(config.HOSTS, config.SSH_PORT, getpass.getuser())
+    CLUSTER_MGR.init(config.HOSTS, config.SSH_PORT, getpass.getuser(), logger)
     check_cluster_health()
     dp_path = _get_deploy_path(config)
     check_cluster_deploy_path(dp_path)
