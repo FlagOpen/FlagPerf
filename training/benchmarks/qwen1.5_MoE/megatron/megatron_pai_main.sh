@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs Qwen1.5 14B(8*1.8B) MoE model on 8xA800 GPUs
+# Runs Qwen1.5 MoE model on 8xA800 GPUs
 
 MEGATRON_PATCH_PATH="/workspace/Pai-Megatron-Patch"
 MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240405

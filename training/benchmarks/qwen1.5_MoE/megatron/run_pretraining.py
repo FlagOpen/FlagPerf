@@ -46,8 +46,6 @@ if __name__ == "__main__":
     gbs = getattr(module, 'gbs')
     pr = getattr(module, 'pr')
 
-
-    mbs = batchsize
     task_log_file = os.path.join(args.log_dir, "megatron_pai.log.txt")
 
     exec_cmd = "bash megatron_pai_main.sh"

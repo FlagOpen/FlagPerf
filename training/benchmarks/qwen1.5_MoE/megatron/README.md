@@ -22,9 +22,14 @@ In terms of model structure, Qwen1.5-MoE introduces a specially designed MoE arc
 
 Detailed evaluation results are reported in this [blog](https://qwenlm.github.io/blog/qwen-moe/)
 
+Code source [Pai-Megatron-Patch-qwen1.5](https://github.com/alibaba/Pai-Megatron-Patch/tree/main/examples/qwen1_5)
+
 - Details
 
-`Qwen1.5_MoE`共64位专家，采用1.8B基座模型的数据，以4位固定专家+top4路由选择专家的形式激活，共8位专家。`Pai_Qwen1.5_MoE`是`Pai-Megatron-Patch`团队近期（SHA=9fce17b39a958a3455b5cd54b93b3f1f3dc5a5a2）支持的MoE训练方法，采用1.8B基座模型，top2路由选择专家的形式激活，共2位专家，实际*计算量*为`2.3B（2.3B=24*2048*2048*(2*8+4)+151936*2048）`。我们以Pai为蓝本添加。Pai版本和qwen版本激活参数量相符，不成为影响mfu计算与芯片评测效果的主要因素。此外，我们结合llm的常见做法，参考Modelscope-Qwen-MoE配置，相比于pai，修改globalbs=512，maxpositionembedding=8192。
+`Qwen1.5_MoE`共64位专家，采用1.8B基座模型的数据，以4位固定专家+top4路由选择专家的形式激活，共8位专家。`Pai_Qwen1.5_MoE`是`Pai-Megatron-Patch`团队近期（SHA=9fce17b39a958a3455b5cd54b93b3f1f3dc5a5a2）支持的MoE训练方法，采用1.8B基座模型，top2路由选择专家的形式激活，共2位专家，实际*计算量*为`2.3B（计算量=num_hidden_layers * (hidden_size * hidden_size * 4 + hidden_size * intermediate_size * 3 * 路由专家个数) + vocab_size * hidden_size = 24 * (2048 * 2048 * 4 + 2048 * 5632 * 3 * 2)+ 151936 * 2048）`。我们以Pai为蓝本添加的根本原因为目前Pai版本待支持专家细分机制Fine-Grained。Pai版本和qwen版本激活参数量相符，不成为影响mfu计算与芯片评测效果的主要因素。此外，我们结合llm的常见做法，参考Modelscope-Qwen-MoE配置，相比于pai，修改globalbs=512，maxpositionembedding=8192。
+
+Qwen1.5_MoE参数量配置详情见：[Qwen/Qwen1.5-MoE-A2.7B](https://huggingface.co/Qwen/Qwen1.5-MoE-A2.7B/blob/main/config.json)
+
 
 ## 数据准备
 
