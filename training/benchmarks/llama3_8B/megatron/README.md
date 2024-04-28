@@ -8,7 +8,7 @@ LLaMA3 is a new generation of large language models developed by Meta. The first
 
 - 模型代码来源 
 
-我们假设您了解Meta开源了Llama3的哪些部分（例如包括模型权重文件、tokenizer等，不包括预训练代码、预训练实现、预训练数据集等）。出于上述事实，本评测样例基于开源Megatron框架，使用开源wudao数据集，在[meta-llama/Meta-Llama-3-8B · Hugging Face](https://huggingface.co/meta-llama/Meta-Llama-3-8B)设计的LLaMA3-8B算法结构上进行预训练，来进行AI硬件评测。测试样例内部代码为FlagPerf编写。需要下载或准备的文件见**数据准备**小节，依赖的外部软件或信息见**依赖**小节。
+我们假设您了解Meta开源了Llama3的哪些部分（例如包括模型权重文件、tokenizer等，不包括预训练代码、预训练实现、预训练数据集等）。出于上述事实，本评测样例基于开源Megatron框架，使用开源wudao数据集，在[meta-llama/Meta-Llama-3-8B · Hugging Face](https://huggingface.co/meta-llama/Meta-Llama-3-8B)设计的LLaMA3-8B算法结构上进行预训练，来进行AI硬件评测。测试样例代码为FlagPerf编写。需要下载或准备的文件见**数据准备**小节，依赖的外部软件或信息见**依赖**小节。
 
 
 # 数据准备
