@@ -22,6 +22,11 @@
 
    - flash attention 2
 
+- ##### 依赖环境
+
+   - sentencepiece==0.2.0
+   - 注：不同版本的sentencepiece分词方式可能会有所不同，为了训练误差的比对，在本case中将sentencepiece的版本设置为0.2.0
+
 ### 运行情况
 
 * 输入批尺寸
