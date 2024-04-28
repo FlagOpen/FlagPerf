@@ -1,3 +1,20 @@
+### 0. 模型背景
+
+* 基本信息
+  * DeepSeek-7B is an open-source large language model developed by the AI organization "DeepSeek," which is part of the broader AI company Fantasia. Trained on a 2 trillion token dataset, it follows the LLaMA model architecture with a Pre-Norm structure and SwiGLU activation function, using Grouped Query Attention for efficiency. The 30-layer model has shown strong few-shot general abilities, math abilities and coding abilities. Besides, DeepSeek-67B claims to outperform Llama2 70B Base in areas such as reasoning, coding, math, and Chinese comprehension. 
+
+* 模型结构
+  * DeepSeek LLM essentially follows the design of LLaMA, adopting a Pre-Norm structure and utilizing the RMSNorm function along with SwiGLU as the activation function for the Feed-Forward Network (FFN), with an intermediate layer dimension ratio of 8/3. It also integrates the RoPE mechanism. To optimize inference costs, the 67B model employs Grouped Query Attention (GQA) instead of the traditional Multi-Head Attention (MHA).
+
+* 更多Eval结果
+  * More evaluation results could be seen at `https://github.com/deepseek-ai/DeepSeek-LLM/tree/main/evaluation`
+
+* 论文链接
+  * DeepSeek LLM: Scaling Open-Source Language Models with Longtermism `https://arxiv.org/abs/2401.02954`
+
+* 源代码链接
+  * https://github.com/deepseek-ai/DeepSeek-LLM
+
 ### 1. 推理数据集
 
 * 下载地址：`https://huggingface.co/datasets/Stevross/mmlu/tree/main`

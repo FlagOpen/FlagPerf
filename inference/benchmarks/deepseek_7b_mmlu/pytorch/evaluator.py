@@ -3,7 +3,7 @@ import torch
 
 def evaluator(pred, y, dataloader):
 
-    tokenizer = dataloader.tokenizer
+    tokenizer = dataloader.dataset.tokenizer
 
     gt = y[0][0][1]
     predict = pred[:, -1, :]

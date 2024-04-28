@@ -329,18 +329,20 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
     for cfg in must_configs:
         new_case_config[cfg] = getattr(config, cfg)
 
-    start_cmd = "cd " + dp_path + " && " + sys.executable \
-                + " utils/container_manager.py -o runcmdin -c " \
-                + container_name + " -r \"" \
-                + f"python3 run_inference.py" \
+    run_container_cmd = "python3 run_inference.py" \
                 + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
                 + f" --loglevel " + getattr(config, "FLAGPERF_LOG_LEVEL") \
                 + f" --vendor " + getattr(config, "VENDOR") \
                 + f" --case " + case_config["model"]  \
                 + f" --data_dir " + case_config["data_dir_container"] \
                 + f" --framework " + case_config["framework"] \
-                + f" --log_dir " + curr_log_path  + " 2>&1 | tee "+curr_log_path+"/stdout_err.out.log" + "\""
-    logger.debug("Run cmd in the cluster to start tasks, cmd: " + start_cmd)
+                + f" --log_dir " + curr_log_path  + " 2>&1 | tee "+curr_log_path+"/stdout_err.out.log"
+    start_cmd = "cd " + dp_path + " && " + sys.executable \
+                + " utils/container_manager.py -o runcmdin -c " \
+                + container_name + " -r \"" + run_container_cmd + "\""
+    
+    logger.debuf("Run cmd in the run_container_cmd to start tasks, cmd: \n" + run_container_cmd)
+    logger.debug("Run cmd in the cluster to start tasks, cmd: \n" + start_cmd)
 
     logger.info("3) Waiting for tasks end in the cluster...")
     logger.info("Check task log in real time from container: " +
