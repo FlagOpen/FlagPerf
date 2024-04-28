@@ -1,3 +1,8 @@
+# Copyright (c) 2024 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 import subprocess
 from argparse import ArgumentParser
 import os
@@ -35,19 +40,56 @@ if __name__ == "__main__":
 
     module = import_module(config_file)
 
-    seqlength = getattr(module, 'seqlength')
     localbs = getattr(module, 'localbs')
     train_steps = getattr(module, 'train_steps')
     theoryflops = getattr(module, 'theoryflops')
-    epochs = getattr(module, 'epochs')
+    megapath = getattr(module, 'megatron_path')
     tensor_parallel = getattr(module, 'tensor_parallel')
     pipeline_parallel = getattr(module, 'pipeline_parallel')
+    tokenizer = getattr(module, 'tokenizer_path')
+    
+    nnodes = args.nnodes
+    nproc_per_node = args.nproc_per_node
+    node_rank = args.node_rank
+    master_addr = args.master_addr
+    master_port = args.master_port
+    data_dir = args.data_dir
+    tokenizer_dir = os.path.join(args.data_dir, tokenizer)
 
 
     task_log_file = os.path.join(args.log_dir, "megatron.log.txt")
+    
+    # merge llama3 patch
 
-    exec_cmd = "cp arguments.py /workspace/Megatron-LM/megatron/training/;cp tokenizer.py /workspace/Megatron-LM/megatron/training/tokenizer/;bash pretrain_llama3.sh"
+    
+    origin_file = os.path.join(megapath, "megatron/training/arguments.py")
+    exec_cmd = "patch --silent --forward " + origin_file + " arguments.patch -o tmp.py;mv tmp.py " + origin_file
+    exec_cmd = exec_cmd + ";"
+    
+    origin_file = os.path.join(megapath, "megatron/training/tokenizer/tokenizer.py")
+    exec_cmd = exec_cmd + "patch --silent --forward " + origin_file + " tokenizer.patch -o tmp.py;mv tmp.py " + origin_file
+    exec_cmd = exec_cmd + ";"
+    
+    # bash pretrain_llama3.sh
+    
+    exec_cmd = exec_cmd + "bash pretrain_llama3.sh"
+    
+    # args
+
+    exec_cmd = exec_cmd + " " + data_dir
+    exec_cmd = exec_cmd + " " + str(nproc_per_node)
+    exec_cmd = exec_cmd + " " + str(nnodes)
+    exec_cmd = exec_cmd + " " + str(node_rank)
+    exec_cmd = exec_cmd + " " + str(master_addr)
+    exec_cmd = exec_cmd + " " + str(master_port)
+    exec_cmd = exec_cmd + " " + megapath
+    exec_cmd = exec_cmd + " " + str(localbs)
+    exec_cmd = exec_cmd + " " + str(train_steps)
+    exec_cmd = exec_cmd + " " + str(tensor_parallel)
+    exec_cmd = exec_cmd + " " + str(pipeline_parallel)
+    exec_cmd = exec_cmd + " " + str(tokenizer_dir)
     exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
+    print(exec_cmd)
 
     with open(task_log_file, "w") as f:
         p = subprocess.Popen(exec_cmd,
@@ -64,8 +106,8 @@ if __name__ == "__main__":
                 steptime = info.split(":")[1]
                 time_per_step = float(steptime) / 1000
 
-    whole_tps = 512* seqlength / time_per_step
+    whole_tps = 512 * 8192 / time_per_step
     chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
     print("System tokens per second: ", whole_tps)
     print("Tokens/p/s: ", chip_tps)
-    print("MFU: ", chip_tps * 80000000000.0 * 6 / theoryflops)
+    print("MFU: ", chip_tps * 8000000000.0 * 6 / theoryflops)

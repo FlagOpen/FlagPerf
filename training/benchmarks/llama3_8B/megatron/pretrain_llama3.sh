@@ -1,10 +1,29 @@
 #!/bin/bash
+# Copyright (c) 2024 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+# args
+
+DATA_DIR=$1
+GPUS_PER_NODE=$2
+NNODES=$3
+NODE_RANK=$4
+MASTER_ADDR=$5
+MASTER_PORT=$6
+MEGAPATH=$7
+MBS=$8
+ITERS=$9
+TP=${10}
+PP=${11}
+TDIR=${12}
+ADAPT=${13}
 
 # Runs the "LLaMA3-8B" parameter model
-export PYTHONPATH=$PYTHONPATH:/workspace/Megatron-LM
+export PYTHONPATH=$PYTHONPATH:$MEGAPATH
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
-ls /workspace
 # algorithm args
 
 MODEL_ARGS=" \
@@ -24,8 +43,8 @@ MODEL_ARGS=" \
 
 OPT_ARGS=" \
     --lr 1.0e-5 \
-    --train-iters 300 \
-    --lr-decay-iters 300 \
+    --train-iters $ITERS \
+    --lr-decay-iters $ITERS \
     --lr-decay-style cosine \
     --min-lr 1.0e-6 \
     --weight-decay 0.1 \
@@ -39,17 +58,26 @@ ALGO_ARGS="$MODEL_ARGS $OPT_ARGS"
 # data args
 
 DATA_ARGS=" \
-    --data-path /data/llama3_8b_pretrain/wudao_llama3bpe_content_document \
+    --data-path $DATA_DIR/wudao_llama3bpe_content_document \
     --tokenizer-type Llama3Tokenizer \
+    --tokenizer-model $TDIR \
     --split 100,0,0
 "
 
 # training args
 
+DISTRIBUTED_ARGS="
+    --nproc_per_node $GPUS_PER_NODE \
+    --nnodes $NNODES \
+    --node_rank $NODE_RANK \
+    --master_addr $MASTER_ADDR \
+    --master_port $MASTER_PORT
+"
+
 TRAINING_ARGS=" \
-    --micro-batch-size 1 \
-    --tensor-model-parallel-size 1 \
-    --pipeline-model-parallel-size 2 \
+    --micro-batch-size $MBS \
+    --tensor-model-parallel-size $TP \
+    --pipeline-model-parallel-size $PP \
     --sequence-parallel \
     --bf16
 "
@@ -65,7 +93,8 @@ VENDOR_ARGS=" \
 
 OUTPUT_ARGS=" --log-interval 1"
 
-run_cmd="torchrun --nproc_per_node 8 --nnodes 1 --node_rank 0 --master_addr 10.1.2.59 --master_port 29501 /workspace/Megatron-LM/pretrain_gpt.py \
+source $ADAPT
+run_cmd="torchrun $DISTRIBUTED_ARGS $MEGAPATH/pretrain_gpt.py \
     $ALGO_ARGS \
     $DATA_ARGS \
     $TRAINING_ARGS \

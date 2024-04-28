@@ -15,7 +15,7 @@ This case includes code from the LLAMA 3 COMMUNITY LICENSE AGREEMENT License ope
 
 ### 模型配置及tokenizer准备
 
-本测试样例为预训练case，需要下载tokenizer，不需要下载模型代码或模型权重。tokenizer需向llama3官方申请并下载8B版本，并在data_dir下创建llama3_8b_hf目录，按照[unsloth/llama-3-8b at main (huggingface.co)](https://huggingface.co/unsloth/llama-3-8b/tree/main)仓库示例格式存放（不需要权重部分）。
+本测试样例为预训练case，需要下载tokenizer，不需要下载模型代码或模型权重。tokenizer需向llama3官方申请并下载8B版本，并在data_dir下创建\<llama3_8b_hf\>目录，按照[unsloth/llama-3-8b at main (huggingface.co)](https://huggingface.co/unsloth/llama-3-8b/tree/main)仓库示例格式存放（不需要权重部分）。其中，\<llama3\_8b\_hf\>目录可更改，需在形如config\_A100\_1x8.py的配置文件中同步修改。默认为\<llama3\_8b\_hf\>。
 
 
 ### 数据集准备
