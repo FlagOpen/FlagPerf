@@ -8,23 +8,29 @@ LLaMA3 is a new generation of large language models developed by Meta. The first
 
 - 模型代码来源 
 
-This case includes code from the LLAMA 3 COMMUNITY LICENSE AGREEMENT License open source project at:[meta-llama/Meta-Llama-3-8B · Hugging Face](https://huggingface.co/meta-llama/Meta-Llama-3-8B)
+我们假设您了解Meta开源了Llama3的哪些部分（例如包括模型权重文件、tokenizer等，不包括预训练代码、预训练实现、预训练数据集等）。出于上述事实，本评测样例基于开源Megatron框架，使用开源wudao数据集，在[meta-llama/Meta-Llama-3-8B · Hugging Face](https://huggingface.co/meta-llama/Meta-Llama-3-8B)设计的LLaMA3-8B算法结构上进行预训练，来进行AI硬件评测。测试样例内部代码为FlagPerf编写。需要下载或准备的文件见**数据准备**小节，依赖的外部软件或信息见**依赖**小节。
 
 
 # 数据准备
 
 ### 模型配置及tokenizer准备
 
-本测试样例为预训练case，需要下载tokenizer，不需要下载模型代码或模型权重。tokenizer需向llama3官方申请并下载8B版本，并在data_dir下创建\<llama3_8b_hf\>目录，按照[unsloth/llama-3-8b at main (huggingface.co)](https://huggingface.co/unsloth/llama-3-8b/tree/main)仓库示例格式存放（不需要权重部分）。其中，\<llama3\_8b\_hf\>目录可更改，需在形如config\_A100\_1x8.py的配置文件中同步修改。默认为\<llama3\_8b\_hf\>。
+本测试样例为预训练case，需要下载tokenizer（我们假设您了解tokenizer包括哪些文件。如不确定，可下载llama3-8B所有文件，尽管我们不需要使用模型权重文件），不需要下载模型代码或模型权重。tokenizer需向llama3官方申请并下载8B所用版本，并在data_dir下创建llama3_8b_hf目录，按照huggingface要求的格式进行处理或存放。了解data\_dir需要阅读FlagPerf有关训练的文档，或不阅读相关文档直接修改FlagPerf/training/run_benchmarks/config/test_conf.py中CASES变量中的value。
+
+出于对Llama3开源协议的遵守，尽管不推荐，不了解相关背景的用户仍可以参考[unsloth/llama-3-8b at main (huggingface.co)](https://huggingface.co/unsloth/llama-3-8b/tree/main)仓库示例格式存放tokenizer相关文件（不需要模型权重部分，如果您不了解哪些是模型权重部分，请保留全部文件）。其中，data_dir下面创建的llama3_8b_hf目录名称可更改。如更改，需在形如FlagPerf/training/nvidia/llama3\_8B-megatron/config/config\_A100\_1x8.py的配置文件中同步修改。默认为llama3\_8b_hf。
 
 
 ### 数据集准备
 
 本测试样例数据使用智源研究院wudao数据集，需向llama3官方申请tokenizer并进行预处理。测试数据集的内容不是影响AI硬件评测结果的核心因素，可以参考或使用阿里灵骏团队开放的预处理好的数据集[Pai-Megatron-Patch/examples/llama3/README.md at main · alibaba/Pai-Megatron-Patch (github.com)](https://github.com/alibaba/Pai-Megatron-Patch/blob/main/examples/llama3/README.md#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8C%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD)
 
-将上述两个文件（.bin与.idx，不清楚文件用法可以参考Megatron-LM仓库相关介绍）放置于data_dir下。
+在上述README文件中找到并执行
 
-# 相关开源仓库
+`wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama3-datasets/wudao_llama3bpe_content_document.binwget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama3-datasets/wudao_llama3bpe_content_document.idx`
+
+将上述两个文件（.bin与.idx，不清楚文件原理可以参考Megatron-LM仓库相关介绍）放置于data_dir下。
+
+# 依赖
 
 ### llama3（算法结构、tokenizer）
 
