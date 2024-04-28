@@ -8,16 +8,16 @@ LLaMA3 is a new generation of large language models developed by Meta. The first
 
 - 模型代码来源 
 
-我们假设您了解Meta开源了Llama3的哪些部分（例如包括模型权重文件、tokenizer等，不包括预训练代码、预训练实现、预训练数据集等）。出于上述事实，本评测样例基于开源Megatron框架，使用开源wudao数据集，在[meta-llama/Meta-Llama-3-8B · Hugging Face](https://huggingface.co/meta-llama/Meta-Llama-3-8B)设计的LLaMA3-8B算法结构上进行预训练，来进行AI硬件评测。测试样例代码为FlagPerf编写。需要下载或准备的文件见**数据准备**小节，依赖的外部软件或信息见**依赖**小节。
+Meta仅开源了Llama3的模型权重文件、tokenizer等，不包括预训练代码、预训练实现、预训练数据集等。出于上述事实，本评测样例基于开源Megatron框架，使用开源wudao数据集，在[meta-llama/Meta-Llama-3-8B · Hugging Face](https://huggingface.co/meta-llama/Meta-Llama-3-8B)设计的LLaMA3-8B算法结构上进行预训练，来进行AI硬件评测。测试样例代码为FlagPerf编写。需要下载或准备的文件见**数据准备**小节，依赖的外部软件或信息见**依赖**小节。
 
 
 # 数据准备
 
 ### 模型配置及tokenizer准备
 
-本测试样例为预训练case，需要下载tokenizer（我们假设您了解tokenizer包括哪些文件。如不确定，可下载llama3-8B所有文件，尽管我们不需要使用模型权重文件），不需要下载模型代码或模型权重。tokenizer需向llama3官方申请并下载8B所用版本，并在data_dir下创建llama3_8b_hf目录，按照huggingface要求的格式进行处理或存放。了解data\_dir需要阅读FlagPerf有关训练的文档，或不阅读相关文档直接修改FlagPerf/training/run_benchmarks/config/test_conf.py中CASES变量中的value。
+本测试样例为预训练case，需要下载tokenizer（如不确定tokenizer包含哪些文件，可下载llama3-8B所有文件，尽管我们不需要使用模型权重文件），不需要下载模型代码或模型权重。tokenizer需向llama3官方申请并下载8B所用版本，并在data_dir下创建llama3_8b_hf目录，按照huggingface要求的格式进行处理或存放。了解data\_dir需要阅读FlagPerf有关训练的文档，或直接修改FlagPerf/training/run_benchmarks/config/test_conf.py中CASES变量中的value。
 
-出于对Llama3开源协议的遵守，尽管不推荐，不了解相关背景的用户仍可以参考[unsloth/llama-3-8b at main (huggingface.co)](https://huggingface.co/unsloth/llama-3-8b/tree/main)仓库示例格式存放tokenizer相关文件（不需要模型权重部分，如果您不了解哪些是模型权重部分，请保留全部文件）。其中，data_dir下面创建的llama3_8b_hf目录名称可更改。如更改，需在形如FlagPerf/training/nvidia/llama3\_8B-megatron/config/config\_A100\_1x8.py的配置文件中同步修改。默认为llama3\_8b_hf。
+出于对Llama3开源协议的遵守，尽管不推荐，不了解相关背景的用户仍可以参考[unsloth/llama-3-8b at main (huggingface.co)](https://huggingface.co/unsloth/llama-3-8b/tree/main)仓库示例格式存放tokenizer相关文件（不需要模型权重部分，如不确定，请保留全部文件）。其中，data_dir下面创建的llama3_8b_hf目录名称可更改。如更改，需在形如FlagPerf/training/nvidia/llama3\_8B-megatron/config/config\_A100\_1x8.py的配置文件中同步修改。默认为llama3\_8b_hf。
 
 
 ### 数据集准备
