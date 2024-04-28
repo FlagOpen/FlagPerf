@@ -25,9 +25,10 @@ ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
     "computation-FP32": "pytorch_2.3"
 
+# nvidia "computation-FP64":"pytorch_2.3"
 # nvidia "computation-FP32":"pytorch_2.3"
 # nvidia "computation-TF32":"pytorch_2.3"
 # nvidia "computation-FP16":"pytorch_2.3"
-# nvidia "computation-FP64":"pytorch_2.3"
 # nvidia "computation-BF16":"pytorch_2.3"
 # nvidia "computation-INT8":"pytorch_2.3"
+# nvidia "main_memory-bandwidth":"pytorch_2.3"

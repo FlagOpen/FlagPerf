@@ -8,7 +8,7 @@ import shutil
 from argparse import ArgumentParser
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../")))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../")))
 from utils import run_cmd
 
 

@@ -116,17 +116,21 @@ class ClusterManager():
     def run_command_some_hosts_distribution_info(self,
                                                  base_cmd,
                                                  host_count,
-                                                 timeout=10):
+                                                 timeout=10,
+                                                 mode="training"):
         '''Run a command with torch ddp options on each host with ssh.
         '''
         failed_hosts_ret = {}
         # remove the " at the end of base_cmd, then add other options.
-        base_cmd = base_cmd.rstrip("\"")
-        command_master_ip = base_cmd + ' --master_addr ' + self.hosts[0]
+        if mode == "training" or mode == "base":
+            base_cmd = base_cmd.rstrip("\"")
+            command_master_ip = base_cmd + ' --master_addr ' + self.hosts[0]
         for i in range(0, host_count):
             host = self.hosts[i]
-            command = command_master_ip + ' --node_rank ' + str(i) \
-                                        + ' --host_addr ' + host + "\""
+            command = base_cmd
+            if mode == "training" or mode == "base":
+                command = command_master_ip + ' --node_rank ' + str(i) \
+                                            + ' --host_addr ' + host + "\""
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
