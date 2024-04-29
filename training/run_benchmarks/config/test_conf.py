@@ -160,6 +160,7 @@ CASES = {
     # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "baichuan2_13b:deepspeed:C500:2:8:1": "/raid/dataset/baichuan2_13b",
 
     # "transformer_xl:pytorch_2.0:C500:1:8:1": "/raid/dataset/transformer_xl/",
     # "wav2vec2:pytorch_2.0:C500:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
