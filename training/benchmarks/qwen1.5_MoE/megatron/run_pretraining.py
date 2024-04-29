@@ -44,7 +44,7 @@ if __name__ == "__main__":
     tensor_parallel = getattr(module, 'tensor_parallel')
     pipeline_parallel = getattr(module, 'pipeline_parallel')
     gbs = getattr(module, 'gbs')
-    pr = getattr(module, 'pr')
+    precision = getattr(module, 'precision')
 
     task_log_file = os.path.join(args.log_dir, "megatron_pai.log.txt")
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     exec_cmd = exec_cmd + " " + str(gbs)
     exec_cmd = exec_cmd + " " + str(seqlength)
     exec_cmd = exec_cmd + " " + str(padlength)
-    exec_cmd = exec_cmd + " " + str(pr)
+    exec_cmd = exec_cmd + " " + str(precision)
     exec_cmd = exec_cmd + " " + str(tensor_parallel)
     exec_cmd = exec_cmd + " " + str(pipeline_parallel)
     exec_cmd = exec_cmd + " " + os.path.join(config_dir_path, "training_adapter.sh")
