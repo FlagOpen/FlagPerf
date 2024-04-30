@@ -6,8 +6,8 @@
 * 模型结构
   * Llama 3 is an auto-regressive language model that uses an optimized transformer architecture. The tuned versions use supervised fine-tuning (SFT) and reinforcement learning with human feedback (RLHF) to align with human preferences for helpfulness and safety.
 
-* 更多Eval结果
-  * More evaluation results and evaluation details could be seen at `https://github.com/meta-llama/llama3/blob/main/eval_details.md`
+* Meta提供的llama3-8b-mmlu得分: Acc=65.4%
+  * Related link: `https://github.com/meta-llama/llama3/blob/main/eval_details.md`
 
 * 源代码链接
   * `https://github.com/meta-llama/llama3`
@@ -17,7 +17,15 @@
 * 下载地址：`https://huggingface.co/datasets/Stevross/mmlu/tree/main`
   1. 下载其中的data.tar
   2. 将.tar文件还原为目录
-  3. 将解压后的data目录放置在config.data_dir/config.mmlu_dir
+  3. 在config.data_dir目录下创建"mmlu_dataset"目录，将解压后的data目录放置在config.data_dir/mmludataset/目录下
+  * config.data_dir为本case存放模型权重与推理数据集的目录，默认为"/raid/dataset/llama3_8b_mmlu"，如需更改，请修改Flagperf/inference/configs/host.yaml中CASES变量的value。
+  * config.mmlu_dir为本case存放推理数据集的目录，默认为"/mmlu_dataset/data"，如需更改，请修改FlagPerf/inference/configs/llama3_8b_mmlu/parameters.yaml中的mmlu_dir变量。
+
+  llama3_8b_mmlu<br/>
+  &emsp;&emsp;├── llama3_8b_hf<br/>
+  &emsp;&emsp;└── mmlu_dataset<br/>
+&emsp;&emsp;&emsp;&emsp;&emsp;└── data<br/>
+
 
 ### 2. 模型与权重
 
@@ -29,6 +37,14 @@
   1. 权重申请地址：`https://huggingface.co/meta-llama/Meta-Llama-3-8B/tree/main`
   2. 填写申请表并同意相关协议，向meta ai申请llama3-8b权重
   3. 使用huggingface提供的convert.py将权重转换为huggingface格式，并保存在config.data_dir/config.weight_dir
+  
+  * config.data_dir为本case存放模型权重与推理数据集的目录，默认为"/raid/dataset/llama3_8b_mmlu"，如需更改，请修改Flagperf/inference/configs/host.yaml中CASES变量的value。
+  * config.weight_dir为本case存放模型权重的目录，默认为"llama3_8b_hf"，如需更改，请修改FlagPerf/inference/configs/llama3_8b_mmlu/parameters.yaml中的weight_dir变量。
+
+  llama3_8b_mmlu<br/>
+  &emsp;&emsp;├── llama3_8b_hf<br/>
+  &emsp;&emsp;└── mmlu_dataset<br/>
+&emsp;&emsp;&emsp;&emsp;&emsp;└── data<br/>
 
 ### 3. 软硬件配置与运行信息参考
 
