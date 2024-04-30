@@ -11,3 +11,7 @@ MASTER_PORT = "29501"
 
 # ssh connection port
 SSH_PORT = "22"
+
+# Initial environment
+ENV_FLAG = "baremetal"
+# ENV_FLAG = "container"
