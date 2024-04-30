@@ -1,3 +1,17 @@
+### 0. 模型背景
+
+* 基本信息
+  * Meta developed and released the Meta Llama 3 family of large language models (LLMs), a collection of pretrained and instruction tuned generative text models in 8 and 70B sizes. The Llama 3 instruction tuned models are optimized for dialogue use cases and outperform many of the available open source chat models on common industry benchmarks.
+
+* 模型结构
+  * Llama 3 is an auto-regressive language model that uses an optimized transformer architecture. The tuned versions use supervised fine-tuning (SFT) and reinforcement learning with human feedback (RLHF) to align with human preferences for helpfulness and safety.
+
+* 更多Eval结果
+  * More evaluation results and evaluation details could be seen at `https://github.com/meta-llama/llama3/blob/main/eval_details.md`
+
+* 源代码链接
+  * `https://github.com/meta-llama/llama3`
+
 ### 1. 推理数据集
 
 * 下载地址：`https://huggingface.co/datasets/Stevross/mmlu/tree/main`
