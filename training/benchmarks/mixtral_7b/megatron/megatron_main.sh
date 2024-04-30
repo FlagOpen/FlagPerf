@@ -34,7 +34,7 @@ MODEL_ARGS=(
     --disable-bias-linear
     --seq-length 2048
     --max-position-embeddings 32768
-    --num-layers 16
+    --num-layers 8
     --hidden-size 4096
     --ffn-hidden-size 14336
     --num-attention-heads 32

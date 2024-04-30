@@ -48,5 +48,4 @@
 | A100多机8卡（2x8） |  /  | 3132 | 6.55 | 36/40 | 18.07% |
 
 * 补充说明
-
-   mixtral 8x7B 激活了12B参数/token，因资源限制，此版本将layer数从32改为8，激活了3B参数/token。
+   mixtral 8x7B 激活了12B参数/token，因资源限制，此版本将layer数从32改为8(将training/benchmarks/mixtral_7b/megatron/megatron_main.sh中MODEL_ARGS参数中的num-layers从32改为8)，激活了3B参数/token。
