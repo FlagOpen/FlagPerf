@@ -1,16 +1,6 @@
 ## 模型信息
 
-LLaVA is an open-source chatbot trained by fine-tuning LLaMA/Vicuna on GPT-generated multimodal instruction-following data. It is an auto-regressive language model, based on the transformer architecture.The official code repository is https://github.com/haotian-liu/LLaVA
-
-Compared with older predecessors such as diffusion and CLIP, LLaVA is an LMM rather than a simple multi-modal model. 
-
-Compared with other LMMs, LLaVA has three advantages:
-
-A. LLaVA is completely open source, including training scripts, training data sets and model evaluation results, which is more fair and credible;
-
-B. LLaVA is based on LLaMA or finetuned LLaMA, which is the most widely used open source LLM, and it is easy for manufacturers to adapt;
-
-C. In the pretraining process of LLaVA, only the connector part is trained, so the computing resource overhead is small, and the manufacturer has low resource requirements for completing the evaluation.
+LLaVA is an open-source chatbot trained by fine-tuning LLaMA/Vicuna on GPT-generated multimodal instruction-following data. It is an auto-regressive language model, based on the transformer architecture.
 
 ## 模型配置及tokenizer准备
 
@@ -62,21 +52,3 @@ https://huggingface.co/openai/clip-vit-large-patch14-336/tree/main ，放置在d
    ```
 
 3. 下载评测数据集MMMU：https://huggingface.co/datasets/MMMU/MMMU/tree/main ，下载完后放置在data_dir下
-
-最后的data_dir目录如下：
-```
-data_dir/
-├── LLaVA-Finetune
-│   ├── checkpoint
-│   ├── data
-│   └── llava_v1_5_mix665k.json
-├── LLaVA-Pretrain
-│   ├── blip_laion_cc_sbu_558k.json
-│   ├── checkpoints
-│   └── images
-├── MMMU
-│   ├── MMMU
-└── Output
-    ├── checkpoints_finetune
-    └── checkpoints_pretrain
-```
