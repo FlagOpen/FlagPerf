@@ -491,7 +491,6 @@ def main():
     with open("configs/host.yaml", "r") as file:
         config_dict = yaml.safe_load(file)
         config = Namespace(**config_dict)
-    print(config)
 
     # Set logger first
     timestamp_log_dir = "run" + time.strftime("%Y%m%d%H%M%S", time.localtime())
