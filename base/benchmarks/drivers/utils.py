@@ -30,10 +30,3 @@ def multi_device_sync(vendor):
         print("unspecified vendor {}, using default pytorch \"torch.distributed.barrier\"".format(vendor))
         torch.distributed.barrier()
         
-
-def get_memory_capacity(vendor, rank):
-    if vendor == "nvidia":
-        return torch.cuda.get_device_properties(rank).total_memory
-    else:
-        print("unspecified vendor {}, return -1.0".format(vendor))
-        return -1.0
