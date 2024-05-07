@@ -1,3 +1,8 @@
+# Copyright (c) 2024 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 import torch
 
 
@@ -30,3 +35,4 @@ def multi_device_sync(vendor):
         print("unspecified vendor {}, using default pytorch \"torch.distributed.barrier\"".format(vendor))
         torch.distributed.barrier()
         
+
