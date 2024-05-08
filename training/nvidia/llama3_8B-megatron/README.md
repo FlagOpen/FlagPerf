@@ -63,4 +63,4 @@
 | H100二机16卡（2x8） | bf16      | PP1DP8TP2 | /      | 7914      | True       | 62/80 | 38.4%       |
 | H100二机16卡（2x8） | bf16+fp8  | PP1DP8TP2 | /      | 10280     | True       | 64/80 | 24.9%-49.9% |
 
-注：H100标定bf16算力为989TFLOPS，fp8算力为1979TFLOPS。因此bf16+fp8混合精度的MFU位于两者之间，为一个范围。如全部为bf16则MFU取上界，如全部转为FP8则MFU取下界
+注：H100标定bf16算力为989TFLOPS，fp8算力为1979TFLOPS。因此bf16+fp8混合精度的MFU位于两者之间，为一个范围。如全部为bf16则MFU取上界，如全部转为FP8则MFU取下界。如需使用fp8数制进行训练，可以将training\_adapter\_H100\_fp8.sh中的内容拷贝到training\_adapter.sh中。注意：只有英伟达H及更高系列GPU等少数AI芯片具备FP8计算能力。
