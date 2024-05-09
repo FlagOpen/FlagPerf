@@ -88,7 +88,6 @@ class ClusterManager():
         ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
         if os.getenv("EXEC_IN_CONTAINER", False):
             if is_substring("../utils/image_manager.py", 
-                                ssh_run_cmd) or is_substring("../utils/sys_monitor.py",
                                 ssh_run_cmd) or is_substring("../utils/nvidia_monitor.py",
                                 ssh_run_cmd):
                 ssh_run_cmd = replace_between_spaces(ssh_run_cmd, 3, 4, "python3")
@@ -154,6 +153,9 @@ class ClusterManager():
                         self.logger.debug(f"Skip running container_manager control in host:{str(i)}, \
                                         because EVN 'EXEC_IN_CONTAINER' is set to True")
                         continue
+                elif is_substring("../utils/sys_monitor.py", command):
+                    command = replace_between_spaces(command, 3, 4, "python3")
+                    self.logger.debug("replace python3 for command: " + command)
 
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
@@ -178,6 +180,9 @@ class ClusterManager():
             # add log_dir option to the command
             log_dir = os.path.join(case_log_dir, host + "_noderank" + str(i))
             command = base_command + log_dir
+            if os.getenv("EXEC_IN_CONTAINER", False):
+                command = replace_between_spaces(command, 3, 4, "python3")
+                self.logger.debug("replace python3 for command: " + command)
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
