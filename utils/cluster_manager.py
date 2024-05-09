@@ -92,6 +92,7 @@ class ClusterManager():
                                 ssh_run_cmd) or is_substring("../utils/nvidia_monitor.py",
                                 ssh_run_cmd):
                 ssh_run_cmd = replace_between_spaces(ssh_run_cmd, 3, 4, "python3")
+                self.logger.debug("replace python3 for ssh_run_cmd: " + ssh_run_cmd)
         self.logger.debug("Run cmd on host with ssh. ssh cmd=" + ssh_run_cmd +
                           " host=" + host + " timeout=" + str(timeout))
         ret, outs = run_cmd.run_cmd_wait(ssh_run_cmd, timeout)
