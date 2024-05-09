@@ -87,7 +87,9 @@ class ClusterManager():
         '''
         ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
         if os.getenv("EXEC_IN_CONTAINER", False):
-            ssh_run_cmd = replace_between_spaces(ssh_run_cmd, 3, 4, "python3")
+            if is_substring("../utils/image_manager.py", 
+                                ssh_run_cmd):
+                ssh_run_cmd = replace_between_spaces(ssh_run_cmd, 3, 4, "python3")
         self.logger.debug("Run cmd on host with ssh. ssh cmd=" + ssh_run_cmd +
                           " host=" + host + " timeout=" + str(timeout))
         ret, outs = run_cmd.run_cmd_wait(ssh_run_cmd, timeout)
