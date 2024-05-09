@@ -205,6 +205,8 @@ class ClusterManager():
         for i in range(0, host_count):
             host = self.hosts[i]
             command = base_cmd
+            if os.getenv("EXEC_IN_CONTAINER", False):
+                command = replace_between_spaces(command, 3, 4, "python3")
             if mode == "training" or mode == "base":
                 command = command_master_ip + ' --node_rank ' + str(i) \
                                             + ' --host_addr ' + host + "\""
