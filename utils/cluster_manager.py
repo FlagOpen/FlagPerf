@@ -209,8 +209,12 @@ class ClusterManager():
                 command = command_master_ip + ' --node_rank ' + str(i) \
                                             + ' --host_addr ' + host + "\""
             if os.getenv("EXEC_IN_CONTAINER", False):
-                command = replace_between_spaces(command, 3, 4, "python3")
+                start_str = "-d -r \""
+                start_index = command.find(start_str) + len(start_str)
+                command = command[start_index:].strip()
+                #command = replace_between_spaces(command, 3, 4, "python3")
                 self.logger.debug("replace python3 for command: " + command)
+
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
                 failed_hosts_ret[host] = ret
