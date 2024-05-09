@@ -87,8 +87,7 @@ class ClusterManager():
         '''
         ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
         if os.getenv("EXEC_IN_CONTAINER", False):
-            if is_substring("../utils/image_manager.py", 
-                                ssh_run_cmd) or is_substring("../utils/nvidia_monitor.py",
+            if is_substring("image_manager.py", 
                                 ssh_run_cmd):
                 ssh_run_cmd = replace_between_spaces(ssh_run_cmd, 3, 4, "python3")
                 self.logger.debug("replace python3 for ssh_run_cmd: " + ssh_run_cmd)
@@ -135,12 +134,12 @@ class ClusterManager():
             self.logger.debug("host number:" + str(i))
             host = self.hosts[i]
             if os.getenv("EXEC_IN_CONTAINER", False):
-                if is_substring("../utils/image_manager.py", 
+                if is_substring("image_manager.py", 
                                 command):
                     self.logger.debug(f"Skip running image_manager control in host:{str(i)}, \
                                         because EVN 'EXEC_IN_CONTAINER' is set to True")
                     continue
-                elif is_substring("../utils/container_manager.py",
+                elif is_substring("container_manager.py",
                                     command):
                     if is_substring("-o pidrunning", command):
                         command = command.replace('container_manager.py', 'cluster_manager.py')
@@ -153,7 +152,8 @@ class ClusterManager():
                         self.logger.debug(f"Skip running container_manager control in host:{str(i)}, \
                                         because EVN 'EXEC_IN_CONTAINER' is set to True")
                         continue
-                elif is_substring("../utils/sys_monitor.py", command):
+                elif is_substring("sys_monitor.py", command) or \
+                    is_substring("nvidia_manager.py", command):
                     command = replace_between_spaces(command, 3, 4, "python3")
                     self.logger.debug("replace python3 for command: " + command)
 
