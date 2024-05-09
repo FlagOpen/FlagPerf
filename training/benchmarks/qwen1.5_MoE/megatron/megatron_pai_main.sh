@@ -1,7 +1,7 @@
 #!/bin/bash
 # Runs Qwen1.5 MoE model on 8xA800 GPUs
 
-MEGATRON_PATCH_PATH="/workspace/Pai-Megatron-Patch"
+MEGATRON_PATCH_PATH="/home/chenglongkai/Pai-Megatron-Patch"
 MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240405
 export PYTHONPATH=${MEGATRON_PATH}:${MEGATRON_PATCH_PATH}:$PYTHONPATH
 export CUDA_DEVICE_MAX_CONNECTIONS=1
@@ -122,7 +122,7 @@ MODEL_PARALLEL_ARGS=" \
 "
 
 source $VENDOR_SHELL
-run_cmd="torchrun ${DISTRIBUTED_ARGS} /workspace/Pai-Megatron-Patch/examples/qwen1_5/pretrain_mcore_qwen.py 
+run_cmd="torchrun ${DISTRIBUTED_ARGS} /home/chenglongkai/Pai-Megatron-Patch/examples/qwen1_5/pretrain_mcore_qwen.py 
     ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 
 echo ${run_cmd}

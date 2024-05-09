@@ -46,6 +46,16 @@ def is_pid_running(pid_file_path, timeout=10):
     print("The process is not running.")
     return False
 
+def replace_between_spaces(input, start, end, replacement):
+    '''
+    Replace the words between start and end with replacement.
+    '''    
+    parts = input.split()
+    if start < 1 or end > len(parts) or start > end:
+        raise ValueError("Invalid start or end index.")
+    parts[start:end] = [replacement]
+    return ' '.join(parts)
+
 class ClusterManager():
     '''A cluster manager that can make healthcheck, distribute files, and run a
        command in the cluster.
@@ -76,6 +86,8 @@ class ClusterManager():
             Return exit code of cmd and stdout/stderr messages.
         '''
         ssh_run_cmd = self.ssh_cmd_head + " " + host + " \'" + cmd + "\'"
+        if os.getenv("EXEC_IN_CONTAINER", False):
+            ssh_run_cmd = replace_between_spaces(ssh_run_cmd, 3, 4, "python3")
         self.logger.debug("Run cmd on host with ssh. ssh cmd=" + ssh_run_cmd +
                           " host=" + host + " timeout=" + str(timeout))
         ret, outs = run_cmd.run_cmd_wait(ssh_run_cmd, timeout)
