@@ -35,6 +35,9 @@ class ContainerManager():
 
     def run_cmd_in(self, cmd_in_container, timeout=5, detach=True):
         '''Start a new docker container with <container_run_args>'''
+        if os.getenv("EXEC_IN_CONTAINER", False):
+            ret, outs= run_cmd.run_cmd_wait(cmd_in_container, 15)
+            return ret, outs
         exists = self.exists()
         if exists is False:
             return 1, ["Conatiner doesn't exist.", None]
