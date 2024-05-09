@@ -211,7 +211,7 @@ class ClusterManager():
             if os.getenv("EXEC_IN_CONTAINER", False):
                 start_str = "-d -r \""
                 start_index = command.find(start_str) + len(start_str)
-                command = command[start_index:].strip()
+                command = command[start_index:-1].strip()
                 #command = replace_between_spaces(command, 3, 4, "python3")
                 self.logger.debug("replace python3 for command: " + command)
 
