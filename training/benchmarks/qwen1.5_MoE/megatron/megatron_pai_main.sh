@@ -127,7 +127,7 @@ MODEL_PARALLEL_ARGS=" \
 "
 
 source $VENDOR_SHELL
-run_cmd="torchrun ${DISTRIBUTED_ARGS} ${MEGATRON_PATCH_PATH}/examples/qwen1_5/pretrain_mcore_qwen.py 
+run_cmd="OMP_NUM_THREADS=8 torchrun ${DISTRIBUTED_ARGS} ${MEGATRON_PATCH_PATH}/examples/qwen1_5/pretrain_mcore_qwen.py 
     ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 
 echo ${run_cmd}
