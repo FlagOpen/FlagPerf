@@ -5,12 +5,6 @@ MEGATRON_PATCH_PATH="/home/chenglongkai/Pai-Megatron-Patch"
 MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240405
 export PYTHONPATH=${MEGATRON_PATH}:${MEGATRON_PATCH_PATH}:$PYTHONPATH
 export CUDA_DEVICE_MAX_CONNECTIONS=1
-export NVTE_APPLY_QK_LAYER_SCALING=1
-export NCCL_SOCKET_IFNAME=docker0;
-export NCCL_IB_DISABLE=0;
-export NCCL_IB_CUDA_SUPPORT=1;
-export NCCL_IB_GID_INDEX=0;
-export NCCL_IB_HCA=mlx5_2,mlx5_8;
 
 DATA_PATH=$1
 DATASET_PATH="${DATA_PATH}llama_00_text_document/llama_00_text_document"
@@ -127,7 +121,7 @@ MODEL_PARALLEL_ARGS=" \
 "
 
 source $VENDOR_SHELL
-run_cmd="torchrun ${DISTRIBUTED_ARGS} ${MEGATRON_PATCH_PATH}/examples/qwen1_5/pretrain_mcore_qwen.py 
+run_cmd="NCCL_P2P_DISABLE=1 NCCL_IB_DISABLE=1 NCCL_SOCKET_IFNAME=eth0 OMP_NUM_THREADS=8 torchrun ${DISTRIBUTED_ARGS} ${MEGATRON_PATCH_PATH}/examples/qwen1_5/pretrain_mcore_qwen.py 
     ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 
 echo ${run_cmd}
