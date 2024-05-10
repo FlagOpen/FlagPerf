@@ -119,7 +119,7 @@ CASES = {
     # "gpt3_13B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
     # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
     
-    "qwen1.5_MoE:megatron_pai:A800:1:8:1":"/home/chenglongkai/datasets/"
+    "qwen1.5_MoE:megatron_pai:A800:2:8:1":"/home/chenglongkai/datasets/"
 
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
