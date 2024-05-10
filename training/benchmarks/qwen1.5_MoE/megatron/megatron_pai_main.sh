@@ -43,7 +43,7 @@ elif [ $PR = bf16 ]; then
 fi
 
 MODEL_ARGS=" \
-    --num-layers 24 \
+    --num-layers 12 \
     --hidden-size 2048 \
     --num-attention-heads 16 \
     --ffn-hidden-size 5504 \
@@ -122,7 +122,7 @@ MODEL_PARALLEL_ARGS=" \
 "
 
 source $VENDOR_SHELL
-run_cmd="torchrun ${DISTRIBUTED_ARGS} /home/chenglongkai/Pai-Megatron-Patch/examples/qwen1_5/pretrain_mcore_qwen.py 
+run_cmd="torchrun ${DISTRIBUTED_ARGS} ${MEGATRON_PATCH_PATH}/examples/qwen1_5/pretrain_mcore_qwen.py 
     ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 
 echo ${run_cmd}
