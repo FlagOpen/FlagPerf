@@ -87,7 +87,9 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
                 images,
                 image_sizes
             )
-
+        if inputs_embeds is not None:
+            with open("tokens.txt", "a") as f:
+                f.write(str(inputs_embeds.size(1)) + "\n")
         return super().forward(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -133,10 +135,6 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
             )
         else:
             inputs_embeds = self.get_model().embed_tokens(inputs)
-
-        if inputs_embeds is not None:
-            with open("tokens.txt", "a") as f:
-                f.write(str(inputs_embeds.size(1)) + "\n")
 
         return super().generate(
             position_ids=position_ids,
