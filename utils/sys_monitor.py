@@ -280,7 +280,9 @@ def main():
     else:
         print("invalid argument!")
         sys.exit(1)
+    print('sys-monitor process is running ......')
     subdaemon.run()
+    print('sys-monitor process is stopped ......')
 
 
 if __name__ == '__main__':
