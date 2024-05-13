@@ -271,6 +271,7 @@ def main():
         subdaemon.stop()
     elif operation == 'restart':
         subdaemon.restart()
+        subdaemon.run()
     elif operation == 'status':
         pid = subdaemon.status()
         if pid:
