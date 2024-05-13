@@ -1,3 +1,8 @@
+# Copyright (c) 2024 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 import torch
 
 
@@ -31,9 +36,3 @@ def multi_device_sync(vendor):
         torch.distributed.barrier()
         
 
-def get_memory_capacity(vendor, rank):
-    if vendor == "nvidia":
-        return torch.cuda.get_device_properties(rank).total_memory
-    else:
-        print("unspecified vendor {}, return -1.0".format(vendor))
-        return -1.0
