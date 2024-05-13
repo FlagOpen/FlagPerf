@@ -1,0 +1,5 @@
+# set an exist path of tensorrt-llm checkpoint 
+exist_tllm_checkpoint: null
+
+tllm_tmp_path: nvidia_tmp/llama3_70b.tllm
+dtype: float16
