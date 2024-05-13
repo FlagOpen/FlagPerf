@@ -2,7 +2,7 @@
 #include <cuda_runtime.h>
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
-#define SIZE (1ULL * GB)
+#define SIZE (16ULL * GB)
 #define WARMUP_ITERATIONS 100
 #define ITERATIONS 100000
 
