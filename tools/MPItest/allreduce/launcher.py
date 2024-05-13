@@ -5,7 +5,7 @@ if __name__ == "__main__":
 
     iplist = []
     for line in open("hostfile").readlines():
-        iplist.append(line.replace("/n", ""))
+        iplist.append(line.replace("\n", ""))
 
     master_addr = iplist[0]
     master_port = "29501"
@@ -17,8 +17,9 @@ if __name__ == "__main__":
     for ip in iplist:
 
         f = open(ip + ": node" + str(noderank) + ".log.txt", "w")
+        path = os.path.dirname(os.path.abspath(__file__))
 
-        exec_cmd = "source env.sh;bash server.sh " + master_addr + " " + master_port + " " + nproc_per_node
+        exec_cmd = "cd " + path + ";source env.sh;bash server.sh " + master_addr + " " + master_port + " " + nproc_per_node
         exec_cmd = exec_cmd + " " + str(nnodes) + " " + str(noderank)
 
         exec_cmd = "\"" + exec_cmd + "\""
