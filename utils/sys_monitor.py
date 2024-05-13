@@ -277,13 +277,13 @@ def main():
             print('process [%s] is running ......' % pid)
         else:
             print('daemon process [%s] stopped' % pid)
+    elif operation == 'run':
+        print('sys-monitor process is running ......')
+        subdaemon.run()
+        print('sys-monitor process is stopped ......')
     else:
         print("invalid argument!")
         sys.exit(1)
-    print('sys-monitor process is running ......')
-    subdaemon.run()
-    print('sys-monitor process is stopped ......')
-
 
 if __name__ == '__main__':
     main()
