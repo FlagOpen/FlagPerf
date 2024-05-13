@@ -77,7 +77,7 @@ class Daemon:
         '''
         NOTE: override the method in subclass
         '''
-
+        print('daemon process is running ......')
         def cpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "mpstat -P ALL 1 1|grep -v Average|grep all|awk '{print (100-$NF)/100}'"
@@ -120,7 +120,7 @@ class Daemon:
         def timer_pwr_mon():
             pwr_process = Process(target=pwr_mon, args=(self.pwrlog, ))
             pwr_process.start()
-
+        print('monitoring process is running ......')
         schedule.every(self.rate1).seconds.do(timer_cpu_mon)
         schedule.every(self.rate1).seconds.do(timer_mem_mon)
         schedule.every(self.rate2).seconds.do(timer_pwr_mon)
@@ -271,7 +271,6 @@ def main():
         subdaemon.stop()
     elif operation == 'restart':
         subdaemon.restart()
-        subdaemon.run()
     elif operation == 'status':
         pid = subdaemon.status()
         if pid:
@@ -281,6 +280,7 @@ def main():
     else:
         print("invalid argument!")
         sys.exit(1)
+    subdaemon.run()
 
 
 if __name__ == '__main__':
