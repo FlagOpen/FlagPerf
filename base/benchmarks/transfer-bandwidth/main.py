@@ -63,7 +63,7 @@ def main(config, case_config, rank, world_size, local_rank):
 
 
     datasize = case_config.ITERS * 2 * (Melements * 1024 * 1024 * 4 / 1E9)
-    bandwidth = datasize / elapsed_time * 2 # 2 for both read and write
+    bandwidth = datasize / elapsed_time
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
 
     return round(bandwidth, 2), round(bandwidth_gib, 2)

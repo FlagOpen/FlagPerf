@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-#define GB (1024ULL * 1024ULL * 1024ULL)
-#define SIZE (16ULL * GB)
-#define WARMUP_ITERATIONS 100
-#define ITERATIONS 10000
+#define MB (1024ULL * 1024ULL)
+#define SIZE (64ULL * MB)
+#define WARMUP_ITERATIONS 10
+#define ITERATIONS 100
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {
@@ -39,7 +39,7 @@ int main() {
 
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
 
-    double bandwidth = 2.0 * SIZE * ITERATIONS / (elapsed_time / 1000.0);
+    double bandwidth = 2.0 * (SIZE / 1024.0) * ITERATIONS / (elapsed_time / 1000.0);
 
     printf("[FlagPerf Result]main_memory-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
     printf("[FlagPerf Result]main_memory-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
