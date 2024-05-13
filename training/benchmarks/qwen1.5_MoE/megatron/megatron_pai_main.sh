@@ -5,6 +5,9 @@ MEGATRON_PATCH_PATH="/home/chenglongkai/Pai-Megatron-Patch"
 MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240405
 export PYTHONPATH=${MEGATRON_PATH}:${MEGATRON_PATCH_PATH}:$PYTHONPATH
 export CUDA_DEVICE_MAX_CONNECTIONS=1
+export CUDA_HOME=/usr/local/cuda
+export PATH=/usr/local/nvm/versions/node/v16.20.2/bin:/usr/local/lib/python3.10/dist-packages/torch_tensorrt/bin:/usr/local/mpi/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ucx/bin:/opt/tensorrt/bin
+export LD_LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/torch/lib:/usr/local/lib/python3.10/dist-packages/torch_tensorrt/lib:/usr/local/cuda/compat/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
 
 DATA_PATH=$1
 DATASET_PATH="${DATA_PATH}llama_00_text_document/llama_00_text_document"
