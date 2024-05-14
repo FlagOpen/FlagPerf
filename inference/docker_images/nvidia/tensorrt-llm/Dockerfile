@@ -7,4 +7,3 @@ RUN pip3 install loguru
 RUN pip3 install pycuda
 RUN pip3 install schedule
 RUN pip3 install munch
-RUN pip3 install rouge_score~=0.1.2 -i https://pypi.nvidia.com/simple

@@ -3,8 +3,78 @@ import subprocess
 import time
 import tensorrt_llm
 from tensorrt_llm.runtime import ModelRunner
-from utils import load_tokenizer, read_model_name
+from tensorrt_llm.builder import get_engine_version
 import torch
+
+import json
+from pathlib import Path
+from typing import Optional
+from transformers import AutoTokenizer, T5Tokenizer
+
+def read_model_name(engine_dir: str):
+    engine_version = get_engine_version(engine_dir)
+
+    with open(Path(engine_dir) / "config.json", 'r') as f:
+        engine_config = json.load(f)
+
+    if engine_version is None:
+        return engine_config['builder_config']['name'], None
+
+    model_arch = engine_config['pretrained_config']['architecture']
+    model_version = None
+    if model_arch == 'ChatGLMForCausalLM':
+        model_version = engine_config['pretrained_config']['chatglm_version']
+    if model_arch == 'QWenForCausalLM':
+        model_version = engine_config['pretrained_config']['qwen_type']
+    return model_arch, model_version
+
+def load_tokenizer(tokenizer_dir: Optional[str] = None,
+                   vocab_file: Optional[str] = None,
+                   model_name: str = 'GPTForCausalLM',
+                   model_version: Optional[str] = None,
+                   tokenizer_type: Optional[str] = None):
+    if vocab_file is None:
+        use_fast = True
+        if tokenizer_type is not None and tokenizer_type == "llama":
+            use_fast = False
+        # Should set both padding_side and truncation_side to be 'left'
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir,
+                                                  legacy=False,
+                                                  padding_side='left',
+                                                  truncation_side='left',
+                                                  trust_remote_code=True,
+                                                  tokenizer_type=tokenizer_type,
+                                                  use_fast=use_fast)
+    elif model_name == 'GemmaForCausalLM' or model_name == 'RecurrentGemmaForCausalLM':
+        from transformers import GemmaTokenizer
+
+        # Initialize tokenizer from vocab file.
+        tokenizer = GemmaTokenizer(vocab_file=vocab_file,
+                                   padding_side='left',
+                                   truncation_side='left',
+                                   legacy=False)
+    else:
+        # For gpt-next, directly load from tokenizer.model
+        tokenizer = T5Tokenizer(vocab_file=vocab_file,
+                                padding_side='left',
+                                truncation_side='left',
+                                legacy=False)
+
+    if model_name == 'QWenForCausalLM' and model_version == 'qwen':
+        with open(Path(tokenizer_dir) / "generation_config.json") as f:
+            gen_config = json.load(f)
+        pad_id = gen_config['pad_token_id']
+        end_id = gen_config['eos_token_id']
+    elif model_name == 'ChatGLMForCausalLM' and model_version == 'glm':
+        pad_id = tokenizer.pad_token_id
+        end_id = tokenizer.eop_token_id
+    else:
+        if tokenizer.pad_token_id is None:
+            tokenizer.pad_token_id = tokenizer.eos_token_id
+        pad_id = tokenizer.pad_token_id
+        end_id = tokenizer.eos_token_id
+
+    return tokenizer, pad_id, end_id
 
 class InferModel:
     def __init__(self, config, onnx_path, model):
@@ -21,7 +91,7 @@ class InferModel:
 
     def convert_checkpoint(self, config):
         dir_path = os.path.join(config.perf_dir, "benchmarks", config.case, "tensorrt-llm")
-        tllm_checkpoint = os.path.join(config.data_dir, "tllm_checkpoint_" + num_gpus + "gpu" + "_tp" + tp_size + "_pp" + pp_size)
+        tllm_checkpoint = os.path.join(config.data_dir, "tllm_checkpoint_" + config.num_gpus + "gpu" + "_tp" + config.tp_size + "_pp" + config.pp_size)
 
         convert_cmd = "cd " + dir_path + " && "
         convert_cmd = convert_cmd + "python convert_checkpoint.py --model_dir " + config.weight_dir
