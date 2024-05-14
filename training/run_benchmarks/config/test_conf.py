@@ -63,6 +63,7 @@ CLEAR_CACHES = True
 CASES = {
     # nvidia cases
     "llama3_8b:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
+    #"llama3_70b:megatron_core060:H100:8:8:1": "/data/llama3_70b_pretrain"
     # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
     # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
