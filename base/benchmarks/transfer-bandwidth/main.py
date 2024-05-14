@@ -79,17 +79,16 @@ if __name__ == "__main__":
 
     dist.init_process_group(backend=case_config.DIST_BACKEND)  
     rank = dist.get_rank()
-    if rank == 0:
-        world_size = dist.get_world_size()
-        local_rank = rank % config.node_size
+    world_size = dist.get_world_size()
+    local_rank = rank % config.node_size
 
-        gb, gib = main(config, case_config, rank, world_size, local_rank)
+    gb, gib = main(config, case_config, rank, world_size, local_rank)
 
+    multi_device_sync(config.vendor)
+    for output_rank in range(config.node_size):
+        if local_rank == output_rank:
+            print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
+            print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
         multi_device_sync(config.vendor)
-        for output_rank in range(config.node_size):
-            if local_rank == output_rank:
-                print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
-                print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
-            multi_device_sync(config.vendor)
 
     dist.destroy_process_group()
