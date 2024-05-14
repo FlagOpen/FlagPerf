@@ -8,7 +8,7 @@ FLAGPERF_LOG_LEVEL: "info"
 # only in benchmarks, flagperf will automatically execute benchmakrs/<case>/<vendor>/requirements.txt and env.sh
 # all resources to be used in toolkits/<case>/<vendor>/main.sh, should be under toolkits/<case>/<vendor>/
 BENCHMARKS_OR_TOOLKITS: "BENCHMARK"
-HOSTS: ["10.1.2.59"]
+HOSTS: ["10.1.2.155"]
 NPROC_PER_NODE: 8
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
