@@ -53,8 +53,6 @@ def main(config, case_config, rank, world_size, local_rank):
 
     for _ in range(case_config.ITERS):
         _tensor = tensor.to(local_rank)
-    #torch.cuda.synchronize()
-
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -63,7 +61,7 @@ def main(config, case_config, rank, world_size, local_rank):
     elapsed_time = end_time - start_time
 
 
-    datasize = case_config.ITERS * 2 * (Melements * 1024 * 1024 * 4 / 1E9)
+    datasize = case_config.ITERS * (Melements * 1024 * 1024 * 4 / 1E9)
     bandwidth = datasize / elapsed_time
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
 
@@ -81,16 +79,17 @@ if __name__ == "__main__":
 
     dist.init_process_group(backend=case_config.DIST_BACKEND)  
     rank = dist.get_rank()
-    world_size = dist.get_world_size()
-    local_rank = rank % config.node_size
+    if rank == 0:
+        world_size = dist.get_world_size()
+        local_rank = rank % config.node_size
 
-    gb, gib = main(config, case_config, rank, world_size, local_rank)
+        gb, gib = main(config, case_config, rank, world_size, local_rank)
 
-    multi_device_sync(config.vendor)
-    for output_rank in range(config.node_size):
-        if local_rank == output_rank:
-            print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
-            print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
         multi_device_sync(config.vendor)
+        for output_rank in range(config.node_size):
+            if local_rank == output_rank:
+                print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
+                print(r"[FlagPerf Result]Rank {}'s transfer-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
+            multi_device_sync(config.vendor)
 
     dist.destroy_process_group()
