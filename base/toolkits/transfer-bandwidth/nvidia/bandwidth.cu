@@ -2,7 +2,7 @@
 #include <cuda_runtime.h>
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
-#define SIZE (1ULL * GB)
+#define SIZE (16ULL * GB)
 #define WARMUP_ITERATIONS 100
 #define ITERATIONS 5000
 
@@ -39,7 +39,7 @@ int main() {
 
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
 
-    double bandwidth = 2.0 * (SIZE) * ITERATIONS / (elapsed_time / 1000.0);
+    double bandwidth = 2.0 * SIZE * ITERATIONS / (elapsed_time / 1000.0);
 
     printf("[FlagPerf Result]transfer-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
     printf("[FlagPerf Result]transfer-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
