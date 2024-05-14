@@ -10,5 +10,5 @@ HOSTS_PORTS = ["2222"]
 MASTER_PORT = "29501"
 
 # ssh connection port
-# SSH_PORT = "60056"
-SSH_PORT = "22"
+SSH_PORT = "60056"
+#SSH_PORT = "22"
