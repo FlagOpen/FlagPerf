@@ -9,12 +9,6 @@ export CUDA_HOME=/usr/local/cuda
 export PATH=/usr/local/nvm/versions/node/v16.20.2/bin:/usr/local/lib/python3.10/dist-packages/torch_tensorrt/bin:/usr/local/mpi/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ucx/bin:/opt/tensorrt/bin
 export LD_LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/torch/lib:/usr/local/lib/python3.10/dist-packages/torch_tensorrt/lib:/usr/local/cuda/compat/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
 
-export NCCL_SOCKET_IFNAME=eth0;
-export NCCL_IB_DISABLE=0;
-export NCCL_IB_CUDA_SUPPORT=1;
-export NCCL_IB_GID_INDEX=0;
-export NCCL_IB_HCA=mlx5_2,mlx5_8;
-
 DATA_PATH=$1
 DATASET_PATH="${DATA_PATH}llama_00_text_document/llama_00_text_document"
 TOKENIZER_PATH="${DATA_PATH}tokenizer"
@@ -41,6 +35,11 @@ DISTRIBUTED_ARGS="
     --master_addr $MASTER_ADDR \
     --master_port $MASTER_PORT
 "
+echo "GPUS_PER_NODE: $GPUS_PER_NODE"
+echo "NNODES: $NNODES"
+echo "NODE_RANK: $NODE_RANK"
+echo "MASTER_ADDR: $MASTER_ADDR"
+echo "MASTER_PORT: $MASTER_PORT"
 
 if [ $PR = fp16 ]; then
     PR_ARGS=" \
@@ -130,8 +129,6 @@ MODEL_PARALLEL_ARGS=" \
 "
 
 source $VENDOR_SHELL
-#run_cmd="NCCL_IB_HCA=mlx5_2,mlx5_8 NCCL_IB_GID_INDEX=0 NCCL_IB_CUDA_SUPPORT=1 NCCL_IB_DISABLE=0 NCCL_SOCKET_IFNAME=docker0 OMP_NUM_THREADS=8 torchrun ${DISTRIBUTED_ARGS} ${MEGATRON_PATCH_PATH}/examples/qwen1_5/pretrain_mcore_qwen.py 
-#    ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 run_cmd="torchrun ${DISTRIBUTED_ARGS} ${MEGATRON_PATCH_PATH}/examples/qwen1_5/pretrain_mcore_qwen.py 
     ${MODEL_ARGS} ${PR_ARGS} ${MOE_ARGS} ${DATA_ARGS} ${LOGGING_ARGS} ${TRAINING_ARGS} ${EVAL_ARGS} ${MODEL_PARALLEL_ARGS}"
 echo ${run_cmd}
