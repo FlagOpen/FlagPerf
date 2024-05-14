@@ -33,6 +33,7 @@ def main(config, case_config, rank, world_size, local_rank):
         print("finish initialization")
         print(local_rank)
     else:
+        print('pass rank:', local_rank)
         return 0, 0
 
     Melements = case_config.Melements
