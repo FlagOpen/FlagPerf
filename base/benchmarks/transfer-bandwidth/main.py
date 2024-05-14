@@ -32,6 +32,8 @@ def main(config, case_config, rank, world_size, local_rank):
     if rank == 0:
         print("finish initialization")
         print(local_rank)
+    else:
+        return 0, 0
 
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
@@ -42,7 +44,7 @@ def main(config, case_config, rank, world_size, local_rank):
     multi_device_sync(config.vendor)
     if rank == 0:
         print("start warmup")
-
+    
     for _ in range(case_config.WARMUP):
         _tensor = tensor.to(local_rank)
 
