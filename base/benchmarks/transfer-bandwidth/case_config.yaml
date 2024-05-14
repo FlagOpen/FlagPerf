@@ -1,4 +1,4 @@
 Melements: 1024
 WARMUP: 100
-ITERS: 1000
+ITERS: 200
 DIST_BACKEND: "mpi"

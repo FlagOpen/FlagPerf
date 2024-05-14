@@ -31,14 +31,11 @@ def main(config, case_config, rank, world_size, local_rank):
     set_ieee_float32(config.vendor)
     if rank == 0:
         print("finish initialization")
-        print(local_rank)
-    else:
-        print('pass rank:', local_rank)
-        return 0, 0
 
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
     tensor = torch.rand(torchsize, dtype=torch.float32)
+    print(f"Memory address of tensor in rank {rank} and local rank {local_rank}: {tensor.data_ptr()}")
 
 
     host_device_sync(config.vendor)
