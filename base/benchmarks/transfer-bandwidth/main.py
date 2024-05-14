@@ -31,6 +31,7 @@ def main(config, case_config, rank, world_size, local_rank):
     set_ieee_float32(config.vendor)
     if rank == 0:
         print("finish initialization")
+        print(local_rank)
 
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
