@@ -35,7 +35,7 @@ def main(config, case_config, rank, world_size, local_rank):
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
     tensor = torch.rand(torchsize, dtype=torch.float32)
-    print(f"Memory address of tensor in rank {rank} and local rank {local_rank}: {tensor.data_ptr()}")
+    #print(f"Memory address of tensor in rank {rank} and local rank {local_rank}: {tensor.data_ptr()}")
 
 
     host_device_sync(config.vendor)
