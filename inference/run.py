@@ -343,7 +343,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
                 + " utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -r \"" + run_container_cmd + "\""
     
-    logger.debuf("Run cmd in the run_container_cmd to start tasks, cmd: \n" + run_container_cmd)
+    logger.debug("Run cmd in the run_container_cmd to start tasks, cmd: \n" + run_container_cmd)
     logger.debug("Run cmd in the cluster to start tasks, cmd: \n" + start_cmd)
 
     logger.info("3) Waiting for tasks end in the cluster...")
