@@ -9,6 +9,12 @@ export CUDA_HOME=/usr/local/cuda
 export PATH=/usr/local/nvm/versions/node/v16.20.2/bin:/usr/local/lib/python3.10/dist-packages/torch_tensorrt/bin:/usr/local/mpi/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ucx/bin:/opt/tensorrt/bin
 export LD_LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/torch/lib:/usr/local/lib/python3.10/dist-packages/torch_tensorrt/lib:/usr/local/cuda/compat/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
 
+export NCCL_SOCKET_IFNAME=eth0;
+export NCCL_IB_DISABLE=0;
+export NCCL_IB_CUDA_SUPPORT=1;
+export NCCL_IB_GID_INDEX=0;
+export NCCL_IB_HCA=mlx5_2,mlx5_8;
+
 DATA_PATH=$1
 DATASET_PATH="${DATA_PATH}llama_00_text_document/llama_00_text_document"
 TOKENIZER_PATH="${DATA_PATH}tokenizer"
