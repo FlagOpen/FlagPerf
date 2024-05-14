@@ -53,7 +53,7 @@ def main(config, case_config, rank, world_size, local_rank):
 
     for _ in range(case_config.ITERS):
         _tensor = tensor.to(local_rank)
-    torch.cuda.synchronize()
+    #torch.cuda.synchronize()
 
 
     host_device_sync(config.vendor)
