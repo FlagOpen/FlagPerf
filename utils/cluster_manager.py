@@ -194,7 +194,10 @@ class ClusterManager():
             log_dir = os.path.join(case_log_dir, host + "_noderank" + str(i))
             command = base_command + log_dir
             if os.getenv("EXEC_IN_CONTAINER", False):
-                command = replace_between_spaces(command, 3, 4, "python3")
+                if is_substring("inference", command):
+                    command = replace_between_spaces(command, 4, 5, "python3") 
+                else:
+                    command = replace_between_spaces(command, 3, 4, "python3")
                 self.logger.debug("replace python3 for command: " + command)
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
             if ret != 0:
