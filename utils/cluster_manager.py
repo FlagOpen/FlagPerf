@@ -160,10 +160,10 @@ class ClusterManager():
                     if is_substring("inference", command):
                         print(2)
                         if is_substring("restart", command):
-                            print(3)
+                            print(3, ' --- ' ,is_substring("restart", command), ' --- ' , command)
                             command = replace_between_spaces(command, 4, 5, "python3")
                         else:
-                            print(4)
+                            print(4, ' --- ' ,is_substring("restart", command), ' --- ' , command)
                             command = replace_between_spaces(command, 3, 4, "python3")
                     else:
                         print(5)
