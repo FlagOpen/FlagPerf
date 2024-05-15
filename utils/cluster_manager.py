@@ -155,11 +155,15 @@ class ClusterManager():
                                         because EVN 'EXEC_IN_CONTAINER' is set to True")
                         continue
                 elif is_substring("sys_monitor.py", command) or \
-                    is_substring("nvidia_monitor.py", command):
+                    is_substring("docker_images", command):
                     print(1)
                     if is_substring("inference", command):
                         print(2)
-                        command = replace_between_spaces(command, 3, 4, "python3") 
+                        if is_substring("stop", command):
+                            print(3)
+                            command = replace_between_spaces(command, 4, 5, "python3")
+                        else:
+                            command = replace_between_spaces(command, 3, 4, "python3") 
                         '''
                         if is_substring("restart", command):
                             print(3, ' --- ' ,is_substring("restart", command), ' --- ' , command)
