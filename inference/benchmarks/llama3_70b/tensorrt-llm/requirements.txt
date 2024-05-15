@@ -1,3 +1,2 @@
-tensorrt_llm==0.10.0.dev2024050700
 sentencepiece~=0.1.99
 transformers==4.40.2
