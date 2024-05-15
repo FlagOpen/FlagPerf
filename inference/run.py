@@ -340,7 +340,7 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
                 + f" --framework " + case_config["framework"] \
                 + f" --log_dir " + curr_log_path  + " 2>&1 | tee "+curr_log_path+"/stdout_err.out.log"
     start_cmd = "cd " + dp_path + " && " + sys.executable \
-                + "../utils/container_manager.py -o runcmdin -c " \
+                + " ../utils/container_manager.py -o runcmdin -c " \
                 + container_name + " -r \"" + run_container_cmd + "\""
     
     logger.debug("Run cmd in the run_container_cmd to start tasks, cmd: \n" + run_container_cmd)
