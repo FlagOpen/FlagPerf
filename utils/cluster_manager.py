@@ -156,9 +156,7 @@ class ClusterManager():
                     command = replace_between_spaces(command, 3, 4, "python3")
                 elif is_substring("docker_images", command):
                     if is_substring("inference", command):
-                        print(2)
                         if is_substring("stop", command):
-                            print(3)
                             command = replace_between_spaces(command, 4, 5, "python3")
                         else:
                             command = replace_between_spaces(command, 3, 4, "python3") 
