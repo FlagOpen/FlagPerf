@@ -1,0 +1,52 @@
+# Copyright (c) 2024 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+43a44,45
+>     elif args.tokenizer_type == 'Llama3Tokenizer':
+>         tokenizer = _Llama3Tokenizer(args.tokenizer_model)
+439a442,484
+> 
+> class _Llama3Tokenizer(MegatronTokenizer):
+>     def __init__(self, model_file):
+>         super().__init__("placeholder")
+>         from transformers import AutoTokenizer
+>         self.tokenizer = AutoTokenizer.from_pretrained(
+>             model_file,
+>             padding_side="right",
+>             use_fast=False,
+>             trust_remote_code=True
+>         )
+>         self.extra_vocab_size = 256
+> 
+>     @property
+>     def vocab_size(self):
+>         return self.tokenizer.vocab_size + self.extra_vocab_size
+> 
+>     @property
+>     def vocab(self):
+>         return self.tokenizer.encoder
+> 
+>     @property
+>     def inv_vocab(self):
+>         return self.tokenizer.decoder
+> 
+>     def tokenize(self, text):
+>         return self.tokenizer.encode(text)
+> 
+>     def detokenize(self, token_ids):
+>         return self.tokenizer.decode(token_ids)
+> 
+>     @property
+>     def eod(self):
+>         return self.tokenizer.eos_token_id
+> 
+>     @property
+>     def eos_token(self):
+>         return self.tokenizer.eos_token
+> 
+>     @property
+>     def pad_token_id(self):
+>         return self.tokenizer.pad_token_id
+>                 
