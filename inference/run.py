@@ -345,15 +345,15 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
     
     logger.debug("Run cmd in the run_container_cmd to start tasks, cmd: \n" + run_container_cmd)
     logger.debug("Run cmd in the cluster to start tasks, cmd: \n" + start_cmd)
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15, "inference")
+    # Wait a moment for starting tasks.
+    time.sleep(15)
 
     logger.info("3) Waiting for tasks end in the cluster...")
     logger.info("Check task log in real time from container: " +
                 curr_log_path + "/container.out.log")
     logger.info("Check task stderr & stdout in real time from container: " +
                 curr_log_path + "/stdout_err.out.log")
-    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15, "inference")
-    # Wait a moment for starting tasks.
-    time.sleep(10)
 
 
 def wait_for_finish(dp_path, container_name, pid_file_path, nnodes):
