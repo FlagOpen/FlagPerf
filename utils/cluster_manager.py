@@ -154,12 +154,12 @@ class ClusterManager():
                         self.logger.debug(f"Skip running container_manager control in host:{str(i)}, \
                                         because EVN 'EXEC_IN_CONTAINER' is set to True")
                         continue
-                elif is_substring("sys_monitor.py", command) or \
-                    is_substring("docker_images", command):
-                    print(1)
+                elif is_substring("sys_monitor.py", command):
+                    command = replace_between_spaces(command, 3, 4, "python3")
+                elif is_substring("docker_images", command):
                     if is_substring("inference", command):
                         print(2)
-                        if is_substring("-o stop", command):
+                        if is_substring("stop", command):
                             print(3)
                             command = replace_between_spaces(command, 4, 5, "python3")
                         else:
@@ -172,9 +172,6 @@ class ClusterManager():
                             print(4, ' --- ' ,is_substring("restart", command), ' --- ' , command)
                             command = replace_between_spaces(command, 3, 4, "python3")
                         '''
-                    else:
-                        print(5)
-                        command = replace_between_spaces(command, 3, 4, "python3")
                     self.logger.debug("replace python3 for command: " + command)
 
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
