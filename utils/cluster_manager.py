@@ -156,12 +156,17 @@ class ClusterManager():
                         continue
                 elif is_substring("sys_monitor.py", command) or \
                     is_substring("nvidia_monitor.py", command):
+                    print(1)
                     if is_substring("inference", command):
+                        print(2)
                         if is_substring("restart", command):
+                            print(3)
                             command = replace_between_spaces(command, 4, 5, "python3")
                         else:
+                            print(4)
                             command = replace_between_spaces(command, 3, 4, "python3")
                     else:
+                        print(5)
                         command = replace_between_spaces(command, 3, 4, "python3")
                     self.logger.debug("replace python3 for command: " + command)
 
