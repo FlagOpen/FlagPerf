@@ -53,6 +53,8 @@ def replace_between_spaces(input, start, end, replacement):
     parts = input.split()
     if start < 1 or end > len(parts) or start > end:
         raise ValueError("Invalid start or end index.")
+    print('*' * 50)
+    print("replace from ", input, " to ", ' '.join(parts))
     parts[start:end] = [replacement]
     return ' '.join(parts)
 
