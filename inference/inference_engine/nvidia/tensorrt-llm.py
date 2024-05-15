@@ -102,8 +102,8 @@ class InferModel:
         convert_cmd = convert_cmd + " --output_dir " + tllm_checkpoint
         convert_cmd = convert_cmd + " --dtype " + config.dtype
         if config.num_gpus != 1:
-            convert_cmd = convert_cmd + " --tp_size " + config.tp_size
-            convert_cmd = convert_cmd + " --pp_size " + config.pp_size
+            convert_cmd = convert_cmd + " --tp_size " + str(config.tp_size)
+            convert_cmd = convert_cmd + " --pp_size " + str(config.pp_size)
         
         p = subprocess.Popen(convert_cmd, shell=True)
         p.wait()
