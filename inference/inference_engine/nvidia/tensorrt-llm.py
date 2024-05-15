@@ -119,7 +119,7 @@ class InferModel:
 
             time.sleep(10)
 
-            build_engine_cmd = "cd " + config.dir_tllm_path + " && "
+            build_engine_cmd = "cd " + dir_tllm_path + " && "
             build_engine_cmd = build_engine_cmd + "trtllm-build"
             build_engine_cmd = build_engine_cmd + " --checkpoint_dir " + tllm_checkpoint_path
             build_engine_cmd = build_engine_cmd + " --output_dir " + tllm_path
