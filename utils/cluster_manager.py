@@ -53,9 +53,7 @@ def replace_between_spaces(input, start, end, replacement):
     parts = input.split()
     if start < 1 or end > len(parts) or start > end:
         raise ValueError("Invalid start or end index.")
-    print('*' * 50)
     parts[start:end] = [replacement]
-    print("replace from ", input, " to ", ' '.join(parts), " with ->", replacement, "and place " , start, "to", end)
     return ' '.join(parts)
 
 class ClusterManager():
@@ -164,14 +162,8 @@ class ClusterManager():
                             command = replace_between_spaces(command, 4, 5, "python3")
                         else:
                             command = replace_between_spaces(command, 3, 4, "python3") 
-                        '''
-                        if is_substring("restart", command):
-                            print(3, ' --- ' ,is_substring("restart", command), ' --- ' , command)
-                            command = replace_between_spaces(command, 4, 5, "python3")
-                        else:
-                            print(4, ' --- ' ,is_substring("restart", command), ' --- ' , command)
-                            command = replace_between_spaces(command, 3, 4, "python3")
-                        '''
+                    else:
+                        command = replace_between_spaces(command, 3, 4, "python3")
                     self.logger.debug("replace python3 for command: " + command)
 
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
