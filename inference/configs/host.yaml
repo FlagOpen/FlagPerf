@@ -1,10 +1,10 @@
-FLAGPERF_PATH: "/home/FlagPerf/inference"
+FLAGPERF_PATH: "/home/chenglongkai/FlagPerf/inference"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "INFO"
 LOG_CALL_INFORMATION: True
-HOSTS: ["127.0.0.1"]
-SSH_PORT: "22"
+HOSTS: ["10.1.2.158"]
+SSH_PORT: "60056"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
 SHM_SIZE: "32G"
@@ -15,8 +15,8 @@ PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
-    # "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
-    "vit_l_16:pytorch_2.1": "/raid/dataset/ImageNet_1k_2012/val"
+    "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
+    #"vit_l_16:pytorch_2.1": "/raid/dataset/ImageNet_1k_2012/val"
     #"stable_diffusion_v1_4:pytorch_2.0": "/raid/dataset/stable_diffusion_v1_4/"
     # "yolov5:pytorch_2.0": "/raid/dataset/coco2017/"
     #"deepseek_7b_mmlu:pytorch_2.1": "/raid/dataset/deepseek_7b_mmlu"
