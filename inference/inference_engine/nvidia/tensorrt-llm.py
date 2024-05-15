@@ -96,9 +96,10 @@ class InferModel:
             "tllm_checkpoint_" + str(config.num_gpus) + "gpu" + 
             "_tp" + str(config.tp_size) + "_pp" + str(config.pp_size)
         )
+        weight_dir = os.path.join(config.data_dir, config.weight_dir)
 
         convert_cmd = "cd " + dir_path + " && "
-        convert_cmd = convert_cmd + "python convert_checkpoint.py --model_dir " + config.weight_dir
+        convert_cmd = convert_cmd + "python convert_checkpoint.py --model_dir " + weight_dir
         convert_cmd = convert_cmd + " --output_dir " + tllm_checkpoint
         convert_cmd = convert_cmd + " --dtype " + config.dtype
         if config.num_gpus != 1:
@@ -132,7 +133,7 @@ class InferModel:
             return config.exist_compiler_path
 
     def __call__(self, model_inputs: list):
-        start = time()
+        start = time.time()
         output_len = 2
         input_lengths = [x.size(0) for x in model_inputs]
 
