@@ -77,7 +77,7 @@ ALGO_ARGS="$MODEL_ARGS $OPT_ARGS $GQA_ARGS $MOE_ARGS"
 # data args
 
 DATA_ARGS=" \
-    --data-path $DATA_DIR/wudao_llama3bpe_content_document \
+    --data-path $DATA_DIR/wudao_mistralbpe_content_document \
     --tokenizer-type MistralTokenizer \
     --tokenizer-model $TDIR \
     --split 99,1,0
