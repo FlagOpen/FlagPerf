@@ -1,4 +1,4 @@
-tokenizer_path = "/home/chenglongkai/datasets/mistral/tokenizer.model"
+tokenizer_path = "/home/chenglongkai/datasets/mistral"
 localbs = 1
 train_steps = 2
 theoryflops = 312000000000000.0
