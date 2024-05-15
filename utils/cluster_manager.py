@@ -159,12 +159,15 @@ class ClusterManager():
                     print(1)
                     if is_substring("inference", command):
                         print(2)
+                        command = replace_between_spaces(command, 3, 4, "python3") 
+                        '''
                         if is_substring("restart", command):
                             print(3, ' --- ' ,is_substring("restart", command), ' --- ' , command)
                             command = replace_between_spaces(command, 4, 5, "python3")
                         else:
                             print(4, ' --- ' ,is_substring("restart", command), ' --- ' , command)
                             command = replace_between_spaces(command, 3, 4, "python3")
+                        '''
                     else:
                         print(5)
                         command = replace_between_spaces(command, 3, 4, "python3")
@@ -194,7 +197,8 @@ class ClusterManager():
             log_dir = os.path.join(case_log_dir, host + "_noderank" + str(i))
             command = base_command + log_dir
             if os.getenv("EXEC_IN_CONTAINER", False):
-                if is_substring("inference", command):
+                if is_substring("inference/docker_images", command):
+                    print(6, ' --- ' ,is_substring("inference/docker_images", command), ' --- ' , command) 
                     command = replace_between_spaces(command, 4, 5, "python3") 
                 else:
                     command = replace_between_spaces(command, 3, 4, "python3")
@@ -228,7 +232,6 @@ class ClusterManager():
                 start_str = "-d -r \""
                 start_index = command.find(start_str) + len(start_str)
                 command = command[start_index:-1].strip()
-                #command = replace_between_spaces(command, 3, 4, "python3")
                 self.logger.debug("replace python3 for command: " + command)
 
             ret, outs = self._run_command_ssh_remote(command, host, timeout)
