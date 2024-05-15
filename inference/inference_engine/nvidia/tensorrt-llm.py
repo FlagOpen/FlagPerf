@@ -91,7 +91,11 @@ class InferModel:
 
     def convert_checkpoint(self, config):
         dir_path = os.path.join(config.perf_dir, "benchmarks", config.case, "tensorrt-llm")
-        tllm_checkpoint = os.path.join(config.data_dir, "tllm_checkpoint_" + config.num_gpus + "gpu" + "_tp" + config.tp_size + "_pp" + config.pp_size)
+        tllm_checkpoint = os.path.join(
+            config.data_dir,
+            "tllm_checkpoint_" + str(config.num_gpus) + "gpu" + 
+            "_tp" + str(config.tp_size) + "_pp" + str(config.pp_size)
+        )
 
         convert_cmd = "cd " + dir_path + " && "
         convert_cmd = convert_cmd + "python convert_checkpoint.py --model_dir " + config.weight_dir
