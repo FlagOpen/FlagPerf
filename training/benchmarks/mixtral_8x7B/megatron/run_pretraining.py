@@ -59,9 +59,7 @@ if __name__ == "__main__":
 
     task_log_file = os.path.join(args.log_dir, "megatron.log.txt")
     
-    # merge llama3 patch
-
-    
+    # merge mixtral 8*7B patch 
     origin_file = os.path.join(megapath, "megatron/training/arguments.py")
     exec_cmd = "patch --silent --forward " + origin_file + " < arguments.patch;"
     

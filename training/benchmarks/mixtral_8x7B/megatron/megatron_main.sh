@@ -32,7 +32,7 @@ MODEL_ARGS=" \
     --hidden-size 4096 \
     --ffn-hidden-size 14336 \
     --num-attention-heads 32 \
-    --max-position-embeddings 32768 \
+    --max-position-embeddings 8192 \
     --sliding-window 4096\
     --seq-length 8192 \
     --swiglu \
@@ -69,7 +69,7 @@ MOE_ARGS=" \
     --moe-router-topk 2 \
     --num-experts 8 \
     --moe-aux-loss-coeff 1e-2 \
-    --expert-model-parallel-size 1 \
+    --expert-model-parallel-size 8 \
     --moe-router-load-balancing-type aux_loss"
 
 ALGO_ARGS="$MODEL_ARGS $OPT_ARGS $GQA_ARGS $MOE_ARGS"
