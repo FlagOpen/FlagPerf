@@ -159,9 +159,9 @@ class ClusterManager():
                     print(1)
                     if is_substring("inference", command):
                         print(2)
-                        if is_substring("stop", command):
+                        if is_substring("-o stop", command):
                             print(3)
-                            command = replace_between_spaces(command, 3, 4, "python3")
+                            command = replace_between_spaces(command, 4, 5, "python3")
                         else:
                             command = replace_between_spaces(command, 3, 4, "python3") 
                         '''
