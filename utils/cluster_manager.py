@@ -191,7 +191,6 @@ class ClusterManager():
             command = base_command + log_dir
             if os.getenv("EXEC_IN_CONTAINER", False):
                 if is_substring("inference/docker_images", command):
-                    print(6, ' --- ' ,is_substring("inference/docker_images", command), ' --- ' , command) 
                     command = replace_between_spaces(command, 4, 5, "python3") 
                 else:
                     command = replace_between_spaces(command, 3, 4, "python3")
