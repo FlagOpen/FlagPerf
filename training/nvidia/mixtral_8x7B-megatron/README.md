@@ -1,18 +1,12 @@
 ### Nvidia GPU配置与运行信息参考
-#### A100环境配置
+#### H100环境配置
 - ##### 硬件环境
 
     - 机器型号: NVIDIA DGX H100(80G) 
-    - 加速卡型号: NVIDIA_A800-SXM4-80GB
-    - CPU型号: AMD EPYC7742-64core@1.5G
-    - 多机网络类型、带宽: InfiniBand，200Gb/s
+    - 多机网络类型、带宽: InfiniBand，400Gb/s
 
 - ##### 软件环境
 
-   - OS版本：Ubuntu 20.04
-   - OS kernel版本: 5.4.0-126-generic     
-   - 加速卡驱动版本：470.141.10
-   - Docker 版本：20.10.18
    - 训练框架版本：megatron-core tag:core_v0.6.0
    - 依赖软件版本：sentencepiece==0.2.0, transformers==4.40.1
 
@@ -27,13 +21,14 @@
    - flash attention 2
    - recompute-activations
    - transformer-engine impl
+   - moe-grouped-gemm
 
 ### 运行情况
 
 * 输入批尺寸
   1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_H100x4x8.py中所写，在本case中默认为1。**厂商适配时可任意更改**
   2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_H100x4x8.py中所写，在本case中默认为8192，原则上不可更改
-  3. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size。在本case中，data_parallel_size=world_size/TPsize/PPsize。在本case中默认为512，使得globalbatchsize=4M tokens。
+  3. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size。在本case中，data_parallel_size=world_size/TPsize/PPsize。在本case中默认为1200，使得globalbatchsize=4.8M tokens。
 
 * 通用指标
 

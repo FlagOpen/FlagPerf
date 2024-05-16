@@ -33,7 +33,6 @@ MODEL_ARGS=" \
     --ffn-hidden-size 14336 \
     --num-attention-heads 32 \
     --max-position-embeddings 4096 \
-    --sliding-window 4096\
     --seq-length 4096 \
     --swiglu \
     --normalization RMSNorm \

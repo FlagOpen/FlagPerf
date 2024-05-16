@@ -102,7 +102,7 @@ if __name__ == "__main__":
                 steptime = info.split(":")[1]
                 time_per_step = float(steptime) / 1000
 
-    whole_tps = 512 * 8192 / time_per_step
+    whole_tps = 1200 * 4096 / time_per_step
     chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
     print("System tokens per second: ", whole_tps)
     print("Tokens/p/s: ", chip_tps)
