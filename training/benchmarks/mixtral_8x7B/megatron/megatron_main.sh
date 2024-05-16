@@ -32,12 +32,12 @@ MODEL_ARGS=" \
     --hidden-size 4096 \
     --ffn-hidden-size 14336 \
     --num-attention-heads 32 \
-    --max-position-embeddings 8192 \
+    --max-position-embeddings 4096 \
     --sliding-window 4096\
-    --seq-length 8192 \
+    --seq-length 4096 \
     --swiglu \
     --normalization RMSNorm \
-    --global-batch-size 512 \
+    --global-batch-size 1200 \
     --disable-bias-linear \
     --no-rope-fusion \
     --no-position-embedding \
