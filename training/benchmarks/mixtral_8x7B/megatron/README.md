@@ -15,11 +15,11 @@ Mistral AI team仅开源了`Mixtral-8x7B`的模型权重文件、tokenizer等，
 
 ### 模型配置及tokenizer准备
 
-本测试样例为预训练case，需要下载tokenizer（如不确定tokenizer包含哪些文件，可下载Mixtral-8x7B-v0.1的所有文件，尽管我们不需要使用模型权重文件），不需要下载模型代码或模型权重。tokenizer需在data_dir下创建tokenizer目录，按照huggingface要求的格式进行处理或存放。了解data\_dir需要阅读FlagPerf有关训练的文档，或直接修改FlagPerf/training/run_benchmarks/config/test_conf.py中CASES变量中的value。
+本测试样例为预训练case，本测试样例参照megatron-core v0.6.0版本的处理方式https://github.com/NVIDIA/Megatron-LM/tree/main/megatron/core/transformer/moe，需要下载tokenizer（https://modelscope.cn/api/v1/models/AI-ModelScope/Mixtral-8x7B-v0.1/repo?Revision=master&FilePath=tokenizer.model），不需要下载模型代码或模型权重。tokenizer需在data_dir下创建tokenizer目录，按照huggingface要求的格式进行处理或存放。了解data\_dir需要阅读FlagPerf有关训练的文档，或直接修改FlagPerf/training/run_benchmarks/config/test_conf.py中CASES变量中的value。
 
 ### 数据集准备
 
-本测试样例数据使用智源研究院wudao数据集，需向llama3官方申请tokenizer并进行预处理。测试数据集的内容不是影响AI硬件评测结果的核心因素，可以参考或使用阿里灵骏团队开放的预处理好的数据集[Pai-Megatron-Patch/examples/llama3/README.md at main · alibaba/Pai-Megatron-Patch (github.com)](https://github.com/alibaba/Pai-Megatron-Patch/blob/main/examples/llama3/README.md#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8C%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD)
+本测试样例数据使用智源研究院wudao数据集，需向llama2官方申请tokenizer并进行预处理。测试数据集的内容不是影响AI硬件评测结果的核心因素，可以参考或使用阿里灵骏团队开放的预处理好的数据集[Pai-Megatron-Patch/examples/llama2/README.md at main · alibaba/Pai-Megatron-Patch (github.com)](https://github.com/alibaba/Pai-Megatron-Patch/blob/main/examples/llama2/)
 
 在上述README文件中找到并执行
 
