@@ -26,8 +26,8 @@
 ### 运行情况
 
 * 输入批尺寸
-  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_H100x4x8.py中所写，在本case中默认为1。**厂商适配时可任意更改**
-  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_H100x4x8.py中所写，在本case中默认为8192，原则上不可更改
+  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_H100x4x8.py中所写，在本case中默认为3。**厂商适配时可任意更改**
+  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_H100x4x8.py中所写，在本case中默认为4096，原则上不可更改
   3. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size。在本case中，data_parallel_size=world_size/TPsize/PPsize。在本case中默认为1200，使得globalbatchsize=4.8M tokens。
 
 * 通用指标
