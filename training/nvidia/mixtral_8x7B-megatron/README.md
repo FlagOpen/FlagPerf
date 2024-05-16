@@ -2,7 +2,7 @@
 #### A100环境配置
 - ##### 硬件环境
 
-    - 机器型号: NVIDIA DGX A800(80G) 
+    - 机器型号: NVIDIA DGX H100(80G) 
     - 加速卡型号: NVIDIA_A800-SXM4-80GB
     - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
@@ -20,7 +20,7 @@
 
    - 并行技术：张量、流水、数据混合并行，具体并行方案见“运行情况”章节
    - 实施者：megatron-core
-   - 实施细节：
+   - 实施细节：PP4DP1EP1TP8
 
 - ##### 优化策略
 
@@ -31,8 +31,8 @@
 ### 运行情况
 
 * 输入批尺寸
-  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A100x4x8.py中所写，在本case中默认为1。**厂商适配时可任意更改**
-  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x4x8.py中所写，在本case中默认为8192，原则上不可更改
+  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_H100x4x8.py中所写，在本case中默认为1。**厂商适配时可任意更改**
+  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_H100x4x8.py中所写，在本case中默认为8192，原则上不可更改
   3. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size。在本case中，data_parallel_size=world_size/TPsize/PPsize。在本case中默认为512，使得globalbatchsize=4M tokens。
 
 * 通用指标
@@ -56,4 +56,4 @@
 
 | 配置             | precision | parallel  | fix_hp | token/p/s | 是否精度对齐     | mem   | MFU         |
 | -------------- | --------- | --------- | ------ | --------- | ---------- | ----- | ----------- |
-| A1004机32卡（4x8）  | bf16      |  | /      |     | True(作为基线) | /80 | %       |
+| H1004机32卡（4x8）  | bf16      | PP4DP1EP1TP8 | /      |     | True(作为基线) | /80 | 16%       |

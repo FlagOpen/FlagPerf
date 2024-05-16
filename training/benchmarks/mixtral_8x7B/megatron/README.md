@@ -19,20 +19,13 @@ Mistral AI team仅开源了`Mixtral-8x7B`的模型权重文件、tokenizer等，
 
 ### 数据集准备
 
-本测试样例数据使用智源研究院wudao数据集，使用Mixtral提供的tokenizer并进行预处理。测试数据集的内容不是影响AI硬件评测结果的核心因素，可以参考或使用阿里灵骏团队开放的预处理好的数据集[Pai-Megatron-Patch/examples/mistral/README.md at main · alibaba/Pai-Megatron-Patch (github.com)](https://github.com/alibaba/Pai-Megatron-Patch/blob/main/examples/mistral/README.md)
+本测试样例数据使用智源研究院wudao数据集，需向llama3官方申请tokenizer并进行预处理。测试数据集的内容不是影响AI硬件评测结果的核心因素，可以参考或使用阿里灵骏团队开放的预处理好的数据集[Pai-Megatron-Patch/examples/llama3/README.md at main · alibaba/Pai-Megatron-Patch (github.com)](https://github.com/alibaba/Pai-Megatron-Patch/blob/main/examples/llama3/README.md#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8C%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD)
 
 在上述README文件中找到并执行
 
-```
-wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/mistral-datasets/wudao_mistralbpe_content_document.bin
-wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/mistral-datasets/wudao_mistralbpe_content_document.idx
+`wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama3-datasets/wudao_llama3bpe_content_document.binwget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama3-datasets/wudao_llama3bpe_content_document.idx`
 
-wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/mistral-datasets/alpaca_zh-mistral-train.json
-wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/mistral-datasets/alpaca_zh-mistral-valid.json
-
-```
-
-将上述4个文件（不清楚文件原理可以参考Megatron-LM仓库相关介绍）放置于data_dir下。
+将上述两个文件（.bin与.idx，不清楚文件原理可以参考Megatron-LM仓库相关介绍）放置于data_dir下。
 
 ### wudao数据集（数据集内容）
 
