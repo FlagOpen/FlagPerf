@@ -1,0 +1,3 @@
+weight_dir: "llama3_8b_hf"
+mmlu_dir: "mmlu_dataset/data"
+few_shots: 5

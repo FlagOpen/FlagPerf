@@ -1,7 +1,7 @@
 '''Test Configs, including'''
 # -*-coding:utf-8 -*-
 
-# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads and metax.
+# Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads, metax and dcu.
 # We will run benchmarks in training/<vendor>
 VENDOR = "nvidia"
 
@@ -23,6 +23,8 @@ VENDOR = "nvidia"
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
 #   metax:
 #       " --device=/dev/dri --device=/dev/mxcd --group-add video"
+#   dcu:
+#       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -31,6 +33,7 @@ ACCE_CONTAINER_OPT = " --gpus all"
 #   XPU_VISIBLE_DEVICES for kunlunxin
 #   ASCEND_VISIBLE_DEVICES for ascend
 #   MUSA_VISIBLE_DEVICES for mthreads
+#   HIP_VISIBLE_DEVICES for dcu
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
@@ -59,12 +62,18 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
-    "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
-    "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
+    "llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
+    # "llama3_70B:megatron_core060:H100:8:8:1": "/data/llama3_70b_pretrain"
+    # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
+    # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
+    # "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
+
+    # "llava1.5_7b:deepspeed-torch:A800:1:8:1": "/raid/dataset/LLAVA/",
     #"llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
     #"aquila2_7b_finetune:flagscale:A800:1:8:1": "/raid/dataset/aquila2_7b_finetune",
+    # "llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
+    # "aquila2_7b_finetune:flagscale:A800:1:8:1": "/raid/dataset/aquila2_7b_finetune",
     # "mobilenetv2:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch_1.13:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -79,14 +88,15 @@ CASES = {
     
     # "wav2vec2:pytorch_1.13:A100:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
     # "WaveGlow:pytorch_1.13:A100:1:8:1": "/raid/dataset/LJSpeech/",
-    "resnet50:tensorflow2:A100:1:8:1": "/raid/dataset/ImageNet2012/tf_records/",
+    # "resnet50:tensorflow2:A100:1:8:1": "/raid/dataset/ImageNet2012/tf_records/",
+    # "moflow:pytorch_1.13:A100:1:8:1": "/raid/dataset/MoFlow/data/",
 
     # "distilbert:pytorch_1.12:A100:1:8:1": "/raid/dataset/distilbert/",
     
     # "transformer:pytorch_1.13:A100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "swin_transformer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "transformer_xl:pytorch_1.8:A100:1:8:1": "/raid/dataset/transformer_xl/",
-    "t5_small:pytorch_1.12:A100:1:8:1": "/raid/dataset/t5_small_train",
+    # "t5_small:pytorch_1.12:A100:1:8:1": "/raid/dataset/t5_small_train",
     # "gpt2:pytorch_1.12:A100:1:8:1": "/raid/dataset/gpt2",
 
     # "bert_hf:pytorch_1.13:A100:1:8:1": "/raid/dataset/bert_hf_train",
@@ -113,6 +123,8 @@ CASES = {
     # "gpt3_13B:paddle_2.5.1:TP2PP1SH1SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
     # "gpt3_13B:paddle_2.5.1:TP2PP1SH2SP4A10040G:1:8:1":"/raid/dataset/gpt-3/"
     # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
+    
+    # "qwen1.5_MoE:megatron_pai:A800:1:8:1":"/raid/datasets/qwen1.5_MoE/"
 
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
@@ -133,13 +145,16 @@ CASES = {
     # "transformer:pytorch:R300:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-  
+    # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
+    # "baichuan2_13b:deepspeed:R300:1:8:1": "/raid/dataset/baichuan_data/",
+
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "vit:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "transformer:pytorch:BI-V100:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
     # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
     # "t5_small:pytorch:BI-V100:1:8:1": "/raid/dataset/t5_small",
+    # "baichuan2_13b:deepspeed:BI-V150:2:8:1": "/raid/dataset/baichuan2_13b",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
@@ -148,16 +163,29 @@ CASES = {
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
     # metax cases
+    # "aquila2_7b:flagscale:C500:1:8:1": "/raid/dataset/Aquila2_7b_data"
     # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "resnet50:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "swin_transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
-    # "WaveGlow:pytorch_2.0:C500:1:8:1": "/raid/dataset/LJSpeech/",
+    # "baichuan2_13b:deepspeed:C500:2:8:1": "/raid/dataset/baichuan2_13b",
 
+    # "transformer_xl:pytorch_2.0:C500:1:8:1": "/raid/dataset/transformer_xl/",
+    # "wav2vec2:pytorch_2.0:C500:1:8:1": "/raid/dataset/wav2vec2_data/LibriSpeech",
+    # "WaveGlow:pytorch_2.0:C500:1:8:1": "/raid/dataset/LJSpeech/",
     # "bert_hf:pytorch_2.0:C500:1:8:1": "/raid/dataset/bert_hf_train",
     # "glm:pytorch_2.0:C500:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "mobilenetv2:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "detr:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
+    # "transformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/transformer/wmt14_en_de_joined_dict",
+    # "cpm:pytorch_2.0:A100:1:8:1": "/raid/dataset/cpm/train/",
+    # "distilbert:pytorch_2.0:A100:1:8:1": "/raid/dataset/distilbert/",
+    # dcu cases
+    # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
+    # "bigtransfer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "longformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/longformer_train/",
+    
 }
+
 

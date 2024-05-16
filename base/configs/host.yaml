@@ -1,0 +1,36 @@
+FLAGPERF_PATH: "/home/FlagPerf/base"
+FLAGPERF_LOG_PATH: "result"
+VENDOR: "nvidia"
+FLAGPERF_LOG_LEVEL: "info"
+# "BENCHMARK" means benchmarks(torch), "TOOLKIT" means toolkits
+# benchmarks using container_main to launch "torchrun benchmarks/<case>/main.py", nnodes * nproc
+# toolkits using container_main to launch bash toolkits/<case>/<vendor>/main.sh, nnodes.
+# only in benchmarks, flagperf will automatically execute benchmakrs/<case>/<vendor>/requirements.txt and env.sh
+# all resources to be used in toolkits/<case>/<vendor>/main.sh, should be under toolkits/<case>/<vendor>/
+BENCHMARKS_OR_TOOLKITS: "BENCHMARK"
+HOSTS: ["192.168.1.2", "192.168.1.3"]
+NPROC_PER_NODE: 8
+SSH_PORT: "22"
+HOSTS_PORTS: ["2222"]
+MASTER_PORT: "29501"
+SHM_SIZE: "32G"
+ACCE_CONTAINER_OPT: " --gpus all"
+# for nvidia, using " -- gpus all"
+# for xxx, using
+PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
+CLEAR_CACHES: True
+# for nvidia, using "CUDA_VISIBLE_DEVICES"
+# for xxx, using
+ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
+CASES: 
+    "computation-FP32": "pytorch_2.3"
+
+# nvidia "computation-FP64": "pytorch_2.3"
+# nvidia "computation-FP32": "pytorch_2.3"
+# nvidia "computation-TF32": "pytorch_2.3"
+# nvidia "computation-FP16": "pytorch_2.3"
+# nvidia "computation-BF16": "pytorch_2.3"
+# nvidia "computation-INT8": "pytorch_2.3"
+# nvidia "main_memory-bandwidth": "pytorch_2.3"
+# nvidia "main_memory-capacity": "pytorch_2.3"
+# nvidia "interconnect-h2d": "pytorch_2.3"
