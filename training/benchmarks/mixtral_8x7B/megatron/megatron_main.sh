@@ -70,7 +70,8 @@ MOE_ARGS=" \
     --num-experts 8 \
     --moe-aux-loss-coeff 1e-2 \
     --expert-model-parallel-size 8 \
-    --moe-router-load-balancing-type aux_loss"
+    --moe-router-load-balancing-type aux_loss \
+    --moe-grouped-gemm"
 
 ALGO_ARGS="$MODEL_ARGS $OPT_ARGS $GQA_ARGS $MOE_ARGS"
 
