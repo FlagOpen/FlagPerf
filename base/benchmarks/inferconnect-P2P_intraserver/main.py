@@ -92,9 +92,7 @@ if __name__ == "__main__":
         case_config_vendor = yaml.safe_load(file)
     case_config.update(case_config_vendor)
     case_config = Namespace(**case_config)
-    gpu_ids = list(range(config.node_size))
-    select_gpus = random.sample(gpu_ids, 2)
-
+    select_gpus = [0, 1]
     dist.init_process_group(backend=case_config.DIST_BACKEND)  
     rank = dist.get_rank()
     world_size = dist.get_world_size()
