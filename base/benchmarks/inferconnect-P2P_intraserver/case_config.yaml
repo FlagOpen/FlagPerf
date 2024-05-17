@@ -1,4 +1,4 @@
-Melements: 1
-WARMUP: 5
-ITERS: 100
+Melements: 512
+WARMUP: 50
+ITERS: 200
 DIST_BACKEND: "mpi"
