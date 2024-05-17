@@ -53,7 +53,7 @@ int main() {
         printf(
             "[FlagPerf Info]Peer to Peer access is not available amongst GPUs in the system, "
             "waiving test.\n");
-            exit(EXIT_WAIVED);
+        return 0;
     }
     int gpuid[2];
     gpuid[0] = p2pCapableGPUs[0];
