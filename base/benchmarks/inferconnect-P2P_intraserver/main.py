@@ -38,6 +38,9 @@ def main(config, case_config, rank, world_size, local_rank, select_gpus):
     if rank == 0:
         print("finish initialization")
     
+    if local_rank not in select_gpus:
+        return 0, 0
+    
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
     tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
