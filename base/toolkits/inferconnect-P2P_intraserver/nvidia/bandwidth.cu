@@ -6,8 +6,8 @@
 #include <cuda_runtime.h>
 
 #define SIZE (16ULL * 1024ULL * 1024ULL * sizeof(float))
-#define WARMUP_ITERATIONS 10
-#define ITERATIONS 100
+#define WARMUP_ITERATIONS 50
+#define ITERATIONS 500
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {
