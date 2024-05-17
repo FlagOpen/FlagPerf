@@ -40,8 +40,7 @@ def main(config, case_config, rank, world_size, local_rank, select_gpus):
     
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
-    if local_rank in select_gpus:
-        tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
+    tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -63,9 +62,6 @@ def main(config, case_config, rank, world_size, local_rank, select_gpus):
             dist.send(tensor, dst=select_gpus[1])
         elif local_rank == select_gpus[1]:
             dist.recv(tensor, src=select_gpus[0])
-    torch.cuda.synchronize()
-
-
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
     end_time = time.perf_counter()
