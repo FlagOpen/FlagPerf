@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-#define SIZE (16ULL * 1024ULL * 1024ULL * sizeof(float))
+#define SIZE (1024ULL * 1024ULL * 1024ULL * sizeof(float))
 #define WARMUP_ITERATIONS 100
 #define ITERATIONS 20000
 
