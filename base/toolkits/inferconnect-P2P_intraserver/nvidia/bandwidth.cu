@@ -59,16 +59,22 @@ int main() {
     gpuid[1] = p2pCapableGPUs[1];
     printf("[FlagPerf Info]Enabling peer access between GPU%d and GPU%d...\n", gpuid[0],
             gpuid[1]);
+    printf("Allocating buffers (%iGB on GPU%d, GPU%d and CPU Host)...\n",
+         int(SIZE / 1024 / 1024 / 1024), gpuid[0], gpuid[1]);
+
     checkCudaError(cudaSetDevice(gpuid[0]), "cudaSetDevice");
     checkCudaError(cudaDeviceEnablePeerAccess(gpuid[1], 0), "cudaDeviceEnablePeerAccess");
-    checkCudaError(cudaMalloc(&d_src, SIZE), "cudaMalloc");
-    
     checkCudaError(cudaSetDevice(gpuid[1]), "cudaSetDevice");
     checkCudaError(cudaDeviceEnablePeerAccess(gpuid[0], 0), "cudaDeviceEnablePeerAccess");
+
+    checkCudaError(cudaSetDevice(gpuid[0]), "cudaSetDevice");
+    checkCudaError(cudaMalloc(&d_src, SIZE), "cudaMalloc");
+    checkCudaError(cudaSetDevice(gpuid[1]), "cudaSetDevice");
     checkCudaError(cudaMalloc(&d_dst, SIZE), "cudaMalloc");
     
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
+
 
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
         if (i % 2 == 0) {
@@ -79,7 +85,7 @@ int main() {
     }
 
 
-    checkCudaError(cudaEventRecord(start), "cudaEventRecord");
+    checkCudaError(cudaEventRecord(start, 0), "cudaEventRecord");
 
     for (int i = 0; i < ITERATIONS; ++i) {
         if (i % 2 == 0) {
@@ -89,7 +95,7 @@ int main() {
         } 
     }
 
-    checkCudaError(cudaEventRecord(end), "cudaEventRecord");
+    checkCudaError(cudaEventRecord(end, 0), "cudaEventRecord");
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
 
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
@@ -98,6 +104,12 @@ int main() {
 
     printf("[FlagPerf Result]inferconnect-P2P_intraserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
     printf("[FlagPerf Result]inferconnect-P2P_intraserver-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
+
+
+    checkCudaError(cudaSetDevice(gpuid[0]), "cudaSetDevice");
+    checkCudaError(cudaDeviceDisablePeerAccess(gpuid[1]), "cudaDeviceDisablePeerAccess");
+    checkCudaError(cudaSetDevice(gpuid[1]), "cudaSetDevice");
+    checkCudaError(cudaDeviceDisablePeerAccess(gpuid[0]), "cudaDeviceDisablePeerAccess");
 
     checkCudaError(cudaFree(d_src), "cudaFree");
     checkCudaError(cudaFree(d_dst), "cudaFree");
