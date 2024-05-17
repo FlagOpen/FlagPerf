@@ -60,9 +60,11 @@ int main() {
     printf("[FlagPerf Info]Enabling peer access between GPU%d and GPU%d...\n", gpuid[0],
             gpuid[1]);
     checkCudaError(cudaSetDevice(gpuid[0]), "cudaSetDevice");
+    checkCudaError(cudaDeviceEnablePeerAccess(gpuid[1], 0), "cudaDeviceEnablePeerAccess");
     checkCudaError(cudaMalloc(&d_src, SIZE), "cudaMalloc");
     
     checkCudaError(cudaSetDevice(gpuid[1]), "cudaSetDevice");
+    checkCudaError(cudaDeviceEnablePeerAccess(gpuid[0], 0), "cudaDeviceEnablePeerAccess");
     checkCudaError(cudaMalloc(&d_dst, SIZE), "cudaMalloc");
     
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
