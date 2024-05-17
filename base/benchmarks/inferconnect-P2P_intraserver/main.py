@@ -52,10 +52,10 @@ def main(config, case_config, rank, world_size, local_rank, select_gpus):
     multi_device_sync(config.vendor)
     if rank == 0:
         print("start warmup")
-        
+
     for _ in range(case_config.WARMUP):
         if local_rank == select_gpus[0]:
-            dict.send(tensor, dst=select_gpus[1])
+            dist.send(tensor, dst=select_gpus[1])
         elif local_rank == select_gpus[1]:
             dist.recv(tensor, src=select_gpus[0])
         
