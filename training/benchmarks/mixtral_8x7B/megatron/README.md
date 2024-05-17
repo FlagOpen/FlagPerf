@@ -23,7 +23,7 @@ Mistral AI team仅开源了`Mixtral-8x7B`的模型权重文件、tokenizer等，
 
 在上述README文件中找到并执行
 
-`wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama3-datasets/wudao_llama3bpe_content_document.binwget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama3-datasets/wudao_llama3bpe_content_document.idx`
+`wget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama2-datasets/wudao_llama2bpe_content_document.binwget https://atp-modelzoo-wlcb-pai.oss-cn-wulanchabu.aliyuncs.com/release/models/pai-megatron-patch/llama2-datasets/wudao_llama2bpe_content_document.idx`
 
 将上述两个文件（.bin与.idx，不清楚文件原理可以参考Megatron-LM仓库相关介绍）放置于data_dir下。
 
