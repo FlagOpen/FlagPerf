@@ -70,7 +70,7 @@ int main() {
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
 
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
-        if i % 2 == 0 {
+        if (i % 2 == 0) {
             checkCudaError(cudaMemcpy(d_dst, d_src, SIZE, cudaMemcpyDefault), "cudaMemcpy");
         } else {
             checkCudaError(cudaMemcpy(d_src, d_dst, SIZE, cudaMemcpyDefault), "cudaMemcpy");
@@ -81,7 +81,7 @@ int main() {
     checkCudaError(cudaEventRecord(start), "cudaEventRecord");
 
     for (int i = 0; i < ITERATIONS; ++i) {
-        if i % 2 == 0 {
+        if (i % 2 == 0) {
             checkCudaError(cudaMemcpy(d_dst, d_src, SIZE, cudaMemcpyDefault), "cudaMemcpy");
         } else {
             checkCudaError(cudaMemcpy(d_src, d_dst, SIZE, cudaMemcpyDefault), "cudaMemcpy");
