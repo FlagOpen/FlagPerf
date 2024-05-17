@@ -44,16 +44,15 @@ def main(config, case_config, rank, world_size, local_rank, select_gpus):
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
 
-    print(local_rank)
-    print(local_rank)
-    
+    print(local_rank, select_gpus)
+
     tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
     if rank == 0:
         print("start warmup")
-    
+        
     for _ in range(case_config.WARMUP):
         if local_rank == select_gpus[0]:
             dict.send(tensor, dst=select_gpus[1])
