@@ -38,7 +38,7 @@ int main() {
             if (i == j) {
                 continue;
             }
-            checkCudaErrors(cudaDeviceCanAccessPeer(&can_access_peer, i, j), "cudaDeviceCanAccessPeer");
+            checkCudaError(cudaDeviceCanAccessPeer(&can_access_peer, i, j), "cudaDeviceCanAccessPeer");
             printf("[FlagPerf Info]> Peer access from (GPU%d) -> (GPU%d) : %s\n",
                     i, j, can_access_peer ? "Yes" : "No");
             if (can_access_peer && p2pCapableGPUs[0] == -1) {
@@ -60,10 +60,10 @@ int main() {
     gpuid[1] = p2pCapableGPUs[1];
     printf("[FlagPerf Info]Enabling peer access between GPU%d and GPU%d...\n", gpuid[0],
             gpuid[1]);
-    checkCudaErrors(cudaSetDevice(gpuid[0]), "cudaSetDevice");
+    checkCudaError(cudaSetDevice(gpuid[0]), "cudaSetDevice");
     checkCudaError(cudaMalloc(&d_src, SIZE), "cudaMalloc");
     
-    checkCudaErrors(cudaSetDevice(gpuid[1]), "cudaSetDevice");
+    checkCudaError(cudaSetDevice(gpuid[1]), "cudaSetDevice");
     checkCudaError(cudaMalloc(&d_dst, SIZE), "cudaMalloc");
     
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
