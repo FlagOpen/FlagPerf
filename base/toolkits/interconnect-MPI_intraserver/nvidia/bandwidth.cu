@@ -37,6 +37,7 @@ int main() {
     std::vector<float*> d_dst(num_gpus);
     std::vector<ncclComm_t> comms(num_gpus);
     std::vector<cudaStream_t> streams(num_gpus);
+    float *host_recvbuff = new float[SIZE];
 
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
@@ -59,8 +60,7 @@ int main() {
         checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
         for (int j = 0; j < num_gpus; ++j){
             checkCudaError(cudaStreamSynchronize(streams[j]), "cudaStreamSynchronize");
-        }
-        
+        } 
     }
 
     checkCudaError(cudaEventRecord(start), "cudaEventRecord");
@@ -74,7 +74,6 @@ int main() {
         for (int j = 0; j < num_gpus; ++j){
             checkCudaError(cudaStreamSynchronize(streams[j]), "cudaStreamSynchronize");
         }
-        
     } 
 
     checkCudaError(cudaEventRecord(end), "cudaEventRecord");
