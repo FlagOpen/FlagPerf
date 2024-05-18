@@ -1,8 +1,3 @@
-# Copyright (c) 2024 BAAI. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License")
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
 import torch
 import torch.distributed as dist
 import os

@@ -1,4 +1,4 @@
-FLAGPERF_PATH: "/home/FlagPerf/base"
+FLAGPERF_PATH: "/home/chenglongkai/FlagPerf/base"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "info"
@@ -7,8 +7,8 @@ FLAGPERF_LOG_LEVEL: "info"
 # toolkits using container_main to launch bash toolkits/<case>/<vendor>/main.sh, nnodes.
 # only in benchmarks, flagperf will automatically execute benchmakrs/<case>/<vendor>/requirements.txt and env.sh
 # all resources to be used in toolkits/<case>/<vendor>/main.sh, should be under toolkits/<case>/<vendor>/
-BENCHMARKS_OR_TOOLKITS: "BENCHMARK"
-HOSTS: ["192.168.1.2", "192.168.1.3"]
+BENCHMARKS_OR_TOOLKITS: "TOOLKITS"
+HOSTS: ["10.1.2.155"]
 NPROC_PER_NODE: 8
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
@@ -23,7 +23,8 @@ CLEAR_CACHES: True
 # for xxx, using
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
-    "computation-FP32": "pytorch_2.3"
+    #"computation-FP32": "pytorch_2.3"
+    "interconnect-MPI_intraserver": "pytorch_2.3"
 
 # nvidia "computation-FP64": "pytorch_2.3"
 # nvidia "computation-FP32": "pytorch_2.3"
