@@ -9,7 +9,7 @@
 
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
-#define SIZE (16ULL * GB)
+#define SIZE (1ULL * GB)
 #define WARMUP_ITERATIONS 100
 #define ITERATIONS 1000
 
@@ -37,7 +37,6 @@ int main() {
     std::vector<float*> d_dst(num_gpus);
     std::vector<ncclComm_t> comms(num_gpus);
     std::vector<cudaStream_t> streams(num_gpus);
-    float *host_recvbuff = new float[SIZE];
 
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
