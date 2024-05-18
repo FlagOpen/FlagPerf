@@ -10,8 +10,8 @@
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
 #define SIZE (4ULL * GB)
-#define WARMUP_ITERATIONS 100
-#define ITERATIONS 1000
+#define WARMUP_ITERATIONS 10
+#define ITERATIONS 100
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {
@@ -47,6 +47,8 @@ int main() {
     }
     checkNcclError(ncclCommInitAll(comms.data(), num_gpus, devs), "ncclCommInitAll");
 
+    checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
+    checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
         checkNcclError(ncclGroupStart(), "ncclGroupStart");
         for (int j = 0; j < num_gpus; ++j) {
@@ -57,8 +59,7 @@ int main() {
             checkCudaError(cudaStreamSynchronize(streams[j]), "cudaStreamSynchronize");
         } 
     }
-    checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
-    checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
+    
     checkCudaError(cudaEventRecord(start), "cudaEventRecord");
 
     for (int i = 0; i < ITERATIONS; ++i) {
@@ -70,8 +71,8 @@ int main() {
         for (int j = 0; j < num_gpus; ++j){
             checkCudaError(cudaStreamSynchronize(streams[j]), "cudaStreamSynchronize");
         }
-    } 
-    checkCudaError(cudaEventRecord(end), "cudaEventRecord");
+    }
+    checkCudaError(cudaEventRecord(end), "cudaEventRecord"); 
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
 
@@ -87,8 +88,8 @@ int main() {
     The final calculation is the two-way bandwidth, so we multiply by 2.
     */
     double algbw = SIZE * ITERATIONS / (elapsed_time / 1000.0);
-    double bandwidth = algbw * (2 * (num_gpus-1) / num_gpus);
-    bandwidth = bandwidth * 2;
+    double bandwidth = algbw * (2.0 * (num_gpus-1) / num_gpus);
+    bandwidth = bandwidth * 2.0;
 
     printf("[FlagPerf Result]transfer-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
     printf("[FlagPerf Result]transfer-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
