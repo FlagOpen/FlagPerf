@@ -40,7 +40,6 @@ int main() {
 
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
-
     for (int i = 0; i < num_gpus; ++i) {
         checkCudaError(cudaSetDevice(devs[i]), "cudaSetDevice");
         checkCudaError(cudaMalloc(&d_src[i], SIZE), "cudaMalloc");
@@ -48,13 +47,12 @@ int main() {
         checkCudaError(cudaMemset(d_src[i], 1.0f, SIZE), "cudaMemset");
         checkCudaError(cudaStreamCreate(&streams[i]), "cudaStreamCreate");
     }
-
     checkNcclError(ncclCommInitAll(comms.data(), num_gpus, devs), "ncclCommInitAll");
 
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
         checkNcclError(ncclGroupStart(), "ncclGroupStart");
         for (int j = 0; j < num_gpus; ++j) {
-            checkNcclError(ncclAllReduce(d_src[j], d_dst[j], SIZE, ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
+            checkNcclError(ncclAllReduce((const void*)d_src[j], (void*)d_dst[j], SIZE, ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
         }
         checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
         for (int j = 0; j < num_gpus; ++j){
@@ -67,7 +65,7 @@ int main() {
     for (int i = 0; i < ITERATIONS; ++i) {
         checkNcclError(ncclGroupStart(), "ncclGroupStart");
         for (int j = 0; j < num_gpus; ++j) {
-            checkNcclError(ncclAllReduce(d_src[j], d_dst[j], SIZE, ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
+            checkNcclError(ncclAllReduce((const void*)d_src[j], (void*)d_dst[j], SIZE, ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
         }
         checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
         for (int j = 0; j < num_gpus; ++j){
