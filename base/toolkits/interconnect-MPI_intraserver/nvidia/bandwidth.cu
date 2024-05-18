@@ -37,7 +37,6 @@ int main() {
     std::vector<float*> d_dst(num_gpus);
     std::vector<ncclComm_t> comms(num_gpus);
     std::vector<cudaStream_t> streams(num_gpus);
-    float *host_recvbuff = new float[num_elements];
 
     for (int i = 0; i < num_gpus; ++i) {
         checkCudaError(cudaSetDevice(devs[i]), "cudaSetDevice");
