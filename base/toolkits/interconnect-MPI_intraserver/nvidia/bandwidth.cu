@@ -9,7 +9,7 @@
 
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
-#define SIZE (1ULL * GB)
+#define SIZE (4ULL * GB)
 #define WARMUP_ITERATIONS 100
 #define ITERATIONS 1000
 
@@ -71,10 +71,8 @@ int main() {
             checkCudaError(cudaStreamSynchronize(streams[j]), "cudaStreamSynchronize");
         }
     } 
-
     checkCudaError(cudaEventRecord(end), "cudaEventRecord");
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
-
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
 
     /*
