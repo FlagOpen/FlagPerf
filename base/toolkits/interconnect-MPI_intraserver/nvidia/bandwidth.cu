@@ -11,7 +11,7 @@
 #define GB (1024ULL * 1024ULL * 1024ULL)
 #define SIZE (4ULL * GB)
 #define WARMUP_ITERATIONS 10
-#define ITERATIONS 100
+#define ITERATIONS 1000
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {
@@ -59,7 +59,7 @@ int main() {
             checkCudaError(cudaStreamSynchronize(streams[j]), "cudaStreamSynchronize");
         } 
     }
-    
+
     checkCudaError(cudaEventRecord(start), "cudaEventRecord");
 
     for (int i = 0; i < ITERATIONS; ++i) {
