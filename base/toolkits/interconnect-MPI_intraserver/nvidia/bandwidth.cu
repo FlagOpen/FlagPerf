@@ -11,7 +11,7 @@
 #define GB (1024ULL * 1024ULL * 1024ULL)
 #define SIZE (4ULL * GB)
 #define WARMUP_ITERATIONS 100
-#define ITERATIONS 5000
+#define ITERATIONS 10000
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {

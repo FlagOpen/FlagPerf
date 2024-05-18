@@ -1,3 +1,8 @@
+# Copyright (c) 2024 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 import torch
 import torch.distributed as dist
 import os
@@ -34,9 +39,7 @@ def main(config, case_config, rank, world_size, local_rank):
 
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
-    tensor = torch.rand(torchsize, dtype=torch.float32)
-    #print(f"Memory address of tensor in rank {rank} and local rank {local_rank}: {tensor.data_ptr()}")
-
+    tensor = torch.ones(torchsize, dtype=torch.float32).to(local_rank)
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -44,15 +47,15 @@ def main(config, case_config, rank, world_size, local_rank):
         print("start warmup")
     
     for _ in range(case_config.WARMUP):
-        _tensor = tensor.to(local_rank)
-
+        dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
+    
     start_time = time.perf_counter()
 
     for _ in range(case_config.ITERS):
-        _tensor = tensor.to(local_rank)
+        dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -60,9 +63,21 @@ def main(config, case_config, rank, world_size, local_rank):
 
     elapsed_time = end_time - start_time
 
-
+    '''
+        algbw = S/t
+    Considering that each rank has a bandwidth to the outside world of B, the time to perform an allReduce operation of S elements is at best :
+        t = (S*2*(n-1)) / (n*B)
+    Indeed, we have S elements, 2*(n-1) operations per element, and n links of bandwidth B to perform them. Reordering the equation, we find that
+        t = (S/B) * (2*(n-1)/n)
+    Therefore, to get an AllReduce bandwidth measurement which we can compare to the hardware peak bandwidth, we compute :
+        B = S/t * (2*(n-1)/n) = algbw * (2*(n-1)/n)
+    More details can be found in https://github.com/NVIDIA/nccl-tests/blob/master/doc/PERFORMANCE.md
+    The final calculation is the two-way bandwidth, so we multiply by 2.
+    '''
     datasize = case_config.ITERS * (Melements * 1024 * 1024 * 4 / 1E9)
-    bandwidth = datasize / elapsed_time
+    algbw = datasize / elapsed_time
+    bandwidth = algbw * (2 * (config.node_size - 1) / config.node_size)
+    bandwidth *= 2
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
 
     return round(bandwidth, 2), round(bandwidth_gib, 2)
