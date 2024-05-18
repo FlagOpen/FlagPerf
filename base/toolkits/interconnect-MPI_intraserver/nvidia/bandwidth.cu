@@ -52,7 +52,7 @@ int main() {
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
         checkNcclError(ncclGroupStart(), "ncclGroupStart");
         for (int j = 0; j < num_gpus; ++j) {
-            checkNcclError(ncclAllReduce((const void*)d_src[j], (void*)d_dst[j], SIZE, ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
+            checkNcclError(ncclAllReduce((const void*)d_src[j], (void*)d_dst[j], SIZE / sizeof(float), ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
         }
         checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
         for (int j = 0; j < num_gpus; ++j){
@@ -65,7 +65,7 @@ int main() {
     for (int i = 0; i < ITERATIONS; ++i) {
         checkNcclError(ncclGroupStart(), "ncclGroupStart");
         for (int j = 0; j < num_gpus; ++j) {
-            checkNcclError(ncclAllReduce((const void*)d_src[j], (void*)d_dst[j], SIZE, ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
+            checkNcclError(ncclAllReduce((const void*)d_src[j], (void*)d_dst[j], SIZE / sizeof(float), ncclFloat, ncclSum, comms[j], streams[j]), "ncclAllReduce");
         }
         checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
         for (int j = 0; j < num_gpus; ++j){
