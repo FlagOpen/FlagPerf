@@ -38,6 +38,9 @@ int main() {
     std::vector<ncclComm_t> comms(num_gpus);
     std::vector<cudaStream_t> streams(num_gpus);
 
+    checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
+    checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
+
     for (int i = 0; i < num_gpus; ++i) {
         checkCudaError(cudaSetDevice(devs[i]), "cudaSetDevice");
         checkCudaError(cudaMalloc(&d_src[i], SIZE), "cudaMalloc");
