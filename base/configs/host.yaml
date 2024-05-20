@@ -34,4 +34,4 @@ CASES:
 # nvidia "main_memory-bandwidth": "pytorch_2.3"
 # nvidia "main_memory-capacity": "pytorch_2.3"
 # nvidia "interconnect-h2d": "pytorch_2.3"
-# nvidia "inferconnect-P2P_intraserver" : "pytorch_2.3"
+# nvidia "inferconnect-P2P_intraserver": "pytorch_2.3"
