@@ -85,7 +85,11 @@ int main() {
     Therefore, to get an AllReduce bandwidth measurement which we can compare to the hardware peak bandwidth, we compute :
         B = S/t * (2*(n-1)/n) = algbw * (2*(n-1)/n)
     More details can be found in https://github.com/NVIDIA/nccl-tests/blob/master/doc/PERFORMANCE.md
-    The final calculation is the two-way bandwidth, so we multiply by 2.
+    NVIDIA specifies the 600GBps for intra-server connect as a bidirectional bandwidth, 
+    meaning each node can simultaneously upload and download at 300GBps. 
+    To better reflect the ratio of the tested value to the specified value and 
+    to align with common understanding of NVIDIA's product capabilities, 
+    we have multiplied the bandwidth result here by two.
     */
     double algbw = SIZE * ITERATIONS / (elapsed_time / 1000.0);
     double bandwidth = algbw * (2.0 * (num_gpus-1) / num_gpus);
