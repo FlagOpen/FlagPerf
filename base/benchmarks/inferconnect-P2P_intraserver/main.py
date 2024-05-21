@@ -92,8 +92,8 @@ if __name__ == "__main__":
     multi_device_sync(config.vendor)
     for output_rank in range(config.node_size):
         if local_rank in select_gpus and local_rank == output_rank:
-            print(r"[FlagPerf Result]Rank {}'s main_memory-bindwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
-            print(r"[FlagPerf Result]Rank {}'s main_memory-bindwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
+            print(r"[FlagPerf Result]Rank {}'s inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
+            print(r"[FlagPerf Result]Rank {}'s inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
         multi_device_sync(config.vendor)
         
     dist.destroy_process_group()
