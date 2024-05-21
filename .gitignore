@@ -8,3 +8,4 @@ training/result/*
 inference/result/*
 base/result/*
 inference/onnxs/*
+data/*
