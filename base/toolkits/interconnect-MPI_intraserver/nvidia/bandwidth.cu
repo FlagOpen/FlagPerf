@@ -91,8 +91,8 @@ int main() {
     double bandwidth = algbw * (2.0 * (num_gpus-1) / num_gpus);
     bandwidth = bandwidth * 2.0;
 
-    printf("[FlagPerf Result]transfer-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
-    printf("[FlagPerf Result]transfer-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
+    printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
+    printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
 
     for (int i = 0; i < num_gpus; ++i) {
         checkCudaError(cudaFree(d_src[i]), "cudaFree");
