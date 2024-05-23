@@ -118,6 +118,36 @@
       <td>存储</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/main_memory-capacity/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/main_memory-capacity/nvidia">厂商专用工具</a></td>
     </tr>
+    <tr>
+      <td>9</td>
+        <td>CPU-芯片互连</td>
+      <td>互联</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/interconnect-h2d/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-h2d/nvidia">厂商专用工具</a></td>
+    </tr>
+    <tr>
+      <td>10</td>
+        <td>服务器内P2P直连</td>
+      <td>互联</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/interconnect-P2P_intraserver/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-P2P_intraserver/nvidia">厂商专用工具</a></td>
+    </tr>
+    <tr>
+      <td>11</td>
+        <td>服务器内MPI直连</td>
+      <td>互联</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/interconnect-MPI_intraserver/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-MPI_intraserver/nvidia">厂商专用工具</a></td>
+    </tr>
+    <tr>
+      <td>12</td>
+        <td>跨服务器P2P直连</td>
+      <td>互联</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/interconnect-P2P_interserver/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-P2P_interserver/nvidia">厂商专用工具</a></td>
+    </tr>
+    <tr>
+      <td>13</td>
+        <td>跨服务器MPI直连</td>
+      <td>互联</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/interconnect-MPI_interserver/nvidia">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-MPI_interserver/nvidia">厂商专用工具</a></td>
+    </tr>
   </tbody>
   </table>  
 
