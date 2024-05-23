@@ -154,7 +154,9 @@ class InferModel:
         outputs = model.generate(model_inputs,
                                  max_new_tokens = output_len,
                                  end_id = end_id,
-                                 pad_id = pad_id)
+                                 pad_id = pad_id,
+                                 top_k = 1,
+                                 top_p = 0.0)
         torch.cuda.synchronize()
         output_ids = outputs[0, 0, input_lengths[0]:]
 

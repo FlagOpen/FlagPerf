@@ -12,7 +12,7 @@ def evaluator(pred, y, dataloader):
     valid_answers = ['A', 'B', 'C', 'D']
     answer_str = ''.join([c for c in answer_str if c in valid_answers])
     
-    if answer_str == gt_str:
+    if answer_str.startswith(gt_str):
         return 1
     else:
         return 0

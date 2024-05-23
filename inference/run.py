@@ -331,7 +331,12 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
     for cfg in must_configs:
         new_case_config[cfg] = getattr(config, cfg)
 
-    run_container_cmd = "python3 run_inference.py" \
+    if (case_config["model"] == "llama3_70b"):
+        run_container_cmd = "mpirun -n 8 --allow-run-as-root "
+    else:
+        run_container_cmd = ""
+
+    run_container_cmd += "python3 run_inference.py" \
                 + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
                 + f" --loglevel " + getattr(config, "FLAGPERF_LOG_LEVEL") \
                 + f" --vendor " + getattr(config, "VENDOR") \

@@ -1,2 +1,3 @@
+--extra-index-url https://pypi.nvidia.com
 sentencepiece~=0.1.99
 transformers==4.40.2

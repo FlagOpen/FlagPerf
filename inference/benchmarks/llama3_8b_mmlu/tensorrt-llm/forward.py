@@ -84,14 +84,13 @@ def engine_forward(model, dataloader, evaluator, config):
                              str(len(dataloader)))
 
             tokens = item["prompt"].input_ids[0]
-            model_inputs = [tokens]
 
             with torch.no_grad():
 
                 torch_sync(config)
                 core_time_start = time.time()
 
-                y = model(model_inputs)
+                y = model(tokens)
 
                 torch_sync(config)
                 core_time += time.time() - core_time_start
