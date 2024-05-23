@@ -9,8 +9,8 @@ compiler: tensorrt-llm
 num_workers: 8
 num_gpus: 8
 # makes sure TP(Tensor Parallelism) * PP(Pipeline parallelism) = num_gpus
-tp_size: 2
-pp_size: 4
+tp_size: 8
+pp_size: 1
 log_freq: 100
 repeat: 1
 # skip validation(will also skip create_model, export onnx). Assert exist_onnx_path != null

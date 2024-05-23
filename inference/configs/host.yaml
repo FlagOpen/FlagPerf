@@ -1,9 +1,9 @@
-FLAGPERF_PATH: "/home/liujiyuan/FlagPerf/inference"
+FLAGPERF_PATH: "/home/FlagPerf/inference"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "INFO"
 LOG_CALL_INFORMATION: True
-HOSTS: ["10.1.2.59"]
+HOSTS: ["127.0.0.1"]
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
@@ -22,3 +22,4 @@ CASES:
     #"deepseek_7b_mmlu:pytorch_2.1": "/raid/dataset/deepseek_7b_mmlu"
     #"llama3_8b_mmlu:pytorch_2.1": "/raid/dataset/llama3_8b_mmlu"
     "llama3_70b:tensorrt-llm": "/data/llama3_infer"
+    #"llama3_8b_mmlu:tensorrt-llm": "/data/llama3_8b_mmlu"
