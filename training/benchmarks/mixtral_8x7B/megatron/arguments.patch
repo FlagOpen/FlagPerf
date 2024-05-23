@@ -1,0 +1,30 @@
+# Copyright (c) 2024 BAAI. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+@@ -571,6 +571,8 @@
+         kw_args['num_query_groups'] = args.num_query_groups
+     else:
+         kw_args['num_query_groups'] = None
++    if args.sliding_window is not None:
++        kw_args['window_size'] = (args.sliding_window, 0)
+ 
+     # Return config.
+     return config_class(**kw_args)
+@@ -1084,6 +1086,7 @@
+     group.add_argument('--disable-tp-comm-split-rs', action='store_false',
+                        help='Disables the Reduce-Scatter overlap with fprop GEMM.',
+                        dest='tp_comm_split_rs')
++    group.add_argument('--sliding-window', type=int, default=None)
+ 
+     return parser
+ 
+@@ -1409,6 +1412,7 @@
+                                 'SentencePieceTokenizer',
+                                 'GPTSentencePieceTokenizer',
+                                 'Llama2Tokenizer',
++                                'MistralTokenizer',
+                                 'NullTokenizer'],
+                        help='What type of tokenizer to use.')
+     group.add_argument('--tokenizer-model', type=str, default=None,

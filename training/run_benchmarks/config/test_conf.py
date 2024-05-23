@@ -62,7 +62,8 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    "llama3_8b:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
+    "llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
+    # "llama3_70B:megatron_core060:H100:8:8:1": "/data/llama3_70b_pretrain"
     # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
     # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
@@ -124,6 +125,7 @@ CASES = {
     # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
     
     # "qwen1.5_MoE:megatron_pai:A800:1:8:1":"/raid/datasets/qwen1.5_MoE/"
+    # "mixtral_8x7B:megatron_core060:H100:4:8:1": "/raid/datasets/mistral"
 
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
@@ -146,6 +148,7 @@ CASES = {
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
     # "baichuan2_13b:deepspeed:R300:1:8:1": "/raid/dataset/baichuan_data/",
+    # "baichuan2_13b:deepspeed_new:R300:1:1:1": "/raid/dataset/baichuan_data/",
 
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
