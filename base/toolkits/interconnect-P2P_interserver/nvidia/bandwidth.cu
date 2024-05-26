@@ -8,7 +8,7 @@
 
 #define SIZE (1024ULL * 1024ULL * 1024ULL * sizeof(float))
 #define WARMUP_ITERATIONS 100
-#define ITERATIONS 200
+#define ITERATIONS 2000
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {
@@ -39,11 +39,11 @@ int main(int argc, char **argv) {
     cudaEvent_t start, end;
     float elapsed_time;
 
-    MPI_Init(&argc, &argv);
+    checkMPIError(MPI_Init(&argc, &argv), "MPI_Init");
     int rank, nranks;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &nranks);
-    checkCudaError(cudaSetDevice(rank), "cudaSetDevice");
+    checkMPIError(MPI_Comm_rank(MPI_COMM_WORLD, &rank), "MPI_Comm_rank");
+    checkMPIError(MPI_Comm_size(MPI_COMM_WORLD, &nranks), "MPI_Comm_size");
+    checkCudaError(cudaSetDevice(0), "cudaSetDevice");
 
     ncclComm_t comm;
     cudaStream_t stream;
@@ -63,6 +63,7 @@ int main(int argc, char **argv) {
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
 
     printf("Rank %d: Running...\n", rank);
+    checkNcclError(ncclGroupStart(), "ncclGroupStart");
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
         if (rank == 0) {
             checkNcclError(ncclSend(d_tensor, SIZE / sizeof(float), ncclFloat, 1, comm, stream), "ncclSend");
@@ -71,14 +72,15 @@ int main(int argc, char **argv) {
             checkNcclError(ncclRecv(d_tensor, SIZE / sizeof(float), ncclFloat, 0, comm, stream), "ncclRecv");
         }
         printf("Rank %d: Warmup iteration %d\n", rank, i);
-        checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize");
     }
+    checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
+    checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize");
     printf("Rank %d: Warmup done\n", rank);
-
-    MPI_Barrier(MPI_COMM_WORLD);
+    checkMPIError(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier");
 
     printf("Rank %d: Running...\n", rank);
     checkCudaError(cudaEventRecord(start), "cudaEventRecord");
+    checkNcclError(ncclGroupStart(), "ncclGroupStart");
     for (int i = 0; i < ITERATIONS; ++i) {
         if (rank == 0) {
             checkNcclError(ncclSend(d_tensor, SIZE / sizeof(float), ncclFloat, 1, comm, stream), "ncclSend");
@@ -87,15 +89,17 @@ int main(int argc, char **argv) {
             checkNcclError(ncclRecv(d_tensor, SIZE / sizeof(float), ncclFloat, 0, comm, stream), "ncclRecv");
         }
         printf("Rank %d: Iteration %d\n", rank, i);
-        checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize"); 
     }
-    MPI_Barrier(MPI_COMM_WORLD);
+    checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
+    checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize");
+    checkMPIError(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier");
     printf("Rank %d: Done\n", rank);
-
-    checkCudaError(cudaEventRecord(end), "cudaEventRecord"); 
+    checkCudaError(cudaEventRecord(end), "cudaEventRecord");
+    printf("Rank %d: Recording done\n", rank); 
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
+    printf("Rank %d: Synchronization done\n", rank);
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
-
+    printf("Rank %d: Elapsed time: %.2fms\n", rank, elapsed_time);
 
     double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0);
     printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
@@ -106,6 +110,6 @@ int main(int argc, char **argv) {
     checkCudaError(cudaFree(d_tensor), "cudaFree");
     checkNcclError(ncclCommDestroy(comm), "ncclCommDestroy");
     checkCudaError(cudaStreamDestroy(stream), "cudaStreamDestroy");
-    MPI_Finalize();    
+    checkMPIError(MPI_Finalize(), "MPI_Finalize");
     return 0;
 }
