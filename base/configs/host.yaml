@@ -1,7 +1,7 @@
 FLAGPERF_PATH: "/home/chenglongkai/FlagPerf/base"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
-FLAGPERF_LOG_LEVEL: "info"
+FLAGPERF_LOG_LEVEL: "debug"
 # "BENCHMARK" means benchmarks(torch), "TOOLKIT" means toolkits
 # benchmarks using container_main to launch "torchrun benchmarks/<case>/main.py", nnodes * nproc
 # toolkits using container_main to launch bash toolkits/<case>/<vendor>/main.sh, nnodes.
