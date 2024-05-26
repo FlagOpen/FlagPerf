@@ -15,4 +15,3 @@ RUN sed -i 's/#Port 22/Port 60128/' /etc/ssh/sshd_config && \
 RUN echo 'AcceptEnv PATH LD_LIBRARY_PATH' >> /etc/ssh/sshd_config
 EXPOSE 60128
 CMD ["/usr/sbin/sshd", "-D"]
-CMD service ssh start && /bin/bash
