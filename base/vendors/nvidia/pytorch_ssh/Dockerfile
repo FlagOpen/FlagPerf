@@ -4,6 +4,11 @@ RUN apt-get update && \
     mkdir /var/run/sshd && \
     echo 'root:password' | chpasswd && \
     mkdir -p /root/.ssh && chmod 700 /root/.ssh
+    
+COPY id_rsa.pub /root/.ssh/authorized_keys
+COPY id_rsa /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/authorized_keys
 
 RUN printf "Host *\n  StrictHostKeyChecking no\n User root\n SendEnv PATH\n  SendEnv LD_LIBRARY_PATH\n  Port 60128" > /root/.ssh/config && chmod 600 /root/.ssh/config && \
     echo 'Port 60128' >> /etc/ssh/sshd_config && \
