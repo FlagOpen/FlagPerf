@@ -77,6 +77,24 @@ int main(int argc, char *argv[]) {
     checkCudaError(cudaEventRecord(end), "cudaEventRecord"); 
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
+    /*
+    The following are the three performance metrics commonly used
+        1. samples/s (algbw): This metric measures the number of samples processed per second, indicating the algorithmic bandwidth. It reflects the computational efficiency of the algorithm.
+        2. busbw: This metric represents the bus bandwidth, which measures the data transfer rate across the system's bus. It is crucial for understanding the communication efficiency between different parts of the system.
+        3. busbw * 2: This metric is an extension of busbw, accounting for bidirectional data transfer. It doubles the bus bandwidth to reflect the full duplex capability of the system.
+    The second metric, busbw, is chosen for the following reasons:
+        1. This number is obtained applying a formula to the algorithm bandwidth to reflect the speed of the inter-GPU communication. Using this bus bandwidth, we can compare it with the hardware peak bandwidth, independently of the number of ranks used.
+    The following is the derivation:
+        algbw = S/t
+    Considering that each rank has a bandwidth to the outside world of B, the time to perform an allReduce operation of S elements is at best :
+        t = (S*2*(n-1)) / (n*B)
+    Indeed, we have S elements, 2*(n-1) operations per element, and n links of bandwidth B to perform them. Reordering the equation, we find that
+        t = (S/B) * (2*(n-1)/n)
+    Therefore, to get an AllReduce bandwidth measurement which we can compare to the hardware peak bandwidth, we compute :
+        B = S/t * (2*(n-1)/n) = algbw * (2*(n-1)/n)
+    More details can be found in https://github.com/NVIDIA/nccl-tests/blob/master/doc/PERFORMANCE.md
+    The final calculation is the unidirectional bandwidth.
+    */
     double algbw = SIZE * ITERATIONS / (elapsed_time / 1000.0);
     double bandwidth = algbw * (2.0 * (total_gpus - 1) / total_gpus);
     if (rank == 0) {

@@ -64,6 +64,13 @@ def main(config, case_config, rank, world_size, local_rank):
     elapsed_time = end_time - start_time
 
     '''
+    The following are the three performance metrics commonly used
+        1. samples/s (algbw): This metric measures the number of samples processed per second, indicating the algorithmic bandwidth. It reflects the computational efficiency of the algorithm.
+        2. busbw: This metric represents the bus bandwidth, which measures the data transfer rate across the system's bus. It is crucial for understanding the communication efficiency between different parts of the system.
+        3. busbw * 2: This metric is an extension of busbw, accounting for bidirectional data transfer. It doubles the bus bandwidth to reflect the full duplex capability of the system.
+    The second metric, busbw, is chosen for the following reasons:
+        1. This number is obtained applying a formula to the algorithm bandwidth to reflect the speed of the inter-GPU communication. Using this bus bandwidth, we can compare it with the hardware peak bandwidth, independently of the number of ranks used.
+    The following is the derivation:
         algbw = S/t
     Considering that each rank has a bandwidth to the outside world of B, the time to perform an allReduce operation of S elements is at best :
         t = (S*2*(n-1)) / (n*B)
