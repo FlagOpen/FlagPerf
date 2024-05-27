@@ -7,8 +7,8 @@
 #include <mpi.h>
 
 #define SIZE (1024ULL * 1024ULL * 1024ULL * sizeof(float))
-#define WARMUP_ITERATIONS 100
-#define ITERATIONS 2000
+#define WARMUP_ITERATIONS 1000
+#define ITERATIONS 5000
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {
@@ -62,7 +62,6 @@ int main(int argc, char **argv) {
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
 
-    printf("Rank %d: Running...\n", rank);
     checkNcclError(ncclGroupStart(), "ncclGroupStart");
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
         if (rank == 0) {
@@ -71,14 +70,11 @@ int main(int argc, char **argv) {
         else if (rank == 1){
             checkNcclError(ncclRecv(d_tensor, SIZE / sizeof(float), ncclFloat, 0, comm, stream), "ncclRecv");
         }
-        printf("Rank %d: Warmup iteration %d\n", rank, i);
     }
     checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
     checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize");
-    printf("Rank %d: Warmup done\n", rank);
     checkMPIError(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier");
 
-    printf("Rank %d: Running...\n", rank);
     checkCudaError(cudaEventRecord(start), "cudaEventRecord");
     checkNcclError(ncclGroupStart(), "ncclGroupStart");
     for (int i = 0; i < ITERATIONS; ++i) {
@@ -88,18 +84,13 @@ int main(int argc, char **argv) {
         else if (rank == 1){
             checkNcclError(ncclRecv(d_tensor, SIZE / sizeof(float), ncclFloat, 0, comm, stream), "ncclRecv");
         }
-        printf("Rank %d: Iteration %d\n", rank, i);
     }
     checkNcclError(ncclGroupEnd(), "ncclGroupEnd");
     checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize");
     checkMPIError(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier");
-    printf("Rank %d: Done\n", rank);
     checkCudaError(cudaEventRecord(end), "cudaEventRecord");
-    printf("Rank %d: Recording done\n", rank); 
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
-    printf("Rank %d: Synchronization done\n", rank);
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
-    printf("Rank %d: Elapsed time: %.2fms\n", rank, elapsed_time);
 
     double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0);
     printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
