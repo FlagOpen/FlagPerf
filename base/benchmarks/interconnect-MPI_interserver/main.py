@@ -70,6 +70,7 @@ def main(config, case_config, rank, world_size, local_rank):
         3. busbw * 2: This metric is an extension of busbw, accounting for bidirectional data transfer. It doubles the bus bandwidth to reflect the full duplex capability of the system.
     The second metric, busbw, is chosen for the following reasons:
         1. This number is obtained applying a formula to the algorithm bandwidth to reflect the speed of the inter-GPU communication. Using this bus bandwidth, we can compare it with the hardware peak bandwidth, independently of the number of ranks used.
+        2. We can horizontally compare the MPI of different patterns such as all-gather/all-reduce/reduce-scatter.
     The following is the derivation:
         algbw = S/t
     Considering that each rank has a bandwidth to the outside world of B, the time to perform an allReduce operation of S elements is at best :
