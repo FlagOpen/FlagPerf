@@ -7,8 +7,8 @@
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
 #define SIZE (4ULL * GB)
-#define WARMUP_ITERATIONS 50
-#define ITERATIONS 100
+#define WARMUP_ITERATIONS 200
+#define ITERATIONS 2000
 
 void checkCudaError(cudaError_t err, const char *msg) {
     if (err != cudaSuccess) {
@@ -38,8 +38,6 @@ int main(int argc, char *argv[]) {
     checkMPIError(MPI_Comm_rank(MPI_COMM_WORLD, &rank), "MPI_Comm_rank");
     checkMPIError(MPI_Comm_size(MPI_COMM_WORLD, &size), "MPI_Comm_size");
 
-    printf("Rank: %d, Size: %d\n", rank, size);
-
     int num_gpus_per_node = 8;
     int total_gpus = size;
     int gpu_id = rank % num_gpus_per_node;
@@ -60,54 +58,36 @@ int main(int argc, char *argv[]) {
     ncclUniqueId id;
     if (rank == 0) checkNcclError(ncclGetUniqueId(&id), "ncclGetUniqueId");
     checkMPIError(MPI_Bcast(&id, sizeof(id), MPI_BYTE, 0, MPI_COMM_WORLD), "MPI_Bcast");
-    printf("Before init nccl comm rank %d\n", rank);
-
-
-    // 初始化NCCL通信器
     checkNcclError(ncclCommInitRank(&comm, total_gpus, id, rank), "ncclCommInitRank");
-    printf("init nccl comm rank %d\n", rank);
-
     checkCudaError(cudaEventCreate(&start), "cudaEventCreate");
     checkCudaError(cudaEventCreate(&end), "cudaEventCreate");
-
-    printf("start bandwidth test\n");
 
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
         checkNcclError(ncclAllReduce((const void*)d_src, (void*)d_dst, SIZE / sizeof(float), ncclFloat, ncclSum, comm, stream), "ncclAllReduce");
         checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize");
-        printf("warmup %d\n", i);
     }
     checkMPIError(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier");
-    printf("warmup finished\n");
     checkCudaError(cudaEventRecord(start), "cudaEventRecord");
 
     for (int i = 0; i < ITERATIONS; ++i) {
         checkNcclError(ncclAllReduce((const void*)d_src, (void*)d_dst, SIZE / sizeof(float), ncclFloat, ncclSum, comm, stream), "ncclAllReduce");
         checkCudaError(cudaStreamSynchronize(stream), "cudaStreamSynchronize");
-        printf("iteration %d\n", i);
     }
-    printf("iterations finished\n");
     checkMPIError(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier");
     checkCudaError(cudaEventRecord(end), "cudaEventRecord"); 
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
-
     double algbw = SIZE * ITERATIONS / (elapsed_time / 1000.0);
     double bandwidth = algbw * (2.0 * (total_gpus - 1) / total_gpus);
-
-
     if (rank == 0) {
-        printf("[FlagPerf Result]transfer-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
-        printf("[FlagPerf Result]transfer-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
+        printf("[FlagPerf Result]interconnect-MPI_interserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
+        printf("[FlagPerf Result]interconnect-MPI_interserver-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
     }
-
     checkCudaError(cudaFree(d_src), "cudaFree");
     checkCudaError(cudaFree(d_dst), "cudaFree");
     checkNcclError(ncclCommDestroy(comm), "ncclCommDestroy");
     checkCudaError(cudaEventDestroy(start), "cudaEventDestroy");
     checkCudaError(cudaEventDestroy(end), "cudaEventDestroy");
-
     checkMPIError(MPI_Finalize(), "MPI_Finalize");
-
     return 0;
 }

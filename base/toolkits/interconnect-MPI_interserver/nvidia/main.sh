@@ -7,5 +7,6 @@ mpic++ -o bdtest bandwidth.o -L/usr/local/cuda/lib64 -L/usr/local/nccl/lib -L/us
 echo "NODERANK: $NODERANK"
 if [ "$NODERANK" -eq 0 ]; then
     echo "NODERANK is 0, executing the final command..."
+    sleep 10
     mpirun --allow-run-as-root --host 10.1.2.155:8,10.1.2.158:8 -np 16 -x NCCL_DEBUG=WARN -x NCCL_IB_DISABLE=0 -x NCCL_IB_HCA=mlx5_2,mlx5_5 -x CUDA_DEVICE_MAX_CONNECTIONS=1 ./bdtest
 fi
