@@ -105,6 +105,11 @@ class Daemon:
             res, out = rcw(cmd, 10)
             if res:
                 result = "error"
+
+            if (out[0] == ""):
+                cmd = "ipmitool dcmi power reading | grep -i 'Instantaneous power reading' | awk -F': *' '{sub(/[^0-9]+/,\"\",$2); print $2}'"
+                res, out = rcw(cmd, 10)
+
             result = TIMESTAMP + "\t" + out[0]
             with open(file, 'a') as f:
                 f.write(result)
