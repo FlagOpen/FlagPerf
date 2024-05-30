@@ -127,7 +127,7 @@ if __name__ == "__main__":
         case_dir = os.path.join(config.perf_path, "toolkits", config.case_name, config.vendor)
         start_cmd = "export NODERANK=" + str(config.node_rank) + ";"
         start_cmd += "cd " + case_dir + ";bash main.sh"
-        script_log_file = os.path.join(os.path.dirname(logfile), "toolkit.log.txt")
+        script_log_file = os.path.join(os.path.dirname(logfile), "toolkit.log.txt") 
     else:
         logger.error("Invalid BENCHMARKS_OR_TOOLKITS CONFIG, STOPPED TEST!")
         exit(1)
