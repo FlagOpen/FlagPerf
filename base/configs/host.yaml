@@ -37,4 +37,17 @@ CASES:
 # nvidia "interconnect-MPI_intraserver": "pytorch_2.3"
 # nvidia "interconnect-P2P_intraserver": "pyorch_2.3"
 # nvidia "interconnect-P2P_interserver": "pytorch_ssh"
-ż
+
+# Fine-grained chip model configuration
+# nvidia "computation-FP64:A100": "pytorch_2.3"
+# nvidia "computation-FP32:A100": "pytorch_2.3"
+# nvidia "computation-TF32:A100": "pytorch_2.3"
+# nvidia "computation-FP16:A100": "pytorch_2.3"
+# nvidia "computation-BF16:A100": "pytorch_2.3"
+# nvidia "computation-INT8:A100": "pytorch_2.3"
+# nvidia "main_memory-bandwidth:A100": "pytorch_2.3"
+# nvidia "main_memory-capacity:A100": "pytorch_2.3"
+# nvidia "interconnect-h2d:A100": "pytorch_2.3"
+# nvidia "interconnect-MPI_intraserver:A100": "pytorch_2.3"
+# nvidia "interconnect-P2P_intraserver:A100": "pyorch_2.3"
+# nvidia "interconnect-P2P_interserver:A100": "pytorch_ssh"
