@@ -1,4 +1,4 @@
-FLAGPERF_PATH: "/home/FlagPerf/base"
+FLAGPERF_PATH: "/home/chenglongkai/FlagPerf/base"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "info"
@@ -8,14 +8,14 @@ FLAGPERF_LOG_LEVEL: "info"
 # only in benchmarks, flagperf will automatically execute benchmakrs/<case>/<vendor>/requirements.txt and env.sh
 # all resources to be used in toolkits/<case>/<vendor>/main.sh, should be under toolkits/<case>/<vendor>/
 BENCHMARKS_OR_TOOLKITS: "BENCHMARK"
-HOSTS: ["192.168.1.2", "192.168.1.3"]
+HOSTS: ["10.1.2.155"]
 NPROC_PER_NODE: 8
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
 SHM_SIZE: "32G"
 ACCE_CONTAINER_OPT: " --gpus all"
-# for nvidia, using " -- gpus all"
+# for nvidia, using " -- gpus all"z
 # for xxx, using
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
@@ -37,4 +37,3 @@ CASES:
 # nvidia "interconnect-MPI_intraserver": "pytorch_2.3"
 # nvidia "interconnect-P2P_intraserver": "pyorch_2.3"
 # nvidia "interconnect-P2P_interserver": "pytorch_ssh"
-ż
