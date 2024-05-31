@@ -23,10 +23,11 @@
 │       ├── README.md
 │       ├── <otherfiles>
 │       └── nvidia
-│           ├── case_config.yaml
-│           ├── env.sh
-│           ├── README.md
-│           └── requirements.txt
+│           ├──A100
+│             ├── case_config.yaml
+│             ├── env.sh
+│             ├── README.md
+│             └── requirements.txt
 ├── configs
 │   └── host.yaml
 ├── container_main.py
@@ -34,9 +35,10 @@
 ├── toolkits
 │   └── computation-FP32
 │       └── nvidia
-│           ├── <otherfiles>
-│           ├── main.sh
-│           └── README.md
+│           ├──A100
+│              ├── <otherfiles>
+│              ├── main.sh
+│              └── README.md
 ├── utils
 │   ├── <otherfiles>
 ├── vendors
@@ -140,7 +142,7 @@ CASES:
 13. PIP_SOURCE，表示容器内PIP所用源地址
 14. CLEAR_CACHE，表示启动测试前是否清理系统cache，原则上为True
 15. ACCE_VISIBLE_DEVICE_ENV_NAME，表示选定AI芯片所用环境变量。例如对于英伟达，环境变量为"CUDA_VISIBLE_DEVICES"
-16. CASES，为一个字典。key为评测样例名称，value为对应运行时环境名称
+16. CASES，为一个字典。key为评测样例名称+芯片型号，缺省为A100，value为对应运行时环境名称。例如，可使用"computation-FP32": "pytorch_2.3"，或"computation-FP32:A100": "pytorch_2.3"
 
 ### 运行流程
 
