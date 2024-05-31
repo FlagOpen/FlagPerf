@@ -57,6 +57,6 @@ sudo -E python3 ./run_benchmarks/run.py
 | 配置     | config | precision | fix_hp | parallel_strategy | throughput   |
 | ------- | ------- | --------- | ------ | ---------------- | ------------ |
 | GPT3-6.7B | ------- | --------- | ------ | ---------------- | ------------ |
-| C500单机8卡（1x8*64G） | config_TP1PP1SH2SP8C50040Gx1x8 | fp16, level="O2" | per_device_bs=2, accumulate=64, (global bs = 2M tokens) | flash_attention=True, recompute=true, use_fused_rms_norm=false, sharding="stage2", sharding_degree=8 |   10013 tokens/s   |
-| C500单机8卡（1x8*64G） | config_TP2PP1SH1SP4C50040Gx1x8 | fp16, level="O2" | per_device_bs=2, accumulate=128, (global bs = 2M tokens) | flash_attention=True, recompute=true, use_fused_rms_norm=false, sharding="stage1", sharding_degree=4, tensor_parallel_degree=2 |   9963 tokens/s   |
+| C500单机8卡（1x8*64G） | config_TP1PP1SH2SP8C50040Gx1x8 | fp16, level="O2" | per_device_bs=2, accumulate=64, (global bs = 2M tokens) | flash_attention=True, recompute=true, use_fused_rms_norm=false, sharding="stage2", sharding_degree=8 |      |
+| C500单机8卡（1x8*64G） | config_TP2PP1SH1SP4C50040Gx1x8 | fp16, level="O2" | per_device_bs=2, accumulate=128, (global bs = 2M tokens) | flash_attention=True, recompute=true, use_fused_rms_norm=false, sharding="stage1", sharding_degree=4, tensor_parallel_degree=2 |      |
 |  |  |  |  |  |  |
