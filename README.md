@@ -119,7 +119,7 @@
       <td>存储</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/main_memory-capacity/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/main_memory-capacity/nvidia/A100">厂商专用工具</a></td>
     </tr>
-        <tr>
+    <tr>
       <td>9</td>
         <td>CPU-芯片互连</td>
       <td>互联</td>
