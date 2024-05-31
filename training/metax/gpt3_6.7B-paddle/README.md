@@ -13,9 +13,6 @@ wget https://bj.bcebos.com/paddlenlp/models/transformers/gpt/data/gpt_en_dataset
 ## 基于FlagPerf运行
 
 ```
-export SET_DEVICE_NUMA_PREFERRED=1
-export MACA_SMALL_PAGESIZE_ENABLE=1
-export PYTORCH_ENABLE_SAME_RAND_A100=1
 cd FlagPerf/training
 sudo -E python3 ./run_benchmarks/run.py
 ```
