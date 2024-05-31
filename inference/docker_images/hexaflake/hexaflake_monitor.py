@@ -76,7 +76,7 @@ class Daemon:
         def gpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "hxsmi | grep 'stb'| awk '{print $3 $4, $6 $7, $8 $9}' > temp1 && \
-                   hxsmi | grep 'MiB'| awk '{print $5, $6 $7}' > temp2 && paste temp1 temp2 | awk '{$1=$1; print}' && rm temp1 temp2"  ## pwr DTemp MUsed Mem
+                   hxsmi | grep 'MiB'| awk '{print $5, $6 $7, $8, $9 $10}' > temp2 && paste temp1 temp2 | awk '{$1=$1; print}' && rm temp1 temp2"  ## pwr DTemp MUsed Mem
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,
