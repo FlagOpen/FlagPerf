@@ -31,7 +31,7 @@ exit 0
 ```
 
 
-### Nvidia GPU配置与运行信息参考
+### Metax GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
     - 机器、加速卡型号: 曦云®C500 64G
@@ -67,5 +67,5 @@ exit 0
 | 配置     | config | precision | fix_hp | parallel_strategy | throughput   | memory |
 | :-----: | :-----: | --------- | ------ | ---------------- | ------------ | ------ |
 | GPT3-13B | ------- | --------- | ------ | ---------------- | ------------ | ------------ |
-| C500单机8卡（1x8*64G） | config_TP2PP1SH2SP4C50040Gx1x8 | fp16, level="O2" | per_device_bs=1, accumulate=256 (global bs = 2M tokens) | flash_attention=False, recompute=True, use_fused_rms_norm=False, sharding="stage2", sharding_degree=4 |   3368.66 / 8 = 421.08 tokens/s   | 59.23*8G |
-| C500单机8卡（1x8*64G） | config_TP1PP1SH2SP8C50080Gx1x8 | fp16, level="O2" | per_device_bs=1, accumulate=128, (global bs = 2M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=False, sharding="stage3", sharding_degree=8, tensor_parallel_degree=1 |   2894.85 / 8 = 361.86 tokens/s   | 62.18*8G |
+| C500单机8卡（1x8*64G） | config_TP2PP1SH2SP4C50040Gx1x8 | fp16, level="O2" | per_device_bs=1, accumulate=256 (global bs = 2M tokens) | flash_attention=False, recompute=True, use_fused_rms_norm=False, sharding="stage2", sharding_degree=4 |   /   | 59.23*8G |
+| C500单机8卡（1x8*64G） | config_TP1PP1SH2SP8C50080Gx1x8 | fp16, level="O2" | per_device_bs=1, accumulate=128, (global bs = 2M tokens) | flash_attention=True, recompute=False, use_fused_rms_norm=False, sharding="stage3", sharding_degree=8, tensor_parallel_degree=1 |   /   | 62.18*8G |
