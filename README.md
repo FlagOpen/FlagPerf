@@ -39,7 +39,7 @@
 
 ## News 
 
-- [4 Jun 2024]支持算子评测板块. [#560](https://github.com/FlagOpen/FlagPerf/pull/560)
+- [4 Jun 2024]支持算子评测板块. [#562](https://github.com/FlagOpen/FlagPerf/pull/562)
 - [20 May 2024]支持FlagPerf在容器内启动评测. [#542](https://github.com/FlagOpen/FlagPerf/pull/542)
 - [6 May 2024]支持LLaMA3-8B megatron-core预训练. [#526](https://github.com/FlagOpen/FlagPerf/pull/526)
 - [1 Apr 2024]支持基础规格评测板块. [#496](https://github.com/FlagOpen/FlagPerf/pull/496)
