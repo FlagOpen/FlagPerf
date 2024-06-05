@@ -39,11 +39,11 @@
 
 ## News 
 
-- [20 May 2024] 支持FlagPerf在容器内启动评测. [#542](https://github.com/FlagOpen/FlagPerf/pull/542)
+- [4 Jun 2024]支持算子评测板块. [#560](https://github.com/FlagOpen/FlagPerf/pull/560)
+- [20 May 2024]支持FlagPerf在容器内启动评测. [#542](https://github.com/FlagOpen/FlagPerf/pull/542)
 - [6 May 2024]支持LLaMA3-8B megatron-core预训练. [#526](https://github.com/FlagOpen/FlagPerf/pull/526)
 - [1 Apr 2024]支持基础规格评测板块. [#496](https://github.com/FlagOpen/FlagPerf/pull/496)
 - [15 Jan 2024]支持megatron-Llama 70B预训练. [#389](https://github.com/FlagOpen/FlagPerf/pull/389)
-- [31 Oct 2023]支持Torch-Aquila 7B预训练，[#299](https://github.com/FlagOpen/FlagPerf/pull/299)
 - [27 Oct 2023]支持Torch-llama2 7B预训练，[#289](https://github.com/FlagOpen/FlagPerf/pull/289)
 - [7 Oct 2023]支持Paddle-GPT3 预训练，[#233](https://github.com/FlagOpen/FlagPerf/pull/233)
 - [27 Sep 2023]发布v1.0版本，支持20余个经典模型，50余个训练样例，支持多家芯片厂商的训练或推理评测 [#v1.0](https://github.com/FlagOpen/FlagPerf/releases/tag/1.0)
@@ -51,6 +51,7 @@
 
 <details><summary>Full News</summary>
 
+- [31 Oct 2023]支持Torch-Aquila 7B预训练，[#299](https://github.com/FlagOpen/FlagPerf/pull/299)
 - [8 Feb 2023]支持Tensorflow框架[#7](https://github.com/FlagOpen/FlagPerf/pull/7)
 - [6 Feb 2023]昆仑芯作为合作厂商进入共建生态 [#6](https://github.com/FlagOpen/FlagPerf/pull/6)
 - [Dec 2022]天数智芯、百度PaddlePaddle作为最早一批厂商参与初版共建开发
@@ -153,6 +154,27 @@
   </table>  
 
 
+算子列表：
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th>编号</th>
+        <th>规格名称</th>
+      <th>算子库</th>
+      <th>英伟达</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+      <td>1</td>
+        <td>mm-FP16</td>
+      <td>nativetorch<br>flaggems</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/operation/benchmarks/mm/nvidia">A100_40_SXM</a></td>
+    </tr>
+</tbody>
+</table>
+ 
 训练列表：
 > [!TIP]
 > **请在表格下方向右滑动查看更多厂商**
@@ -339,6 +361,10 @@ vim configs/host.yaml
 cd FlagPerf/base/
 sudo python3 run.py
 ```
+
+### 算子评测启动说明
+
+1. 同基础规格评测
 
 ### 训练评测启动说明
 
