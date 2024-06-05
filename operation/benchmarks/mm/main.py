@@ -9,6 +9,7 @@ import os
 import time
 from argparse import ArgumentParser, Namespace
 import yaml
+import triton
 import sys
 sys.path.append("..")
 from drivers.utils import *
@@ -94,8 +95,10 @@ def main(config, case_config):
 
     datasize = case_config.ITERS * (m * n * k * 2)
     tflops = datasize / elapsed_time / 1E12
-
-    return round(tflops, 2), mape
+    
+    kernel_latency = triton.testing.do_bench(lambda: torch.mm(a,b), warmup=case_config.KERNELWARMUP, rep=case_config.KERNELITERS, return_mode="median")
+    kernel_tflops = round(2 * m * n * k / (kernel_latency / 1000.0) / 1E12, 2)
+    return round(tflops, 2), kernel_tflops, mape
 
 
 if __name__ == "__main__":    
@@ -114,6 +117,7 @@ if __name__ == "__main__":
         print("Using flaggems")
     else:
         print("Using nativetorch")
-    tflops, err = main(config, case_config)
-    print(r"[FlagPerf Result]{}'s computation-{}=".format(config.oplib, config.dataformat) + str(tflops) + "TFLOPS")
+    tflops, ktflops, err = main(config, case_config)
+    print(r"[FlagPerf Result]CPU Time {}'s computation-{}=".format(config.oplib, config.dataformat) + str(tflops) + "TFLOPS")
+    print(r"[FlagPerf Result]Kernel Time {}'s computation-{}=".format(config.oplib, config.dataformat) + str(ktflops) + "TFLOPS")
     print(r"[FlagPerf Result]{}'s computation-{} mean relative error with FP64-CPU:{}".format(config.oplib, config.dataformat, err))

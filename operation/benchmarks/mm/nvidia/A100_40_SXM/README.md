@@ -27,8 +27,8 @@
 
 | 评测项  | 平均相对误差(with FP64-CPU) | TFLOPS(cpu wall clock) | TFLOPS(kernel clock) |
 | ---- | -------------- | -------------- | ------------ |
-| flaggems | 5.066E-6    | 255.82TFLOPS       | /        |
-| nativetorch | 5.066E-6    | 256.01TFLOPS       | /        |
+| flaggems | 5.066E-6    | 255.76TFLOPS       | 258.42TFLOPS        |
+| nativetorch | 5.066E-6    | 255.97TFLOPS       | 257.96TFLOPS      |
 
 
 ## 能耗监控结果
