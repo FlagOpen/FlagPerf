@@ -1,8 +1,8 @@
-FLAGPERF_PATH: "/home/shihonghao/FlagPerf/operation"
+FLAGPERF_PATH: "/home/FlagPerf/operation"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "nvidia"
-FLAGPERF_LOG_LEVEL: "debug"
-HOSTS: ["10.1.2.155"]
+FLAGPERF_LOG_LEVEL: "info"
+HOSTS: ["192.168.1.2"]
 NPROC_PER_NODE: 1
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
