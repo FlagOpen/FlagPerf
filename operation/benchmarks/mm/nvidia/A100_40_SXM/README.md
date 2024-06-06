@@ -21,6 +21,10 @@
 * 内存：1TiB
 * 服务器间AI芯片直连规格及带宽：此评测项不涉及服务期间AI芯片直连
 
+# 算子库版本
+
+https://github.com/FlagOpen/FlagGems. Commit ID:982781081f5d62856064ae986e8927a31e96c235
+
 # 评测结果
 
 ## 核心评测结果
