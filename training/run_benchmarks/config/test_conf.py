@@ -126,6 +126,7 @@ CASES = {
     # "gpt3_13B:paddle_2.5.1:TP2PP4SH1SP1A10040G:1:8:1":"/raid/dataset/gpt-3/"
     
     # "qwen1.5_MoE:megatron_pai:A800:1:8:1":"/raid/datasets/qwen1.5_MoE/"
+    # "mixtral_8x7B:megatron_core060:H100:4:8:1": "/raid/datasets/mistral"
 
     # kunlunxin cases
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
@@ -148,6 +149,7 @@ CASES = {
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
     # "baichuan2_13b:deepspeed:R300:1:8:1": "/raid/dataset/baichuan_data/",
+    # "baichuan2_13b:deepspeed_new:R300:1:1:1": "/raid/dataset/baichuan_data/",
 
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -186,6 +188,8 @@ CASES = {
     # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
     # "bigtransfer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "longformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/longformer_train/",
+    #"gpt3_13B:paddle_2.6.0:TP2PP1SH2SP4C50040G:1:8:1":"/raid/data_set/data-gpt3"
+    #"gpt3_13B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/data_set/data-gpt3"
     
 }
 

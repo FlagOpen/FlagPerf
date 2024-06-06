@@ -102,33 +102,32 @@ if __name__ == "__main__":
     logger.info(config)
     write_pid_file(config.log_dir, "start_base_task.pid")
     logger.info("Success Writing PID file at " + os.path.join(config.log_dir, "start_base_task.pid"))
-    
+    if ':' not in config.case_name:
+        case_name = config.case_name
+        chip_model = 'A100'
+    else:
+        case_name, chip_model = config.case_name.split(':')
     if config.bench_or_tool == "BENCHMARK":
-        logger.info("Using PyTorch to Test {}'s {}".format(config.vendor, config.case_name))
-        case_dir = os.path.join(config.perf_path, "benchmarks", config.case_name)
-        
+        logger.info("Using PyTorch to Test {}'s {}".format(config.vendor, case_name))
+        case_dir = os.path.join(config.perf_path, "benchmarks", case_name)
         start_cmd = "cd " + case_dir + ";torchrun"
-        
         # for torch
         start_cmd += " --nproc_per_node=" + str(config.nproc_per_node)
         start_cmd += " --nnodes=" + str(config.nnodes)
         start_cmd += " --node_rank=" + str(config.node_rank)
         start_cmd += " --master_addr=" + str(config.master_addr)
-        start_cmd += " --master_port=" + str(config.master_port)   
-        
+        start_cmd += " --master_port=" + str(config.master_port)
         # for flagperf
         start_cmd += " main.py"
-        start_cmd += " --vendor=" + config.vendor
+        start_cmd += " --vendor=" + config.vendor + '/' + chip_model
         start_cmd += " --node_size=" + str(config.nproc_per_node)
-        
         script_log_file = os.path.join(os.path.dirname(logfile), "benchmark.log.txt")  
     elif config.bench_or_tool == "TOOLKIT":
-        logger.info("Using {}'s Toolkits to Test {}".format(config.vendor, config.case_name))
-        case_dir = os.path.join(config.perf_path, "toolkits", config.case_name, config.vendor)
-        
-        start_cmd = "cd " + case_dir + ";bash main.sh"
-        
-        script_log_file = os.path.join(os.path.dirname(logfile), "toolkit.log.txt")    
+        logger.info("Using {}'s Toolkits to Test {}".format(config.vendor, case_name))
+        case_dir = os.path.join(config.perf_path, "toolkits", case_name, config.vendor, chip_model)
+        start_cmd = "export NODERANK=" + str(config.node_rank) + ";"
+        start_cmd += "cd " + case_dir + ";bash main.sh"
+        script_log_file = os.path.join(os.path.dirname(logfile), "toolkit.log.txt") 
     else:
         logger.error("Invalid BENCHMARKS_OR_TOOLKITS CONFIG, STOPPED TEST!")
         exit(1)
