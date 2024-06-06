@@ -42,7 +42,7 @@ PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/FlagPerf/training"
+FLAGPERF_PATH = "/home/yangfei/zhangweixing/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -62,7 +62,7 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    "llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
+    # "llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
     # "llama3_70B:megatron_core060:H100:8:8:1": "/data/llama3_70b_pretrain"
     # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
     # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
@@ -82,7 +82,7 @@ CASES = {
     # "bigtransfer:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
 
     # "tacotron2:pytorch_1.13:A100:1:8:1": "/raid/dataset/tacotron2/LJSpeech/",
-    # "resnet50:pytorch_1.8:A100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
+    # "resnet50:pytorch_1.8:A100:1:8:1": "/mnt/self-define/zhangweixing/imagenet",
     # "mask_rcnn:pytorch_1.8:A100:1:8:1": "/raid/dataset/maskrcnn/coco2017",
     # "dlrm:pytorch_1.10:A100:1:8:1": "/raid/dataset/criteo_1TB_click_logs/binary_dataset/",
     
@@ -104,6 +104,7 @@ CASES = {
     # "detr:pytorch_1.13:A100:1:8:1": "/raid/dataset/detr/coco2017/",
     
     # "llama2_7b:deepspeed:A100:1:8:1": "/raid/dataset/llama2_7b_pretrain",
+    "llama2_7b:megatron-deepspeed:A100:1:8:1": "/mnt/self-define/zhangweixing/datasets/llm/preprocessed/",
     # "aquila2_7b:flagscale:A100:1:8:1": "/raid/dataset/aquila2_7b_pretrain",
     # "llama2_70B:megatron:H800:4:8:1": "/raid/dataset/llama2_70B_pretrain",
     # "llama1_7B:paddle_2.5.1:TP1PP1SH2SP8A10040G:1:8:1":"/raid/dataset/llama/"
