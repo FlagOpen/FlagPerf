@@ -69,6 +69,7 @@
         <th>规格名称</th>
       <th>规格类型</th>
       <th>英伟达</th>
+      <th>沐曦</th>
     </tr>
   </thead>
   <tbody>
@@ -77,48 +78,56 @@
         <td>FP64算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP64/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP64/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP64/metax">算子或原语</a></td>
     </tr>
     <tr>
       <td>2</td>
         <td>FP32算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/metax">算子或原语</a></td>
     </tr>
     <tr>
       <td>3</td>
         <td>TF32算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-TF32/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-TF32/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-TF32/metax">算子或原语</a></td>
     </tr>
     <tr>
       <td>4</td>
         <td>FP16算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP16/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/metax">算子或原语</a></td>
     </tr>
     <tr>
       <td>5</td>
         <td>BF16算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-BF16/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/metax">算子或原语</a></td>
     </tr>
     <tr>
       <td>6</td>
         <td>INT8算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-INT8/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-INT8/metax">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>7</td>
         <td>主存储带宽</td>
       <td>存储</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/main_memory-bandwidth/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/main_memory-bandwidth/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/main_memory-bandwidth/metax">算子或原语</a></td>
     </tr>
     <tr>
       <td>8</td>
         <td>主存储容量</td>
       <td>存储</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/main_memory-capacity/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/main_memory-capacity/nvidia/A100">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/main_memory-capacity/metax">算子或原语</a></td>
     </tr>
     <tr>
       <td>9</td>
@@ -174,7 +183,7 @@
     </tr>
 </tbody>
 </table>
- 
+
 训练列表：
 > [!TIP]
 > **请在表格下方向右滑动查看更多厂商**
