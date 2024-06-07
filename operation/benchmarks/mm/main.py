@@ -78,12 +78,10 @@ def main(config, case_config):
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(torch.mm, (a, b), host_device_sync, config, case_config)
     
-    print(latency_nowarm, latency_warm, cputime, kerneltime)
     
     op2flops = lambda x: x * 2 * m * n * k
     
     perf_result = cal_perf(cputime, kerneltime, op2flops, case_config.SPECTFLOPS)
-    print(perf_result)
     print_result(config, "matrix multiply(mm)", *perf_result, mape, mape_std, latency_nowarm, latency_warm)
 
 
@@ -97,7 +95,6 @@ if __name__ == "__main__":
     case_config.update(case_config_vendor)
     case_config = Namespace(**case_config)
 
-    print(case_config)
     if config.oplib == "flaggems":
         import flag_gems
         flag_gems.enable()

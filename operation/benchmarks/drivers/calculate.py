@@ -15,8 +15,6 @@ def do_test(exec_func, exec_args, sync_func, config, case_config):
     sync_func(config.vendor)
     latency_nowarm = time.perf_counter_ns() - start_latency_nowarm
 
-    print("start warmup")
-
     for _ in range(case_config.WARMUP):
         _tensor = exec_func(*exec_args)
 
