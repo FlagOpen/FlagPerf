@@ -4,13 +4,13 @@ batch_size: 1
 # format: a_1*a*2*...*a_nea_0,like 2*512*0.33e9(bert) or 4.12e9(resnet50)
 flops: 2*7e9
 fp16: true
-compiler: inductor
+compiler: pytorch_foo
 num_workers: 8
 log_freq: 100
 repeat: 1
 # skip validation(will also skip create_model, export onnx). Assert exist_onnx_path != null
-no_validation: false
+no_validation: True
 # set a real onnx_path to use exist, or set it to anything but null to avoid export onnx manually(like torch-tensorrt)
-exist_onnx_path: null
+exist_onnx_path: "foo"
 # set a exist path of engine file like resnet50.trt/resnet50.plan/resnet50.engine
-exist_compiler_path: null
+exist_compiler_path: "/home/FlagPerf/data/llama2_7b/llama2_7b_2048_bf16_q/llama2_7b_2048_bf16_q_multi.ngf"

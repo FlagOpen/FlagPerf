@@ -12,8 +12,7 @@ import sys
 from tools import init_logger, merge_config
 from argparse import ArgumentParser
 
-## XIAO YU 
-# test MERGE temporally 
+ 
 def main(config):
     
     init_logger(config)
