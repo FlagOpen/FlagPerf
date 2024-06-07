@@ -34,36 +34,40 @@ def do_test(exec_func, exec_args, sync_func, config, case_config):
 
     cputime_raw = end_time - start_time
 
-    kerneltime_raw = kernel_bench(lambda: exec_func(*exec_args),warmup=case_config.KERNELWARMUP,rep=case_config.KERNELITERS,return_mode="median")
+    kerneltime_raw = kernel_bench(lambda: exec_func(*exec_args),
+                                  warmup=case_config.KERNELWARMUP,
+                                  rep=case_config.KERNELITERS,
+                                  return_mode="median")
     cputime = cputime_raw / case_config.ITERS
-    kerneltime = kerneltime_raw / 1000.0 # ms to s
-    return round(latency_nowarm / 1000.0, 2), round(latency_warm / 1000.0, 2), cputime, kerneltime
-    
+    kerneltime = kerneltime_raw / 1000.0  # ms to s
+    return round(latency_nowarm / 1000.0, 2), round(latency_warm / 1000.0,
+                                                    2), cputime, kerneltime
+
 
 def cal_perf(cputime, kerneltime, op2flops, spectflops):
     ctus = round(cputime * 1E6, 2)
     ktus = round(kerneltime * 1E6, 2)
-    
+
     cps = 1.0 / cputime
     kps = 1.0 / kerneltime
-    
+
     cflops = op2flops(cps)
     kflops = op2flops(kps)
     ctflops = round(cflops / 1E12, 2)
     ktflops = round(kflops / 1E12, 2)
-    
-    
-    cfu = round(100.0 * cflops / 1E12 / spectflops, 2)
-    kfu = round(100.0 * kflops / 1E12 / spectflops, 2)  
-    
-    return ctus, ktus, cps, kps, ctflops, ktflops, cfu, kfu
-    
 
-def print_result(config, casename, ct, kt, cps, kps, ctflops, ktflops, cfu, kfu, errmean, errstd, lnm, lm):
-    print(
-        r"[FlagPerf Result]Operation {} in {} at {}:".format(
-            casename, config.oplib, config.dataformat))
-    print(r"[FlagPerf Result]FLOPS utilization: cputime={}%, kerneltime={}%".format(cfu, kfu))
+    cfu = round(100.0 * cflops / 1E12 / spectflops, 2)
+    kfu = round(100.0 * kflops / 1E12 / spectflops, 2)
+
+    return ctus, ktus, cps, kps, ctflops, ktflops, cfu, kfu
+
+
+def print_result(config, casename, ct, kt, cps, kps, ctflops, ktflops, cfu,
+                 kfu, errmean, errstd, lnm, lm):
+    print(r"[FlagPerf Result]Operation {} in {} at {}:".format(
+        casename, config.oplib, config.dataformat))
+    print(r"[FlagPerf Result]FLOPS utilization: cputime={}%, kerneltime={}%".
+          format(cfu, kfu))
     print(
         r"[FlagPerf Result]cputime={} us, throughput={} op/s, equals to {} TFLOPS"
         .format(ct, cps, ctflops))
@@ -75,4 +79,3 @@ def print_result(config, casename, ct, kt, cps, kps, ctflops, ktflops, cfu, kfu,
     print(
         r"[FlagPerf Result]First time latency: no warmup={} us, warmup={} us".
         format(lnm, lm))
-

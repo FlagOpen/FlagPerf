@@ -45,7 +45,8 @@ def parse_args():
 
 
 def main(config, case_config):
-    print("Test Correctness with 16-times smaller operation") # correctness is implemented casebycase
+    print("Test Correctness with 16-times smaller operation"
+          )  # correctness is implemented casebycase
 
     m = case_config.M
     n = case_config.N
@@ -76,13 +77,15 @@ def main(config, case_config):
     a = torch.randn((m, n), dtype=dtype[config.dataformat]).to(0)
     b = torch.randn((n, k), dtype=dtype[config.dataformat]).to(0)
 
-    latency_nowarm, latency_warm, cputime, kerneltime = do_test(torch.mm, (a, b), host_device_sync, config, case_config)
-    
-    
+    latency_nowarm, latency_warm, cputime, kerneltime = do_test(
+        torch.mm, (a, b), host_device_sync, config, case_config)
+
     op2flops = lambda x: x * 2 * m * n * k
-    
-    perf_result = cal_perf(cputime, kerneltime, op2flops, case_config.SPECTFLOPS)
-    print_result(config, "matrix multiply(mm)", *perf_result, mape, mape_std, latency_nowarm, latency_warm)
+
+    perf_result = cal_perf(cputime, kerneltime, op2flops,
+                           case_config.SPECTFLOPS)
+    print_result(config, "matrix multiply(mm)", *perf_result, mape, mape_std,
+                 latency_nowarm, latency_warm)
 
 
 if __name__ == "__main__":
