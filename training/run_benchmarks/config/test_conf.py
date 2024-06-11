@@ -187,6 +187,7 @@ CASES = {
     # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
     # "bigtransfer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "longformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/longformer_train/",
+    # "llama1_7B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/dataset/llama/"
     #"gpt3_13B:paddle_2.6.0:TP2PP1SH2SP4C50040G:1:8:1":"/raid/data_set/data-gpt3"
     #"gpt3_13B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/data_set/data-gpt3"
     
