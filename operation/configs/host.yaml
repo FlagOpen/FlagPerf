@@ -1,0 +1,24 @@
+FLAGPERF_PATH: "/home/FlagPerf/operation"
+FLAGPERF_LOG_PATH: "result"
+VENDOR: "nvidia"
+FLAGPERF_LOG_LEVEL: "info"
+HOSTS: ["192.168.1.2"]
+NPROC_PER_NODE: 1
+SSH_PORT: "22"
+HOSTS_PORTS: ["2222"]
+MASTER_PORT: "29501"
+SHM_SIZE: "32G"
+ACCE_CONTAINER_OPT: " --gpus all"
+# for nvidia, using " -- gpus all"
+# for xxx, using
+PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
+CLEAR_CACHES: True
+# for nvidia, using "CUDA_VISIBLE_DEVICES"
+# for xxx, using
+ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
+# "operation:dataFormat:chip": "docker_images"
+# now only support flaggems and nativepytorch
+CASES: 
+    "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
+#    "mm:FP16:flaggems:A100_40_SXM": "ngctorch2403"
+#    "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
