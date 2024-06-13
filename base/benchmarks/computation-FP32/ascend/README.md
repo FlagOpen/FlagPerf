@@ -15,7 +15,7 @@
 ## 服务器
 
 * 单服务器内使用卡数：8
-* 服务器型号：Hengshan AI326TA
+* 服务器型号：Atlas 800T A2训练服务器
 * 操作系统版本：Ubuntu 22.04 LTS
 * 操作系统内核：5.15.0-25-generic
 * CPU：Kunpeng 920
