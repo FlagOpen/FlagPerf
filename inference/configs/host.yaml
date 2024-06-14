@@ -1,22 +1,23 @@
 FLAGPERF_PATH: "/home/FlagPerf/inference"
 FLAGPERF_LOG_PATH: "result"
-VENDOR: "hexaflake"
+VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "INFO"
 LOG_CALL_INFORMATION: True
-HOSTS: ["120.131.124.25"]
+HOSTS: ["127.0.0.1"]
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
 SHM_SIZE: "32G"
 #   metax:
 #       " --device=/dev/dri --device=/dev/mxcd --group-add video"
-ACCE_CONTAINER_OPT: "-v /mnt:/mnt -v /usr/local/hexaflake/driver:/usr/local/hexaflake/driver -v /home:/home --device /dev/hx_aigpu0-0 --device /dev/hx_pedd0 --device /dev/hx_vdec0-0 --device /dev/hx_venc0-0 --device /dev/mem --privileged=true"
+ACCE_CONTAINER_OPT: " --gpus all"
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
     # "resnet50:pytorch_1.13": "/raid/dataset/ImageNet/imagenet/val"
-    # "vit_l_16:pytorch_2.1": "/raid/dataset/ImageNet_1k_2012/val"
-    # "stable_diffusion_v1_4:pytorch_2.0": "/raid/dataset/stable_diffusion_v1_4/"
+    "vit_l_16:pytorch_2.1": "/raid/dataset/ImageNet_1k_2012/val"
+    #"stable_diffusion_v1_4:pytorch_2.0": "/raid/dataset/stable_diffusion_v1_4/"
     # "yolov5:pytorch_2.0": "/raid/dataset/coco2017/"
-    "llama2_7b_mmlu:pytorch_foo": "/home/FlagPerf/data/dataset/"
+    #"deepseek_7b_mmlu:pytorch_2.1": "/raid/dataset/deepseek_7b_mmlu"
+    #"llama3_8b_mmlu:pytorch_2.1": "/raid/dataset/llama3_8b_mmlu"

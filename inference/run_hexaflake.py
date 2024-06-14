@@ -246,7 +246,7 @@ def clear_caches_cluster(clear, nnodes):
         logger.info("Caches clear config is NOT set.")
         return
 
-    clear_cmd = "sync && echo Hexa@2024 | sudo -S /sbin/sysctl vm.drop_caches=3"
+    clear_cmd = "sync && echo password | sudo -S /sbin/sysctl vm.drop_caches=3"
     timeout = 30
     logger.debug("Run cmd in the cluster to clear the system cache: " +
                  clear_cmd + " timeout=" + str(timeout))
@@ -274,7 +274,7 @@ def start_monitors_in_cluster(dp_path, case_log_dir, nnodes):
 
     ven_mon_path = os.path.join(dp_path, "docker_images", config.VENDOR,
                                 config.VENDOR + "_monitor.py")
-    start_mon_cmd = "cd " + dp_path + " && echo Hexa@2024 | sudo -S " + sys.executable \
+    start_mon_cmd = "cd " + dp_path + " && echo password | sudo -S " + sys.executable \
                     + " " + ven_mon_path + " -o restart -l "
     logger.debug("Run cmd in the cluster to start vendor's monitors: " +
                  start_mon_cmd)
@@ -301,7 +301,7 @@ def stop_monitors_in_cluster(dp_path, nnodes):
 
     ven_mon_path = os.path.join(dp_path, "docker_images", config.VENDOR,
                                 config.VENDOR + "_monitor.py")
-    stop_mon_cmd = "cd " + dp_path + " && echo Hexa@2024 | sudo -S " + sys.executable \
+    stop_mon_cmd = "cd " + dp_path + " && echo password | sudo -S " + sys.executable \
                    + " " + ven_mon_path + " -o stop"
     logger.debug("Run cmd in the cluster to stop vendor's monitors: " +
                  stop_mon_cmd)
