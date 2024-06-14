@@ -407,9 +407,9 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, config,
     if not prepare_running_env(dp_path, container_name, case_config):
         logger.error("c) Prepare running environment......"
                      "[FAILED]. Ignore this round.")
-        #logger.info("Stop containers in cluster.")
-        #stop_container_in_cluster(dp_path, container_name, nnodes)
-        #return False
+        logger.info("Stop containers in cluster.")
+        stop_container_in_cluster(dp_path, container_name, nnodes)
+        return False
     logger.info("c) Prepare running environment......[SUCCESS]")
     logger.info("d) Start monitors......")
     start_monitors_in_cluster(dp_path, case_log_dir, nnodes)
