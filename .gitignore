@@ -6,4 +6,6 @@ __pycache__/
 .pytest_cache
 training/result/*
 inference/result/*
+base/result/*
+operation/result/*
 inference/onnxs/*
