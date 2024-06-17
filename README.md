@@ -88,7 +88,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/metax">算子或原语</a></td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/ascend">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>3</td>
@@ -104,7 +104,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP16/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/metax">算子或原语</a></td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>5</td>
