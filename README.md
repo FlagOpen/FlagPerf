@@ -112,7 +112,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-BF16/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/metax">算子或原语</a></td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>6</td>
@@ -120,7 +120,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-INT8/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-INT8/metax">厂商专用工具</a></td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-INT8/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>7</td>
