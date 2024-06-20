@@ -61,8 +61,8 @@ def main(config, case_config):
 
     torch.manual_seed(42)
     for i in range(100):
-        a = torch.randn(bs//16, m//16, n//16, dtype=dtype[config.dataformat])
-        b = torch.randn(bs//16, n//16, k//16, dtype=dtype[config.dataformat])
+        a = torch.randn(bs, m//16, n//16, dtype=dtype[config.dataformat])
+        b = torch.randn(bs, n//16, k//16, dtype=dtype[config.dataformat])
 
         a_fp64 = a.to(torch.float64)
         b_fp64 = b.to(torch.float64)
