@@ -78,8 +78,8 @@ def main(config, case_config):
     mape = torch.mean(torch.tensor(mmape))
     mape_std = torch.std(torch.tensor(mmape))
 
-    a = torch.randn(bs, m, n, dtype=dtype[config.dataformat])
-    b = torch.randn(bs, n, k, dtype=dtype[config.dataformat])
+    a = torch.randn(bs, m, n, dtype=dtype[config.dataformat]).to(0)
+    b = torch.randn(bs, n, k, dtype=dtype[config.dataformat]).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.bmm, (a, b), host_device_sync, config, case_config)
