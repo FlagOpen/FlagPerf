@@ -60,15 +60,12 @@ def main(config, case_config):
     for i in range(100):
         # Main computation block for cos operator
         a = torch.randn(m, dtype=dtype[config.dataformat])
-        b = torch.randn(m, dtype=dtype[config.dataformat])
 
         a_fp64 = a.to(torch.float64)
-        b_fp64 = b.to(torch.float64)
-        r_fp64 = torch.cos(a_fp64 + b_fp64)
+        r_fp64 = torch.cos(a_fp64)
 
         a = a.to(0)
-        b = b.to(0)
-        r_device = torch.cos(a + b).cpu()
+        r_device = torch.cos(a).cpu()
         mape = torch.mean(torch.abs(r_device - r_fp64) / torch.abs(r_fp64))
 
         mmape.append(mape)
@@ -78,12 +75,11 @@ def main(config, case_config):
     mape_std = torch.std(torch.tensor(mmape))
 
     a = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
-    b = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        torch.cos, (a, b), host_device_sync, config, case_config)
+        torch.cos, (a, ), host_device_sync, config, case_config)
 
-    op2flops = lambda x: x * 2 * m * 1024 * 1024
+    op2flops = lambda x: x * m * 1024 * 1024
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            case_config.SPECTFLOPS)
