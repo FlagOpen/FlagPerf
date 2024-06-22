@@ -47,8 +47,8 @@ def parse_args():
 def main(config, case_config):
     set_ieee_float32(config.vendor)
 
-    print("Setting up environment for cos operator"
-          )  # Environment setup for cos operator
+    print("Test Correctness with 1M-times smaller operation"
+          )  # correctness is implemented casebycase
 
     m = case_config.Melements
 
@@ -58,7 +58,6 @@ def main(config, case_config):
 
     torch.manual_seed(42)
     for i in range(100):
-        # Main computation block for cos operator
         a = torch.randn(m, dtype=dtype[config.dataformat])
 
         a_fp64 = a.to(torch.float64)
@@ -70,7 +69,6 @@ def main(config, case_config):
 
         mmape.append(mape)
     
-    # Post-computation analysis and performance evaluation
     mape = torch.mean(torch.tensor(mmape))
     mape_std = torch.std(torch.tensor(mmape))
 
