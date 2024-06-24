@@ -50,7 +50,7 @@ def main(config, case_config):
     print("Test Correctness with 1M-times smaller operation"
           )  # correctness is implemented casebycase
 
-    Melements = case_config.Melements
+    m = case_config.Melements
 
     dtype = {"FP32": torch.float32}
 
