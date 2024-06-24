@@ -69,7 +69,7 @@ def main(config, case_config):
         a = a.to(0)
         b = b.to(0)
         r_device = torch.gt(a, b).cpu()
-        mape = torch.mean(torch.abs(r_device - r_fp64) / torch.abs(r_fp64))
+        mape = ((r_device != r_fp64).float().sum()/r_fp64.numel()).item()
 
         mmape.append(mape)
     
