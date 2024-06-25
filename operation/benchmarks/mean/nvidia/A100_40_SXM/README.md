@@ -23,7 +23,7 @@
 
 # 算子库版本
 
-https://github.com/FlagOpen/FlagGems. Commit ID:9168f2d031ecc1b31a9f658fb66dd6735b7306b3
+https://github.com/FlagOpen/FlagGems. Commit ID:982781081f5d62856064ae986e8927a31e96c235
 
 # 评测结果
 
