@@ -49,7 +49,7 @@ def main(config, case_config):
 
     print("Test Correctness with 1M-times smaller operation")
     m = case_config.Melements
-    f = nn.GELU()
+    f = torch.nn.GELU()
     dtype = {"FP32": torch.float32}
 
     mmape = []
