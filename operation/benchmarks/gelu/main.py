@@ -73,7 +73,7 @@ def main(config, case_config):
     a = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        f, (a), host_device_sync, config, case_config) # 调整为torch.sub
+        f, (a, ), host_device_sync, config, case_config) # 调整为torch.sub
 
     op2flops = lambda x: x * 9 * m * 1024 * 1024 # 根据减法的实际FLOPs调整
 
