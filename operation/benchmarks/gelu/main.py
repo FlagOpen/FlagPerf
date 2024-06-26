@@ -47,36 +47,35 @@ def parse_args():
 def main(config, case_config):
     set_ieee_float32(config.vendor)
 
-    print("Test Correctness with 1M-times smaller operation"
-          )  # correctness is implemented casebycase
-
-    Melements = case_config.Melements
-
+    print("Test Correctness with 1M-times smaller operation")
+    m = case_config.Melements
+    f = nn.GELU()
     dtype = {"FP32": torch.float32}
 
     mmape = []
 
     torch.manual_seed(42)
     for i in range(100):
-        a = torch.randn(Melements, dtype=dtype[config.dataformat])
+        a = torch.randn(m, dtype=dtype[config.dataformat])
 
         a_fp64 = a.to(torch.float64)
-        r_fp64 = torch.sum(a)
+        r_fp64 = f(a_fp64) # 修改为gelu
 
         a = a.to(0)
-        r_device = torch.sum(a).cpu()
+        r_device = f(a).cpu() 
+        mape = torch.mean(torch.abs(r_device - r_fp64) / torch.abs(r_fp64))
 
         mmape.append(mape)
     
     mape = torch.mean(torch.tensor(mmape))
     mape_std = torch.std(torch.tensor(mmape))
 
-    a = torch.randn(Melements * 1024 * 1024, dtype=dtype[config.dataformat]).to(0)
+    a = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        torch.sum, (a, ), host_device_sync, config, case_config)
+        f, (a), host_device_sync, config, case_config) # 调整为torch.sub
 
-    op2flops = lambda x: x * 2 * Melements * 1024 * 1024
+    op2flops = lambda x: x * 9 * m * 1024 * 1024 # 根据减法的实际FLOPs调整
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            case_config.SPECTFLOPS)
