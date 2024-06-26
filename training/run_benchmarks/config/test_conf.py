@@ -157,6 +157,7 @@ CASES = {
     # "bert_hf:pytorch:BI-V100:1:8:1": "/raid/dataset/bert_hf_train",
     # "t5_small:pytorch:BI-V100:1:8:1": "/raid/dataset/t5_small",
     # "baichuan2_13b:deepspeed:BI-V150:2:8:1": "/raid/dataset/baichuan2_13b",
+    # "llava1.5_13b:deepspeed-torch:BI-V150:1:16:1": "/raid/dataset/llava1.5_13b",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
@@ -187,6 +188,7 @@ CASES = {
     # "glm:pytorch_1.13:K100:1:8:1": "/home/chenych/datasets/glm_train_datset/",
     # "bigtransfer:pytorch_2.0:C500:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "longformer:pytorch_2.0:C500:1:8:1": "/raid/dataset/longformer_train/",
+    # "llama1_7B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/dataset/llama/"
     #"gpt3_13B:paddle_2.6.0:TP2PP1SH2SP4C50040G:1:8:1":"/raid/data_set/data-gpt3"
     #"gpt3_13B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/data_set/data-gpt3"
     

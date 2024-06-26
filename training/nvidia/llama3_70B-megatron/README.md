@@ -3,7 +3,7 @@
 #### H100环境配置
 - ##### 软硬件环境
 
-    - 加速卡型号: NVIDIA_H800-SXM4-80GB
+    - 加速卡型号: NVIDIA_H100-SXM4-80GB
     - 多机网络类型、带宽: InfiniBand，400Gb/s
 
    - 训练框架版本：megatron-core tag:core_v0.6.0
