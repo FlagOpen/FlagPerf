@@ -59,6 +59,7 @@ def main(config, case_config):
     torch.manual_seed(42)
     for i in range(100):
         a = torch.randn(m, dtype=dtype[config.dataformat])
+        a = torch.abs(a)
 
         a_fp64 = a.to(torch.float64)
         r_fp64 = torch.rsqrt(a_fp64)
@@ -68,11 +69,12 @@ def main(config, case_config):
         mape = torch.mean(torch.abs(r_device - r_fp64) / torch.abs(r_fp64))
 
         mmape.append(mape)
-    
+
     mape = torch.mean(torch.tensor(mmape))
     mape_std = torch.std(torch.tensor(mmape))
 
     a = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
+    a = torch.abs(a)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.rsqrt, (a, ), host_device_sync, config, case_config)
