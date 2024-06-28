@@ -45,4 +45,4 @@
 
 # 厂商测试工具原理说明
 
-使用cudaMemcpy，进行hosttodevice的CPU-AI芯片互联操作，计算CPU-AI芯片互联带宽
+使用ascend-dmi，进行hosttodevice的CPU-AI芯片互联操作，计算CPU-AI芯片互联带宽
