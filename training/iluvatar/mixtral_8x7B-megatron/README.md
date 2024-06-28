@@ -30,10 +30,13 @@
   1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_BI-V150x1x16.py中所写，在本case中默认为1。**厂商适配时可任意更改**
   2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_BI-V150x1x16.py中所写，在本case中默认为2048，原则上不可更改
 * 具体操作
-  1. 获取run包：corex-docker-installer-3.4.0.20240531.113-10.2-ubuntu20.04-py3.10-x86_64.run，放置位置/FlagPerf/training/iluvatar/docker_image/megatron/sdk_installers
+  1. 获取run包：corex-docker-installer-3.4.0.20240531.113-10.2-ubuntu20.04-py3.10-x86_64.run，放置位置/FlagPerf/training/iluvatar/docker_image/megatron/sdk_installers  ###由于是daily-sdk不能直接制作需要手动完成，需要先bash *.run得到一个docker image【flagperf-iluvatar-megatron:t_v0.1】
+  安装方式：1、accept；2、点击"install driver";3、点击"set image name",改为flagperf-iluvatar-megatron:t_v0.1；4、点击"install"
   2. 获取mixtral_8x7B的运行代码，放置位置/FlagPerf/data_dir,>联系邮箱: contact-us@iluvatar.com  ###也可以放置在其他位置需要修改/FlagPerf/training/iluvatar/mixtral_8x7B-megatron/config/config_BI-V150x1x16.py中mixtral_iluvatar_path的位置；根据自己机器修改同级training_adapter.sh中MASTERADDR的ip。
   3. 由于算法引用的层级不一致，需要修改/FlagPerf/training/benchmarks/mixtral_8x7B/megatron/run_pretraining.py第63行origin_file = os.path.join(megapath, "megatron/megatron/training/arguments.py")和origin_file = os.path.join(megapath, "megatron/megatron/training/tokenizer/tokenizer.py")；修改megatron_main.sh中run_cmd="torchrun $DISTRIBUTED_ARGS $MEGAPATH/megatron/pretrain_gpt.py 
-
+  4. 由于dialy-sdk没有软连接python3到python，需要修改/FlagPerf/training/run_benchmarks/megatron/start_megatron_task.py第120行为exec_cmd = exec_cmd + "python3 run_pretraining.py"
+  5. 先按照第一步制作docker_image，下载pip库的源需要用清华源"https://pypi.tuna.tsinghua.edu.cn/simple/";再执行python3 ./run_benchmarks/run.py
+  注意：若出现卡断现象，先停掉所有进程执行"ixsmi -r"
 
 * 通用指标
 
