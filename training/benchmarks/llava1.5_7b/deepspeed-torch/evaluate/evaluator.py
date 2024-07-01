@@ -80,18 +80,19 @@ def main_eval(output_path, answer_path):
         
         exampels_to_eval = []
         for data_id, parsed_pred in cat_outputs.items():
-            question_type = cat_answers[data_id]['question_type']
-            if question_type != 'multiple-choice':
-                parsed_pred = parse_open_response(parsed_pred) # mainly for type consistency (make it number, etc.)
-            else:
-                parsed_pred = parsed_pred
+            if data_id in cat_answers:
+                question_type = cat_answers[data_id]['question_type']
+                if question_type != 'multiple-choice':
+                    parsed_pred = parse_open_response(parsed_pred) # mainly for type consistency (make it number, etc.)
+                else:
+                    parsed_pred = parsed_pred
 
-            exampels_to_eval.append({
-                "id": data_id,
-                "question_type": question_type,
-                "answer": cat_answers[data_id]['ground_truth'],
-                "parsed_pred": parsed_pred
-            })
+                exampels_to_eval.append({
+                    "id": data_id,
+                    "question_type": question_type,
+                    "answer": cat_answers[data_id]['ground_truth'],
+                    "parsed_pred": parsed_pred
+                })
 
         judge_dict, metric_dict = evaluate(exampels_to_eval)
         metric_dict.update({"num_example": len(exampels_to_eval)})
