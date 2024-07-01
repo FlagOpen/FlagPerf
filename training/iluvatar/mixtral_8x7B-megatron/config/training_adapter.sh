@@ -9,10 +9,11 @@ PP=${11}
 MASTERADDR=10.31.10.149
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 export PYTHONPATH=$MEGAPATH/megatron:$MEGAPATH/megatron:$PYTHONPATH
+export CUDA_DEVICE_MAX_CONNECTIONS=1
 
 ##双机16卡num-layers=32
 MODEL_ARGS=" \
-    --num-layers 2 \
+    --num-layers 8 \
     --hidden-size 4096 \
     --ffn-hidden-size 14336 \
     --num-attention-heads 32 \
