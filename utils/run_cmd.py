@@ -10,6 +10,7 @@ def run_cmd_wait(cmd, timeout):
     '''Run a shell command and wait <timeout> second(s).'''
     process = subprocess.Popen(cmd,
                                shell=True,
+                               executable="/bin/bash",
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT,
                                encoding='utf-8')
