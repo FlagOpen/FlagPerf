@@ -59,20 +59,9 @@ if __name__ == "__main__":
 
     task_log_file = os.path.join(args.log_dir, "megatron.log.txt")
     
-    # merge llama3 patch
-
-    
-    origin_file = os.path.join(megapath, "megatron/training/arguments.py")
-    exec_cmd = "patch --silent --forward " + origin_file + " arguments.patch -o tmp.py;mv tmp.py " + origin_file
-    exec_cmd = exec_cmd + ";"
-    
-    origin_file = os.path.join(megapath, "megatron/training/tokenizer/tokenizer.py")
-    exec_cmd = exec_cmd + "patch --silent --forward " + origin_file + " tokenizer.patch -o tmp.py;mv tmp.py " + origin_file
-    exec_cmd = exec_cmd + ";"
-    
     # bash pretrain_llama3.sh
     
-    exec_cmd = exec_cmd + "bash pretrain_llama3.sh"
+    exec_cmd = "bash pretrain_llama3.sh"
     
     # args
 
