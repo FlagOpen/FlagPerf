@@ -2,6 +2,12 @@ import copy
 
 import pytest
 import torch
+
+try:
+    from torch_mlu.utils.model_transfer import transfer
+except ImportError:
+    pass
+
 from transformers import AutoTokenizer, BertConfig, BertModel
 
 import flag_gems
