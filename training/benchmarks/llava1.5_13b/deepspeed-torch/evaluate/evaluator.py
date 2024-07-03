@@ -1,3 +1,8 @@
+# cambricon mlu import
+try:
+    from torch_mlu.utils.model_transfer import transfer
+except ImportError:
+    pass
 import os
 import sys
 import torch
