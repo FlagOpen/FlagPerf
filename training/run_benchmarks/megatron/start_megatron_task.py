@@ -117,7 +117,7 @@ def main():
     START_LOGGER.info("Hello Flagscale")
 
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
-    exec_cmd = exec_cmd + "python run_pretraining.py"
+    exec_cmd = exec_cmd + "python3 run_pretraining.py"
     exec_cmd = exec_cmd + " --nproc_per_node=" + str(task_args.nproc)
     exec_cmd = exec_cmd + " --nnodes=" + str(task_args.nnodes)
     exec_cmd = exec_cmd + " --node_rank=" + str(task_args.node_rank)

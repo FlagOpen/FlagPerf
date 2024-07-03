@@ -26,12 +26,13 @@ MODEL_ARGS=" \
     --no-position-embedding \
     --no-masked-softmax-fusion \
     --untie-embeddings-and-output-weights \
-    --position-embedding-type rope "
+    --position-embedding-type rope \
+    --rotary-base 1000000.0"
 
 OPT_ARGS=" \
     --lr 1.0e-5 \
     --min-lr 1e-05 \
-    --train-iters 500000 \
+    --train-iters 100 \
     --lr-decay-iters 320000 \
     --lr-decay-style cosine \
     --weight-decay 0.1 \
@@ -82,12 +83,9 @@ setup_args="
     --norm-epsilon 1e-05 \
     --attention-dropout 0.0 \
     --hidden-dropout 0.0 \
-    --rotary-base 1000000.0 \
     --eval-interval 1000 \
     --eval-iters 10 \
     --lr-warmup-iters 500 \
-    --rotary-base 1000000.0 \
-    --split 1 \
     --tokenizer-path $MEGAPATH/data_dir/Qwen1___5-7B-Chat-GPTQ-Int8/ \
     --vocab-file $MEGAPATH/examples/aquila/tokenizer/vocab.json \
     --merge-file $MEGAPATH/examples/aquila/tokenizer/merges.txt \
