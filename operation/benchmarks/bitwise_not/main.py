@@ -69,7 +69,7 @@ def main(config, case_config):
     mape_std = torch.std(torch.tensor(mmape))
 
     a = torch.randn(m, 1024, 1024) 
-    a = (127 * a).to(torch.int8)
+    a = (127 * a).to(torch.int8).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.bitwise_not, (a, ), host_device_sync, config, case_config)
