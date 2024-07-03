@@ -3,7 +3,7 @@
 
 # Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads, metax and dcu.
 # We will run benchmarks in training/<vendor>
-VENDOR = "iluvatar"
+VENDOR = "nvidia"
 
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
@@ -25,7 +25,7 @@ VENDOR = "iluvatar"
 #       " --device=/dev/dri --device=/dev/mxcd --group-add video"
 #   dcu:
 #       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
-ACCE_CONTAINER_OPT = " -v /lib/modules:/lib/modules"
+ACCE_CONTAINER_OPT = " --gpus all"
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -37,12 +37,12 @@ ACCE_CONTAINER_OPT = " -v /lib/modules:/lib/modules"
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
 
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/gengyang/FlagPerf/training"
+FLAGPERF_PATH = "/home/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -62,7 +62,7 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    # "llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
+    "llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
     # "llama3_70B:megatron_core060:H100:8:8:1": "/data/llama3_70b_pretrain"
     # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
     # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
@@ -158,8 +158,8 @@ CASES = {
     # "t5_small:pytorch:BI-V100:1:8:1": "/raid/dataset/t5_small",
     # "baichuan2_13b:deepspeed:BI-V150:2:8:1": "/raid/dataset/baichuan2_13b",
     # "llava1.5_13b:deepspeed-torch:BI-V150:1:16:1": "/raid/dataset/llava1.5_13b",
-    # "mixtral_8x7B:megatron:BI-V150:2:16:1": "/raid/dataset/mixtral_8x7B",
-    "mixtral_8x7B:megatron:BI-V150:1:16:1": "/home/gengyang/FlagPerf/data_dir",
+    # "mixtral_8x7B:megatron:BI-V150:4:16:1": "/raid/dataset/mixtral_8x7B",
+    # "mixtral_8x7B:megatron:BI-V150:1:16:1": "/raid/dataset/mixtral_8x7B",
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
@@ -195,5 +195,3 @@ CASES = {
     #"gpt3_13B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/data_set/data-gpt3"
     
 }
-
-
