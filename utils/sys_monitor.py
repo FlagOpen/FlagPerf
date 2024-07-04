@@ -135,6 +135,7 @@ class Daemon:
         schedule.every(self.rate1).seconds.do(timer_cpu_mon)
         schedule.every(self.rate1).seconds.do(timer_mem_mon)
         schedule.every(self.rate2).seconds.do(timer_pwr_mon)
+        schedule.run_all()
         while True:
             schedule.run_pending()
             time.sleep(5)
