@@ -39,6 +39,7 @@ class Daemon:
                  stderr=os.devnull,
                  home_dir='.',
                  umask=0o22,
+                 vendor="nvidia",
                  verbose=0):
         self.stdin = stdin
         self.stdout = stdout
@@ -58,6 +59,7 @@ class Daemon:
         self.umask = umask
         self.verbose = verbose
         self.daemon_alive = True
+        self.vendor=vendor
 
     def get_pid(self):
         try:
@@ -102,6 +104,10 @@ class Daemon:
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "ipmitool sdr list|grep -i Watts|awk 'BEGIN{FS = \"|\"}{for (f=1; f <= NF; f+=1) {if ($f ~ /Watts/)" \
                   " {print $f}}}'|awk '{print $1}'|sort -n -r|head -n1"
+            # support cambriocn mlu 
+            if "cambricon" in self.vendor:
+                cmd = "echo $(( $(ipmitool sdr list | grep -i Watts | awk 'BEGIN{FS=\"|\"} {for (f=1; f<=NF; f++) {if ($f ~ /Watts/) print $f}}' | awk '{print $1}' | sort -n -r | head -n 1) + $(cnmon info -c 0 | grep 'Machine' | awk '{print $3}') ))"
+            
             res, out = rcw(cmd, 10)
             if res:
                 result = "error"
@@ -129,6 +135,7 @@ class Daemon:
         schedule.every(self.rate1).seconds.do(timer_cpu_mon)
         schedule.every(self.rate1).seconds.do(timer_mem_mon)
         schedule.every(self.rate2).seconds.do(timer_pwr_mon)
+        schedule.run_all()
         while True:
             schedule.run_pending()
             time.sleep(5)
@@ -249,6 +256,12 @@ def parse_args():
                        required=False,
                        default='./logs/',
                        help='log path')
+    parse.add_argument('-v',
+                       type=str,
+                       metavar='[vendor]',
+                       required=False,
+                       default='nvidia',
+                       help='gpu vendor')
     args = parse.parse_args()
     return args
 
@@ -258,6 +271,7 @@ def main():
     sample_rate2 = 120
     args = parse_args()
     operation = args.o
+    vendor=args.v
     path = args.l
     pid_fn = str('/tmp/sys_monitor.pid')
     log_fn = str(path + '/sys_monitor.log')
@@ -268,6 +282,7 @@ def main():
                        err_fn,
                        path,
                        verbose=1,
+                       vendor=vendor,
                        rate1=sample_rate1,
                        rate2=sample_rate2)
     if operation == 'start':
