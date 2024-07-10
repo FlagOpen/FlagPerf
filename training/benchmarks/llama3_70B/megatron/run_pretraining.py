@@ -61,18 +61,20 @@ if __name__ == "__main__":
     
     # merge llama3 patch
 
-    
-    origin_file = os.path.join(megapath, "megatron/training/arguments.py")
-    exec_cmd = "patch --silent --forward " + origin_file + " arguments.patch -o tmp.py;mv tmp.py " + origin_file
-    exec_cmd = exec_cmd + ";"
-    
-    origin_file = os.path.join(megapath, "megatron/training/tokenizer/tokenizer.py")
-    exec_cmd = exec_cmd + "patch --silent --forward " + origin_file + " tokenizer.patch -o tmp.py;mv tmp.py " + origin_file
-    exec_cmd = exec_cmd + ";"
-    
-    # bash pretrain_llama3.sh
-    
-    exec_cmd = exec_cmd + "bash pretrain_llama3.sh"
+    if args.vendor=="cambricon":
+        exec_cmd = "bash pretrain_llama3.sh"
+    else:      
+        origin_file = os.path.join(megapath, "megatron/training/arguments.py")
+        exec_cmd = "patch --silent --forward " + origin_file + " arguments.patch -o tmp.py;mv tmp.py " + origin_file
+        exec_cmd = exec_cmd + ";"
+        
+        origin_file = os.path.join(megapath, "megatron/training/tokenizer/tokenizer.py")
+        exec_cmd = exec_cmd + "patch --silent --forward " + origin_file + " tokenizer.patch -o tmp.py;mv tmp.py " + origin_file
+        exec_cmd = exec_cmd + ";"
+        
+        # bash pretrain_llama3.sh
+        
+        exec_cmd = exec_cmd + "bash pretrain_llama3.sh"
     
     # args
 
@@ -110,4 +112,4 @@ if __name__ == "__main__":
     chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
     print("System tokens per second: ", whole_tps)
     print("Tokens/p/s: ", chip_tps)
-    print("MFU: ", chip_tps * 8000000000.0 * 6 / theoryflops)
+    print("MFU: ", chip_tps * 70000000000.0 * 6 / theoryflops)
