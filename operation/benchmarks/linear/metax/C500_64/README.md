@@ -41,7 +41,7 @@ https://github.com/FlagOpen/FlagGems. Commit ID:982781081f5d62856064ae986e8927a3
 | 评测项  | 相对误差(with FP64-CPU)标准差 | cputime | kerneltime | cputime吞吐 | kerneltime吞吐 | 无预热时延 | 预热后时延 |
 | ---- | -------------- | -------------- | ------------ | ------------ | -------------- | -------------- | ------------ |
 | flaggems |  1.752E-6   |       |         |  |  |  |  |
-| nativetorch | 2.510E-6    | 5014.63us       | 5032.7us        | 199.42 op/s | 198.70 op/s | 5483.61 us | 5200.05 us |
+| nativetorch | 2.510E-6    |        |         |  |  |  |  |
 
 ## 能耗监控结果
 
