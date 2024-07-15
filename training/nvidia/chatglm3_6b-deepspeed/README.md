@@ -1,8 +1,8 @@
 ### Nvidia GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器型号: NVIDIA DGX A800(80G) 
-    - 加速卡型号: NVIDIA_A800-SXM4-80GB
+    - 机器型号: NVIDIA DGX H100(80G) 
+    - 加速卡型号: NVIDIA_H100-SXM4-80GB
     - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
     
@@ -22,8 +22,8 @@
 ### 运行情况
 
 * 输入批尺寸
-  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A100x1x8.py中所写，在本case中默认为**1**
-  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A100x1x8.py中所写，在本case中默认为**8192**
+  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_H100x1x8.py中所写，在本case中默认为**1**
+  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_H100x1x8.py中所写，在本case中默认为**4096**
   3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为ds_config.json中所写，在本case中默认为**1**
   4. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size，简写为GBS。在本case中，只存在数据并行，因此data_parallel_size=world_size。
 
@@ -45,5 +45,4 @@
 
 | 配置                |  fix_hp           | token/p/s | loss | mem       | MFU       |
 | ------------------- | ---------------- | ------ | ------- | --------- | --------- |
-| A800单机8卡（1x8）  |  mpe=4096        | 3486.4 | 4.65 | 61/80 | 40.2% |
-| A800单机8卡（1x8）  |  mpe=2048        | 3391.6 | 6.82 | 44/80 | 39.1% |
+| H100单机8卡（1x8）  |  mpe=4096        | 8429.22 | 4.18 | 61/80 | 30.7% |
