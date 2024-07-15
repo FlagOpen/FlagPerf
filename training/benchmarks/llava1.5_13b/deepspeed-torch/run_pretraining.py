@@ -112,7 +112,7 @@ if __name__ == "__main__":
         mmmu_answer_path
     ])
     whole_tps_pretrain = (tokens_pretrain * 558128) / pretrain_time  # 714
-    chip_tps_pretrain = whole_tps_pretrain / args.nproc_per_node * args.nnodes
+    chip_tps_pretrain = whole_tps_pretrain / (args.nproc_per_node * args.nnodes)
     print("Pretrain stage")
     print("System tokens per second: ", whole_tps_pretrain)
     print("Tokens/p/s: ", chip_tps_pretrain)
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     print("Tokens/TFLOPS: ", chip_tps_pretrain / TFLOPS)
     print("MFU: ", chip_tps_pretrain * 13000000000.0 * 2 / theoryflops)
     whole_tps_finetune = (tokens_finetune * 665344) / finetune_time
-    chip_tps_finetune = whole_tps_finetune / args.nproc_per_node * args.nnodes
+    chip_tps_finetune = whole_tps_finetune / (args.nproc_per_node * args.nnodes)
     print("Finetune stage")
     print("System tokens per second: ", whole_tps_finetune)
     print("Tokens/p/s: ", chip_tps_finetune)
