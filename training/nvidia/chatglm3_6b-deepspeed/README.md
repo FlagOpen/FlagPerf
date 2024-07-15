@@ -2,7 +2,7 @@
 #### 环境配置
 - ##### 硬件环境
     - 机器型号: NVIDIA DGX H100(80G) 
-    - 加速卡型号: NVIDIA_H100-SXM4-80GB
+    - 加速卡型号: NVIDIA_H100-SXM-80GB
     - CPU型号: AMD EPYC7742-64core@1.5G
     - 多机网络类型、带宽: InfiniBand，200Gb/s
     
