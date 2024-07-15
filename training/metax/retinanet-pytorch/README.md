@@ -22,9 +22,9 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
 - ##### 软件环境
    - OS版本：Ubuntu 20.04.6
    - OS kernel版本:  5.4.0-26-generic
-   - 加速卡驱动版本：2.2.0
+   - 加速卡驱动版本：2.3.0
    - Docker 版本：24.0.7
-   - 训练框架版本：pytorch-2.0.0+mc2.18.0.8-cp38-cp38-linux_x86_64.whl
+   - 训练框架版本：pytorch-2.0.0+mc2.20.2.20-cp38-cp38-linux_x86_64.whl
    - 依赖软件版本：无
 
 
@@ -51,7 +51,7 @@ torchvision.models.resnet.ResNet50_Weights.IMAGENET1K_V1.value.url = 'https://do
 
 | 配置                | precision | fix_hp        | e2e_time | p_whole | p_train | p_core | mAP    | mem       |
 | ------------------- | --------- | ------------- | -------- | ------- | ------- | ------ | ------ | --------- |
-| MXC500 单机8卡（1x8）  | fp32    | /             |         |          |        |        | 0.3517 | 37.5/64.0 |
-| MXC500 单机单卡（1x1） | fp32    | /             | /       |          |        |        | /      | 25.1/64.0 |
-| MXC500 两机8卡（2x8）  | fp32    | /             | /       |          |        |        | /      | 59.6/64.0 |
+| MXC500 单机8卡（1x8）  | fp32    | bs=24,lr=0.04 |         |          |        |        | 0.3414 | 59.4/64.0 |
+| MXC500 单机单卡（1x1） | fp32    | bs=40,lr=0.01 | /       |          |        |        | /      | 61.9/64.0 |
+| MXC500 两机8卡（2x8）  | fp32    | bs=22,lr=0.02 | /       |          |        |        | /      | 62.0/64.0 |
 
