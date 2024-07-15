@@ -63,7 +63,7 @@ def main(config, case_config):
 
         a = a.to(0)
         r_device = f(a).cpu() 
-        mape = torch.mean(torch.abs(r_device - r_fp64) / torch.abs(r_fp64))
+        mape = torch.mean(torch.where(r_fp64 == 0, torch.tensor(0.0), torch.abs(r_device - r_fp64) / torch.abs(r_fp64)))
 
         mmape.append(mape)
     
