@@ -143,8 +143,7 @@ def clear_caches_cluster(clear, nnodes):
 
 def start_monitors_in_cluster(dp_path, case_log_dir, nnodes, config):
     '''Start sytem and vendor's monitors.'''
-    start_mon_cmd = "cd " + dp_path + " && " + sys.executable \
-                    + " ../utils/sys_monitor.py -o restart -l "
+    start_mon_cmd = "cd " + dp_path + " && " + sys.executable + " ../utils/sys_monitor.py -v " + config.VENDOR +  " -o restart -l "
     timeout = 60
     RUN_LOGGER.debug("Run cmd in the cluster to start system monitors: " +
                      start_mon_cmd)

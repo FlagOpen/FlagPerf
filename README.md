@@ -79,7 +79,7 @@
         <td>FP64算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP64/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP64/nvidia/A100">厂商专用工具</a></td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP64/metax">算子或原语</a></td>
+      <td>N/A</td>
       <td>N/A</td>
     </tr>
     <tr>
@@ -88,7 +88,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/metax">算子或原语</a></td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP32/ascend">厂商专用工具</a></td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP32/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>3</td>
@@ -104,7 +104,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP16/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/metax">算子或原语</a></td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP16/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>5</td>
@@ -112,7 +112,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-BF16/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/metax">算子或原语</a></td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-BF16/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>6</td>
@@ -120,7 +120,7 @@
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-INT8/nvidia/A100">厂商专用工具</a></td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-INT8/metax">厂商专用工具</a></td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-INT8/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>7</td>
@@ -144,7 +144,7 @@
       <td>互联</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/interconnect-h2d/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-h2d/nvidia/A100">厂商专用工具</a></td>
       <td>N/A</td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-h2d/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>10</td>
@@ -152,7 +152,7 @@
       <td>互联</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/interconnect-P2P_intraserver/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-P2P_intraserver/nvidia/A100">厂商专用工具</a></td>
       <td>N/A</td>
-      <td>N/A</td>
+      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/interconnect-P2P_intraserver/ascend">厂商专用工具</a></td>
     </tr>
     <tr>
       <td>11</td>
@@ -212,6 +212,12 @@
       <td>nativetorch<br>flaggems</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/operation/benchmarks/linear/nvidia">A100_40_SXM</a></td>
     </tr>
+    <tr>
+      <td>...</td>
+        <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
 </tbody>
 </table>
 
@@ -244,6 +250,7 @@
     <td class="xl65" x:str>天数智芯</td>
     <td class="xl65" x:str>腾讯九霄</td>
     <td class="xl65" x:str>沐曦</td>
+    <td class="xl65" x:str>海飞科</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>1</td>
@@ -254,6 +261,7 @@
     <td class="xl69" x:str>f16</td>
        <td class="xl69" x:str>f16</td>
        <td class="xl69" x:str>f32/f16</td>
+       <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>2</td>
@@ -264,6 +272,7 @@
     <td class="xl69" x:str>f16</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>f32/f16</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>3</td>
@@ -274,6 +283,7 @@
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>f32/f16</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>4</td>
@@ -284,6 +294,7 @@
     <td class="xl69" x:str>f16</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>f32/f16</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
    <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>5</td>
@@ -294,6 +305,7 @@
     <td class="xl69" x:str>N/A</td>
        <td class="xl69" x:str>N/A</td>
        <td class="xl69" x:str>f32/f16</td>
+       <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>6</td>
@@ -304,6 +316,7 @@
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>f32/f16</td>
+        <td class="xl69" x:str>N/A</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
     <td class="xl65" x:str>7</td>
@@ -313,6 +326,7 @@
     <td class="xl69" x:str>N/A</td>
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
+        <td class="xl69" x:str>f32/f16</td>
         <td class="xl69" x:str>f32/f16</td>
    </tr>
     <tr height="16.80" style='height:16.80pt;'>
@@ -324,6 +338,7 @@
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>f16</td>
+        <td class="xl69" x:str>N/A</td>
     </tr>
 <tr height="16.80" style='height:16.80pt;'>
    <td class="xl65" x:str>9</td>
@@ -334,6 +349,7 @@
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>f32/f16</td>
+        <td class="xl69" x:str>N/A</td>
     </tr>
     <tr height="16.80" style='height:16.80pt;'>
    <td class="xl65" x:str>10</td>
@@ -344,7 +360,8 @@
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
-    </tr><<tr height="16.80" style='height:16.80pt;'>
+        <td class="xl69" x:str>N/A</td>
+    </tr><tr height="16.80" style='height:16.80pt;'>
    <td class="xl65" x:str>11</td>
     <td class="xl65" height="33.60" style='height:33.60pt;border-right:none;border-bottom:none;' x:str><a href="https://github.com/FlagOpen/FlagPerf/tree/main/inference/benchmarks/llama3_8b_mmlu" style="text-decoration:none" target="_parent">LLaMA3-8B MMLU</td>
         <td class="xl69" x:str>LLM</td>
@@ -353,7 +370,9 @@
     <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
         <td class="xl69" x:str>N/A</td>
-    </tr></table>
+        <td class="xl69" x:str>N/A</td>
+    </tr>
+</table>
 
 
 ## 如何使用FlagPerf进行AI硬件评测
