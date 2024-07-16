@@ -49,6 +49,7 @@ def main(config, case_config):
 
     print("Test Correctness with 1M-times smaller operation")
     m = case_config.M
+    n = case_config.N
     f = torch.nn.LogSoftmax(dim=1)
     dtype = {"FP32": torch.float32}
 
@@ -56,7 +57,7 @@ def main(config, case_config):
 
     torch.manual_seed(42)
     for i in range(100):
-        a = torch.randn(m, dtype=dtype[config.dataformat])
+        a = torch.randn(m, n, dtype=dtype[config.dataformat])
 
         a_fp64 = a.to(torch.float64)
         r_fp64 = f(a_fp64) 
@@ -70,12 +71,12 @@ def main(config, case_config):
     mape = torch.mean(torch.tensor(mmape))
     mape_std = torch.std(torch.tensor(mmape))
 
-    a = torch.randn(m * 1024 * 1024, dtype=dtype[config.dataformat]).to(0)
+    a = torch.randn(m * 1024 , n, dtype=dtype[config.dataformat]).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         f, (a, ), host_device_sync, config, case_config) # 调整为torch.sub
 
-    op2flops = lambda x: x * 5 * m * 1024 * 1024
+    op2flops = lambda x: x * 5 * m * 1024 * n
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            case_config.SPECTFLOPS)
