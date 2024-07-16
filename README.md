@@ -79,7 +79,7 @@
         <td>FP64算力</td>
       <td>算力</td>
       <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP64/nvidia/A100">算子或原语</a>,<br><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/toolkits/computation-FP64/nvidia/A100">厂商专用工具</a></td>
-      <td><a href="https://github.com/FlagOpen/FlagPerf/tree/main/base/benchmarks/computation-FP64/metax">算子或原语</a></td>
+      <td>N/A</td>
       <td>N/A</td>
     </tr>
     <tr>

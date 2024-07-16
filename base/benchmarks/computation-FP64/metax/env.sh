@@ -1,1 +1,0 @@
-echo "Metax PLACEHOLDER ENV.SH"
