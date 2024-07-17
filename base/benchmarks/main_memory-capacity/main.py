@@ -53,7 +53,7 @@ def main(config, case_config, rank, world_size, local_rank):
             total_allocated += byte_size
             print(f"Allocated: {total_allocated} MiB")
         except RuntimeError as e:
-            if "CUDA out of memory" in str(e):
+            if "out of memory" in str(e):
                 print(f"CUDA OOM at tensor size {byte_size} MiB. Allocated:{total_allocated} MiB")
                 byte_size //= 2
                 if byte_size < min_byte_size:
