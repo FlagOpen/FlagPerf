@@ -74,7 +74,7 @@ class ImageManager():
             0 - image already exist
             1 - image doesn't exist
         '''
-        cmd = "sudo docker images|grep -w \"" + self.repository + "\"|grep -w \"" + \
+        cmd = "docker images|grep -w \"" + self.repository + "\"|grep -w \"" + \
               self.tag + "\""
         print(cmd)
         ret, _ = rcw(cmd, 10)
