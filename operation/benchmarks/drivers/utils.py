@@ -5,6 +5,10 @@
 # -*- coding: UTF-8 -*-
 import torch
 
+try:
+    from torch_mlu.utils.model_transfer import transfer
+except ImportError:
+    pass
 
 def set_ieee_float32(vendor):
     if vendor == "nvidia":

@@ -1,0 +1,4 @@
+M: 8192
+N: 8192
+K: 8192
+DIST_BACKEND: "hccl"

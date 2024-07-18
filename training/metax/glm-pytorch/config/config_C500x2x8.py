@@ -1,11 +1,11 @@
 fp16 = True
 ddp_type = "apex"
-train_batch_size = 8
-eval_batch_size = 8
+train_batch_size = 16
+eval_batch_size = 16
 
 dist_backend = "nccl"
 
-lr = 1e-5
+lr = 2e-5
 weight_decay = 0.1
 adam_beta1 = 0.9
 adam_beta2 = 0.999
