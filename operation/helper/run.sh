@@ -7,6 +7,14 @@ modify_config() {
     local result_dir=$2
     echo "case_type is: ${case_type}"
     echo "result_dir is: ${result_dir}"
+
+    sed -i "s|^VENDOR:.*$|VENDOR: \"$VENDOR\"|" "${OPERATIONDIR}/configs/host.yaml"
+    sed -i "s|^SSH_PORT:.*$|SSH_PORT: \"$SSH_PORT\"|" "${OPERATIONDIR}/configs/host.yaml"
+    sed -i "s|^HOSTS_PORTS:.*$|HOSTS_PORTS: $HOSTS_PORTS|" "${OPERATIONDIR}/configs/host.yaml"
+    sed -i "s|^MASTER_PORT:.*$|MASTER_PORT: \"$MASTER_PORT\"|" "${OPERATIONDIR}/configs/host.yaml"
+    sed -i "s|^ACCE_CONTAINER_OPT:.*$|ACCE_CONTAINER_OPT: \"$ACCE_CONTAINER_OPT\"|" "${OPERATIONDIR}/configs/host.yaml"
+    sed -i "s|^ACCE_VISIBLE_DEVICE_ENV_NAME:.*$|ACCE_VISIBLE_DEVICE_ENV_NAME: \"$ACCE_VISIBLE_DEVICE_ENV_NAME\"|" "${OPERATIONDIR}/configs/host.yaml"
+
     # 修改 operation/configs/host.yaml
     sed -i "s|^FLAGPERF_PATH:.*$|FLAGPERF_PATH: \"$OPERATIONDIR\"|" "${OPERATIONDIR}/configs/host.yaml"
 
@@ -29,10 +37,16 @@ parse_log() {
     latest_folder=$(ls -td "$log_dir"/*/ | head -n 1)
     echo "log dir is: ${latest_folder}"
     log_file_path="${latest_folder}flagperf_run.log"
-    readme_file_path="${result_dir}"
+    readme_file_path="${OPERATIONDIR}/${result_dir}"
     if [ -f "$log_file_path" ]; then
         cd "${CURRENTDIR}"
         python render.py "${log_file_path}" "${case_type}" "${readme_file_path}"
+        if [ $? -eq 0 ]; then
+            echo "markdown渲染成功"
+        else
+            echo "markdown渲染失败"
+            exit 1
+        fi
     else
         echo "error: log dir not exist"
         exit 1
@@ -62,7 +76,7 @@ run_cases_and_gen_readme() {
 
 
 main() {
-    result_dir="results/${op_name}_${data_format}" 
+    result_dir="results/${op_name}_${data_format}"
     cd "$OPERATIONDIR"
     mkdir -p $result_dir
     if [ -f "${result_dir}/data.json" ]; then
@@ -72,6 +86,7 @@ main() {
     case_type=("flaggems" "nativetorch")
     for case_type in ${case_type[@]}
     do
+	cd "$OPERATIONDIR"
         modify_config "$case_type" "$result_dir"
         run_cases_and_gen_readme "$case_type" "$result_dir"
     done

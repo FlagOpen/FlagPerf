@@ -3,6 +3,12 @@ import sys
 import os
 from jinja2 import Environment, FileSystemLoader
 
+# Read TDP from environment variable
+tdp = os.environ.get('TDP')
+if tdp:
+    single_card_tdp = tdp
+else:
+    single_card_tdp = ''
 
 # Regular expressions for extracting desired values
 # 用这个dict 从日志中提取数据
@@ -29,7 +35,6 @@ regex_dict = {
     'single_card_avg_power': r'RANK.* AVERAGE: (.*?) Watts',
     'single_card_max_power': r'RANK.* MAX: (.*?) Watts',
     'single_card_power_stddev': r'RANK.* STD DEVIATION: (.*?) Watts',
-    'single_card_tdp': r'AVERAGE: (.*?) Watts', # TODO 这个有问题
     # Other important monitoring results
     'avg_cpu_usage': r'SYSTEM CPU:\s+.*AVERAGE:\s+(\d+\.\d+)\s+%',
     'avg_mem_usage': r'SYSTEM MEMORY:\s+.*AVERAGE:\s+(\d+\.\d+)\s+%',
@@ -61,7 +66,6 @@ format_dict = {
     'single_card_avg_power': ['W'],
     'single_card_max_power': ['W'],
     'single_card_power_stddev': ['W'],
-    'single_card_tdp': None, # TODO 这个有问题
     # Other important monitoring results
     'avg_cpu_usage': ['%'],
     'avg_mem_usage': ['%'],
@@ -141,6 +145,7 @@ if __name__ == "__main__":
             
             extracted_values = format_values(extracted_values, format_dict)
             extracted_values = {f"{data_type}_{key}": value for key, value in extracted_values.items()}
+            extracted_values[f"{data_type}_single_card_tdp"] = single_card_tdp
             data_file = os.path.join(readme_file_path, "data.json")
 
             if os.path.exists(data_file):
@@ -153,7 +158,7 @@ if __name__ == "__main__":
                     render(extracted_values, readme_file_path)
             else:
                 # Write extracted_values to data file
-                with open(data_file, 'w') as file:
+                with open(data_file, 'w+') as file:
                     file.write(str(extracted_values))
     else:
         print("Please provide a file name as a command line argument.")
