@@ -100,21 +100,21 @@ CASES:
 ```
 在host.yaml文件中，各项配置含义如下：
 
-FLAGPERF_PATH: 为FlagPerf/operation/所在**绝对路径**
-FLAGPERF_LOG_PATH: 为填写日志目录相对于FlagPerf/operation/的**相对路径**，需要具有write权限
-VENDOR: 为厂商名称
-FLAGPERF_LOG_LEVEL: 为日志记录等级，可选debug、info、error等
-HOSTS:为一个字符串数组，包含若干主机的IP。数组0位置填写的IP为MASTER
-NPROC_PER_NODE: 表示每台主机启动的AI芯片数量
-SSH_PORT: 表示主机间免密登录所用端口
-HOST_PORTS: 表示容器间torch通信所用端口
-MASTER_PORT: 表示容器间torch通信对应master端口
-SHM_SIZE:表示容器启动时共享内存大小
-ACCE_CONTAINER_OPT: 表示AI芯片进入镜像所需命令。例如对于英伟达，命令为" --gpus all"
-PIP_SOURCE: 表示容器内PIP所用源地址
-CLEAR_CACHE: 表示启动测试前是否清理系统cache，原则上为True
-ACCE_VISIBLE_DEVICE_ENV_NAME: 表示选定AI芯片所用环境变量。例如对于英伟达，环境变量为"CUDA_VISIBLE_DEVICES"
-CASES: 为一个字典。key为评测算子名称:数制:算子库名:芯片型号, value为对应运行时环境名称。
+* FLAGPERF_PATH: 为FlagPerf/operation/所在**绝对路径**
+* FLAGPERF_LOG_PATH: 为填写日志目录相对于FlagPerf/operation/的**相对路径**，需要具有write权限
+* VENDOR: 为厂商名称
+* FLAGPERF_LOG_LEVEL: 为日志记录等级，可选debug、info、error等
+* HOSTS:为一个字符串数组，包含若干主机的IP。数组0位置填写的IP为MASTER
+* NPROC_PER_NODE: 表示每台主机启动的AI芯片数量
+* SSH_PORT: 表示主机间免密登录所用端口
+* HOST_PORTS: 表示容器间torch通信所用端口
+* MASTER_PORT: 表示容器间torch通信对应master端口
+* SHM_SIZE:表示容器启动时共享内存大小
+* ACCE_CONTAINER_OPT: 表示AI芯片进入镜像所需命令。例如对于英伟达，命令为" --gpus all"
+* PIP_SOURCE: 表示容器内PIP所用源地址
+* CLEAR_CACHE: 表示启动测试前是否清理系统cache，原则上为True
+* ACCE_VISIBLE_DEVICE_ENV_NAME: 表示选定AI芯片所用环境变量。例如对于英伟达，环境变量为"CUDA_VISIBLE_DEVICES"
+* CASES: 为一个字典。key为评测算子名称:数制:算子库名:芯片型号, value为对应运行时环境名称。
     例如，可使用"mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403" 来以FP6数制基于原生NativeTorch执行mm算子；
     可使用"mm:FP32:flaggems:A100_40_SXM": "ngctorch2403" 来以FP6数制基于FlagGems算子库执行mm算子；
     ngctorch2403 为vendors目录下被评测厂商对应运行环境的名称。
