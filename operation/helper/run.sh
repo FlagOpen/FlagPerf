@@ -8,11 +8,11 @@ modify_config() {
     echo "case_type is: ${case_type}"
     echo "result_dir is: ${result_dir}"
     # 修改 operation/configs/host.yaml
-    echo "operationdir is: ${OPERATIONDIR}"
     sed -i "s|^FLAGPERF_PATH:.*$|FLAGPERF_PATH: \"$OPERATIONDIR\"|" "${OPERATIONDIR}/configs/host.yaml"
 
+    sed -i "s|^FLAGPERF_LOG_PATH:.*$|FLAGPERF_LOG_PATH: \"$result_dir\/logs\"|" "${OPERATIONDIR}/configs/host.yaml"
+
     # 修改ip
-    echo "ip address is: ${ip_address}"
     sed -i "s|^HOSTS:.*$|HOSTS: [\"$ip_address\"]|" "${OPERATIONDIR}/configs/host.yaml"
 
     # 替换FP  和 替换case 类型等
@@ -25,7 +25,7 @@ modify_config() {
 
 parse_log() {
     local result_dir=$1
-    log_dir="${OPERATIONDIR}/result"
+    log_dir="${OPERATIONDIR}/${result_dir}/logs"
     latest_folder=$(ls -td "$log_dir"/*/ | head -n 1)
     echo "log dir is: ${latest_folder}"
     log_file_path="${latest_folder}flagperf_run.log"
@@ -62,8 +62,9 @@ run_cases_and_gen_readme() {
 
 
 main() {
-    result_dir="results/${op_name}_${data_format}"
-    mkdir $result_dir
+    result_dir="results/${op_name}_${data_format}" 
+    cd "$OPERATIONDIR"
+    mkdir -p $result_dir
     if [ -f "${result_dir}/data.json" ]; then
         rm "${result_dir}/data.json"
     fi
@@ -82,7 +83,7 @@ op_name=""
 ip_address=""
 chip_name=""
 env_name=""
-# Function to display usage information
+
 usage() {
     echo "Usage: $0 --op_name <op_name> --data_format <data_format> --ip_address <ip_address>  --chip_name <chip_name> --env_name <env_name>"
     exit 1
@@ -132,6 +133,11 @@ echo "ip_address: $ip_address"
 echo "chip_name: $chip_name"
 echo "env_name: $env_name"
 
+
+# Read env vars
+VENDOR="$VENDOR"
+ACCE_CONTAINER_OPT="$ACCE_CONTAINER_OPT"
+ACCE_VISIBLE_DEVICE_ENV_NAME="$ACCE_VISIBLE_DEVICE_ENV_NAME"
 
 CURRENTDIR=$(pwd)
 # 获取当前路径的上一级目录
