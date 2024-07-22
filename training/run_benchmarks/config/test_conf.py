@@ -62,7 +62,7 @@ CLEAR_CACHES = True
 '''
 CASES = {
     # nvidia cases
-    "llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
+    #"llama3_8B:megatron_core060:A100:1:8:1": "/data/llama3_8b_pretrain"
     # "llama3_70B:megatron_core060:H100:8:8:1": "/data/llama3_70b_pretrain"
     # "bert:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/bert/train/",
     # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
@@ -169,6 +169,7 @@ CASES = {
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
     # metax cases
+    #"llama3_8B:megatron_core060:C500:1:8:1": "/data/llama3_8b_pretrain"
     # "aquila2_7b:flagscale:C500:1:8:1": "/raid/dataset/Aquila2_7b_data"
     # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
     # "retinanet:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
@@ -194,5 +195,6 @@ CASES = {
     # "llama1_7B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/dataset/llama/"
     #"gpt3_13B:paddle_2.6.0:TP2PP1SH2SP4C50040G:1:8:1":"/raid/data_set/data-gpt3"
     #"gpt3_13B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/data_set/data-gpt3"
+    "qwen1.5_MoE:megatron_pai:C500:1:8:1":"/raid/datasets/qwen1.5_MoE/"
     
 }

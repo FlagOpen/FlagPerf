@@ -61,7 +61,7 @@ if __name__ == "__main__":
     
     # merge llama3 patch
 
-    if args.vendor=="cambricon":
+    if args.vendor=="cambricon" or args.vendor=="metax":
         exec_cmd = "bash pretrain_llama3.sh"
     else:    
         origin_file = os.path.join(megapath, "megatron/training/arguments.py")
