@@ -9,6 +9,9 @@ import torch
 def set_ieee_float32(vendor):
     if vendor == "nvidia":
         torch.backends.cuda.matmul.allow_tf32 = False
+    elif "cambricon" in vendor:
+        torch.backends.mlu.matmul.allow_tf32 = False
+        torch.backends.cnnl.allow_tf32 = False
     else:
         print("unspecified vendor {}, do nothing".format(vendor))
 
@@ -16,6 +19,9 @@ def set_ieee_float32(vendor):
 def unset_ieee_float32(vendor):
     if vendor == "nvidia":
         torch.backends.cuda.matmul.allow_tf32 = True
+    elif "cambricon" in vendor:
+        torch.backends.mlu.matmul.allow_tf32 = True
+        torch.backends.cnnl.allow_tf32 = True
     else:
         print("unspecified vendor {}, do nothing".format(vendor))
 
