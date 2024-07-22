@@ -6,5 +6,5 @@ precision = 'bf16'
 tensor_parallel = 1
 pipeline_parallel = 2
 accumulate_steps = 1
-theoryflops = 312000000000000.0
+theoryflops = 280000000000000.0
 epochs = 1
