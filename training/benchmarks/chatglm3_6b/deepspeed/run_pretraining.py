@@ -80,6 +80,8 @@ def get_deepspeed_engine(args, model_config_dir, flashattn):
                              mpu=None):
         model = get_chatglm_model(model_config_dir, flashattn)
 
+    if args.gradient_checkpointing_enable:
+        model.gradient_checkpointing_enable()
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
     return model_engine
@@ -109,6 +111,8 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
+    gradient_checkpointing_enable = getattr(module, 'gradient_checkpointing_enable', False)
+    args.gradient_checkpointing_enable = gradient_checkpointing_enable
 
     deepspeed.init_distributed()
     model_engine = get_deepspeed_engine(args, os.path.join("chatglm3_6b_hf"),
