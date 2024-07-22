@@ -1,0 +1,1 @@
+echo "[Prompt] metax adaption is NULL, for other Vendors"
