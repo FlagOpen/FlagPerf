@@ -1,4 +1,3 @@
-http://repo.metax-tech.com/r/pypi/simple/torch-2.0.0+gite544b36-cp38-cp38-linux_x86_64.whl
 numpy
 tqdm
 schedule
