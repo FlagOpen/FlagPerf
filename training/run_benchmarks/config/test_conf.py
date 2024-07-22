@@ -159,7 +159,6 @@ CASES = {
     # "baichuan2_13b:deepspeed:BI-V150:2:8:1": "/raid/dataset/baichuan2_13b",
     # "llava1.5_13b:deepspeed-torch:BI-V150:1:16:1": "/raid/dataset/llava1.5_13b",
     # "mixtral_8x7B:megatron:BI-V150:4:16:1": "/raid/dataset/mixtral_8x7B",   ##单机测试
-    # "mixtral_8x7B:megatron:BI-V150:2:16:1": "/raid/dataset/mixtral_8x7B",   ##双机测试
     # "mixtral_8x7B:megatron:BI-V150:1:16:1": "/raid/dataset/mixtral_8x7B",   ##四机测试
 
     # mthreads cases
