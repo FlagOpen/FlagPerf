@@ -154,6 +154,8 @@ if __name__ == "__main__":
                 # Merge the values from data file with extracted_values
                 data_values = eval(data)
                 extracted_values.update(data_values)
+                with open(data_file, 'w') as file:
+                    file.write(str(extracted_values))
                 if len(extracted_values.keys()) >= 46:
                     render(extracted_values, readme_file_path)
             else:
