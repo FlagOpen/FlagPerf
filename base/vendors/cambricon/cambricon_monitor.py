@@ -78,8 +78,8 @@ class Daemon:
             cmd = "paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU' | head -n -1) | awk '{print $3,$4,$5,$9,$10,$11,$25}'; echo \"\""
             process = subprocess.Popen(cmd,
                                        shell=True,
-                                       stdout=subprocess.PIPE,
                                        executable="/bin/bash",
+                                       stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
                                        encoding='utf-8')
             try:

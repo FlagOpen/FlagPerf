@@ -1,0 +1,4 @@
+DIST_BACKEND: "cncl"
+Melements: 1024
+WARMUP: 100
+ITERS: 3000
