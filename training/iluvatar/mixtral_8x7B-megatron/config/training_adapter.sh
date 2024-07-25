@@ -4,6 +4,7 @@ NNODES=$3
 NODE_RANK=$4
 MEGAPATH=$7
 MBS=$8
+ITERS=$9
 TP=${10}
 PP=${11}
 MASTERADDR=10.31.10.149
@@ -11,7 +12,7 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 export PYTHONPATH=$MEGAPATH/megatron:$MEGAPATH/megatron:$PYTHONPATH
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
-##双机16卡num-layers=32
+##非四机暂设为8，四机16卡num-layers=32
 MODEL_ARGS=" \
     --num-layers 8 \
     --hidden-size 4096 \
@@ -32,7 +33,7 @@ MODEL_ARGS=" \
 OPT_ARGS=" \
     --lr 1.0e-5 \
     --min-lr 1e-05 \
-    --train-iters 100 \
+    --train-iters $ITERS \
     --lr-decay-iters 320000 \
     --lr-decay-style cosine \
     --weight-decay 0.1 \
