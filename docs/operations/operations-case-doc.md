@@ -63,7 +63,7 @@
     *  \<envname\>_install.sh: 可自定义全局的环境变量、安装软件等操作，会在测例评测开始由FlagPerf 自动执行
 
 注意: 这里的**envname**需要和host.yaml中 CASES 的 value 值保持一致。可以参考下图英伟达的命名与使用方式。
-![](media/17211979373735/17212948369423.jpg)
+![sample](assets/sample.jpg)
 
 
 ## 评测运行时流程
