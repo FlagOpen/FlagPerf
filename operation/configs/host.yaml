@@ -24,3 +24,4 @@ CASES:
     "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:flaggems:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
+#    "abs:FP32:nativetorch:BI150": "bi150-410"
