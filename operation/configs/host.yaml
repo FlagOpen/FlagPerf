@@ -1,5 +1,6 @@
 FLAGPERF_PATH: "/home/FlagPerf/operation"
 FLAGPERF_LOG_PATH: "result"
+##nvidia,iluvatar,or other
 VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "info"
 HOSTS: ["192.168.1.2"]
@@ -10,6 +11,7 @@ MASTER_PORT: "29501"
 SHM_SIZE: "32G"
 ACCE_CONTAINER_OPT: " --gpus all"
 # for nvidia, using " -- gpus all"
+# for iluvatar, using ""
 # for xxx, using
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
