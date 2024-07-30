@@ -5,6 +5,28 @@
 # -*- coding: UTF-8 -*-
 import time
 from triton.testing import do_bench as kernel_bench
+import os
+import subprocess
+
+
+def do_correctness(operation):
+    gems_repo = subprocess.check_output(
+        ["find", "/", "-type", "d", "-name", "FlagGems"], text=True).strip()
+
+    test_pyfile_str = subprocess.check_output(
+        f"cd {os.path.join(gems_repo, 'tests')} && grep -rn '_{operation}(' .",
+        shell=True,
+        text=True).strip()
+
+    test_pyfile = test_pyfile_str[2:].split(".")[0] + ".py"
+    test_func = test_pyfile_str.split("def")[1][1:].split("(")[0]
+
+    correctness_command = f"cd {os.path.join(gems_repo, 'tests')} && pytest {test_pyfile}::{test_func} --device cpu"
+
+    p = subprocess.Popen(correctness_command, shell=True)
+    p.wait()
+
+    return p.returncode
 
 
 def do_test(exec_func, exec_args, sync_func, config, case_config):
@@ -63,7 +85,7 @@ def cal_perf(cputime, kerneltime, op2flops, spectflops):
 
 
 def print_result(config, casename, ct, kt, cps, kps, ctflops, ktflops, cfu,
-                 kfu, errmean, errstd, lnm, lm):
+                 kfu, correctness, lnm, lm):
     print(r"[FlagPerf Result]Operation {} in {} at {}:".format(
         casename, config.oplib, config.dataformat))
     print(r"[FlagPerf Result]FLOPS utilization: cputime={}%, kerneltime={}%".
@@ -74,8 +96,8 @@ def print_result(config, casename, ct, kt, cps, kps, ctflops, ktflops, cfu,
     print(
         r"[FlagPerf Result]kerneltime={} us, throughput={} op/s, equals to {} TFLOPS"
         .format(kt, kps, ktflops))
-    print(r"[FlagPerf Result]Relative error with FP64-CPU: mean={}, std={}".
-          format(errmean, errstd))
+    print(r"[FlagPerf Result]Correctness with CPU golden Reference: {}".format(
+        correctness))
     print(
         r"[FlagPerf Result]First time latency: no warmup={} us, warmup={} us".
         format(lnm, lm))
