@@ -48,4 +48,4 @@
 
 | 配置              | precision | fix_hp                     | token/p/s | loss | mem   | MFU   |
 | --------------- | ----------- |-------------------------- | --------- | ---- | ----- | ----- |
-| R300+ 单机8卡（1x8） | bf16 |  gradient_checkpointing_enable = True | --      | -- | -- | -- |
+| R300+ 单机8卡（1x8） | bf16 |  LBS=8, gradient_checkpointing_enable = True | --      | -- | -- | -- |
