@@ -9,8 +9,8 @@ SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
 SHM_SIZE: "32G"
-# DEVICE only for iluvatar
-DEVICE: 1
+# only for iluvatar,dual process operation, modify device id,0 or 1
+DEVICE: 0
 # for nvidia, using " -- gpus all"
 # for iluvatar, using ""
 # for xxx, using
