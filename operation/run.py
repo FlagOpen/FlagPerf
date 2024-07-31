@@ -221,6 +221,8 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
                      + "2>&1"
 
     if os.path.isfile(env_shell):
+        if config.VENDOR == "iluvatar":
+            start_cmd += " && export CUDA_VISIBLE_DEVICES=" + str(config.DEVICE) 
         start_cmd += " && source " + env_shell \
                      + " > " + abs_log_path + "/env.log.txt " \
                      + "2>&1"
@@ -549,7 +551,8 @@ def main():
         # Set command to start docker container in the cluster
         container_name = image_mgr.repository + "-" + image_mgr.tag \
                          + "-container"
-
+        if config.VENDOR == "iluvatar":
+            container_name = container_name + "_device_" + str(config.DEVICE)
         # Set command to start train script in container in the cluster
         log_dir_container = os.path.join(config.FLAGPERF_LOG_PATH,
                                          timestamp_log_dir)

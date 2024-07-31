@@ -9,10 +9,12 @@ SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
 SHM_SIZE: "32G"
-ACCE_CONTAINER_OPT: " --gpus all"
+# DEVICE only for iluvatar
+DEVICE: 1
 # for nvidia, using " -- gpus all"
 # for iluvatar, using ""
 # for xxx, using
+ACCE_CONTAINER_OPT: " --gpus all"
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 # for nvidia, using "CUDA_VISIBLE_DEVICES"
