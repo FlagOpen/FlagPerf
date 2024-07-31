@@ -1,4 +1,4 @@
-Melements: 1024
+Melements: 512
 SPECTFLOPS: -1.0
 WARMUP: 100
 ITERS: 50000
