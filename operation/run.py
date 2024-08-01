@@ -201,7 +201,7 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
     nnodes = len(config.HOSTS)
     framework = config.CASES[case]
 
-    op, df, oplib, chip = case.split(":")
+    op, df, spectflops, oplib, chip = case.split(":")
     env_dir = os.path.join(config.FLAGPERF_PATH, "benchmarks", op,
                            config.VENDOR, chip)
 
