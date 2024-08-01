@@ -28,6 +28,11 @@ def parse_args():
                         type=str,
                         required=True,
                         help="op name like mm")
+    
+    parser.add_argument("--spectflops",
+                        type=str,
+                        required=True,
+                        help="spectflops of current dataformat")
 
     parser.add_argument("--dataformat",
                         type=str,
@@ -74,7 +79,7 @@ def main(config, case_config):
         torch.mm, (a, b), host_device_sync, config, case_config)
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           case_config.SPECTFLOPS)
+                           config.spectflops)
     print_result(config, config.case_name, *perf_result, correctness,
                  latency_nowarm, latency_warm)
 
