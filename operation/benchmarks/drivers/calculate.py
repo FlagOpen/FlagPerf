@@ -67,6 +67,7 @@ def do_test(exec_func, exec_args, sync_func, config, case_config):
 
 
 def cal_perf(cputime, kerneltime, op2flops, spectflops):
+    spectflops = float(spectflops)
     ctus = round(cputime * 1E6, 2)
     ktus = round(kerneltime * 1E6, 2)
 
