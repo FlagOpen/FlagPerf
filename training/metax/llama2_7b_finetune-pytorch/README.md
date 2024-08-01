@@ -1,16 +1,14 @@
-### Nvidia GPU配置与运行信息参考
+### 沐曦集成电路 C500 GPU配置与运行信息参考
 #### 环境配置
 - ##### 硬件环境
-    - 机器型号:  DGXA100
-    - 加速卡型号:  NVIDIA A100-SXM4-40GB
-    - CPU型号: AMD EPYC 7742 64-Core Processor
-    - 多机网络类型、带宽: InfiniBand，200Gb/s
-    
+    - 机器、加速卡型号: 曦云®C500 64G 
+    - 多机网络类型、带宽: InfiniBand，2x200 Gb/s
+
 - ##### 软件环境
-   - OS版本：Ubuntu 20.04.4
-   - OS kernel版本: 5.4.0-113-generic
-   - 加速卡驱动版本：470.129.06
-   - Docker 版本：20.10.16
+   - OS版本：Ubuntu 20.04.6
+   - OS kernel版本:  5.4.0-26-generic
+   - 加速卡驱动版本：2.2.0
+   - Docker 版本：24.0.7
    - 依赖软件版本：见llama2_7b_finetune-pytorch/config/requirements.txt
 
 - ##### 并行策略
@@ -61,8 +59,7 @@
 
 | 配置                |  fix_hp           | token/p/s | loss | mem       |acc(MMLU) |MFU       |
 | ------------------- | ---------------- | ------ | ------- | --------- | --------- |--------- |
-| A100单机单卡（1x1）  |  /  | 2788 | 1.64 | 37.3/40 | 0.38 |/|
-| A100单机单卡（1x1）  |  数据精度=fp16, local_batchsize=4  | 4017 | 1.77 | 32.0/40 | 0.43 |36.1%|
+| C500单机单卡（1x1）  |  数据精度=fp16, local_batchsize=4  | / | 1.72 | 32.0/64 | 0.41 |36.2%|
 
 >注：
 >finetune训练数据集为samsum_dataset,MMLU数据集在这里只做配合lora-finetune后功能测试使用，MMLU评测结果无finetune结果指导意义，这里关注吞吐量即可。
