@@ -74,7 +74,6 @@ def main(config, case_config):
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            case_config.SPECTFLOPS)
     print_result(config, config.case_name, *perf_result, correctness,latency_nowarm, latency_warm)
-                 latency_nowarm, latency_warm)
 
 
 if __name__ == "__main__":
