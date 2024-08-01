@@ -27,7 +27,10 @@ def parse_args():
                         type=str,
                         required=True,
                         help="op name like mm")
-
+    parser.add_argument("--spectflops",
+                        type=str,
+                        required=True,
+                        help="spectflops of current dataformat")
     parser.add_argument("--dataformat",
                         type=str,
                         required=True,
@@ -72,7 +75,7 @@ def main(config, case_config):
     op2flops = lambda x: x * Melements * 1024 * 1024
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           case_config.SPECTFLOPS)
+                           config.spectflops)
     print_result(config, config.case_name, *perf_result, correctness,
                  latency_nowarm, latency_warm)
 
