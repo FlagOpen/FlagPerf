@@ -149,6 +149,7 @@ CASES = {
     # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
     # "baichuan2_13b:deepspeed:R300:1:8:1": "/raid/dataset/baichuan_data/",
     # "baichuan2_13b:deepspeed_new:R300:1:1:1": "/raid/dataset/baichuan_data/",
+    # "chatglm3_6b:deepspeed_v0.14.4:R300:1:8:1": "/raid/dataset/chatglm3_6b_data/",
 
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
