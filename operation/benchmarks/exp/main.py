@@ -78,7 +78,7 @@ def main(config, case_config):
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.exp, (a, ), host_device_sync, config, case_config)
 
-    op2flops = lambda x: x * 2 * Melements * 1024 * 1024
+    op2flops = lambda x: x * Melements * 1024 * 1024
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            case_config.SPECTFLOPS)

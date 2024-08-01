@@ -55,9 +55,9 @@ def main(config, case_config):
     torch.manual_seed(42)
     for i in range(100):
         a = torch.randn(m) 
-        a = (127 * a).to(torch.int8)
+        a = (127 * a).to(torch.dataformat)
         b = torch.randn(m) 
-        b = (127 * b).to(torch.int8)
+        b = (127 * b).to(torch.dataformat)
 
         r_cpu = torch.bitwise_and(a, b)
 
@@ -72,14 +72,14 @@ def main(config, case_config):
     mape_std = torch.std(torch.tensor(mmape))
 
     a = torch.randn(m, 1024, 1024) 
-    a = (127 * a).to(torch.int8).to(0)
+    a = (127 * a).to(torch.dataformat).to(0)
     b = torch.randn(m, 1024, 1024) 
-    b = (127 * b).to(torch.int8).to(0)
+    b = (127 * b).to(torch.dataformat).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.bitwise_and, (a, b), host_device_sync, config, case_config)
 
-    op2flops = lambda x: 0.0
+    op2flops = lambda x: x * m * 1024 * 1024
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            case_config.SPECTFLOPS)
