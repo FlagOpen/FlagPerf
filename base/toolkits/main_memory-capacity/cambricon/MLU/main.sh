@@ -1,5 +1,5 @@
 export MLU_VISIBLE_DEVICES=0
-LOG_PATH=`pwd`/`hostname -i`_run_log
+LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
 pushd /usr/local/neuware/samples/cnrt && mkdir -p build && pushd build && cmake .. && make -j20 && pushd bin 
 for i in $(seq 1 7500)  
 do

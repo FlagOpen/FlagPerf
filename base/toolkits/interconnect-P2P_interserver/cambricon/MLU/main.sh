@@ -18,13 +18,13 @@ sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@${ip1}
 sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@${ip2}
 
 # step-3 正式测试
-cur_ip=`hostname -i`
+cur_ip=`hostname -i | awk '{print $1}'`
 if [ "$cur_ip" == "$ip1" ]; then
     export MLU_VISIBLE_DEVICES=0
 else
     export MLU_VISIBLE_DEVICES=1
 fi
-LOG_PATH=`pwd`/`hostname -i`_run_log
+LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
 tcp_if_include=`echo ${ip1} | awk -F'.' '{print $1"."$2"."$3}'`
 /usr/local/openmpi/bin/mpirun \
         --allow-run-as-root -n 2 --host ${ip1}:1,${ip2}:1 \

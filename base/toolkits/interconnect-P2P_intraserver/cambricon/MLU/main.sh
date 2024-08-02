@@ -1,5 +1,5 @@
 export MLU_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-LOG_PATH=`pwd`/`hostname -i`_run_log
+LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
 cnvs -r mlulink -c `pwd`/cnvs.example.yml 2>&1 | tee ${LOG_PATH}
 device0_1=$(sed -n '58p' "$LOG_PATH" | awk '{print $7}')
 device1_0=$(sed -n '62p' "$LOG_PATH" | awk '{print $5}')

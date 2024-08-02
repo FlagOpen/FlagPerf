@@ -13,4 +13,4 @@ sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_co
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 #免密
-sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@`hostname -i`
+sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@`hostname -i | awk '{print $1}'`

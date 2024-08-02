@@ -1,6 +1,7 @@
 custom:
 - custom:
     pcie:
+      numa_mode: "enable"
       subtests:
         link_check:
           subtest_on: True

@@ -1,4 +1,4 @@
-LOG_PATH=`pwd`/`hostname -i`_run_log
+LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
 /usr/local/neuware/bin/allreduce \
     --warmup_loop 20  \
     --thread 8 \

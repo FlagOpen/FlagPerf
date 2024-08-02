@@ -1,6 +1,6 @@
 #!/bin/bash
 export MLU_VISIBLE_DEVICES=0
-LOG_PATH=`pwd`/`hostname -i`_run_log
+LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
 cnvs -r matmul_performance -c `pwd`/cnvs.example.yml 2>&1 | tee ${LOG_PATH}
 value=$(grep -o 'matmul performance(GOPS): [0-9.]\+' ${LOG_PATH} )
 number=$(echo $value | grep -o '[0-9.]\+')

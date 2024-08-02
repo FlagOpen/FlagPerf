@@ -6,7 +6,7 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup \
   && sed -i 's|http://.*archive.ubuntu.com/ubuntu/|https://mirrors.tuna.tsinghua.edu.cn/ubuntu/|g' /etc/apt/sources.list \
   && sed -i 's|http://.*security.ubuntu.com/ubuntu/|https://mirrors.tuna.tsinghua.edu.cn/ubuntu/|g' /etc/apt/sources.list
 
-RUN apt update -y && apt install -y sudo dmidecode ipmitool sysstat net-tools sshpass
+RUN apt update -y && apt install -y sudo dmidecode ipmitool sysstat net-tools sshpass libnuma-dev
 
 # modify ~/.bashrc file
 RUN sed -i '/\[ -z "\$PS1" \] \&\& return/s/^/#/' ~/.bashrc

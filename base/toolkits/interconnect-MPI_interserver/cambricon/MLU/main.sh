@@ -19,8 +19,8 @@ sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@${ip2}
 
 # step-3 正式测试
 finished_str="All Result Check: PASSED" 
-LOG_PATH=`pwd`/`hostname -i`_run_log
-cur_ip=`hostname -i`
+LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
+cur_ip=`hostname -i | awk '{print $1}'`
 tcp_if_include=`echo ${ip1} | awk -F'.' '{print $1"."$2"."$3}'`
 if [ "$cur_ip" == "$ip1" ]; then
 	/usr/local/openmpi/bin/mpirun --allow-run-as-root -n 16 --host ${ip1}:8,${ip2}:8 \
