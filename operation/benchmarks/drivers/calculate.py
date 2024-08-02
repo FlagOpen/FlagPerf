@@ -13,8 +13,13 @@ def do_correctness(operation):
     gems_repo = subprocess.check_output(
         ["find", "/", "-type", "d", "-name", "FlagGems"], text=True).strip()
 
+    special_ops = {"cross_entropy_loss": "_cross_entropy_loss_indices("}
+    op_grep_regex = "_" + operation + "("
+    if operation in special_ops.keys():
+        op_grep_regex = special_ops[operation]
+
     test_pyfile_str = subprocess.check_output(
-        f"cd {os.path.join(gems_repo, 'tests')} && grep -rn '_{operation}(' .",
+        f"cd {os.path.join(gems_repo, 'tests')} && grep -rn '{op_grep_regex}' .",
         shell=True,
         text=True).strip()
 
