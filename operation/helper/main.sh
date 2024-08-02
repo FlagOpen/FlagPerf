@@ -12,13 +12,20 @@ TDP="400W"
 ip_address="10.1.2.155"
 chip_name="A100_40_SXM"
 env_name="ngctorch2403"
+
+declare -A spec_tflops_dict
+spec_tflops_dict["BF16"]=312
+spec_tflops_dict["FP16"]=312
+spec_tflops_dict["FP32"]=19.5
 #=============================STOP==========================
 
 declare -A op_dict
 # Assign list values to dictionary keys
 # ==========================修改点2: START==========================
-op_dict["sum"]="FP32 FP16"
-op_dict["bitwise_or"]="INT8"
+op_dict["sum"]="FP32 FP16 BF16"
+op_dict["sub"]="FP32 FP16 BF16"
+op_dict["mm"]="FP32 FP16 BF16"
+#op_dict["bitwise_or"]="INT8"
 #=============================STOP==========================
 
 
@@ -39,6 +46,6 @@ for key in "${!op_dict[@]}"; do
         # Your code here
         echo "Running operation: $key with data format: $value"
         # Example command using the variables
-        bash run.sh --op_name "$key" --data_format "$value" --ip_address "$ip_address" --chip_name "$chip_name" --env_name "$env_name"
+        bash run.sh --op_name "$key" --data_format "$value" --ip_address "$ip_address" --chip_name "$chip_name" --env_name "$env_name" --spec_tflops "${spec_tflops_dict[$value]}"
     done
 done
