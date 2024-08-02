@@ -23,14 +23,17 @@
 # 算子库版本
 FlagGems:>联系邮箱: contact-us@iluvatar.com获取版本(FlagGems-0710_pointwise_use_tid)
 
+# 注意事项
+测试linear时必须调节降频问题，因此需要：bash vendors/iluvatar/dvfs.sh && python3 run.py
+
 # 评测结果
 
 ## 核心评测结果
 
 | 评测项  | 平均相对误差(with FP64-CPU) | TFLOPS(cpu wall clock) | TFLOPS(kernel clock) | FU(FLOPS Utilization)-cputime | FU-kerneltime |
 | ---- | -------------- | -------------- | ------------ | ------ | ----- |
-| flaggems | 1.77E-04    | 92.3TFLOPS       | 92.1TFLOPS        | 187.79% | 187.37% |
-| nativetorch | 1.77E-04    | 95.76TFLOPS      | 95.48TFLOPS      | 194.83%      | 194.25%    |
+| flaggems | 1.77E-04    | 92.3TFLOPS       | 92.1TFLOPS        | 47.81% | 47.99% |
+| nativetorch | 1.77E-04    | 95.76TFLOPS      | 95.48TFLOPS      | 49.84%      | 49.73%    |
 
 ## 其他评测结果
 
