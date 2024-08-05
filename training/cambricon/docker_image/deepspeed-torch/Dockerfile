@@ -1,6 +1,7 @@
-FROM flagperf:cambricon-deepspeed-v24.06-torch2.1.0-catch1.21.0-ubuntu22.04-py310
+FROM flagperf:cambricon-deepspeed-v24.06-torch2.1.0-catch1.21.0-ubuntu22.04-py310-megatron-patch
 #shell
 SHELL ["/bin/bash", "-c"]
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends tzdata && apt-get install -y openssh-server && mkdir -p /run/sshd
 RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup \
   && sed -i 's|http://.*archive.ubuntu.com/ubuntu/|https://mirrors.tuna.tsinghua.edu.cn/ubuntu/|g' /etc/apt/sources.list \
   && sed -i 's|http://.*security.ubuntu.com/ubuntu/|https://mirrors.tuna.tsinghua.edu.cn/ubuntu/|g' /etc/apt/sources.list
