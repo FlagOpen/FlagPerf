@@ -25,7 +25,7 @@ modify_config() {
 
     # 替换FP  和 替换case 类型等
     #  "eq:FP32:nativetorch:A100_40_SXM": "ngctorch2403"
-    sed -i "s|^    \".*:.*:.*:.*\": \".*\"|    \"$op_name:$data_format:$case_type:$chip_name\": \"$env_name\"|" "${OPERATIONDIR}/configs/host.yaml"
+    sed -i "s|^    \".*:.*:.*:.*\": \".*\"|    \"$op_name:$data_format:$spec_tflops:$case_type:$chip_name\": \"$env_name\"|" "${OPERATIONDIR}/configs/host.yaml"
     # 备份一下, 方便排查问题
     cp "${OPERATIONDIR}/configs/host.yaml" "${result_dir}/bak_${case_type}_host.yaml"
    }
@@ -98,9 +98,10 @@ op_name=""
 ip_address=""
 chip_name=""
 env_name=""
+spec_tflops=0
 
 usage() {
-    echo "Usage: $0 --op_name <op_name> --data_format <data_format> --ip_address <ip_address>  --chip_name <chip_name> --env_name <env_name>"
+    echo "Usage: $0 --op_name <op_name> --data_format <data_format> --ip_address <ip_address>  --chip_name <chip_name> --env_name <env_name> --spec_tflops <spec_tflops>"
     exit 1
 }
 
@@ -127,7 +128,11 @@ while [ $# -gt 0 ]; do
         --env_name)
             env_name="$2"
             shift 2
-            ;;
+            ;; 
+        --spec_tflops)
+            spec_tflops="$2"
+            shift 2
+            ;; 
         *)
             echo "Unknown option: $1"
             usage
@@ -136,7 +141,7 @@ while [ $# -gt 0 ]; do
 done
 
 # Check if required options are provided
-if [ -z "$data_format" ] || [ -z "$op_name" ] || [ -z "$ip_address" ] || [ -z "$chip_name" ] || [ -z "$env_name" ]; then
+if [ -z "$data_format" ] || [ -z "$op_name" ] || [ -z "$ip_address" ] || [ -z "$chip_name" ] || [ -z "$env_name" ] || [ -z "$spec_tflops" ]; then
     echo "Error: Missing required options."
     usage
 fi
@@ -147,6 +152,7 @@ echo "op_name: $op_name"
 echo "ip_address: $ip_address"
 echo "chip_name: $chip_name"
 echo "env_name: $env_name"
+echo "spec_tflops: $spec_tflops"
 
 
 # Read env vars

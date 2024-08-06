@@ -4,12 +4,12 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import torch
-import torch.distributed as dist
 import os
 import time
 from argparse import ArgumentParser, Namespace
 import yaml
 import sys
+import subprocess
 
 sys.path.append("..")
 from drivers.utils import *
@@ -23,6 +23,14 @@ def parse_args():
                         type=str,
                         required=True,
                         help="vendor name like nvidia")
+    parser.add_argument("--case_name",
+                        type=str,
+                        required=True,
+                        help="op name like mm")
+    parser.add_argument("--spectflops",
+                        type=str,
+                        required=True,
+                        help="spectflops of current dataformat")
 
     parser.add_argument("--dataformat",
                         type=str,
@@ -45,38 +53,24 @@ def parse_args():
 
 
 def main(config, case_config):
+    correctness = do_correctness(config.case_name)
+    correctness = correctness == 0
+    dtype = {
+        "FP32": torch.float32,
+        "FP16": torch.float16,
+        "BF16": torch.bfloat16,
+        "INT32": torch.int32,
+        "INT16": torch.int16,
+        "BOOL": torch.bool
+        }
     set_ieee_float32(config.vendor)
 
-    print("Test Correctness with 16-times smaller operation"
-          )  # correctness is implemented casebycase
 
     m = case_config.M
     n = case_config.N
     k = case_config.K
     bs = case_config.BS
 
-    dtype = {"FP16": torch.float16}
-
-    mmape = []
-
-    torch.manual_seed(42)
-    for i in range(100):
-        a = torch.randn(bs, m//16, n//16, dtype=dtype[config.dataformat])
-        b = torch.randn(bs, n//16, k//16, dtype=dtype[config.dataformat])
-
-        a_fp64 = a.to(torch.float64)
-        b_fp64 = b.to(torch.float64)
-        r_fp64 = torch.bmm(a_fp64, b_fp64)
-
-        a = a.to(0)
-        b = b.to(0)
-        r_device = torch.bmm(a, b).cpu()
-        mape = torch.mean(torch.abs(r_device - r_fp64) / torch.abs(r_fp64))
-
-        mmape.append(mape)
-    
-    mape = torch.mean(torch.tensor(mmape))
-    mape_std = torch.std(torch.tensor(mmape))
 
     a = torch.randn(bs, m, n, dtype=dtype[config.dataformat]).to(0)
     b = torch.randn(bs, n, k, dtype=dtype[config.dataformat]).to(0)
@@ -87,8 +81,8 @@ def main(config, case_config):
     op2flops = lambda x: x * 2 * m * n * k * bs
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           case_config.SPECTFLOPS)
-    print_result(config, "bmm", *perf_result, mape, mape_std,
+                           config.spectflops)
+    print_result(config, config.case_name, *perf_result, correctness,
                  latency_nowarm, latency_warm)
 
 
@@ -96,6 +90,7 @@ if __name__ == "__main__":
     config = parse_args()
     with open("case_config.yaml", "r") as file:
         case_config = yaml.safe_load(file)
+    adapt_torch(config.vendor)
     with open(os.path.join(config.vendor, config.chip, "case_config.yaml"),
               "r") as file:
         case_config_vendor = yaml.safe_load(file)
