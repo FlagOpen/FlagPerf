@@ -1,0 +1,2 @@
+sentencePiece==0.1.99
+datasets==2.15.0

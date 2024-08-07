@@ -1,0 +1,13 @@
+custom:
+- custom:
+    matmul_performance:
+      matrix_dimension_m: 8192
+      matrix_dimension_k: 8192
+      matrix_dimension_n: 8192
+      transpose_a: false
+      transpose_b: true
+      input_data_type: "int8"
+      output_data_type: "half"
+      input_data_random: false
+      correct_check: false
+      iterations: 200000
