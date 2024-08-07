@@ -28,13 +28,13 @@ https://github.com/FlagOpen/FlagGems. Commit ID: 7042de1d8fb6f978596322faaeda6b5
 
 | 评测项  | correctness | TFLOPS(cpu wall clock) | TFLOPS(kernel clock) | FU(FLOPS Utilization)-cputime | FU-kerneltime |
 | ---- | -------------- | -------------- | ------------ | ------ | ----- |
-| flaggems | : True    | 5.54TFLOPS       | 5.54TFLOPS        | 28.4% | 28.4% |
-| nativetorch | : True    | 7.78TFLOPS      | 7.79TFLOPS      | 39.92%      | 39.96%    |
+| flaggems | True    | 5.54TFLOPS       | 5.54TFLOPS        | 28.4% | 28.4% |
+| nativetorch | True    | 7.78TFLOPS      | 7.79TFLOPS      | 39.92%      | 39.96%    |
 
 ## 其他评测结果
 
 | 评测项  | cputime | kerneltime | cputime吞吐 | kerneltime吞吐 | 无预热时延 | 预热后时延 |
-| ---- | -------------- | -------------- | ------------ | ------------ | -------------- | -------------- | ------------ |
+| ---- | -------------- | -------------- | ------------ | ------------ | -------------- | -------------- | 
 | flaggems | 15385.57us       | 15384.58us        | 65.0op/s | 65.0op/s | 4664630.35us | 15567.45us |
 | nativetorch | 12976.67us       | 12969.98us        | 77.06op/s | 77.1op/s | 32750.17us | 13024.22us |
 
