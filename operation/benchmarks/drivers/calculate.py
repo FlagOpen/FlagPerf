@@ -13,17 +13,10 @@ def do_correctness(operation):
     gems_repo = subprocess.check_output(
         ["find", "/", "-type", "d", "-name", "FlagGems"], text=True).strip()
 
-    test_pyfile_str = subprocess.check_output(
-        f"cd {os.path.join(gems_repo, 'tests')} && grep -rn '_{operation}(' .",
-        shell=True,
-        text=True).strip()
-
-    test_pyfile = test_pyfile_str[2:].split(".")[0] + ".py"
-    test_func = test_pyfile_str.split("def")[1][1:].split("(")[0]
-
-    correctness_command = f"cd {os.path.join(gems_repo, 'tests')} && pytest {test_pyfile}::{test_func} --device cpu"
-
-    p = subprocess.Popen(correctness_command, shell=True)
+    p = subprocess.Popen(
+        f"cd {os.path.join(gems_repo, 'tests')} && python3 test_specific_ops.py --name {operation}",
+        shell=True
+        )
     p.wait()
 
     return p.returncode
