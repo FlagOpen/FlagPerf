@@ -35,7 +35,7 @@ https://github.com/FlagOpen/FlagGems. Commit ID: XXX
 ## 其他评测结果
 
 | 评测项  | cputime | kerneltime | cputime吞吐 | kerneltime吞吐 | 无预热时延 | 预热后时延 |
-| ---- | -------------- | -------------- | ------------ | ------------ | -------------- | -------------- | ------------ |
+| ---- | -------------- | -------------- | ------------ | ------------ | -------------- | -------------- |
 | flaggems | {{ flaggems_cpu_time }}       | {{ flaggems_kernel_time }}        | {{ flaggems_cpu_ops }} | {{ flaggems_kernel_ops }} | {{ flaggems_no_warmup_delay }} | {{ flaggems_warmup_delay }} |
 | nativetorch | {{ nativetorch_cpu_time }}       | {{ nativetorch_kernel_time }}        | {{ nativetorch_cpu_ops }} | {{ nativetorch_kernel_ops }} | {{ nativetorch_no_warmup_delay }} | {{ nativetorch_warmup_delay }} |
 

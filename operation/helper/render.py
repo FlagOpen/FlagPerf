@@ -14,7 +14,7 @@ else:
 # 用这个dict 从日志中提取数据
 regex_dict = {
     # Core evaluation results
-    'correctness': r'Correctness with CPU golden Reference(.*)',
+    'correctness': r'Correctness with CPU golden Reference:(.*)',
     'tflops': r'cputime=[0-9.]+\s+us,\s+throughput=[0-9.]+\s+op/s,\s+equals to (.*?) TFLOPS\s+',
     'kernel_clock': r'kerneltime=[0-9.]+\s+us,\s+throughput=[0-9.]+\s+op/s,\s+equals to (.*?) TFLOPS\s+',
     'fu_cputime': r'cputime=(.*?),',

@@ -14,7 +14,7 @@ def do_correctness(operation):
         ["find", "/", "-type", "d", "-name", "FlagGems"], text=True).strip()
 
     p = subprocess.Popen(
-        f"cd {os.path.join(gems_repo, 'tests')} && python3 test_specific_ops.py --name {operation}",
+        f"cd {os.path.join(gems_repo, 'tests')} && python3 test_named_ops.py --name {operation}",
         shell=True
         )
     p.wait()
