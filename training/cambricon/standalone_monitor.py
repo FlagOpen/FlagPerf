@@ -96,7 +96,7 @@ def main():
     pwr_thread = threading.Thread(target=run_pwr_cmd, args=(pwr_cmd,5,log_dir + "pwr.log.txt"))
     threads.append(pwr_thread)
     
-    mlu_cmd = "date; paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU590-M9') | awk '{print $3,$4,$5,$9,$10,$11,$25}'; echo \"\""
+    mlu_cmd = "date; paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU' | head -n -1) | awk '{print $3,$4,$5,$9,$10,$11,$25}'; echo \"\""
     mlu_file = open(log_dir + "mlu.log.txt", "w")
     mlu_thread = threading.Thread(target=run_cmd, args=(mlu_cmd, 5, mlu_file))
     threads.append(mlu_thread)

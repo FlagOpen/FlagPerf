@@ -1,0 +1,27 @@
+custom:
+- custom:
+    pcie:
+      numa_mode: "enable"
+      subtests:
+        link_check:
+          subtest_on: True
+          min_pci_generation: 1
+          min_pci_width: 1
+        h2d_d2h_d2d_bidir:
+          subtest_on: True
+          h2d_data_size: 1000000000.0
+          h2d_repeat_num: 200
+          h2d_min_bandwidth: 0
+          h2d_memcpy_type: async
+          d2h_data_size: 1000000000.0
+          d2h_repeat_num: 200
+          d2h_min_bandwidth: 0
+          d2h_memcpy_type: async
+          d2d_data_size: 1000000000.0
+          d2d_repeat_num: 200
+          d2d_min_bandwidth: 0
+          d2d_memcpy_type: async
+          bidir_data_size: 1000000000.0
+          bidir_repeat_num: 200
+          bidir_min_bandwidth: 0
+          bidir_memcpy_type: async
