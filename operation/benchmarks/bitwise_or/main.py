@@ -68,8 +68,8 @@ def main(config, case_config):
 
     m = case_config.Melements
 
-    low = -65535
-    high = 65536
+    low = -32768
+    high = 32767
     a = torch.randint(low, high, (m, 1024, 1024),  dtype=dtype[config.dataformat]) 
     a = (127 * a).to(0)
     b = torch.randint(low, high, (m, 1024, 1024),  dtype=dtype[config.dataformat]) 
