@@ -68,10 +68,10 @@ def main(config, case_config):
 
     m = case_config.Melements
 
-    a = torch.randn(m, 1024, 1024) 
-    a = (127 * a).to(torch.dataformat).to(0)
+    a = torch.randn(m, 1024, 1024,  dtype=dtype[config.dataformat]) 
+    a = (127 * a).to(0)
     b = torch.randn(m, 1024, 1024) 
-    b = (127 * b).to(torch.dataformat).to(0)
+    b = (127 * b).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.bitwise_and, (a, b), host_device_sync, config, case_config)
