@@ -32,14 +32,6 @@ def parse_args():
                         type=str,
                         required=True,
                         help="spectflops of current dataformat")
-    parser.add_argument("--case_name",
-                        type=str,
-                        required=True,
-                        help="op name like mm")
-    parser.add_argument("--spectflops",
-                        type=str,
-                        required=True,
-                        help="spectflops of current dataformat")
 
     parser.add_argument("--dataformat",
                         type=str,
@@ -72,39 +64,9 @@ def main(config, case_config):
         "INT16": torch.int16,
         "BOOL": torch.bool
         }
-    correctness = do_correctness(config.case_name)
-    correctness = correctness == 0
-    dtype = {
-        "FP32": torch.float32,
-        "FP16": torch.float16,
-        "BF16": torch.bfloat16,
-        "INT32": torch.int32,
-        "INT16": torch.int16,
-        "BOOL": torch.bool
-        }
     set_ieee_float32(config.vendor)
 
     m = case_config.Melements
-
-    mmape = []
-
-    torch.manual_seed(42)
-    for i in range(100):
-        a = torch.randn(m) 
-        a = (127 * a).to(torch.dataformat)
-        b = torch.randn(m) 
-        b = (127 * b).to(torch.dataformat)
-
-        r_cpu = torch.bitwise_and(a, b)
-
-        a = a.to(0)
-        b = b.to(0)
-        r_device = torch.bitwise_and(a, b).cpu() 
-        mape = ((r_device != r_cpu).float().sum()/r_cpu.numel()).item()
-
-        mmape.append(mape)
-    
-    mape = torch.mean(torch.tensor(mmape))
 
     a = torch.randn(m, 1024, 1024) 
     a = (127 * a).to(torch.dataformat).to(0)
@@ -126,7 +88,6 @@ if __name__ == "__main__":
     config = parse_args()
     with open("case_config.yaml", "r") as file:
         case_config = yaml.safe_load(file)
-    adapt_torch(config.vendor)
     adapt_torch(config.vendor)
     with open(os.path.join(config.vendor, config.chip, "case_config.yaml"),
               "r") as file:
