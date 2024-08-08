@@ -69,7 +69,10 @@ def main(config, case_config):
     m = case_config.Melements
 
 
-    a = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]) 
+    low = -65535
+    high = 65536
+    a = torch.randint(low, high, (m, 1024, 1024), dtype[config.dataformat])
+
     a = (127 * a).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
