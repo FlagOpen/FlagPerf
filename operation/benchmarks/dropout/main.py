@@ -65,7 +65,7 @@ def main(config, case_config):
     set_ieee_float32(config.vendor)
 
     m = case_config.Melements
-    a = torch.randn(elements * 1024 * 1024, dtype=dtype[config.dataformat]).to(0)
+    a = torch.randn(m * 1024 * 1024, dtype=dtype[config.dataformat]).to(0)
     f = torch.nn.Dropout(p=0.2)
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         f, (a), host_device_sync, config, case_config)
