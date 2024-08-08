@@ -76,6 +76,8 @@ def main(config, case_config):
         # if `Shape' specified in `case_config.yaml', use it
         if case_config.__contains__('Shape') and case_config.Shape is not None:
             shape = case_config.Shape
+    elif config.vendor == 'cambricon':
+        shape = (m, 1024, n)
 
     a = torch.randn(shape, dtype=dtype[config.dataformat], requires_grad=True).to(0)
     print(f'Shape for performance test: {a.shape}')
