@@ -10,6 +10,7 @@ from argparse import ArgumentParser, Namespace
 import yaml
 import sys
 import subprocess
+import math
 
 sys.path.append("..")
 from drivers.utils import *
@@ -69,12 +70,20 @@ def main(config, case_config):
     n = case_config.N
     f = torch.nn.LogSoftmax(dim=1)
 
-    a = torch.randn(m * 1024 , n, dtype=dtype[config.dataformat]).to(0)
+    # if `Shape' specified in `case_config.yaml', use it
+    # otherwise, default shape: (M * 1024, N)
+    if case_config.__contains__('Shape') and case_config.Shape is not None:
+        shape = case_config.Shape
+    else:
+        shape = (m * 1024, n)
+
+    a = torch.randn(shape, dtype=dtype[config.dataformat]).to(0)
+    print(f'Shape for performance test: {a.shape}')
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         f, (a, ), host_device_sync, config, case_config) # 调整为torch.sub
 
-    op2flops = lambda x: x * 4 * m * 1024 * n
+    op2flops = lambda x: x * 4 * math.prod(shape)
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            config.spectflops)
