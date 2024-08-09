@@ -23,7 +23,7 @@ def parse_args():
                         type=int,
                         required=True,
                         help="number of node")
-                        
+
     parser.add_argument("--nproc_per_node",
                         type=int,
                         required=True,
@@ -43,27 +43,21 @@ def parse_args():
                         type=str,
                         required=True,
                         help="log level")
-    
+
     parser.add_argument("--master_port",
                         type=int,
                         required=True,
                         help="master port")
-    
+
     parser.add_argument("--master_addr",
                         type=str,
                         required=True,
                         help="master ip")
-                        
-    parser.add_argument("--host_addr",
-                        type=str,
-                        required=True,
-                        help="my ip")
-    
-    parser.add_argument("--node_rank",
-                        type=int,
-                        required=True,
-                        help="my rank")
-                        
+
+    parser.add_argument("--host_addr", type=str, required=True, help="my ip")
+
+    parser.add_argument("--node_rank", type=int, required=True, help="my rank")
+
     parser.add_argument("--perf_path",
                         type=str,
                         required=True,
@@ -84,40 +78,46 @@ def write_pid_file(pid_file_path, pid_file):
     file_d = open(pid_file_path, "w")
     file_d.write("%s\n" % os.getpid())
     file_d.close()
-    
+
 
 if __name__ == "__main__":
     config = parse_args()
-    
-    logfile = os.path.join(config.log_dir, config.case_name, config.host_addr + "_noderank" + str(config.node_rank), "container_main.log.txt")
+
+    logfile = os.path.join(
+        config.log_dir, config.case_name,
+        config.host_addr + "_noderank" + str(config.node_rank),
+        "container_main.log.txt")
     logger.remove()
     logger.add(logfile, level=config.log_level)
     logger.add(sys.stdout, level=config.log_level)
-    
+
     logger.info(config)
     write_pid_file(config.log_dir, "start_base_task.pid")
-    logger.info("Success Writing PID file at " + os.path.join(config.log_dir, "start_base_task.pid"))
-    
-    op, dataformat, oplib, chip = config.case_name.split(":")
-    
+    logger.info("Success Writing PID file at " +
+                os.path.join(config.log_dir, "start_base_task.pid"))
+
+    op, dataformat, spectflops, oplib, chip = config.case_name.split(":")
+
     case_dir = os.path.join(config.perf_path, "benchmarks", op)
     start_cmd = "cd " + case_dir + ";python3 main.py "
     start_cmd += " --vendor=" + config.vendor
+    start_cmd += " --case_name=" + op
+    start_cmd += " --spectflops=" + spectflops
     start_cmd += " --dataformat=" + dataformat
     start_cmd += " --oplib=" + oplib
     start_cmd += " --chip=" + chip
-    
-    script_log_file = os.path.join(os.path.dirname(logfile), "operation.log.txt")
+
+    script_log_file = os.path.join(os.path.dirname(logfile),
+                                   "operation.log.txt")
 
     logger.info(start_cmd)
     logger.info(script_log_file)
-    
+
     f = open(script_log_file, "w")
     p = subprocess.Popen(start_cmd,
                          shell=True,
                          stdout=f,
                          stderr=subprocess.STDOUT)
     p.wait()
-    f.close() 
-    logger.info("Task Finish")    
-  
+    f.close()
+    logger.info("Task Finish")

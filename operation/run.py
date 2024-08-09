@@ -43,8 +43,7 @@ def check_cluster_health():
     if len(bad_hosts) != 0:
         for bad_host in bad_hosts:
             RUN_LOGGER.error("Check " + bad_host + " failed. ssh command exit "
-                                                   "with: " + str(
-                bad_hosts[bad_host]))
+                             "with: " + str(bad_hosts[bad_host]))
         RUN_LOGGER.error("Check hosts in the cluster......[FAILED] [EXIT]")
         sys.exit(3)
     RUN_LOGGER.info("Check hosts in the cluster......[SUCCESS]")
@@ -65,7 +64,8 @@ def check_cluster_deploy_path(dp_path):
                     "...[SUCCESS]")
 
 
-def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes, config):
+def prepare_docker_image_cluster(dp_path, image_mgr, framework, nnodes,
+                                 config):
     '''Prepare docker image in registry and in the cluster.
     '''
     vendor = config.VENDOR
@@ -201,9 +201,9 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
     nnodes = len(config.HOSTS)
     framework = config.CASES[case]
 
-    op, df, oplib, chip = case.split(":")
-    env_dir = os.path.join(
-        config.FLAGPERF_PATH, "benchmarks", op, config.VENDOR, chip)
+    op, df, spectflops, oplib, chip = case.split(":")
+    env_dir = os.path.join(config.FLAGPERF_PATH, "benchmarks", op,
+                           config.VENDOR, chip)
 
     env_shell = os.path.join(env_dir, "env.sh")
     req_file = os.path.join(env_dir, "requirements.txt")
@@ -232,7 +232,8 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
     start_cmd += " \""
 
     RUN_LOGGER.debug("Run cmd in the cluster to start tasks, cmd=" + start_cmd)
-    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15, "base")
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(
+        start_cmd, nnodes, 15, "base")
     # Wait a moment for starting tasks.
     time.sleep(60)
 
@@ -254,7 +255,7 @@ def wait_for_finish(dp_path, container_name, pid_file_path, nnodes):
         if len(bad_hosts) == nnodes:
             break
         time.sleep(10)
-        
+
 
 def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
                                    image_name, nnodes, config):
@@ -305,8 +306,8 @@ def get_valid_cases(config):
             "No valid cases found in config/host.yaml because config.CASES is not a dict...[EXIT]"
         )
         sys.exit(4)
-    RUN_LOGGER.debug(
-        "Check configs of all test cases: " + ",".join(config.CASES))
+    RUN_LOGGER.debug("Check configs of all test cases: " +
+                     ",".join(config.CASES))
     valid_cases = []
     cases_config_error = []
     for case in config.CASES:
@@ -337,19 +338,18 @@ def collect_and_merge_logs(curr_log_path, cases, nnodes):
                              ",".join(failed_hosts))
             get_all = False
         else:
-            RUN_LOGGER.info("Case " + case + 
-                            ", get all logs in dir: " + case_log_dir)
+            RUN_LOGGER.info("Case " + case + ", get all logs in dir: " +
+                            case_log_dir)
 
     if get_all:
         RUN_LOGGER.info("Congrats! See all logs in " + curr_log_path)
     else:
         RUN_LOGGER.warning("Sorry! Not all logs have been collected in " +
                            curr_log_path)
-                           
+
 
 def summary_logs(config, case_log_dir):
-    analysis_module_path = os.path.join("vendors",
-                                        config.VENDOR,
+    analysis_module_path = os.path.join("vendors", config.VENDOR,
                                         config.VENDOR + "_analysis")
     analysis_module_path = analysis_module_path.replace("/", ".")
     analysis_module = importlib.import_module(analysis_module_path)
@@ -361,29 +361,34 @@ def summary_logs(config, case_log_dir):
         result[host] = {}
         monitor_log_dir = os.path.join(case_log_dir,
                                        host + "_noderank" + str(noderank))
-        
-        # vendor monitor results like temp/power        
+
+        # vendor monitor results like temp/power
         vendor_monitor_path = os.path.join(monitor_log_dir,
                                            config.VENDOR + "_monitor.log")
         vendor_log = analysis_log(vendor_monitor_path, config)
         result[host]["vendor"] = vendor_log
-        
-        
+
         # system monitor results like CPU/MEM/POWER
         for index in ["cpu", "mem", "pwr"]:
-            monitor_path = os.path.join(monitor_log_dir, index + "_monitor.log")
+            monitor_path = os.path.join(monitor_log_dir,
+                                        index + "_monitor.log")
             with open(monitor_path, 'r') as file:
-                sys_log = [float(line.split("\t")[1][:-1]) for line in file if "\t" in line]
+                sys_log = [
+                    float(line.split("\t")[1][:-1]) for line in file
+                    if "\t" in line
+                ]
             result[host][index] = sys_log
-        
+
         # FlagPerf Result
-        flagperf_result_path = os.path.join(monitor_log_dir, "operation.log.txt")
+        flagperf_result_path = os.path.join(monitor_log_dir,
+                                            "operation.log.txt")
         with open(flagperf_result_path, 'r') as file:
-            key_lines = [line.strip() for line in file if 'FlagPerf Result' in line]
+            key_lines = [
+                line.strip() for line in file if 'FlagPerf Result' in line
+            ]
         result[host]["flagperf"] = key_lines
-        
+
         noderank += 1
-        
 
     return result
 
@@ -411,7 +416,7 @@ def analysis_log(key_logs):
             pwr_series = key_logs[host]["vendor"]["power"][node]
             kmeans_series = []
             for item in pwr_series:
-                if(np.max(pwr_series)-item) <= (item-np.min(pwr_series)):
+                if (np.max(pwr_series) - item) <= (item - np.min(pwr_series)):
                     kmeans_series.append(item)
             pwr_series = kmeans_series
             RUN_LOGGER.info(
@@ -425,7 +430,8 @@ def analysis_log(key_logs):
             temp_series = key_logs[host]["vendor"]["temp"][node]
             kmeans_series = []
             for item in temp_series:
-                if(np.max(temp_series)-item) <= (item-np.min(temp_series)):
+                if (np.max(temp_series) - item) <= (item -
+                                                    np.min(temp_series)):
                     kmeans_series.append(item)
             temp_series = kmeans_series
             RUN_LOGGER.info(
@@ -468,7 +474,6 @@ def analysis_log(key_logs):
                         np.std(mem_series) * 100 /
                         key_logs[host]["vendor"]["max_mem"], 3)))
         noderank += 1
-    
 
 
 def print_welcome_msg():
@@ -536,7 +541,8 @@ def main():
 
         # Prepare docker image.
         image_mgr = image_manager.ImageManager(
-            "flagperf-operation-" + config.VENDOR + "-" + framework, "t_" + VERSION)
+            "flagperf-operation-" + config.VENDOR + "-" + framework,
+            "t_" + VERSION)
         image_name = image_mgr.repository + ":" + image_mgr.tag
         nnodes = len(config.HOSTS)
         RUN_LOGGER.info("=== 2.1 Prepare docker image:" + image_name + " ===")
@@ -566,21 +572,20 @@ def main():
         RUN_LOGGER.info("-== Testcase " + case + " starts ==-")
         RUN_LOGGER.info("1) Prepare container environments in cluster...")
         case_log_dir = os.path.join(curr_log_path, case)
-        if not prepare_containers_env_cluster(dp_path, case_log_dir,
-                                              container_name, image_name,
-                                              nnodes, config):
+        if not prepare_containers_env_cluster(
+                dp_path, case_log_dir, container_name, image_name, nnodes,
+                config):
             RUN_LOGGER.error("1) Prepare container environments in cluster"
                              "...[FAILED]. Ignore case " + case)
             continue
         RUN_LOGGER.info("2) Start tasks in the cluster...")
 
-        start_tasks_in_cluster(dp_path, container_name, config,
-                               base_args, curr_log_path, case)
+        start_tasks_in_cluster(dp_path, container_name, config, base_args,
+                               curr_log_path, case)
 
         # Wait until start_xxx_task.py finished.
         RUN_LOGGER.info("3) Waiting for tasks end in the cluster...")
-        pid_file_path = os.path.join(
-            log_dir_container, "start_base_task.pid")
+        pid_file_path = os.path.join(log_dir_container, "start_base_task.pid")
         wait_for_finish(dp_path, container_name, pid_file_path, nnodes)
 
         RUN_LOGGER.info("3) Training tasks end in the cluster...")
@@ -598,7 +603,7 @@ def main():
     RUN_LOGGER.debug(key_logs)
     jsonfile = os.path.join(dp_path, curr_log_path, "detail_result.json")
     json.dump(key_logs, open(jsonfile, "w"))
-    
+
     RUN_LOGGER.info("3) analysis logs")
     analysis_log(key_logs)
 

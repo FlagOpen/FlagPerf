@@ -75,10 +75,11 @@ class Daemon:
 
         def mlu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "cnmon |grep 'Default'|awk '{print $3,$4,$5,$9,$10,$11,$2}' && cnmon |grep 'MLU590-M9'|awk '{print $9}';"
+            cmd = "paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU' | head -n -1) | awk '{print $3,$4,$5,$9,$10,$11,$25}'; echo \"\""
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,
+                                       executable="/bin/bash",
                                        stderr=subprocess.STDOUT,
                                        encoding='utf-8')
             try:
@@ -211,7 +212,7 @@ def parse_args():
                        type=str,
                        metavar='[log_path]',
                        required=False,
-                       default='./logs/',
+                       default='/tmp/',
                        help='log path')
     args = parse.parse_args()
     return args
