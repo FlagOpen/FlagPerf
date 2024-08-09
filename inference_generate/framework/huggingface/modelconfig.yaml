@@ -1,0 +1,9 @@
+DATAPATH: "/home/daliwang/FlagPerf/newinference/inference_generate/data/Xsum/dev.csv"
+MODELPATH: "/raid/llama3_infer/llama3_70b_hf"
+DEVICE: "cuda"
+FRAMEWORK: "torch"
+INFER_API: "transformers"
+GPU_COMPUTE_EXCUTE: ["nsys","profile","--stat=true","--force-overwrite=true","--output","nsys_profile","python","timemonitor.py"]
+GPU_ANALYSIS: ["nsys","stats","-f","csv","--force-overwrite","-o","./result/file.csv","nsys_profile.nsys-rep"]
+POWER_ANALYSIS: ['nvidia-smi', '--query-gpu=power.draw', '--format=csv,noheader,nounits']
+UTIL_ANALYSIS: ['nvidia-smi','--query-gpu=utilization.gpu','--format=csv,noheader,nounits']
