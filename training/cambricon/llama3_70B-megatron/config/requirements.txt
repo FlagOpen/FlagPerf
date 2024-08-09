@@ -1,0 +1,4 @@
+regex==2024.5.15
+schedule==1.2.2
+accelerate==0.31.0
+transformers==4.40.1

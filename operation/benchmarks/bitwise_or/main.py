@@ -4,12 +4,12 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import torch
-import torch.distributed as dist
 import os
 import time
 from argparse import ArgumentParser, Namespace
 import yaml
 import sys
+import subprocess
 
 sys.path.append("..")
 from drivers.utils import *
@@ -23,6 +23,14 @@ def parse_args():
                         type=str,
                         required=True,
                         help="vendor name like nvidia")
+    parser.add_argument("--case_name",
+                        type=str,
+                        required=True,
+                        help="op name like mm")
+    parser.add_argument("--spectflops",
+                        type=str,
+                        required=True,
+                        help="spectflops of current dataformat")
 
     parser.add_argument("--dataformat",
                         type=str,
@@ -45,9 +53,18 @@ def parse_args():
 
 
 def main(config, case_config):
+    correctness = do_correctness(config.case_name)
+    correctness = correctness == 0
+    dtype = {
+        "FP32": torch.float32,
+        "FP16": torch.float16,
+        "BF16": torch.bfloat16,
+        "INT32": torch.int32,
+        "INT16": torch.int16,
+        "BOOL": torch.bool
+        }
     set_ieee_float32(config.vendor)
 
-    print("Test Correctness with 1M-times smaller operation")
     m = case_config.Melements
 
     mmape = []
@@ -69,21 +86,20 @@ def main(config, case_config):
         mmape.append(mape)
     
     mape = torch.mean(torch.tensor(mmape))
-    mape_std = torch.std(torch.tensor(mmape))
 
     a = torch.randn(m, 1024, 1024) 
-    a = (127 * a).to(torch.int8).to(0)
+    a = (127 * a).to(config.dataformat).to(0)
     b = torch.randn(m, 1024, 1024) 
-    b = (127 * b).to(torch.int8).to(0)
+    b = (127 * b).to(config.dataformat).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.bitwise_or, (a, b), host_device_sync, config, case_config)
 
-    op2flops = lambda x: 0.0
+    op2flops = lambda x: x * m * 1024 * 1024
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           case_config.SPECTFLOPS)
-    print_result(config, "bitwise_or", *perf_result, mape, mape_std,
+                           config.spectflops)
+    print_result(config, config.case_name, *perf_result, correctness,
                  latency_nowarm, latency_warm)
 
 
@@ -91,6 +107,7 @@ if __name__ == "__main__":
     config = parse_args()
     with open("case_config.yaml", "r") as file:
         case_config = yaml.safe_load(file)
+    adapt_torch(config.vendor)
     with open(os.path.join(config.vendor, config.chip, "case_config.yaml"),
               "r") as file:
         case_config_vendor = yaml.safe_load(file)

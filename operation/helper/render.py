@@ -14,14 +14,12 @@ else:
 # 用这个dict 从日志中提取数据
 regex_dict = {
     # Core evaluation results
-    'average_relative_error': r'Relative error with FP64-CPU: mean=(.*?),',
+    'correctness': r'Correctness with CPU golden Reference(.*)',
     'tflops': r'cputime=[0-9.]+\s+us,\s+throughput=[0-9.]+\s+op/s,\s+equals to (.*?) TFLOPS\s+',
     'kernel_clock': r'kerneltime=[0-9.]+\s+us,\s+throughput=[0-9.]+\s+op/s,\s+equals to (.*?) TFLOPS\s+',
     'fu_cputime': r'cputime=(.*?),',
     'kerneltime': r'FLOPS utilization: cputime=.*kerneltime=(.*?)\s+',
     # Other evaluation results
-    #'relative_error': r' Relative error with FP64-CPU: mean=.*, std=(.*?)$',
-    'relative_error': r'Relative error with FP64-CPU: mean=.*, std=([0-9.e-]+)\s+',
     'cpu_time': r'cputime=(.*?) us',
     'kernel_time': r'kerneltime=(.*?) us',
     'cpu_ops': r'cputime=.*, throughput=(.*?) op/s',
@@ -45,14 +43,12 @@ regex_dict = {
 # 用这个dict格式化生成最后的数据
 format_dict = {
     # Core evaluation results
-    'average_relative_error': ["2E"],
+    'correctness': None,
     'tflops': ["TFLOPS"],
     'kernel_clock': ["TFLOPS"],
     'fu_cputime': None,
     'kerneltime': None,
     # Other evaluation results
-    #'relative_error': r' Relative error with FP64-CPU: mean=.*, std=(.*?)$',
-    'relative_error': ["2E"],
     'cpu_time': ["us"],
     'kernel_time': ["us"],
     'cpu_ops': ["2F", 'op/s'],
@@ -156,7 +152,7 @@ if __name__ == "__main__":
                 extracted_values.update(data_values)
                 with open(data_file, 'w') as file:
                     file.write(str(extracted_values))
-                if len(extracted_values.keys()) >= 46:
+                if len(extracted_values.keys()) >= 44:
                     render(extracted_values, readme_file_path)
             else:
                 # Write extracted_values to data file
