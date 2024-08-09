@@ -68,7 +68,7 @@ def main(config, case_config):
     a = torch.randn(m * 1024 * 1024, dtype=dtype[config.dataformat]).to(0)
     f = torch.nn.Dropout(p=0.2)
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        f, (a), host_device_sync, config, case_config)
+        f, (a, ), host_device_sync, config, case_config)
 
     op2flops = lambda x: x * m * 1024 * 1024
 
