@@ -1,6 +1,6 @@
 bs: 20
 channel: 6
-hiddensize: 1048576
+hiddensize: 65536
 WARMUP: 100
 ITERS: 50000
 KERNELWARMUP: 10

@@ -68,7 +68,7 @@ def main(config, case_config):
     channel = case_config.channel
     hiddensize = case_config.hiddensize
     a = torch.randn(bs, channel,  hiddensize, dtype=dtype[config.dataformat], requires_grad=True).to(0)
-    f = torch.nn.LayerNorm([channel, hiddensize])
+    f = torch.nn.LayerNorm([channel, hiddensize]).to(0)
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         f, (a, ), host_device_sync, config, case_config)
 
