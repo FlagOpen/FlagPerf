@@ -67,13 +67,13 @@ def main(config, case_config):
     set_ieee_float32(config.vendor)
 
     Melements = case_config.Melements
+    # default shape: (M, 1024, 1024)
+    shape = (Melements, 1024, 1024)
 
-    # if `Shape' specified in `case_config.yaml', use it
-    # otherwise, default shape: (M, 1024, 1024)
-    if case_config.__contains__('Shape') and case_config.Shape is not None:
-        shape = case_config.Shape
-    else:
-        shape = (Melements, 1024, 1024)
+    if config.vendor == 'kunlunxin':
+        # if `Shape' specified in `case_config.yaml', use it
+        if case_config.__contains__('Shape') and case_config.Shape is not None:
+            shape = case_config.Shape
 
     a = torch.randn(shape, dtype=dtype[config.dataformat]).to(0)
     print(f'Shape for performance_test: {a.shape}')
