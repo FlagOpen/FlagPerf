@@ -9,7 +9,7 @@
   - OS版本：Ubuntu 20.04
   - OS kernel版本: 5.4.0-26-generic
   - 加速卡驱动版本：4.0.25
-  - Docker镜像和版本：iregistry.baidu-int.com/xmlir/xmlir_ubuntu_2004_x86_64:v0.27
+  - Docker镜像和版本：iregistry.baidu-int.com/xmlir/xmlir_ubuntu_2004_x86_64:v0.29
   - 训练框架版本：xmlir
   - 训练编译器版本：xacc
   - 依赖软件版本：pytorch-2.0.1
@@ -36,7 +36,7 @@
 | 任务类别    | 自然语言理解                |                               |
 | 模型      | baichuan2_13b         |                               |
 | 数据集     | openwebtext           | 如无特殊说明，训练前1亿个token            |
-| 数据精度    | bf16                  |                               |
+| 数据精度    | fp16                  |                               |
 | 超参修改    | fix_hp,见“性能指标”        | 运行必要特殊超参，例如需要改小seqlength避免OOM |
 | 硬件设备简称  | nvidia H800           |                               |
 | 硬件存储使用  | mem,见“性能指标”           | 通常称为“显存”,单位为GiB               |
@@ -48,3 +48,4 @@
 | 配置              | fix_hp                     | token/p/s | loss | mem   | MFU   |
 | --------------- | -------------------------- | --------- | ---- | ----- | ----- |
 | R300 1机1卡（1x1） | GAS=1 | --      | -- | -- | -- |
+| R300 2机8卡（2x8） | GAS=64 | --      | -- | -- | -- |
