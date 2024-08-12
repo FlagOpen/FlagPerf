@@ -36,7 +36,7 @@ os.chdir(cwd)
 
 
 # Common arguments
-theoryflops = 312000000000000.0
+theoryflops = 304277000000000.0
 
 # pretrain arguments
 pretrain_per_device_train_batch_size = 32
