@@ -70,12 +70,12 @@ def main(config, case_config):
     target = torch.empty(bs, dtype=torch.int64).random_(elements).to(0)
     f = torch.nn.CrossEntropyLoss()
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        f, (a, target), host_device_sync, config, case_config)
+        f, (a, target), host_device_sync, config, case_config, bp=True)
 
     op2flops = lambda x: x * bs * elements * 3
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           config.spectflops)
+                           config.spectflops, bp=True)
     print_result(config, config.case_name, *perf_result, correctness,
                  latency_nowarm, latency_warm)
 

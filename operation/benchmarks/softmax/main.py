@@ -68,16 +68,16 @@ def main(config, case_config):
     Melements = case_config.Melements
 
 
-    a = torch.randn(Melements, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
+    a = torch.randn(Melements, 1024, 1024, dtype=dtype[config.dataformat], requires_grad=True).to(0)
     f = torch.nn.Softmax(dim=1).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        f, (a, ), host_device_sync, config, case_config)
+        f, (a, ), host_device_sync, config, case_config, bp=True)
 
     op2flops = lambda x: x * 3 * Melements * 1024 * 1024
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           config.spectflops)
+                           config.spectflops, bp=True)
     print_result(config, config.case_name, *perf_result, correctness,
                  latency_nowarm, latency_warm)
 
