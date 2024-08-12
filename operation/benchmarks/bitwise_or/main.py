@@ -10,7 +10,6 @@ from argparse import ArgumentParser, Namespace
 import yaml
 import sys
 import subprocess
-import subprocess
 
 sys.path.append("..")
 from drivers.utils import *
