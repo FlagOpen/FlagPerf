@@ -24,7 +24,7 @@ def do_correctness(operation):
 
 def do(exec_func, exec_args, bp=False):
     if bp:
-        _tensor = exec_func(*exec_args)
+        _tensor = exec_func(*exec_args).sum()
         _tensor.backward()
     else:
         _tensor = exec_func(*exec_args)
