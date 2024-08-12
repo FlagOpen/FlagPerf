@@ -67,25 +67,12 @@ def main(config, case_config):
 
     m = case_config.Melements
 
-    mmape = []
 
-    torch.manual_seed(42)
-    for i in range(100):
-        a = torch.randn(m) 
-        a = (127 * a).to(torch.int8)
+    low = -32768
+    high = 32768
+    a = torch.randint(low, high, (m, 1024, 1024), dtype=dtype[config.dataformat])
 
-        r_cpu = torch.bitwise_not(a)
-
-        a = a.to(0)
-        r_device = torch.bitwise_not(a).cpu() 
-        mape = ((r_device != r_cpu).float().sum()/r_cpu.numel()).item()
-
-        mmape.append(mape)
-    
-    mape = torch.mean(torch.tensor(mmape))
-
-    a = torch.randn(m, 1024, 1024) 
-    a = (127 * a).to(config.dataformat).to(0)
+    a = (127 * a).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.bitwise_not, (a, ), host_device_sync, config, case_config)
