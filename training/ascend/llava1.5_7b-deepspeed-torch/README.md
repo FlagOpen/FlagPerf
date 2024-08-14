@@ -9,7 +9,7 @@
 - ##### Atlas 800T A2软件环境
    - OS版本：Ubuntu 22.04 LTS
    - OS kernel版本: 5.15.0-25-generic     
-   - 加速卡驱动版本：24.1.rc2.b020
+   - 加速卡驱动版本：24.1.rc2
    - Docker 版本：此评测样例无需docker环境
    - 训练框架版本：deepspeed 0.13.1
 
