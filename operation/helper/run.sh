@@ -83,7 +83,7 @@ main() {
         rm "${result_dir}/data.json"
     fi
     # 调用修改配置函数
-    case_type=("flaggems" "nativetorch")
+    case_type=("nativetorch" "flaggems")
     for case_type in ${case_type[@]}
     do
 	cd "$OPERATIONDIR"

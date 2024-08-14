@@ -66,31 +66,13 @@ def main(config, case_config):
     set_ieee_float32(config.vendor)
 
     m = case_config.Melements
-
-    mmape = []
-
-    torch.manual_seed(42)
-    for i in range(100):
-        a = torch.randn(m) 
-        a = (127 * a).to(torch.dataformat)
-        b = torch.randn(m) 
-        b = (127 * b).to(torch.dataformat)
-
-        r_cpu = torch.bitwise_and(a, b)
-
-        a = a.to(0)
-        b = b.to(0)
-        r_device = torch.bitwise_and(a, b).cpu() 
-        mape = ((r_device != r_cpu).float().sum()/r_cpu.numel()).item()
-
-        mmape.append(mape)
     
-    mape = torch.mean(torch.tensor(mmape))
-
-    a = torch.randn(m, 1024, 1024) 
-    a = (127 * a).to(torch.dataformat).to(0)
-    b = torch.randn(m, 1024, 1024) 
-    b = (127 * b).to(torch.dataformat).to(0)
+    low = -32768
+    high = 32768
+    a = torch.randint(low, high, (m, 1024, 1024),  dtype=dtype[config.dataformat]) 
+    a = (127 * a).to(0)
+    b = torch.randint(low, high, (m, 1024, 1024),  dtype=dtype[config.dataformat]) 
+    b = (127 * b).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.bitwise_and, (a, b), host_device_sync, config, case_config)
