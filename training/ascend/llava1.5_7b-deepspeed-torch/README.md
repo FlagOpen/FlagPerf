@@ -26,8 +26,8 @@
 ### 运行情况
 
 * 输入批尺寸
-  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_A800x1x8.py中所写，在本case中pretrain阶段为32，finetune阶段为16
-  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_A800x1x8.py中所写，在本case中默认为2048。这里需注意，llava1.5实际训练时，实际序列长度并非都为2048，本case在计算MFU时，统计每条数据进入模型的实际序列长度求取平均值作为实际序列长度
+  1. local_batchsize(micro_batchsize)，简写为LBS，即实际进入模型的张量批尺寸，为config_Atlas800TA2x1x8.py中所写，在本case中pretrain阶段为32，finetune阶段为16
+  2. seqlength(max_position_embedding)，简写为MPE，即实际进入模型的序列长度，为config_Atlas800TA2x1x8.py中所写，在本case中默认为2048。这里需注意，llava1.5实际训练时，实际序列长度并非都为2048，本case在计算MFU时，统计每条数据进入模型的实际序列长度求取平均值作为实际序列长度
   3. gradient_accumulate_steps，简写为GAS，即梯度累加步数，为config_A800x1x8中所写，在本case中默认为1
   4. global_batchsize恒等于local_batchsize\*gradient_accumulate_steps\*data_parallel_size，简写为GBS。在本case中，只存在数据并行，因此data_parallel_size=world_size
 
@@ -45,7 +45,7 @@
 | 数据集       | LAION-CC-SBU、llava的混合指令微调数据                | |
 | 数据精度     |bf16                        |                                    |
 | 超参修改     | fix_hp,见“性能指标”        | 运行必要特殊超参 |
-| 硬件设备简称 | Ascend 800T A2    |                                    |
+| 硬件设备简称 | Atlas 800T A2    |                                    |
 | 硬件存储使用 | mem,见“性能指标”           | 通常称为“显存”,单位为GiB           |
 | 计算使用率 | MFU,见“性能指标”           | 参见PaLM论文定义 |
 | **吞吐量**   | **token/p/s,见“性能指标”** | 平均单卡每秒处理的token数          |
