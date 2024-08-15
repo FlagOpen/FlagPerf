@@ -1,5 +1,8 @@
 {
-    "gradient_accumulation_steps": 1,
+    "gradient_accumulation_steps": 64,
+    "bf16": {
+        "enabled": false
+    },
     "fp16": {
         "enabled": true
     }
