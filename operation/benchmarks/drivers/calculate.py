@@ -21,11 +21,17 @@ def do_correctness(operation):
 
     return p.returncode
 
+grad_outputs = None
 
 def do(exec_func, exec_args, bp=False):
+    global grad_outputs
     if bp:
+        import torch
         _tensor = exec_func(*exec_args).sum()
-        _tensor.backward()
+        if grad_outputs is None:
+            grad_outputs = torch.zeros_like(_tensor)
+        inputs = list(filter(lambda x: x.requires_grad, [*exec_args]))
+        _grad = torch.autograd.grad(outputs=_tensor, inputs=inputs, grad_outputs=grad_outputs)
     else:
         _tensor = exec_func(*exec_args)
 
