@@ -20,7 +20,7 @@
 
 # 算子库版本
 
-https://github.com/FlagOpen/FlagGems. Commit ID: 801377f03ba4649bc2d839ff34e38be66ee8a633
+https://github.com/FlagOpen/FlagGems. Commit ID: 3c10679326b32ea5f037db50cc397d41c0ff1934
 
 # 评测结果
 
@@ -28,26 +28,26 @@ https://github.com/FlagOpen/FlagGems. Commit ID: 801377f03ba4649bc2d839ff34e38be
 
 | 评测项  | correctness | TFLOPS(cpu wall clock) | TFLOPS(kernel clock) | FU(FLOPS Utilization)-cputime | FU-kerneltime |
 | ---- | -------------- | -------------- | ------------ | ------ | ----- |
-| flaggems | True    | 0.37TFLOPS       | 0.37TFLOPS        | 1.92% | 1.9% |
-| nativetorch | True    | 0.36TFLOPS      | 0.36TFLOPS      | 1.86%      | 1.85%    |
+| flaggems | True    | 0.04TFLOPS       | 0.19TFLOPS        | 0.01% | 0.06% |
+| nativetorch | True    | 0.14TFLOPS      | 0.17TFLOPS      | 0.04%      | 0.05%    |
 
 ## 其他评测结果
 
 | 评测项  | cputime | kerneltime | cputime吞吐 | kerneltime吞吐 | 无预热时延 | 预热后时延 |
-| ---- | -------------- | -------------- | ------------ | ------------ | -------------- | -------------- | 
-| flaggems | 2872.74us       | 2894.85us        | 348.1op/s | 345.44op/s | 1118567.39us | 2940.77us |
-| nativetorch | 2961.98us       | 2982.91us        | 337.61op/s | 335.24op/s | 22158.57us | 2983.21us |
+| ---- | -------------- | -------------- | ------------ | ------------ | -------------- | -------------- |
+| flaggems | 52.9us       | 11.26us        | 18901.85op/s | 88778.41op/s | 16327512.33us | 73.89us |
+| nativetorch | 15.44us       | 12.29us        | 64751.84op/s | 81380.21op/s | 148089.35us | 37.16us |
 
 ## 能耗监控结果
 
 | 监控项  | 系统平均功耗  | 系统最大功耗  | 系统功耗标准差 | 单机TDP | 单卡平均功耗 | 单卡最大功耗 | 单卡功耗标准差 | 单卡TDP |
 | ---- | ------- | ------- | ------- | ----- | ------------ | ------------ | ------------- | ----- |
-| nativetorch监控结果 | 1599.0W | 1716.0W | 117.0W   | /     | 278.13W       | 281.0W      | 4.0W        | 400W  |
-| flaggems监控结果 | 1599.0W | 1716.0W | 117.0W   | /     | 277.96W       | 282.0W      | 3.28W        | 400W  |
+| nativetorch监控结果 | 1482.0W | 1560.0W | 63.69W   | /     | 165.24W       | 178.0W      | 13.78W        | 400W  |
+| flaggems监控结果 | 1482.0W | 1560.0W | 63.69W   | /     | 164.88W       | 177.0W      | 15.11W        | 400W  |
 
 ## 其他重要监控结果
 
 | 监控项  | 系统平均CPU占用 | 系统平均内存占用 | 单卡平均温度 | 单卡最大显存占用 |
 | ---- | --------- | -------- | ------------ | -------------- |
-| nativetorch监控结果 | 0.691%    | 2.294%   | 46.75°C       | 12.347%        |
-| flaggems监控结果 | 0.747%    | 2.302%   | 46.64°C       | 12.954%        |
+| nativetorch监控结果 | 1.982%    | 1.613%   | 37.37°C       | 2.519%        |
+| flaggems监控结果 | 1.325%    | 1.548%   | 37.92°C       | 87.752%        |
