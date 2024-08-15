@@ -21,8 +21,22 @@ def do_correctness(operation):
 
     return p.returncode
 
+grad_outputs = None
 
-def do_test(exec_func, exec_args, sync_func, config, case_config):
+def do(exec_func, exec_args, bp=False):
+    global grad_outputs
+    if bp:
+        import torch
+        _tensor = exec_func(*exec_args).sum()
+        if grad_outputs is None:
+            grad_outputs = torch.zeros_like(_tensor)
+        inputs = list(filter(lambda x: x.requires_grad, [*exec_args]))
+        _grad = torch.autograd.grad(outputs=_tensor, inputs=inputs, grad_outputs=grad_outputs)
+    else:
+        _tensor = exec_func(*exec_args)
+
+
+def do_test(exec_func, exec_args, sync_func, config, case_config, bp=False):
     sync_func(config.vendor)
     start_latency_nowarm = time.perf_counter_ns()
     _tensor = exec_func(*exec_args)
@@ -31,7 +45,7 @@ def do_test(exec_func, exec_args, sync_func, config, case_config):
     latency_nowarm = time.perf_counter_ns() - start_latency_nowarm
 
     for _ in range(case_config.WARMUP):
-        _tensor = exec_func(*exec_args)
+        do(exec_func, exec_args, bp)
 
     sync_func(config.vendor)
     start_latency_warm = time.perf_counter_ns()
@@ -42,14 +56,14 @@ def do_test(exec_func, exec_args, sync_func, config, case_config):
 
     start_time = time.perf_counter()
     for _ in range(case_config.ITERS):
-        _tensor = exec_func(*exec_args)
+        do(exec_func, exec_args, bp)
 
     sync_func(config.vendor)
     end_time = time.perf_counter()
 
     cputime_raw = end_time - start_time
 
-    kerneltime_raw = kernel_bench(lambda: exec_func(*exec_args),
+    kerneltime_raw = kernel_bench(lambda: do(exec_func, exec_args, bp),
                                   warmup=case_config.KERNELWARMUP,
                                   rep=case_config.KERNELITERS,
                                   return_mode="median")
@@ -59,7 +73,7 @@ def do_test(exec_func, exec_args, sync_func, config, case_config):
                                                     2), cputime, kerneltime
 
 
-def cal_perf(cputime, kerneltime, op2flops, spectflops):
+def cal_perf(cputime, kerneltime, op2flops, spectflops, bp=False):
     spectflops = float(spectflops)
     ctus = round(cputime * 1E6, 2)
     ktus = round(kerneltime * 1E6, 2)
@@ -67,8 +81,8 @@ def cal_perf(cputime, kerneltime, op2flops, spectflops):
     cps = 1.0 / cputime
     kps = 1.0 / kerneltime
 
-    cflops = op2flops(cps)
-    kflops = op2flops(kps)
+    cflops = op2flops(cps) * (3.0 if bp else 1.0)
+    kflops = op2flops(kps) * (3.0 if bp else 1.0)
     ctflops = round(cflops / 1E12, 2)
     ktflops = round(kflops / 1E12, 2)
 

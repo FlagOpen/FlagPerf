@@ -75,18 +75,18 @@ def main(config, case_config):
         if case_config.__contains__('Shape') and case_config.Shape is not None:
             shape = case_config.Shape
 
-    a = torch.randn(shape, dtype=dtype[config.dataformat]).to(0)
+    a = torch.randn(shape, dtype=dtype[config.dataformat], requires_grad=True).to(0)
     print(f'Shape for performance_test: {a.shape}')
 
     f = torch.nn.Softmax(dim=1).to(0)
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        f, (a, ), host_device_sync, config, case_config)
+        f, (a, ), host_device_sync, config, case_config, bp=True)
 
     op2flops = lambda x: x * 3 * math.prod(shape)
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           config.spectflops)
+                           config.spectflops, bp=True)
     print_result(config, config.case_name, *perf_result, correctness,
                  latency_nowarm, latency_warm)
 
