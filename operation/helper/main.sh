@@ -17,46 +17,63 @@ declare -A spec_tflops_dict
 spec_tflops_dict["BF16"]=312
 spec_tflops_dict["FP16"]=312
 spec_tflops_dict["FP32"]=19.5
+spec_tflops_dict["INT32"]=19.5
+spec_tflops_dict["INT16"]=-1
 #=============================STOP==========================
 
 declare -A op_dict
 # Assign list values to dictionary keys
 # ==========================修改点2: START==========================
-op_dict["sum"]="FP32 FP16 BF16"
-op_dict["sub"]="FP32 FP16 BF16"
-op_dict["mm"]="FP32 FP16 BF16"
 op_dict["abs"]="FP32 FP16 BF16"
 op_dict["add"]="FP32 FP16 BF16"
+op_dict["addmm"]="FP32 FP16 BF16"
 op_dict["all"]="FP32 FP16 BF16"
-#op_dict["bitwise_and"]="INT32 INT16"
-#op_dict["bitwise_not"]="INT32 INT16"
-#op_dict["bitwise_or"]="INT32 INT16"
+op_dict["amax"]="FP32 FP16 BF16"
+op_dict["argmax"]="FP32 FP16 BF16"
+op_dict["bitwise_and"]="INT32 INT16"
+op_dict["bitwise_not"]="INT32 INT16"
+op_dict["bitwise_or"]="INT32 INT16"
 op_dict["bmm"]="FP32 FP16 BF16"
 op_dict["cos"]="FP32 FP16 BF16"
+op_dict["cross_entropy_loss"]="FP32 FP16 BF16"
 op_dict["div"]="FP32 FP16 BF16"
+op_dict["dropout"]="FP32 FP16 BF16"
 op_dict["eq"]="FP32 FP16 BF16"
 op_dict["exp"]="FP32 FP16 BF16"
 op_dict["ge"]="FP32 FP16 BF16"
 op_dict["gelu"]="FP32 FP16 BF16"
+op_dict["group_norm"]="FP32 FP16 BF16"
 op_dict["gt"]="FP32 FP16 BF16"
 op_dict["isinf"]="FP32 FP16 BF16"
 op_dict["isnan"]="FP32 FP16 BF16"
+op_dict["layer_norm"]="FP32 FP16 BF16"
 op_dict["le"]="FP32 FP16 BF16"
-#op_dict["linear"]="FP32 FP16 BF16"
+op_dict["linear"]="FP32 FP16 BF16"
+op_dict["log_softmax"]="FP32 FP16 BF16"
 op_dict["lt"]="FP32 FP16 BF16"
 op_dict["max"]="FP32 FP16 BF16"
 op_dict["mean"]="FP32 FP16 BF16"
 op_dict["min"]="FP32 FP16 BF16"
+op_dict["mm"]="FP32 FP16 BF16"
 op_dict["mul"]="FP32 FP16 BF16"
 op_dict["mv"]="FP32 FP16 BF16"
+op_dict["native_dropout"]="FP32 FP16 BF16"
+op_dict["native_group_norm"]="FP32 FP16 BF16"
 op_dict["ne"]="FP32 FP16 BF16"
 op_dict["neg"]="FP32 FP16 BF16"
-#op_dict["or"]="FP32 FP16 BF16"
 op_dict["pow"]="FP32 FP16 BF16"
 op_dict["prod"]="FP32 FP16 BF16"
 op_dict["reciprocal"]="FP32 FP16 BF16"
+op_dict["relu"]="FP32 FP16 BF16"
 op_dict["rsqrt"]="FP32 FP16 BF16"
+op_dict["sigmoid"]="FP32 FP16 BF16"
+op_dict["silu"]="FP32 FP16 BF16"
 op_dict["sin"]="FP32 FP16 BF16"
+op_dict["softmax"]="FP32 FP16 BF16"
+op_dict["sub"]="FP32 FP16 BF16"
+op_dict["sum"]="FP32 FP16 BF16"
+op_dict["tanh"]="FP32 FP16 BF16"
+op_dict["triu"]="FP32 FP16 BF16"
 #=============================STOP==========================
 
 

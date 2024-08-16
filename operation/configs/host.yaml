@@ -1,6 +1,8 @@
 FLAGPERF_PATH: "/home/FlagPerf/operation"
 FLAGPERF_LOG_PATH: "result"
+##nvidia,iluvatar,or other
 VENDOR: "nvidia"
+# VENDOR: "kunlunxin"
 FLAGPERF_LOG_LEVEL: "info"
 HOSTS: ["192.168.1.2"]
 NPROC_PER_NODE: 1
@@ -8,9 +10,13 @@ SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
 MASTER_PORT: "29501"
 SHM_SIZE: "32G"
-ACCE_CONTAINER_OPT: " --gpus all"
+# only for iluvatar,dual process operation, modify device id,0 or 1
+DEVICE: 0
 # for nvidia, using " -- gpus all"
+# for kunlunxin, using "--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+# for iluvatar, using ""
 # for xxx, using
+ACCE_CONTAINER_OPT: " --gpus all"
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 # for nvidia, using "CUDA_VISIBLE_DEVICES"
@@ -22,3 +28,6 @@ CASES:
     "mm:FP16:312:nativetorch:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:flaggems:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
+#    'exp:FP32:nativetorch:R300p" : "xpytorch029"
+#    'exp:FP32:flaggems:R300p" : "xpytorch029"
+#    "abs:FP32:nativetorch:BI150": "bi150-410"
