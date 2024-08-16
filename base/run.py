@@ -258,15 +258,28 @@ def prepare_containers_env_cluster(dp_path, case_log_dir, container_name,
                                    image_name, nnodes, config):
     '''Prepare containers environments in the cluster. It will start
        containers, setup environments, start monitors, and clear caches.'''
-    container_start_args = " --rm --init --detach --net=host --uts=host" \
-                           + " --ipc=host --security-opt=seccomp=unconfined" \
-                           + " --privileged=true --ulimit=stack=67108864" \
-                           + " --ulimit=memlock=-1" \
-                           + " -w " + config.FLAGPERF_PATH \
-                           + " --shm-size=" + config.SHM_SIZE \
-                           + " -v " + dp_path + ":" \
-                           + config.FLAGPERF_PATH
-
+       
+    container_start_args=None
+    if config.VENDOR == "metax" and any("TF32" in key for key in config.CASES.keys()):
+        
+        container_start_args = " --rm --init --detach --net=host --uts=host" \
+                            + " --ipc=host --security-opt=seccomp=unconfined" \
+                            + " --privileged=true --ulimit=stack=67108864" \
+                            + " --ulimit=memlock=-1" \
+                            + " -e TORCH_ALLOW_TF32_CUBLAS_OVERRIDE=1" \
+                            + " -w " + config.FLAGPERF_PATH \
+                            + " --shm-size=" + config.SHM_SIZE \
+                            + " -v " + dp_path + ":" \
+                            + config.FLAGPERF_PATH
+    else:
+        container_start_args = " --rm --init --detach --net=host --uts=host" \
+                            + " --ipc=host --security-opt=seccomp=unconfined" \
+                            + " --privileged=true --ulimit=stack=67108864" \
+                            + " --ulimit=memlock=-1" \
+                            + " -w " + config.FLAGPERF_PATH \
+                            + " --shm-size=" + config.SHM_SIZE \
+                            + " -v " + dp_path + ":" \
+                            + config.FLAGPERF_PATH
     if config.ACCE_CONTAINER_OPT is not None:
         container_start_args += " " + config.ACCE_CONTAINER_OPT
 
