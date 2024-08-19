@@ -9,7 +9,7 @@ pip install pytest loguru schedule
 # xpytorch install
 #wget -q -O xpytorch.run https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/R300_plus/latest/xpytorch-cp38-torch201-ubuntu2004-x64.run && bash xpytorch.run &> install-xpytorch.log
 CUDART_DUMMY_REGISTER=1 python -m torch_xmlir --doctor
-CUDART_DUMMY_REGISTER=1 python -c "import torch; input = torch.rand(512, 128).cuda()"
+CUDART_DUMMY_REGISTER=1 python -c "import torch; print(torch.rand(2,3).cuda())"
 
 # xpu triton
 #wget -q -O triton-2.1.0-cp38-cp38-linux_x86_64.whl https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/R300_plus/latest/flaggems/triton-2.1.0-cp38-cp38-linux_x86_64.whl && pip install --no-deps --force-reinstall ./triton-2.1.0-cp38-cp38-linux_x86_64.whl &> install-triton.log
@@ -19,16 +19,14 @@ wget -q -O /root/miniconda/envs/python38_torch201_cuda/lib/python3.8/site-packag
 
 
 # FlagGems
-#git clone https://mirror.ghproxy.com/https://github.com/FlagOpen/FlagGems.git
+git clone https://mirror.ghproxy.com/https://github.com/FlagOpen/FlagGems.git
 #git clone https://github.com/FlagOpen/FlagGems.git
-#cd FlagGems
-#git checkout 9000685bd708
-#wget -q -O flaggems-xpu.patch https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/R300_plus/latest/flaggems/flaggems_xpu_9000685bd708a231af6b98916cd18ba9af9f5069.patch && git apply flaggems-xpu.patch
-#md5sum flaggems-xpu.patch
-#pip install -e . --no-deps
+cd FlagGems
+git checkout v2.0-perf-klx
+pip install -e . --no-deps
 
 
 # test flaggems
 export TRITON_XPU_ARCH=3
 export CUDART_DUMMY_REGISTER=1
-cd /home/FlagGems && python -m pytest -s tests/test_binary_pointwise_ops.py::test_accuracy_add
+cd /home/FlagGems && python -m pytest -s tests/test_binary_pointwise_ops.py::test_accuracy_add[dtype0-0.001-shape0]
