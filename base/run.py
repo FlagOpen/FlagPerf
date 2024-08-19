@@ -200,8 +200,13 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
     nnodes = len(config.HOSTS)
     framework = config.CASES[case]
 
-    env_dir = os.path.join(
-        config.FLAGPERF_PATH, "benchmarks", case, config.VENDOR)
+    case_absname = case.split(":")[0] if ":" in case else case
+    chipname = case.split(":")[1] if ":" in case else None
+    if chipname is not None:
+        env_dir = os.path.join(config.FLAGPERF_PATH, "benchmarks", case_absname, config.VENDOR, chipname)
+    else:
+        env_dir = os.path.join(config.FLAGPERF_PATH, "benchmarks", case_absname, config.VENDOR)
+
 
     env_shell = os.path.join(env_dir, "env.sh")
     req_file = os.path.join(env_dir, "requirements.txt")
