@@ -6,7 +6,7 @@
 #include <nccl.h>
 #include <vector>
 #include <iostream>
-
+#include <iomanip>
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
 #define SIZE (4ULL * GB)
@@ -75,7 +75,6 @@ int main() {
     checkCudaError(cudaEventRecord(end), "cudaEventRecord"); 
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
-
     /*
         algbw = S/t
     Considering that each rank has a bandwidth to the outside world of B, the time to perform an allReduce operation of S elements is at best :
@@ -92,12 +91,22 @@ int main() {
     we have multiplied the bandwidth result here by two.
     */
     double algbw = SIZE * ITERATIONS / (elapsed_time / 1000.0);
+    std::cout << "[FlagPerf Result]interconnect-MPI_intraserver-algbw=" 
+              << std::fixed << std::setprecision(2) << algbw / (1024.0 * 1024.0 * 1024.0) 
+              << "GiB/s" << std::endl;
+
+    std::cout << "[FlagPerf Result]interconnect-MPI_intraserver-algbw=" 
+              << std::fixed << std::setprecision(2) << algbw / (1000.0 * 1000.0 * 1000.0) 
+              << "GB/s" << std::endl;
     double bandwidth = algbw * (2.0 * (num_gpus-1) / num_gpus);
-    bandwidth = bandwidth * 2.0;
+    bandwidth = bandwidth + bandwidth;
+    std::cout << "[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1024.0 * 1024.0 * 1024.0) 
+              << "GiB/s" << std::endl;
 
-    printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
-    printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
-
+    std::cout << "[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1000.0 * 1000.0 * 1000.0) 
+              << "GB/s" << std::endl;
     for (int i = 0; i < num_gpus; ++i) {
         checkCudaError(cudaFree(d_src[i]), "cudaFree");
         checkCudaError(cudaFree(d_dst[i]), "cudaFree");
