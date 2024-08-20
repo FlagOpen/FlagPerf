@@ -1,1 +1,4 @@
+bs: 16
+channel: 512
+hiddensize: 1024
 ITERS: 50000
