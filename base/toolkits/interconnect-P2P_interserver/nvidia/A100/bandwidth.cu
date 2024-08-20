@@ -5,6 +5,8 @@
 #include <cuda_runtime.h>
 #include <nccl.h>
 #include <mpi.h>
+#include <iostream>
+#include <iomanip>
 
 #define SIZE (1024ULL * 1024ULL * 1024ULL * sizeof(float))
 #define WARMUP_ITERATIONS 1000
@@ -92,10 +94,14 @@ int main(int argc, char **argv) {
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
 
-    double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0);
-    printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
-    printf("[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
+    double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0) + SIZE * ITERATIONS / (elapsed_time / 1000.0);
+    std::cout << "[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1024.0 * 1024.0 * 1024.0) 
+              << "GiB/s" << std::endl;
 
+    std::cout << "[FlagPerf Result]interconnect-MPI_intraserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1000.0 * 1000.0 * 1000.0) 
+              << "GB/s" << std::endl;
     checkCudaError(cudaEventDestroy(start), "cudaEventDestroy");
     checkCudaError(cudaEventDestroy(end), "cudaEventDestroy");
     checkCudaError(cudaFree(d_tensor), "cudaFree");

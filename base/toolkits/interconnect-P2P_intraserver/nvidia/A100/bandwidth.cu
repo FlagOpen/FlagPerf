@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <cuda_runtime.h>
+#include <iostream>
+#include <iomanip>
 
 #define SIZE (1024ULL * 1024ULL * 1024ULL * sizeof(float))
 #define WARMUP_ITERATIONS 100
@@ -94,18 +96,17 @@ int main() {
             checkCudaError(cudaMemcpy(d_src, d_dst, SIZE, cudaMemcpyDefault), "cudaMemcpy");
         } 
     }
-
     checkCudaError(cudaEventRecord(end, 0), "cudaEventRecord");
     checkCudaError(cudaEventSynchronize(end), "cudaEventSynchronize");
-
     checkCudaError(cudaEventElapsedTime(&elapsed_time, start, end), "cudaEventElapsedTime");
+    double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0) + SIZE * ITERATIONS / (elapsed_time / 1000.0);
+    std::cout << "[FlagPerf Result]inferconnect-P2P_intraserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1024.0 * 1024.0 * 1024.0) 
+              << "GiB/s" << std::endl;
 
-    double bandwidth = 2.0 * SIZE * ITERATIONS / (elapsed_time / 1000.0);
-
-    printf("[FlagPerf Result]inferconnect-P2P_intraserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
-    printf("[FlagPerf Result]inferconnect-P2P_intraserver-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
-
-
+    std::cout << "[FlagPerf Result]inferconnect-P2P_intraserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1000.0 * 1000.0 * 1000.0) 
+              << "GB/s" << std::endl;
     checkCudaError(cudaSetDevice(gpuid[0]), "cudaSetDevice");
     checkCudaError(cudaDeviceDisablePeerAccess(gpuid[1]), "cudaDeviceDisablePeerAccess");
     checkCudaError(cudaSetDevice(gpuid[1]), "cudaSetDevice");
