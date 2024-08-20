@@ -29,6 +29,7 @@
 | ---- | ----------- | -------- | ------ |
 | 评测结果 | 464.65GB/s | 600GB/s | 77.4%  |
 
+* 算法带宽、等效带宽计算参考：https://github.com/NVIDIA/nccl-tests/blob/master/doc/PERFORMANCE.md
 
 ## 能耗监控结果
 
