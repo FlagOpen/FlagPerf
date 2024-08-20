@@ -45,6 +45,8 @@ The second metric, busbw, is chosen for the following reasons:
 | 评测结果 | 96.62GB/s    | /       | /    |
 * 等效带宽为双向带宽
 
+* 算法带宽、等效带宽计算参考：https://github.com/NVIDIA/nccl-tests/blob/master/doc/PERFORMANCE.md
+
 ## 能耗监控结果
 
 | 监控项  | 系统平均功耗  | 系统最大功耗  | 系统功耗标准差 | 单机TDP | 单卡平均功耗(16卡平均) | 单卡最大功耗(16卡最大) | 单卡功耗标准差(16卡最大) | 单卡TDP |
