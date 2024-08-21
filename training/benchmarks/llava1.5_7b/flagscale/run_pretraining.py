@@ -74,7 +74,7 @@ def replace_yamls(scale_home, config_module, args):
         dist_data = yaml.safe_load(f)
 
     try:
-        dist_data["experiment"]["exp_dir"] = os.path.join(scale_home, "outputs_llava1.5")
+        dist_data["experiment"]["exp_dir"] = os.path.join(args.log_dir, "outputs_llava1.5")
         hosts = args.hosts.split(",")
         dist_data["experiment"]["runner"]["nnodes"] = len(hosts)
         hostfile = os.path.join(scale_home, "hostfile")
