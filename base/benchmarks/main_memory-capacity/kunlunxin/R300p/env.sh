@@ -1,0 +1,2 @@
+set -x
+echo "KUNLUNXIN PLACEHOLDER ENV.SH"

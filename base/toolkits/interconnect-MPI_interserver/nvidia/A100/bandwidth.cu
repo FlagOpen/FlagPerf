@@ -4,6 +4,7 @@
 #include <mpi.h>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
 #define SIZE (4ULL * GB)
@@ -98,9 +99,20 @@ int main(int argc, char *argv[]) {
     */
     double algbw = SIZE * ITERATIONS / (elapsed_time / 1000.0);
     double bandwidth = algbw * (2.0 * (total_gpus - 1) / total_gpus);
+    bandwidth = bandwidth + bandwidth;
     if (rank == 0) {
-        printf("[FlagPerf Result]interconnect-MPI_interserver-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
-        printf("[FlagPerf Result]interconnect-MPI_interserver-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
+        std::cout << "[FlagPerf Result]interconnect-MPI_interserver-algbw=" 
+              << std::fixed << std::setprecision(2) << algbw / (1024.0 * 1024.0 * 1024.0) 
+              << "GiB/s" << std::endl;
+        std::cout << "[FlagPerf Result]interconnect-MPI_interserver-algbw=" 
+              << std::fixed << std::setprecision(2) << algbw / (1000.0 * 1000.0 * 1000.0) 
+              << "GB/s" << std::endl; 
+        std::cout << "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1024.0 * 1024.0 * 1024.0) 
+              << "GiB/s" << std::endl;
+        std::cout << "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=" 
+              << std::fixed << std::setprecision(2) << bandwidth / (1000.0 * 1000.0 * 1000.0) 
+              << "GB/s" << std::endl;
     }
     checkCudaError(cudaFree(d_src), "cudaFree");
     checkCudaError(cudaFree(d_dst), "cudaFree");

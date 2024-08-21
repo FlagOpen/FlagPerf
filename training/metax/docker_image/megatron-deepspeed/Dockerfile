@@ -1,4 +1,4 @@
-FROM megatron_2.18.0.8:FlagPerf_base
+FROM maca-2.20.2.2:megatron-deepspeed
 ENV PATH="/opt/conda/bin:${PATH}"
 RUN /bin/bash -c "uname -a"
 RUN /bin/bash -c "pip config set global.index-url https://mirror.baidu.com/pypi/simple"

@@ -1,0 +1,53 @@
+52a53
+> import torch_npu
+54,56c55,57
+< if is_flash_attn_2_available():
+<     from flash_attn import flash_attn_func, flash_attn_varlen_func
+<     from flash_attn.bert_padding import index_first_axis, pad_input, unpad_input  # noqa
+---
+> # if is_flash_attn_2_available():
+> #     from flash_attn import flash_attn_func, flash_attn_varlen_func
+> #     from flash_attn.bert_padding import index_first_axis, pad_input, unpad_input  # noqa
+583,597c584,586
+<         if not self._flash_attn_uses_top_left_mask:
+<             causal = self.is_causal
+<         else:
+<             # TODO: Remove the `query_length != 1` check once Flash Attention for RoCm is bumped to 2.1. For details, please see the comment in LlamaFlashAttention2 __init__.
+<             causal = self.is_causal and query_length != 1
+< 
+<         # Contains at least one padding token in the sequence
+<         if attention_mask is not None:
+<             batch_size = query_states.shape[0]
+<             query_states, key_states, value_states, indices_q, cu_seq_lens, max_seq_lens = self._upad_input(
+<                 query_states, key_states, value_states, attention_mask, query_length
+<             )
+< 
+<             cu_seqlens_q, cu_seqlens_k = cu_seq_lens
+<             max_seqlen_in_batch_q, max_seqlen_in_batch_k = max_seq_lens
+---
+>         head_num = query_states.shape[2]
+>         out = torch_npu.npu_fusion_attention(query_states, key_states, value_states, head_num, "BSND", keep_prob=1.0,
+>         scale=1.0 / math.sqrt(query_states.shape[-1]))
+599,616c588
+<             attn_output_unpad = flash_attn_varlen_func(
+<                 query_states,
+<                 key_states,
+<                 value_states,
+<                 cu_seqlens_q=cu_seqlens_q,
+<                 cu_seqlens_k=cu_seqlens_k,
+<                 max_seqlen_q=max_seqlen_in_batch_q,
+<                 max_seqlen_k=max_seqlen_in_batch_k,
+<                 dropout_p=dropout,
+<                 softmax_scale=softmax_scale,
+<                 causal=causal,
+<             )
+< 
+<             attn_output = pad_input(attn_output_unpad, indices_q, batch_size, query_length)
+<         else:
+<             attn_output = flash_attn_func(
+<                 query_states, key_states, value_states, dropout, softmax_scale=softmax_scale, causal=causal
+<             )
+---
+>         return out[0]
+618d589
+<         return attn_output

@@ -1,8 +1,8 @@
 seqlength = 4096
 batchsize = 1
-accumulate_steps = 44
+accumulate_steps =1024
 train_tokens = 100000000
-theoryflops = 240000000000000.0
+theoryflops = 280000000000000.0
 epochs = 1
 flashattn = True
 recompute = True

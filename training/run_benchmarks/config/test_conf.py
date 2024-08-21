@@ -22,7 +22,7 @@ VENDOR = "nvidia"
 #   mthreads:
 #       " --env MTHREADS_VISIBLE_DEVICES=all"
 #   metax:
-#       " --device=/dev/dri --device=/dev/mxcd --group-add video"
+#       " --device=/dev/infiniband --device=/dev/dri --device=/dev/mxcd --group-add video"
 #   dcu:
 #       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
@@ -169,6 +169,10 @@ CASES = {
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
     # metax cases
+    #"llama3_8B:megatron_core060:C500:1:8:1": "/data/llama3_8b"
+    # "llama2_70B:megatron:C500:4:8:1": "/data/llama2-70B"
+    #"chatglm3_6b:deepspeed:C500:1:8:1": "/raid/dataset//chatglm3-6b"
+    #"llama2_7b:megatron-deepspeed:C500:1:8:1": "/raid/dataset/llama2-7b"
     #"llama3_8B:megatron_core060:C500:1:8:1": "/data/llama3_8b_pretrain"
     # "aquila2_7b:flagscale:C500:1:8:1": "/raid/dataset/Aquila2_7b_data"
     # "faster_rcnn:pytorch_2.0:C500:1:8:1": "/raid/dataset/coco2017/",
@@ -195,6 +199,6 @@ CASES = {
     # "llama1_7B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/dataset/llama/"
     #"gpt3_13B:paddle_2.6.0:TP2PP1SH2SP4C50040G:1:8:1":"/raid/data_set/data-gpt3"
     #"gpt3_13B:paddle_2.6.0:TP1PP1SH2SP8C50080G:1:8:1":"/raid/data_set/data-gpt3"
-    "qwen1.5_MoE:megatron_pai:C500:1:8:1":"/raid/datasets/qwen1.5_MoE/"
+    # "qwen1.5_MoE:megatron_pai:C500:1:8:1":"/raid/datasets/qwen1.5_MoE/"
     
 }
