@@ -111,7 +111,6 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
-
     deepspeed.init_distributed()
     model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"),
                                         flashattn)
