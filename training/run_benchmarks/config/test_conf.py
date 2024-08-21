@@ -37,12 +37,12 @@ ACCE_CONTAINER_OPT = " --gpus all"
 ACCE_VISIBLE_DEVICE_ENV_NAME = "CUDA_VISIBLE_DEVICES"
 
 # Set pip source, which will be used in preparing envs in container
-PIP_SOURCE = "https://mirror.baidu.com/pypi/simple"
+PIP_SOURCE = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/FlagPerf/training"
+FLAGPERF_PATH = "/home/shihonghao/xlcscale/FlagPerf/training"
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -68,7 +68,7 @@ CASES = {
     # "glm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/glm/train/",
     # "cpm:pytorch_1.8:A100:1:8:1": "/raid/home_datasets_ckpt/cpm/train/",
 
-
+    "llava1.5_7b:flagscale_2409:H100:1:8:1": "/raid/dataset/LLAVA"
     # "llava1.5_7b:deepspeed-torch:A800:1:8:1": "/raid/dataset/LLAVA/",
     #"llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
     #"aquila2_7b_finetune:flagscale:A800:1:8:1": "/raid/dataset/aquila2_7b_finetune",
