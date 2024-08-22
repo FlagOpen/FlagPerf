@@ -77,6 +77,7 @@ def replace_yamls(scale_home, config_module, args):
         dist_data["experiment"]["exp_dir"] = os.path.join(args.log_dir, "outputs_llava1.5")
         hosts = args.hosts.split(",")
         dist_data["experiment"]["runner"]["nnodes"] = len(hosts)
+        dist_data["experiment"]["runner"]["ssh_port"] = getattr(config_module, "flagscale_ssh_port")
         hostfile = os.path.join(scale_home, "hostfile")
         with open(hostfile, 'w') as f:
             for host in hosts:

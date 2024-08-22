@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-'''This script is called in container to execute the real training task.
-   Support pytorch DDP only.
-'''
 import os
 import sys
 import subprocess
