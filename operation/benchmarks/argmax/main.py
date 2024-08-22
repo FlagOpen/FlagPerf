@@ -10,6 +10,7 @@ from argparse import ArgumentParser, Namespace
 import yaml
 import sys
 import subprocess
+import math
 
 sys.path.append("..")
 from drivers.utils import *
@@ -68,14 +69,21 @@ def main(config, case_config):
 
     m = case_config.M
     n = case_config.N
+    # default shape: (M * 80, N * 80)
+    shape = (m * 80, n * 80)
 
+    if config.vendor == 'kunlunxin':
+        # if `Shape' specified in `case_config.yaml', use it
+        if case_config.__contains__('Shape') and case_config.Shape is not None:
+            shape = case_config.Shape
 
-    a = torch.randn(m * 80, n * 80, dtype=dtype[config.dataformat]).to(0)
+    a = torch.randn(shape, dtype=dtype[config.dataformat]).to(0)
+    print(f'Shape for performance_test: {a.shape}')
 
     latency_nowarm, latency_warm, cputime, kerneltime = do_test(
         torch.argmax, (a, 1), host_device_sync, config, case_config)
 
-    op2flops = lambda x: x * m * n * 80 * 80
+    op2flops = lambda x: x * math.prod(shape)
 
     perf_result = cal_perf(cputime, kerneltime, op2flops,
                            config.spectflops)
