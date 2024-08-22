@@ -24,9 +24,9 @@ def parse_args():
     return args
 
 
-def install_scale(scale_download_cmd, log_dir, scale_install_cmd, energon_locate_cmd, debug_mode=False):
+def install_scale(module, log_dir, debug_mode=False):
     if not debug_mode:
-        exec_cmd = scale_download_cmd.replace('<scale_home>', log_dir)
+        exec_cmd = getattr(module, "scale_download_cmd")
         print(exec_cmd)
 
         install_logdir = os.path.join(log_dir, "install_logs")
@@ -38,14 +38,14 @@ def install_scale(scale_download_cmd, log_dir, scale_install_cmd, energon_locate
         p.wait()
         f.close()
 
-        exec_cmd = f"cd {log_dir}; {scale_install_cmd}"
+        exec_cmd = getattr(module, "scale_install_cmd")
         logfile = os.path.join(install_logdir, "scale_install.log.txt")
         with open(logfile, 'w') as f:
             p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
         p.wait()
         f.close()
         
-        exec_cmd = energon_locate_cmd
+        exec_cmd = getattr(module, "energon_locate_cmd")
         logfile = os.path.join(install_logdir, "energon_locate.log.txt")
         with open(logfile, 'w') as f:
             p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
@@ -57,7 +57,7 @@ def install_scale(scale_download_cmd, log_dir, scale_install_cmd, energon_locate
         print(energon_locate)
 
         src_dir = os.path.join(energon_locate, "megatron", "energon")
-        dst_dir = os.path.join(log_dir, "FlagScale", "megatron", "megatron")
+        dst_dir = os.path.join(getattr(module, "scale_home"), "megatron", "megatron")
         exec_cmd = f"cp -r {src_dir} {dst_dir}/"
         
         logfile = os.path.join(install_logdir, "energon_copy.log.txt")
@@ -68,8 +68,8 @@ def install_scale(scale_download_cmd, log_dir, scale_install_cmd, energon_locate
 
 
 def replace_yamls(scale_home, config_module, args):
-    scale_conf_dir = os.path.join(scale_home, getattr(config_module, "scale_conf_dir"))
-    dist_yaml = os.path.join(scale_conf_dir, getattr(config_module, "configyaml"))
+    scale_conf_dir = getattr(config_module, "scale_conf_dir")
+    dist_yaml = getattr(config_module, "configyaml")
     with open(dist_yaml, 'r') as f:
         dist_data = yaml.safe_load(f)
 
@@ -90,7 +90,7 @@ def replace_yamls(scale_home, config_module, args):
 
     print(dist_data)
 
-    train_yaml = os.path.join(scale_conf_dir, getattr(config_module, "trainyaml"))
+    train_yaml = getattr(config_module, "trainyaml")
 
     with open(train_yaml, 'r') as f:
         train_data = yaml.safe_load(f)
@@ -101,9 +101,9 @@ def replace_yamls(scale_home, config_module, args):
 
         train_data["model"]["train_iters"] = 5000
         train_data["model"].pop("img_embedding_idx", None)
-        train_data["data"]["data_path"] = os.path.join(scale_home, getattr(config_module, "datasetyaml"))
-        train_data["data"]["valid_path"] = os.path.join(scale_home, getattr(config_module, "datasetyaml"))
-        train_data["data"]["prompt_path"] = os.path.join(scale_home, "megatron/examples/multimodal/manual_prompts.json")
+        train_data["data"]["data_path"] = getattr(config_module, "datasetyaml")
+        train_data["data"]["valid_path"] = getattr(config_module, "datasetyaml")
+        train_data["data"]["prompt_path"] = getattr(config_module, "prompt")
         train_data["data"]["tokenizer"]["tokenizer_model"] = os.path.join(args.data_dir, "vicuna-7b-v1___5/tokenizer.model")
     except Exception as e:
         print("You're using an illegal trainllava.yaml in flagscale. You must fix it")
@@ -111,7 +111,7 @@ def replace_yamls(scale_home, config_module, args):
 
     print(train_data)
 
-    dataset_yaml = os.path.join(scale_home, getattr(config_module, "datasetyaml"))
+    dataset_yaml = getattr(config_module, "datasetyaml")
     
     with open(dataset_yaml, 'r') as f:
         dataset_data = yaml.safe_load(f)
@@ -149,23 +149,19 @@ if __name__ == "__main__":
     config_file = os.path.basename(args.flagperf_config_file).split('.')[0]
 
     module = import_module(config_file)
+    print(module)
+    scale_home = getattr(module, "scale_home")
 
-    scale_download_cmd = getattr(module, 'scale_download_cmd')
-    scale_install_cmd = getattr(module, 'scale_install_cmd')
-    energon_locate_cmd = getattr(module, 'energon_locate_cmd')
+    install_scale(module, args.log_dir)
 
-    install_scale(scale_download_cmd, args.log_dir, scale_install_cmd, energon_locate_cmd)
-
-    scale_home = os.path.join(args.log_dir, "FlagScale")
     replace_yamls(scale_home, module, args)
 
     scale_conf_dir = getattr(module, "scale_conf_dir")
     configyaml = getattr(module, "configyaml")
-    configname = os.path.splitext(os.path.basename(configyaml))
+    configname = os.path.splitext(os.path.basename(configyaml))[0]
     exec_cmd = f"cd {scale_home}; python3 run.py --config-path {scale_conf_dir} --config-name {configname}"
     
     print(exec_cmd)
-    exit(0)
     with open(os.path.join(args.log_dir, "flagscale_main.log.txt"), 'w') as f:
         p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
         p.wait()
