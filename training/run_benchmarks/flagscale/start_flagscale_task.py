@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-'''This script is called in container to execute the real training task.
-   Support pytorch DDP only.
-'''
 import os
 import sys
 import subprocess
@@ -48,6 +45,10 @@ def parse_args():
                         type=int,
                         required=True,
                         help="how many processes will run on each host.")
+    parser.add_argument("--hosts",
+                        type=str,
+                        required=True,
+                        help="hosts to run the testcase.")
 
     parser.add_argument("--vendor",
                         type=str,
@@ -120,6 +121,8 @@ def main():
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
     exec_cmd = exec_cmd + "python run_pretraining.py"
     exec_cmd = exec_cmd + " --world_size=" + str(task_args.nproc)
+    exec_cmd = exec_cmd + " --hosts=" + task_args.hosts
+    exec_cmd = exec_cmd + " --host_addr=" + task_args.host_addr
     exec_cmd = exec_cmd + " --vendor=" + task_args.vendor
     exec_cmd = exec_cmd + " --data_dir=" + task_args.data_dir
     exec_cmd = exec_cmd + " --log_dir=" + task_log_dir
@@ -127,6 +130,7 @@ def main():
 
     task_log_file = os.path.join(task_log_dir, "rank0.out.log")
 
+    START_LOGGER.info(exec_cmd)
     with open(task_log_file, "w") as f:
         p = subprocess.Popen(exec_cmd,
                              shell=True,
