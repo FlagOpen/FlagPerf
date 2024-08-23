@@ -1,3 +1,4 @@
+# scale_parent must under FlagPerf/ or data_dir/, otherwise you cannot mount it into baremetal, therefore cannot use shared storage
 scale_parent = "/workspace"
 scale_home = f"{scale_parent}/FlagScale"
 
@@ -17,3 +18,4 @@ datasetyaml = f"{scale_home}/megatron/examples/multimodal/pretrain_dataset.yaml"
 prompt = f"{scale_home}/megatron/examples/multimodal/manual_prompts.json"
 flagscale_chip_type = "H100"
 flagscale_ssh_port = 60128
+flops = 989E12

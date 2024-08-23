@@ -4,6 +4,7 @@ import os
 import sys
 from importlib import import_module
 import yaml
+import time
 
 
 def parse_args():
@@ -97,7 +98,7 @@ def replace_yamls(scale_home, config_module, args):
         train_data = yaml.safe_load(f)
 
     try:
-        train_data["system"]["checkpoint"]["save_interval"] = 20
+        train_data["system"]["checkpoint"]["save_interval"] = 1000
         train_data["system"]["checkpoint"]["pretrained_checkpoint"] = os.path.join(args.data_dir, "LLaVA_megatron", "vicuna_instruct_clip336_tp1_combined_mcore")
 
         train_data["model"]["train_iters"] = 5000
@@ -166,3 +167,36 @@ if __name__ == "__main__":
     with open(os.path.join(args.log_dir, "flagscale_main.log.txt"), 'w') as f:
         p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
         p.wait()
+
+    timestamp_log_host = hosts[-1]
+    timestamp_log_noderank = len(hosts) - 1
+
+    timestamp_log_file = os.path.join(args.log_dir, "outputs_llava1.5", "logs", "host_" + str(timestamp_log_noderank) + "_" + timestamp_log_host + ".output")
+
+    info_line = []
+    while True:
+        try:
+            with open(timestamp_log_file, 'r') as f:
+                lines = f.readlines()
+                for line in lines:
+                    if "elapsed time per iteration" in line:
+                        info_line.append(line)
+        except Exception as e:
+            print("Maybe some errors")
+        if len(info_line) == 5000:
+            break
+        time.sleep(300)
+
+    infos = []
+    for line in info_line:
+        info = line.split("|")[2]
+        steptime = info.split(":")[1]
+        stepsecond = float(steptime) / 1000
+        infos.append(stepsecond)
+    print(infos)
+
+    ave_steptime = sum(infos[1:]) / len(infos[1:])
+    tps = 2048 * 256 / ave_steptime / args.world_size
+    mfu = tps * 7E9 * 6 / getattr(module, "flops")
+    print(f"MFU: {mfu}")
+
