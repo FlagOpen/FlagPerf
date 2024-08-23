@@ -14,3 +14,6 @@ RUN pip3 install schedule
 RUN pip3 install munch
 #RUN /bin/bash -c 'wget -O /tmp/xpytorch.run https://bd.bcebos.com/klx-pytorch-ipipe-bd/flagperf/R300_plus/latest/xpytorch-cp38-torch201-ubuntu2004-x64.run && bash /tmp/xpytorch.run'
 #RUN /bin/bash -c 'source /root/miniconda/etc/profile.d/conda.sh && conda activate python38_torch201_cuda'
+
+ENV TRITON_XPU_ARCH 3
+ENV CUDART_DUMMY_REGISTER 1

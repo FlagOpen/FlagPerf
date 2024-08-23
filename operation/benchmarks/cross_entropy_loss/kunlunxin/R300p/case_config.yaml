@@ -1,0 +1,4 @@
+bs: 4096
+elements: 256
+ITERS: 50
+SPECTFLOPS: 9999
