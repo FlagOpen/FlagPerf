@@ -35,21 +35,30 @@ def install_scale(module, log_dir, debug_mode=False):
 
         logfile = os.path.join(install_logdir, "scale_download.log.txt")
         with open(logfile, 'w') as f:
-            p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(exec_cmd,
+                                 shell=True,
+                                 stdout=f,
+                                 stderr=subprocess.STDOUT)
         p.wait()
         f.close()
 
         exec_cmd = getattr(module, "scale_install_cmd")
         logfile = os.path.join(install_logdir, "scale_install.log.txt")
         with open(logfile, 'w') as f:
-            p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(exec_cmd,
+                                 shell=True,
+                                 stdout=f,
+                                 stderr=subprocess.STDOUT)
         p.wait()
         f.close()
-        
+
         exec_cmd = getattr(module, "energon_locate_cmd")
         logfile = os.path.join(install_logdir, "energon_locate.log.txt")
         with open(logfile, 'w') as f:
-            p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(exec_cmd,
+                                 shell=True,
+                                 stdout=f,
+                                 stderr=subprocess.STDOUT)
         p.wait()
         f.close()
 
@@ -58,12 +67,16 @@ def install_scale(module, log_dir, debug_mode=False):
         print(energon_locate)
 
         src_dir = os.path.join(energon_locate, "megatron", "energon")
-        dst_dir = os.path.join(getattr(module, "scale_home"), "megatron", "megatron")
+        dst_dir = os.path.join(getattr(module, "scale_home"), "megatron",
+                               "megatron")
         exec_cmd = f"cp -r {src_dir} {dst_dir}/"
-        
+
         logfile = os.path.join(install_logdir, "energon_copy.log.txt")
         with open(logfile, 'w') as f:
-            p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(exec_cmd,
+                                 shell=True,
+                                 stdout=f,
+                                 stderr=subprocess.STDOUT)
         p.wait()
         f.close()
 
@@ -75,10 +88,12 @@ def replace_yamls(scale_home, config_module, args):
         dist_data = yaml.safe_load(f)
 
     try:
-        dist_data["experiment"]["exp_dir"] = os.path.join(args.log_dir, "outputs_llava1.5")
+        dist_data["experiment"]["exp_dir"] = os.path.join(
+            args.log_dir, "outputs_llava1.5")
         hosts = args.hosts.split(",")
         dist_data["experiment"]["runner"]["nnodes"] = len(hosts)
-        dist_data["experiment"]["runner"]["ssh_port"] = getattr(config_module, "flagscale_ssh_port")
+        dist_data["experiment"]["runner"]["ssh_port"] = getattr(
+            config_module, "flagscale_ssh_port")
         hostfile = os.path.join(scale_home, "hostfile")
         with open(hostfile, 'w') as f:
             for host in hosts:
@@ -88,7 +103,9 @@ def replace_yamls(scale_home, config_module, args):
         dist_data["experiment"]["runner"]["hostfile"] = hostfile
     except Exception as e:
         print(e)
-        print("You're using an illegal config.yaml in flagscale. You must fix it")
+        print(
+            "You're using an illegal config.yaml in flagscale. You must fix it"
+        )
 
     print(dist_data)
 
@@ -99,32 +116,41 @@ def replace_yamls(scale_home, config_module, args):
 
     try:
         train_data["system"]["checkpoint"]["save_interval"] = 1000
-        train_data["system"]["checkpoint"]["pretrained_checkpoint"] = os.path.join(args.data_dir, "LLaVA_megatron", "vicuna_instruct_clip336_tp1_combined_mcore")
+        train_data["system"]["checkpoint"][
+            "pretrained_checkpoint"] = os.path.join(
+                args.data_dir, "LLaVA_megatron",
+                "vicuna_instruct_clip336_tp1_combined_mcore")
 
-        train_data["model"]["train_iters"] = 5000
+        train_data["model"]["train_iters"] = getattr(config_module, "steps")
         train_data["model"].pop("img_embedding_idx", None)
         train_data["data"]["data_path"] = getattr(config_module, "datasetyaml")
-        train_data["data"]["valid_path"] = getattr(config_module, "datasetyaml")
+        train_data["data"]["valid_path"] = getattr(config_module,
+                                                   "datasetyaml")
         train_data["data"]["prompt_path"] = getattr(config_module, "prompt")
-        train_data["data"]["tokenizer"]["tokenizer_model"] = os.path.join(args.data_dir, "vicuna-7b-v1___5/tokenizer.model")
+        train_data["data"]["tokenizer"]["tokenizer_model"] = os.path.join(
+            args.data_dir, "vicuna-7b-v1___5/tokenizer.model")
     except Exception as e:
-        print("You're using an illegal trainllava.yaml in flagscale. You must fix it")
-
+        print(
+            "You're using an illegal trainllava.yaml in flagscale. You must fix it"
+        )
 
     print(train_data)
 
     dataset_yaml = getattr(config_module, "datasetyaml")
-    
+
     with open(dataset_yaml, 'r') as f:
         dataset_data = yaml.safe_load(f)
 
     try:
         llava_train_dir = os.path.join(args.data_dir, "LLaVA-Pretrain/wds")
-        dataset_data["splits"]["train"]["datasets"][0]["path"] = llava_train_dir
+        dataset_data["splits"]["train"]["datasets"][0][
+            "path"] = llava_train_dir
         dataset_data["splits"]["val"]["datasets"][0]["path"] = llava_train_dir
     except Exception as e:
-        print("You're using an illegal dataset.yaml in flagscale. You must fix it")
-    
+        print(
+            "You're using an illegal dataset.yaml in flagscale. You must fix it"
+        )
+
     print(dataset_data)
 
     with open(dist_yaml, 'w') as f:
@@ -143,7 +169,7 @@ if __name__ == "__main__":
     host = args.host_addr
     hosts = args.hosts.split(",")
     print(host, hosts)
-    
+
     if host != hosts[0]:
         exit(0)
 
@@ -162,16 +188,21 @@ if __name__ == "__main__":
     configyaml = getattr(module, "configyaml")
     configname = os.path.splitext(os.path.basename(configyaml))[0]
     exec_cmd = f"cd {scale_home}; python3 run.py --config-path {scale_conf_dir} --config-name {configname}"
-    
+
     print(exec_cmd)
     with open(os.path.join(args.log_dir, "flagscale_main.log.txt"), 'w') as f:
-        p = subprocess.Popen(exec_cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(exec_cmd,
+                             shell=True,
+                             stdout=f,
+                             stderr=subprocess.STDOUT)
         p.wait()
 
     timestamp_log_host = hosts[-1]
     timestamp_log_noderank = len(hosts) - 1
 
-    timestamp_log_file = os.path.join(args.log_dir, "outputs_llava1.5", "logs", "host_" + str(timestamp_log_noderank) + "_" + timestamp_log_host + ".output")
+    timestamp_log_file = os.path.join(
+        args.log_dir, "outputs_llava1.5", "logs", "host_" +
+        str(timestamp_log_noderank) + "_" + timestamp_log_host + ".output")
 
     info_line = []
     while True:
@@ -183,7 +214,7 @@ if __name__ == "__main__":
                         info_line.append(line)
         except Exception as e:
             print("Maybe some errors")
-        if len(info_line) == 5000:
+        if len(info_line) == getattr(module, "steps"):
             break
         time.sleep(300)
 
@@ -199,4 +230,3 @@ if __name__ == "__main__":
     tps = 2048 * 256 / ave_steptime / args.world_size
     mfu = tps * 7E9 * 6 / getattr(module, "flops")
     print(f"MFU: {mfu}")
-

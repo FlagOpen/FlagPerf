@@ -16,6 +16,11 @@ configyaml = f"{scale_conf_dir}/config.yaml"
 trainyaml = f"{scale_conf_dir}/train/train_llava1.5_7b.yaml"
 datasetyaml = f"{scale_home}/megatron/examples/multimodal/pretrain_dataset.yaml"
 prompt = f"{scale_home}/megatron/examples/multimodal/manual_prompts.json"
+
+# flagscale's requirements
 flagscale_chip_type = "H100"
 flagscale_ssh_port = 60128
 flops = 989E12
+
+# for llava's algorithm
+steps = 5000
