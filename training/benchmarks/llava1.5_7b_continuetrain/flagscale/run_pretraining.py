@@ -120,7 +120,7 @@ def replace_yamls(scale_home, config_module, args):
         train_data["system"]["checkpoint"][
             "pretrained_checkpoint"] = os.path.join(
                 args.data_dir, "LLaVA_megatron",
-                "vicuna_instruct_clip336_tp1_combined_mcore")
+                "vicuna_instruct_clip336_mlp_tp1_combined_mcore")
 
         train_data["model"]["train_iters"] = getattr(config_module, "steps")
         train_data["model"].pop("img_embedding_idx", None)
