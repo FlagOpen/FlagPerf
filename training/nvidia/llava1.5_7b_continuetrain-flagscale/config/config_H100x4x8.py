@@ -24,4 +24,4 @@ flagscale_ssh_port = 22
 flops = 989E12
 
 # for llava's algorithm
-steps = 30
+steps = 5000

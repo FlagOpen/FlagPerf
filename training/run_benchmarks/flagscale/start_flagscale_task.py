@@ -120,7 +120,7 @@ def main():
 
     exec_cmd = "cd " + os.path.dirname(train_script_path) + ";"
     exec_cmd = exec_cmd + "python run_pretraining.py"
-    exec_cmd = exec_cmd + " --world_size=" + str(task_args.nproc)
+    exec_cmd = exec_cmd + " --world_size=" + str(task_args.nproc * task_args.nnodes) 
     exec_cmd = exec_cmd + " --hosts=" + task_args.hosts
     exec_cmd = exec_cmd + " --host_addr=" + task_args.host_addr
     exec_cmd = exec_cmd + " --vendor=" + task_args.vendor
