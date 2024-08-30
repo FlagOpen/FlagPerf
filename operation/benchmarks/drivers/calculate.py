@@ -10,8 +10,9 @@ import subprocess
 
 
 def do_correctness(operation):
+    flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
-        ["find", "/", "-type", "d", "-name", "FlagGems"], text=True).strip()
+        ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
 
     p = subprocess.Popen(
         f"cd {os.path.join(gems_repo, 'tests')} && python3 test_named_ops.py --name {operation} --device cpu ",
