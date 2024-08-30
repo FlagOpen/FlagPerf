@@ -1,1 +1,2 @@
+ITERS: 1000
 DIST_BACKEND: "nccl"
