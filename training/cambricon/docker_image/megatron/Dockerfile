@@ -11,4 +11,7 @@ RUN sed -i '/\[ -z "\$PS1" \] \&\& return/s/^/#/' ~/.bashrc
 RUN echo -e "\n# Add environment variables\n\
 export NEUWARE_HOME=/usr/local/neuware\n\
 export LD_LIBRARY_PATH=/usr/local/mpi_wrapper/build/install/lib64:/usr/local/neuware/lib64:/usr/local/openmpi/lib:${LD_LIBRARY_PATH}\n\
-export PATH=/torch/venv3/pytorch/bin:/torch/venv3/pytorch/bin:/usr/local/neuware/bin:/usr/local/openmpi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}" >> ~/.bashrc
+export PATH=/torch/venv5/pytorch/bin:/torch/venv3/pytorch/bin:/usr/local/neuware/bin:/usr/local/openmpi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}\n\
+export CNCL_MLULINK_OVER_ROCE_DISABLE=1\n\
+export CNCL_MLULINK_CROSS_HOSTS_ENABLE=0\n\
+export CNCL_MLU_DIRECT_LEVEL=1" >> ~/.bashrc

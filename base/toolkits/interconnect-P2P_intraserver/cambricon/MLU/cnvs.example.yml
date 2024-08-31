@@ -2,3 +2,4 @@ custom:
 - custom:
     mlulink:
       data_size: 3000000
+      link_type: over_port
