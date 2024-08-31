@@ -2,6 +2,7 @@ FLAGPERF_PATH: "/home/FlagPerf/operation"
 FLAGPERF_LOG_PATH: "result"
 ##nvidia,iluvatar,or other
 VENDOR: "nvidia"
+# VENDOR: "cambricon"
 # VENDOR: "metax"
 # VENDOR: "kunlunxin"
 FLAGPERF_LOG_LEVEL: "info"
@@ -16,6 +17,7 @@ DEVICE: 0
 # for nvidia, using " -- gpus all"
 # for metax, using " --device=/dev/dri --device=/dev/mxcd --group-add video"
 # for kunlunxin, using "--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+# for cambricon, using " --device=/dev/cambricon_dev0:/dev/cambricon_dev0 --device=/dev/cambricon_dev1:/dev/cambricon_dev1 --device=/dev/cambricon_dev2:/dev/cambricon_dev2 --device=/dev/cambricon_dev3:/dev/cambricon_dev3  --device=/dev/cambricon_dev4:/dev/cambricon_dev4  --device=/dev/cambricon_dev5:/dev/cambricon_dev5  --device=/dev/cambricon_dev6:/dev/cambricon_dev6   --device=/dev/cambricon_dev7:/dev/cambricon_dev7  --device=/dev/cambricon_ctl "
 # for iluvatar, using ""
 # for xxx, using
 ACCE_CONTAINER_OPT: " --gpus all"
@@ -23,6 +25,7 @@ PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 # for nvidia, using "CUDA_VISIBLE_DEVICES"
 # for metax, using "MACA_VISIBLE_DEVICES"
+# for cambricon, using "MLU_VISIBLE_DEVICES"
 # for xxx, using
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 # "operation:dataFormat:chip": "docker_images"
@@ -34,3 +37,4 @@ CASES:
 #    'exp:FP32:nativetorch:R300p" : "xpytorch029"
 #    'exp:FP32:flaggems:R300p" : "xpytorch029"
 #    "abs:FP32:nativetorch:BI150": "bi150-410"
+#    "argmax:BF16:312:flaggems:MLU": "camtorch0830"
