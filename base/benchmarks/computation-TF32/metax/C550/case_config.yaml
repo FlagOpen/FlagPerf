@@ -1,4 +1,5 @@
 M: 8192
 N: 8192
 K: 8192
+ITERS: 1000
 DIST_BACKEND: "nccl"
