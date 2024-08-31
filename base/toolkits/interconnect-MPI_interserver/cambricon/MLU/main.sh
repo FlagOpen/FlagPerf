@@ -22,8 +22,14 @@ finished_str="All Result Check: PASSED"
 LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
 cur_ip=`hostname -i | awk '{print $1}'`
 tcp_if_include=`echo ${ip1} | awk -F'.' '{print $1"."$2"."$3}'`
+
+export CNCL_MLULINK_OVER_ROCE_DISABLE=1
+export CNCL_MLULINK_CROSS_HOSTS_ENABLE=0
+export CNCL_MLU_DIRECT_LEVEL=1
+
 if [ "$cur_ip" == "$ip1" ]; then
 	/usr/local/openmpi/bin/mpirun --allow-run-as-root -n 16 --host ${ip1}:8,${ip2}:8 \
+                -x CNCL_MLULINK_OVER_ROCE_DISABLE -x CNCL_MLULINK_CROSS_HOSTS_ENABLE -x CNCL_MLU_DIRECT_LEVEL \
 		-x PATH -x LD_LIBRARY_PATH -mca btl ^openib  -bind-to none -map-by slot -mca plm_rsh_args \
 		"-p 1234" -mca btl_tcp_if_include ${tcp_if_include}.0/24 \
 		/usr/local/neuware/bin/allreduce --warmup_loop 20 --thread 1 --loop 2000 --mincount 1 --maxcount 512M --multifactor 2 --async 1 --block 0 \
@@ -41,6 +47,7 @@ else
 		sleep 1  # 等待1秒再次检查
 	done
 	/usr/local/openmpi/bin/mpirun --allow-run-as-root -n 16 --host ${ip1}:8,${ip2}:8 \
+                -x CNCL_MLULINK_OVER_ROCE_DISABLE -x CNCL_MLULINK_CROSS_HOSTS_ENABLE -x CNCL_MLU_DIRECT_LEVEL \
 		-x PATH -x LD_LIBRARY_PATH -mca btl ^openib  -bind-to none -map-by slot -mca plm_rsh_args \
 		"-p 1234" -mca btl_tcp_if_include ${tcp_if_include}.0/24 \
 		/usr/local/neuware/bin/allreduce --warmup_loop 20 --thread 1 --loop 2000 --mincount 1 --maxcount 512M --multifactor 2 --async 1 --block 0 \
