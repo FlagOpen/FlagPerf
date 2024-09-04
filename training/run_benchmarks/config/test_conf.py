@@ -70,6 +70,8 @@ CASES = {
 
     #"llava1.5_7b:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
     #"llava1.5_7b_continuetrain:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
+    #"llama3_70B:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
+    #"llama3_70B_continuetrain:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
     # "llava1.5_7b:deepspeed-torch:A800:1:8:1": "/raid/dataset/LLAVA/",
     #"llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
     #"aquila2_7b_finetune:flagscale:A800:1:8:1": "/raid/dataset/aquila2_7b_finetune",
