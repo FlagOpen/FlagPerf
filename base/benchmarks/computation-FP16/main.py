@@ -43,6 +43,9 @@ def main(config, case_config, rank, world_size, local_rank):
     if rank == 0:
         print("finish initialization")
     
+    if "iluvatar" in config.vendor:
+        torch.cuda.set_device(local_rank)
+        
     m = case_config.M
     n = case_config.N
     k = case_config.K
@@ -71,8 +74,9 @@ def main(config, case_config, rank, world_size, local_rank):
     for _ in range(case_config.ITERS):
         _result = torch.mm(matrixA, matrixB)
     
-    host_device_sync(config.vendor)
-    multi_device_sync(config.vendor)
+    if "iluvatar" not in config.vendor:
+        host_device_sync(config.vendor)
+        multi_device_sync(config.vendor)
     end_time = time.perf_counter()
     
     exec_time = end_time - start_time

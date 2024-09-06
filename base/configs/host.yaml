@@ -17,6 +17,7 @@ SHM_SIZE: "32G"
 ACCE_CONTAINER_OPT: " --gpus all"
 # for nvidia, using " -- gpus all"
 # for kunlunxin, using "--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
+# for iluvatar, using""
 # for xxx, using
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
@@ -24,7 +25,16 @@ CLEAR_CACHES: True
 # for xxx, using
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
-    "computation-FP32": "pytorch_2.3"
+     "computation-FP32": "pytorch_2.3"
+     
+# iluvatar "computation-BF16:BI150": "pytorch_2.1"
+# iluvatar "computation-FP16:BI150": "pytorch_2.1"
+# iluvatar "computation-FP32:BI150": "pytorch_2.1" 
+# iluvatar "main_memory-bandwidth:BI150": "pytorch_2.1"
+# iluvatar "main_memory-capacity:BI150": "pytorch_2.1"
+# iluvatar "interconnect-h2d:BI150": "pytorch_2.1"
+# iluvatar "interconnect-MPI_intraserver:BI150": "pytorch_2.1"
+# iluvatar "interconnect-MPI_interserver:BI150": "pytorch_2.1"
 
 # nvidia "computation-FP64": "pytorch_2.3"
 # nvidia "computation-FP32": "pytorch_2.3"
