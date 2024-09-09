@@ -89,8 +89,6 @@ def replace_yamls(scale_home, config_module, args):
         train_data = yaml.safe_load(f)
 
     try:
-        train_data["system"]["tensor_model_parallel_size"] = 2
-        train_data["system"]["pipeline_model_parallel_size"] = 2
         train_data["model"]["train_iters"] = getattr(config_module, "steps")
         train_data["model"]["optimizer"]["lr_scheduler"][
             "lr_warmup_iters"] = 500

@@ -3,7 +3,7 @@ scale_parent = "/share/project/shhh/xlcmoe"
 scale_home = f"{scale_parent}/FlagScale"
 
 # this cmd should install scale at <scale_home>. <scale_home> is set by flagperf.training.benchmarks.llava1.5_7b.flagscale.run_pretraining.py
-scale_download_cmd = f"cd {scale_parent}; git clone https://github.com/FlagOpen/FlagScale.git; cd FlagScale; git checkout a44556c"
+scale_download_cmd = f"cd {scale_parent}; git clone https://github.com/FlagOpen/FlagScale.git; cd FlagScale; git checkout 237377e"
 
 # NV need nothing because all requirements have been established in base docker image. vendor can do anything related here
 scale_install_cmd = ""
