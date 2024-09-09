@@ -64,7 +64,8 @@ def replace_yamls(scale_home, config_module, args):
             args.log_dir, "outputs_mixtral")
         hosts = args.hosts.split(",")
         dist_data["experiment"]["runner"]["nnodes"] = len(hosts)
-        dist_data["experiment"]["runner"]["nproc_per_node"] = args.world_size // len(hosts)
+        dist_data["experiment"]["runner"][
+            "nproc_per_node"] = args.world_size // len(hosts)
         dist_data["experiment"]["runner"]["ssh_port"] = getattr(
             config_module, "flagscale_ssh_port")
         hostfile = os.path.join(scale_home, "hostfile")

@@ -64,7 +64,8 @@ def replace_yamls(scale_home, config_module, args):
             args.log_dir, "outputs_mixtral")
         hosts = args.hosts.split(",")
         dist_data["experiment"]["runner"]["nnodes"] = len(hosts)
-        dist_data["experiment"]["runner"]["nproc_per_node"] = args.world_size // len(hosts)
+        dist_data["experiment"]["runner"][
+            "nproc_per_node"] = args.world_size // len(hosts)
         dist_data["experiment"]["runner"]["ssh_port"] = getattr(
             config_module, "flagscale_ssh_port")
         hostfile = os.path.join(scale_home, "hostfile")
@@ -89,7 +90,8 @@ def replace_yamls(scale_home, config_module, args):
         train_data = yaml.safe_load(f)
 
     try:
-        train_data["system"]["checkpoint"]["load"] = os.path.join(args.data_dir, getattr(config_module, "ckpt"))
+        train_data["system"]["checkpoint"]["load"] = os.path.join(
+            args.data_dir, getattr(config_module, "ckpt"))
         train_data["system"]["checkpoint"]["finetune"] = True
         train_data["model"]["train_iters"] = getattr(config_module, "steps")
         train_data["data"]["data_path"] = os.path.join(
