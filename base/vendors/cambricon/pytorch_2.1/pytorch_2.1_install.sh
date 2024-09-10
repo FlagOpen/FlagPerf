@@ -1,8 +1,5 @@
 set -xe
-pip install schedule loguru
-pushd /usr/local/neuware/share/cnclbenchmark/cnmpi_wrapper/
-bash build.sh
-popd
+pip3 install schedule loguru
 
 #配置免密
 echo 'root:123456' | sudo chpasswd
