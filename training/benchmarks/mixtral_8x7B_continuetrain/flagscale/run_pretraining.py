@@ -52,34 +52,6 @@ def install_scale(module, log_dir, debug_mode=False):
         p.wait()
         f.close()
 
-        exec_cmd = getattr(module, "energon_locate_cmd")
-        logfile = os.path.join(install_logdir, "energon_locate.log.txt")
-        with open(logfile, 'w') as f:
-            p = subprocess.Popen(exec_cmd,
-                                 shell=True,
-                                 stdout=f,
-                                 stderr=subprocess.STDOUT)
-        p.wait()
-        f.close()
-
-        with open(logfile, 'r') as f:
-            energon_locate = f.readline().replace('\n', '')
-        print(energon_locate)
-
-        src_dir = os.path.join(energon_locate, "megatron", "energon")
-        dst_dir = os.path.join(getattr(module, "scale_home"), "megatron",
-                               "megatron")
-        exec_cmd = f"cp -r {src_dir} {dst_dir}/"
-
-        logfile = os.path.join(install_logdir, "energon_copy.log.txt")
-        with open(logfile, 'w') as f:
-            p = subprocess.Popen(exec_cmd,
-                                 shell=True,
-                                 stdout=f,
-                                 stderr=subprocess.STDOUT)
-        p.wait()
-        f.close()
-
 
 def replace_yamls(scale_home, config_module, args):
     scale_conf_dir = getattr(config_module, "scale_conf_dir")
@@ -89,9 +61,11 @@ def replace_yamls(scale_home, config_module, args):
 
     try:
         dist_data["experiment"]["exp_dir"] = os.path.join(
-            args.log_dir, "outputs_llava1.5")
+            args.log_dir, "outputs_mixtral")
         hosts = args.hosts.split(",")
         dist_data["experiment"]["runner"]["nnodes"] = len(hosts)
+        dist_data["experiment"]["runner"][
+            "nproc_per_node"] = args.world_size // len(hosts)
         dist_data["experiment"]["runner"]["ssh_port"] = getattr(
             config_module, "flagscale_ssh_port")
         hostfile = os.path.join(scale_home, "hostfile")
@@ -116,52 +90,29 @@ def replace_yamls(scale_home, config_module, args):
         train_data = yaml.safe_load(f)
 
     try:
-        train_data["system"]["checkpoint"]["save_interval"] = 1000
-        train_data["system"]["checkpoint"][
-            "pretrained_checkpoint"] = os.path.join(
-                args.data_dir, "LLaVA_megatron",
-                "vicuna_instruct_clip336_mlp_tp1_combined_mcore")
-
+        train_data["system"]["checkpoint"]["load"] = os.path.join(
+            args.data_dir, getattr(config_module, "ckpt"))
+        train_data["system"]["checkpoint"]["finetune"] = True
         train_data["model"]["train_iters"] = getattr(config_module, "steps")
-        train_data["model"].pop("img_embedding_idx", None)
-        train_data["data"]["data_path"] = getattr(config_module, "datasetyaml")
-        train_data["data"]["valid_path"] = getattr(config_module,
-                                                   "datasetyaml")
-        train_data["data"]["prompt_path"] = getattr(config_module, "prompt")
-        train_data["data"]["tokenizer"]["tokenizer_model"] = os.path.join(
-            args.data_dir, "vicuna-7b-v1___5/tokenizer.model")
+        train_data["data"]["data_path"] = os.path.join(
+            args.data_dir, getattr(config_module, "dataset"),
+            "dedup-md5-pile-pile-cc_text_document")
+        train_data["data"]["tokenizer"]["tokenizer_path"] = os.path.join(
+            args.data_dir, getattr(config_module, "tokenizer"))
     except Exception as e:
+        print(e)
+        print(train_data)
         print(
-            "You're using an illegal trainllava.yaml in flagscale. You must fix it"
+            "You're using an illegal trainmixtral.yaml in flagscale. You must fix it"
         )
 
     print(train_data)
-
-    dataset_yaml = getattr(config_module, "datasetyaml")
-
-    with open(dataset_yaml, 'r') as f:
-        dataset_data = yaml.safe_load(f)
-
-    try:
-        llava_train_dir = os.path.join(args.data_dir, "LLaVA-Pretrain/wds")
-        dataset_data["splits"]["train"]["datasets"][0][
-            "path"] = llava_train_dir
-        dataset_data["splits"]["val"]["datasets"][0]["path"] = llava_train_dir
-    except Exception as e:
-        print(
-            "You're using an illegal dataset.yaml in flagscale. You must fix it"
-        )
-
-    print(dataset_data)
 
     with open(dist_yaml, 'w') as f:
         yaml.safe_dump(dist_data, f)
 
     with open(train_yaml, 'w') as f:
         yaml.safe_dump(train_data, f)
-
-    with open(dataset_yaml, 'w') as f:
-        yaml.safe_dump(dataset_data, f)
 
 
 if __name__ == "__main__":
@@ -202,11 +153,11 @@ if __name__ == "__main__":
     timestamp_log_noderank = len(hosts) - 1
 
     timestamp_log_file = os.path.join(
-        args.log_dir, "outputs_llava1.5", "logs", "host_" +
+        args.log_dir, "outputs_mixtral", "logs", "host_" +
         str(timestamp_log_noderank) + "_" + timestamp_log_host + ".output")
 
+    info_line = []
     while True:
-        info_line = []
         try:
             with open(timestamp_log_file, 'r') as f:
                 lines = f.readlines()
@@ -228,7 +179,7 @@ if __name__ == "__main__":
     print(infos)
 
     ave_steptime = sum(infos[1:]) / len(infos[1:])
-    tps = 2048 * 256 / ave_steptime / args.world_size
-    mfu = tps * 7E9 * 6 / getattr(module, "flops")
+    tps = 4096 * 2048 / ave_steptime / args.world_size
+    mfu = tps * 12E9 * 6 / getattr(module, "flops")
     print(ave_steptime, tps)
     print(f"MFU: {mfu}")
