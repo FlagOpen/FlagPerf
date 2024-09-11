@@ -205,8 +205,8 @@ if __name__ == "__main__":
         args.log_dir, "outputs_llava1.5", "logs", "host_" +
         str(timestamp_log_noderank) + "_" + timestamp_log_host + ".output")
 
-    info_line = []
     while True:
+        info_line = []
         try:
             with open(timestamp_log_file, 'r') as f:
                 lines = f.readlines()
