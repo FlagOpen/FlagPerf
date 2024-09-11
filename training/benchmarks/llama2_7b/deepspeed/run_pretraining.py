@@ -41,11 +41,15 @@ def get_argument_parser():
                         help="Reserved for deepspeed framework")
     parser.add_argument("--data_dir", type=str)
     parser.add_argument("--flagperf_config", type=str)
+    parser.add_argument("--node_rank",
+                        type=int,
+                        required=True,
+                        help="The rank of the node for multi-node distributed training.")
     parser.add_argument("--nnodes",
                         type=int,
                         required=True,
                         help="how many hosts to run the testcase.")
-    parser.add_argument("--nproc",
+    parser.add_argument("--nproc_per_node",
                         type=int,
                         required=True,
                         help="how many processes will run on each host.")
@@ -107,7 +111,6 @@ if __name__ == "__main__":
     theoryflops = getattr(module, 'theoryflops')
     epochs = getattr(module, 'epochs')
     flashattn = getattr(module, 'flashattn')
-
     deepspeed.init_distributed()
     model_engine = get_deepspeed_engine(args, os.path.join("llama2_7b_hf"),
                                         flashattn)
@@ -118,7 +121,7 @@ if __name__ == "__main__":
     logger.addHandler(handler)
 
     sampler = DistributedSampler(dataset,
-                                 num_replicas=args.nproc * args.nnodes,
+                                 num_replicas=args.nproc_per_node * args.nnodes,
                                  rank=args.local_rank)
     dataloader = DataLoader(dataset,
                             sampler=sampler,
@@ -135,7 +138,7 @@ if __name__ == "__main__":
             tokens = seqlength * batchsize
             perf = get_metric(handler.texts)
             whole_tps = tokens * perf
-            chip_tps = whole_tps / args.nproc * args.nnodes
+            chip_tps = whole_tps / args.nproc_per_node * args.nnodes
             print("System tokens per second: ", whole_tps)
             print("Tokens/p/s: ", chip_tps)
 
