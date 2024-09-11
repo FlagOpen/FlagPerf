@@ -4,4 +4,4 @@ train_steps = 300
 theoryflops = -1
 megatron_path = "/workspace/Megatron-LM_metax" # need to be aligned with DockerFile. In NGCtorch, it's /workspace/ + Megatron-LM
 tensor_parallel = 1
-pipeline_parallel = 4
+pipeline_parallel = 2
