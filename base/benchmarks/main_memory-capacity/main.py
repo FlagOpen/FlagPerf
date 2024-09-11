@@ -92,12 +92,14 @@ if __name__ == "__main__":
     gib = round(mib / 1024, 2)
     gb = round((mib * 1048576) / 1000000000, 2)
     
-    multi_device_sync(config.vendor)
+    if "iluvatar" not in config.vendor:
+        multi_device_sync(config.vendor)
     for output_rank in range(config.node_size):
         if local_rank == output_rank:
             print(r"[FlagPerf Result]Rank {}'s main_memory-capacity=".format(dist.get_rank()) + str(gb) + "GB")
             print(r"[FlagPerf Result]Rank {}'s main_memory-capacity=".format(dist.get_rank()) + str(gib) + "GiB")
-        multi_device_sync(config.vendor)
+        if "iluvatar" not in config.vendor:
+            multi_device_sync(config.vendor)
 
 
 

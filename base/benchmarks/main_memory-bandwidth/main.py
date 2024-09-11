@@ -44,6 +44,9 @@ def main(config, case_config, rank, world_size, local_rank):
     if rank == 0:
         print("finish initialization")
     
+    if "iluvatar" in config.vendor:
+        torch.cuda.set_device(local_rank)
+
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
     tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
@@ -65,7 +68,6 @@ def main(config, case_config, rank, world_size, local_rank):
     for _ in range(case_config.ITERS):
         _tensor = tensor.clone()
     torch.cuda.synchronize()
-
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
