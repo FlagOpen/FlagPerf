@@ -42,6 +42,12 @@ def main(config, case_config, rank, world_size, local_rank):
     set_ieee_float32(config.vendor)
     if rank == 0:
         print("finish initialization")
+        
+    if "iluvatar" in config.vendor:
+        torch.cuda.set_device(local_rank)
+        rank_dst = 16
+    else:
+        rank_dst = 8
     
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
@@ -54,8 +60,8 @@ def main(config, case_config, rank, world_size, local_rank):
 
     for _ in range(case_config.WARMUP):
         if rank == 0:
-            dist.send(tensor, dst=8)
-        elif rank == 8:
+            dist.send(tensor, dst=rank_dst)
+        elif rank == rank_dst:
             dist.recv(tensor, src=0)
         
     host_device_sync(config.vendor)
@@ -64,9 +70,10 @@ def main(config, case_config, rank, world_size, local_rank):
 
     for _ in range(case_config.ITERS):
         if rank == 0:
-            dist.send(tensor, dst=8)
-        elif rank == 8:
+            dist.send(tensor, dst=rank_dst)
+        elif rank == rank_dst:
             dist.recv(tensor, src=0)
+
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
     end_time = time.perf_counter()
