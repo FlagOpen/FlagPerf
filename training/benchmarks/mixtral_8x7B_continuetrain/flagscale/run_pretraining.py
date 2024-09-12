@@ -64,8 +64,7 @@ def replace_yamls(scale_home, config_module, args):
             args.log_dir, "outputs_mixtral")
         hosts = args.hosts.split(",")
         dist_data["experiment"]["runner"]["nnodes"] = len(hosts)
-        dist_data["experiment"]["runner"][
-            "nproc_per_node"] = args.world_size // len(hosts)
+        dist_data["experiment"]["runner"]["nproc_per_node"] = args.world_size // len(hosts)
         dist_data["experiment"]["runner"]["ssh_port"] = getattr(
             config_module, "flagscale_ssh_port")
         hostfile = os.path.join(scale_home, "hostfile")
@@ -90,10 +89,12 @@ def replace_yamls(scale_home, config_module, args):
         train_data = yaml.safe_load(f)
 
     try:
-        train_data["system"]["checkpoint"]["load"] = os.path.join(
-            args.data_dir, getattr(config_module, "ckpt"))
+        train_data["system"]["checkpoint"]["load"] = os.path.join(args.data_dir, getattr(config_module, "ckpt"))
         train_data["system"]["checkpoint"]["finetune"] = True
         train_data["model"]["train_iters"] = getattr(config_module, "steps")
+        train_data["model"]["global_batch_size"] = 64
+        train_data["model"]["optimizer"]["lr"] = 1e-6
+        train_data["model"]["optimizer"]["lr_scheduler"]["min_lr"] = 1e-7
         train_data["data"]["data_path"] = os.path.join(
             args.data_dir, getattr(config_module, "dataset"),
             "dedup-md5-pile-pile-cc_text_document")
@@ -156,8 +157,8 @@ if __name__ == "__main__":
         args.log_dir, "outputs_mixtral", "logs", "host_" +
         str(timestamp_log_noderank) + "_" + timestamp_log_host + ".output")
 
-    info_line = []
     while True:
+        info_line = []
         try:
             with open(timestamp_log_file, 'r') as f:
                 lines = f.readlines()
@@ -179,7 +180,7 @@ if __name__ == "__main__":
     print(infos)
 
     ave_steptime = sum(infos[1:]) / len(infos[1:])
-    tps = 4096 * 2048 / ave_steptime / args.world_size
+    tps = 4096 * 64 / ave_steptime / args.world_size
     mfu = tps * 12E9 * 6 / getattr(module, "flops")
     print(ave_steptime, tps)
     print(f"MFU: {mfu}")
