@@ -1,0 +1,16 @@
+#!/bin/bash
+
+TOOL=test_dma
+LOG=_${TOOL}.log.$$
+PERF=/opt/xre/tools/$TOOL
+DEV=0
+SIZE=$((1024*1024*1024))
+
+$PERF \
+    --loop 100 \
+    $DEV \
+    $SIZE | tee $LOG
+    
+busbw=$(cat ${LOG} | grep -A 4 HOST_TO_DEVICE | tail -1 | cut -d: -f2 | sed -e 's/ //g')
+echo "[FlagPerf Result] interconnect-h2d bandwidth=$busbw GB/s"
+rm -f $LOG
