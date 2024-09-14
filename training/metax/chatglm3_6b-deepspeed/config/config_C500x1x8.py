@@ -1,4 +1,4 @@
-seqlength = 4096
+seqlength = 2048
 batchsize = 1
 datafilename = "openwebtext_chatglm3_100M.npy"
 theoryflops = -1

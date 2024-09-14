@@ -1,1 +1,5 @@
-echo "[Prompt] metax adaption is NULL, for other Vendors"
+VENDOR_ARGS=" \
+    --transformer-impl local  \
+    --use-distributed-optimizer \
+    --use-flash-attn
+"
