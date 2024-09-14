@@ -79,4 +79,16 @@ CASES:
 # metax   "main_memory-capacity:C550": "pytorch_2.0"
 # metax   "computation-FP64:C550": "pytorch_2.0"
 
-    # kunlunxin   "main_memory-capacity:R300p": "xpytorch029"
+# kunlunxin "interconnect-MPI_intraserver:R300p": "pytorch_2.0"
+# kunlunxin "interconnect-P2P_intraserver:R300p": "pytorch_2.0"
+# kunlunxin "interconnect-MPI_interserver:R300p": "pytorch_2.0"
+# kunlunxin "interconnect-P2P_interserver:R300p": "pytorch_2.0"
+# kunlunxin "interconnect-h2d:R300p": "pytorch_2.0"
+# kunlunxin "main_memory-bandwidth:R300p": "pytorch_2.0"
+# kunlunxin "main_memory-capacity:R300p": "pytorch_2.0"
+# kunlunxin "computation-FP32:R300p": "pytorch_2.0"
+# kunlunxin "computation-FP16:R300p": "pytorch_2.0"
+# kunlunxin "computation-BF16:R300p": "pytorch_2.0"
+# kunlunxin "computation-INT8:R300p": "pytorch_2.0"
+# kunlunxin "computation-TF32:R300p": "pytorch_2.0"
+
