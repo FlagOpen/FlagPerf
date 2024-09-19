@@ -58,7 +58,7 @@ def get_mlu_pid():
     import subprocess
     result = subprocess.Popen(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
     for line in result.stdout:
-        if 'MLU_VISIBLE_DEVICES' in line and 'grep' not in line:
+        if 'torchrun' in line and 'flagscale' in line and 'grep' not in line:
             return line.split()[1]
     return None
 
