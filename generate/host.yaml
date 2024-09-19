@@ -1,0 +1,7 @@
+data_path: "/home/daliwang/FlagPerf/newinference/inference_generate/data/data.csv"
+model_path: "/raid/llama3_infer/llama3_70b_hf"
+vendor: "nvidia"
+engine: "hf"
+log_path: "/home/daliwang/FlagPerf/generate_inference/log/"
+config_path: "/home/daliwang/FlagPerf/generate/host.yaml"
+nproc_per_node: 8

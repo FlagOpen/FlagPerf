@@ -1,0 +1,101 @@
+pid file [/tmp/gpu_monitor.pid] does not exist. Not running?
+stopping ...
+ready to start ......
+daemon process starting ...
+stopping ...
+ready to start ......
+daemon process starting ...
+stopping ...
+ready to start ......
+daemon process starting ...
+
+Loading checkpoint shards:   0%|          | 0/30 [00:00<?, ?it/s]
+Loading checkpoint shards:   3%|▎         | 1/30 [00:03<01:45,  3.62s/it]
+Loading checkpoint shards:   7%|▋         | 2/30 [00:05<01:14,  2.67s/it]
+Loading checkpoint shards:  10%|█         | 3/30 [00:09<01:26,  3.19s/it]
+Loading checkpoint shards:  13%|█▎        | 4/30 [00:13<01:32,  3.55s/it]
+Loading checkpoint shards:  17%|█▋        | 5/30 [00:15<01:15,  3.01s/it]
+Loading checkpoint shards:  20%|██        | 6/30 [00:19<01:16,  3.20s/it]
+Loading checkpoint shards:  23%|██▎       | 7/30 [00:21<01:10,  3.07s/it]
+Loading checkpoint shards:  27%|██▋       | 8/30 [00:24<01:06,  3.04s/it]
+Loading checkpoint shards:  30%|███       | 9/30 [00:28<01:08,  3.28s/it]
+Loading checkpoint shards:  33%|███▎      | 10/30 [00:31<01:04,  3.20s/it]
+Loading checkpoint shards:  37%|███▋      | 11/30 [00:35<01:03,  3.34s/it]
+Loading checkpoint shards:  40%|████      | 12/30 [00:39<01:03,  3.50s/it]
+Loading checkpoint shards:  43%|████▎     | 13/30 [00:43<01:03,  3.76s/it]
+Loading checkpoint shards:  47%|████▋     | 14/30 [00:46<00:56,  3.56s/it]
+Loading checkpoint shards:  50%|█████     | 15/30 [00:49<00:51,  3.43s/it]
+Loading checkpoint shards:  53%|█████▎    | 16/30 [00:54<00:50,  3.64s/it]
+Loading checkpoint shards:  57%|█████▋    | 17/30 [00:57<00:44,  3.44s/it]
+Loading checkpoint shards:  60%|██████    | 18/30 [01:00<00:40,  3.34s/it]
+Loading checkpoint shards:  63%|██████▎   | 19/30 [01:03<00:38,  3.48s/it]
+Loading checkpoint shards:  67%|██████▋   | 20/30 [01:06<00:33,  3.31s/it]
+Loading checkpoint shards:  70%|███████   | 21/30 [01:09<00:28,  3.22s/it]
+Loading checkpoint shards:  73%|███████▎  | 22/30 [01:13<00:27,  3.44s/it]
+Loading checkpoint shards:  77%|███████▋  | 23/30 [01:16<00:23,  3.36s/it]
+Loading checkpoint shards:  80%|████████  | 24/30 [01:20<00:19,  3.32s/it]
+Loading checkpoint shards:  83%|████████▎ | 25/30 [01:23<00:17,  3.43s/it]
+Loading checkpoint shards:  87%|████████▋ | 26/30 [01:26<00:13,  3.31s/it]
+Loading checkpoint shards:  90%|█████████ | 27/30 [01:29<00:09,  3.19s/it]
+Loading checkpoint shards:  93%|█████████▎| 28/30 [01:33<00:06,  3.39s/it]
+Loading checkpoint shards:  97%|█████████▋| 29/30 [01:37<00:03,  3.56s/it]
+Loading checkpoint shards: 100%|██████████| 30/30 [01:39<00:00,  2.98s/it]
+Loading checkpoint shards: 100%|██████████| 30/30 [01:39<00:00,  3.31s/it]
+
+inference:   0%|          | 0/4 [00:00<?, ?it/s]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+inference:  25%|██▌       | 1/4 [00:03<00:09,  3.29s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+inference:  50%|█████     | 2/4 [00:03<00:03,  1.60s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+inference:  75%|███████▌  | 3/4 [00:06<00:02,  2.09s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+inference: 100%|██████████| 4/4 [00:06<00:00,  1.46s/it]
+inference: 100%|██████████| 4/4 [00:06<00:00,  1.72s/it]
+
+Loading checkpoint shards:   0%|          | 0/30 [00:00<?, ?it/s]
+Loading checkpoint shards:   3%|▎         | 1/30 [00:03<01:52,  3.89s/it]
+Loading checkpoint shards:   7%|▋         | 2/30 [00:06<01:34,  3.37s/it]
+Loading checkpoint shards:  10%|█         | 3/30 [00:09<01:25,  3.16s/it]
+Loading checkpoint shards:  13%|█▎        | 4/30 [00:12<01:19,  3.07s/it]
+Loading checkpoint shards:  17%|█▋        | 5/30 [00:15<01:13,  2.95s/it]
+Loading checkpoint shards:  20%|██        | 6/30 [00:19<01:17,  3.21s/it]
+Loading checkpoint shards:  23%|██▎       | 7/30 [00:22<01:11,  3.11s/it]
+Loading checkpoint shards:  27%|██▋       | 8/30 [00:25<01:07,  3.05s/it]
+Loading checkpoint shards:  30%|███       | 9/30 [00:28<01:08,  3.26s/it]
+Loading checkpoint shards:  33%|███▎      | 10/30 [00:32<01:07,  3.39s/it]
+Loading checkpoint shards:  37%|███▋      | 11/30 [00:35<01:01,  3.23s/it]
+Loading checkpoint shards:  40%|████      | 12/30 [00:39<01:01,  3.40s/it]
+Loading checkpoint shards:  43%|████▎     | 13/30 [00:42<00:55,  3.27s/it]
+Loading checkpoint shards:  47%|████▋     | 14/30 [00:45<00:51,  3.21s/it]
+Loading checkpoint shards:  50%|█████     | 15/30 [00:48<00:50,  3.39s/it]
+Loading checkpoint shards:  53%|█████▎    | 16/30 [00:51<00:45,  3.27s/it]
+Loading checkpoint shards:  57%|█████▋    | 17/30 [00:54<00:40,  3.15s/it]
+Loading checkpoint shards:  60%|██████    | 18/30 [00:57<00:37,  3.10s/it]
+Loading checkpoint shards:  63%|██████▎   | 19/30 [01:01<00:35,  3.23s/it]
+Loading checkpoint shards:  67%|██████▋   | 20/30 [01:04<00:32,  3.21s/it]
+Loading checkpoint shards:  70%|███████   | 21/30 [01:07<00:27,  3.10s/it]
+Loading checkpoint shards:  73%|███████▎  | 22/30 [01:10<00:24,  3.01s/it]
+Loading checkpoint shards:  77%|███████▋  | 23/30 [01:14<00:22,  3.28s/it]
+Loading checkpoint shards:  80%|████████  | 24/30 [01:17<00:19,  3.19s/it]
+Loading checkpoint shards:  83%|████████▎ | 25/30 [01:20<00:15,  3.14s/it]
+Loading checkpoint shards:  87%|████████▋ | 26/30 [01:23<00:13,  3.36s/it]
+Loading checkpoint shards:  90%|█████████ | 27/30 [01:26<00:09,  3.28s/it]
+Loading checkpoint shards:  93%|█████████▎| 28/30 [01:31<00:07,  3.77s/it]
+Loading checkpoint shards:  97%|█████████▋| 29/30 [01:34<00:03,  3.52s/it]
+Loading checkpoint shards: 100%|██████████| 30/30 [01:35<00:00,  2.72s/it]
+Loading checkpoint shards: 100%|██████████| 30/30 [01:35<00:00,  3.19s/it]
+
+  0%|          | 0/4 [00:00<?, ?it/s]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+ 25%|██▌       | 1/4 [00:03<00:09,  3.27s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+ 50%|█████     | 2/4 [00:03<00:03,  1.60s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+ 75%|███████▌  | 3/4 [00:05<00:01,  1.61s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+
+100%|██████████| 4/4 [00:05<00:00,  1.17s/it]
+100%|██████████| 4/4 [00:05<00:00,  1.46s/it]
+stopping ...
+Stopped!
+  
