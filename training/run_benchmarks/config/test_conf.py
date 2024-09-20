@@ -174,6 +174,7 @@ CASES = {
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
     # metax cases
+    #"llava1.5_7b_continuetrain:flagscale:C500:4:8:1": "/data/dataset/llava"
     #"llama3_8B:megatron_core060:C500:1:8:1": "/data/llama3_8b"
     # "llama2_70B:megatron:C500:4:8:1": "/data/llama2-70B"
     #"chatglm3_6b:deepspeed:C500:1:8:1": "/raid/dataset//chatglm3-6b"
