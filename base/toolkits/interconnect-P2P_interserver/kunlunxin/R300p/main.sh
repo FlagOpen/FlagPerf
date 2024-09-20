@@ -11,7 +11,7 @@ hosts=$(cat "../../../../configs/host.yaml" | egrep -v '^\s*#' | grep HOSTS: | c
 n=$(($(echo $hosts| sed -e 's/,/\n/g'| wc -l)*8))
 
 TOOL=sendrecv
-LOG=_${TOOL}.log.$$
+LOG=_${TOOL}.log.${RANDOM}.$$
 PERF=/opt/xccl/perf/${TOOL}
 
 # FIXME: hard code hostname, need graceful impl.
@@ -23,7 +23,7 @@ fi
 mpirun -hosts "${hosts}" -n 2 $PERF \
     --nxpus 2\
     --warmup_iters 20 \
-    --iters 2000 \
+    --iters 50000 \
     --minbytes 256m \
     --maxbytes 256m \
     --op_type sum \

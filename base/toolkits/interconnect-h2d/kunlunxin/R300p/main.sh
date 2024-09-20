@@ -1,13 +1,13 @@
 #!/bin/bash
 
 TOOL=test_dma
-LOG=_${TOOL}.log.$$
+LOG=_${TOOL}.log.${RANDOM}.$$
 PERF=/opt/xre/tools/$TOOL
 DEV=0
 SIZE=$((1024*1024*1024))
 
 $PERF \
-    --loop 100 \
+    --loop 5000 \
     $DEV \
     $SIZE | tee $LOG
     
