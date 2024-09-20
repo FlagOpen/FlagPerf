@@ -1,15 +1,15 @@
 #!/bin/bash
 
 TOOL=sendrecv
-LOG=_${TOOL}.log.$$
+LOG=_${TOOL}.log.${RANDOM}.$$
 PERF=/opt/xccl/perf/${TOOL}
 
 $PERF \
     --nxpus 8 \
     --warmup_iters 20 \
-    --iters 20000 \
-    --minbytes 128m \
-    --maxbytes 128m \
+    --iters 50000 \
+    --minbytes 256m \
+    --maxbytes 256m \
     --op_type sum \
     --data_type float \
     -c 0 | tee $LOG
