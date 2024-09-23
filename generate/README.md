@@ -15,7 +15,7 @@
 |    ├── vendor #厂商配置
 |          ├── engine #推理引擎
 |                |—— ttft.py #测量首字延迟
-|—— TASK #配置任务信息
+|—— tasks #配置任务信息
 |    ├── vendor #厂商配置
 |          ├── engine #推理引擎
 |                 |—— GPUConfig.yaml #硬件信息配置
