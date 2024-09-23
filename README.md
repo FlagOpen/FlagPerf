@@ -596,8 +596,9 @@ vim host.yaml
 ```Bash
 #必须修改项
 data_path: "/Xsum.csv" #数据路径
-VENDOR :"nvidia" #测试机器对象，nvidia/kunlunxin/iluvatar
-engine :"hf"  #推理框架类型，现支持vllm、huggingface 需自己本地配置
+model_path: "/llama3_70b_hf"#模型路径，该测量的标程应选用Llama3 70b进行测量
+VENDOR :"nvidia" #测试机器对象，nvidia/kunlunxin
+engine :"hf"  #推理框架类型，现支持vllm、huggingface。推理框架需自己本地配置
 log_path :"/log" #日志路径
 config_path :"./host.yaml" #host.yaml文件所在路径
 nproc_per_node: 8 #参与推理评测的GPU数量
