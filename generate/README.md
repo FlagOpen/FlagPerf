@@ -32,7 +32,7 @@
     2. data_path: 数据集存放路径
     3. log_path: 推理结果存放路径
     4. engine: 推理框架(支持扩展，现版本支持vllm以及huggingface框架下的推理)
-    5. gpu_nums:采用的gpu数量
+    5. nproc_per_node:采用的gpu数量
     6. vendor: 厂商名称
     7. config_path: 配置文件存放路径
 2. vendor/engine/task.yaml
