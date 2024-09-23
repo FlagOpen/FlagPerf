@@ -10,9 +10,11 @@
 |—— Throughput #用于观测吞吐量信息
 |    ├── vendor #厂商配置
 |          ├── engine #推理引擎
+|                |—— throughput.py #测量吞吐量
 |—— TTFT #用于观测首字延迟
 |    ├── vendor #厂商配置
 |          ├── engine #推理引擎
+|                |—— ttft.py #测量首字延迟
 |—— TASK #配置任务信息
 |    ├── vendor #厂商配置
 |          ├── engine #推理引擎
