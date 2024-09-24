@@ -1,5 +1,5 @@
 # scale_parent must under FlagPerf/ or data_dir/, otherwise you cannot mount it into baremetal, therefore cannot use shared storage
-scale_parent = "/share/project/zhaodeming/data_dir"
+scale_parent = "/share/project/data_dir"
 scale_home = f"{scale_parent}/FlagScale/build/cambricon_MLU/FlagScale"
 
 # this cmd should install scale at <scale_home>. <scale_home> is set by flagperf.training.benchmarks.llava1.5_7b.flagscale.run_pretraining.py

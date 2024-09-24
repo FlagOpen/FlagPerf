@@ -1,4 +1,4 @@
-FROM cambricon_flagscale_2409_pt21
+FROM flagperf:cambricon-v24.08.02-torch2.1.0-catch1.22.1-ubuntu22.04-py310-megatron-patch-flagscale
 #shell
 SHELL ["/bin/bash", "-c"]
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends tzdata && apt-get install -y openssh-server && mkdir -p /run/sshd
