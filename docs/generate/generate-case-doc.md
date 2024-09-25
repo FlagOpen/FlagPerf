@@ -13,10 +13,10 @@
 |—— TTFT #用于观测首字延迟
 |    ├── vendor #厂商配置
 |          ├── engine #推理引擎
-|—— TASK #配置任务信息
+|—— tasks #配置任务信息
 |    ├── vendor #厂商配置
 |          ├── engine #推理引擎
-|                 |—— GPUConfig.yaml #硬件信息配置
+|                 |—— chip.yaml #硬件信息配置
 |—— host.yaml #路径信息配置
 
 ```
@@ -46,10 +46,11 @@
     5. gpu_nums:采用的gpu数量
     6. vendor: 厂商名称
     7. config_path: 配置文件存放路径
+    8. chip: 芯片名称
 2. vendor/engine/task.yaml
     1. GPU_NAME: GPU名称
-    2. GPU_FPxx: 在xx精度下GPU的理论峰值FLOPs(单位为TFLOPs)
-    3. task_nums: 任务数量(默认4000条推理)
+    2. TFLOPS_FPxx: 在xx精度下GPU的理论峰值FLOPs(单位为TFLOPs)
+    3. task_nums: 任务数量(默认1000条推理)
 
 #### 运行方式
 厂商修改完task.yaml和host.yaml文件后，调用python main.py 即可进行评测，评测结果会显示在控制台以及/log/engine/之中的log文件
