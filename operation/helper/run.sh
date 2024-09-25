@@ -40,7 +40,7 @@ parse_log() {
     readme_file_path="${OPERATIONDIR}/${result_dir}"
     if [ -f "$log_file_path" ]; then
         cd "${CURRENTDIR}"
-        python render.py "${log_file_path}" "${case_type}" "${readme_file_path}"
+        python3 render.py "${log_file_path}" "${case_type}" "${readme_file_path}"
         if [ $? -eq 0 ]; then
             echo "markdown渲染成功"
         else
@@ -61,7 +61,7 @@ run_cases_and_gen_readme() {
     echo "-------------------current dir---------------------"
     echo `pwd`
     echo "start to run..."
-    python run.py
+    python3 run.py
     # 检查上一条命令的执行结果
     if [ $? -eq 0 ]; then
         echo "执行成功"
