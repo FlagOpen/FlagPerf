@@ -1,9 +1,42 @@
-FROM maca-c500-pytorch-2.19.0.9-ubuntu18.04-amd64:FlagPerf_aquila2_7b
+FROM metax-flagscale:2.24.0.2-ubuntu20.04-amd64-v7
 ENV PATH="/opt/conda/bin:${PATH}"
+
+ENV MACA_PATH="/opt/maca"
+ENV MACA_CLANG_PATH="${MACA_PATH}/mxgpu_llvm/bin"
+ENV MACA_CLANG="${MACA_PATH}/mxgpu_llvm"
+ENV DEVINFO_ROOT="${MACA_PATH}"
+ENV CUCC_PATH="${MACA_PATH}/tools/cu-bridge"
+ENV CUDA_PATH="${CUCC_PATH}"
+
+ENV PATH="${CUCC_PATH}:${MACA_PATH}/bin:${MACA_CLANG}/bin:${PATH}"
+ENV LD_LIBRARY_PATH="${MACA_PATH}/lib:${MACA_PATH}/mxgpu_llvm/lib:${LD_LIBRARY_PATH}"
+
+# ENV GLOO_SOCKET_IFNAME=ens115f0
+
 ENV MACA_SMALL_PAGESIZE_ENABLE=1
-ENV MHA_USE_BLAS=ON
-ENV MHA_BWD_NO_ATOMIC_F64=1
-ENV CUCC_PATH=${MACA_PATH}/tools/cu-bridge
-ENV CUDA_PATH=${CUCC_PATH}
+ENV MCPYTORCH_DISABLE_PRINT=1
+
+ENV MCCL_NET_GDR_LEVEL=7
+ENV MCCL_P2P_LEVEL=SYS
+ENV MCCL_LIMIT_RING_LL_THREADTHRESHOLDS=1
+ENV FORCE_ACTIVATE_WAIT=1
+
+ENV SET_DEVICE_NUMA_PREFERRED=1
+
+ENV MAX_JOBS=20
+ENV PYTORCH_ENABLE_SAME_RAND_A100=1
+ENV MCCL_IB_GID_INDEX=1
+ENV NVTE_FLASH_ATTN=1
+ENV NVTE_FUSED_ATTN=0
+ENV HYDRA_FULL_ERROR=1
+
+#ENV MCBLAS_CUSTOMIZED_CONFIG_PATH=/workspace/Megatron-LM_metax/mcblas_customized_config.yaml
+
 RUN /bin/bash -c "uname -a"
-RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple  pybind11 regex
+RUN /bin/bash -c alias python3=python
+#RUN pip install pybind11 regex hydra-core wandb s3fs --trusted-host mirrors.aliyun.com
+#RUN pip install braceexpand webdataset --trusted-host mirrors.aliyun.com
+
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+ENTRYPOINT ["/start.sh"]

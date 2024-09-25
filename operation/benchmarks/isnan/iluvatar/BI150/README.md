@@ -21,7 +21,7 @@
 * 服务器间AI芯片直连规格及带宽：此评测项不涉及服务期间AI芯片直连
 
 # 算子库版本
-FlagGems:>联系邮箱: contact-us@iluvatar.com获取版本(FlagGems-0710_pointwise_use_tid)
+FlagGems:>联系邮箱: contact-us@iluvatar.com获取版本(FlagGems最新适配版本)
 
 # 评测结果
 
