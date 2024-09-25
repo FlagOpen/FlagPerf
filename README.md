@@ -602,7 +602,7 @@ engine :"hf"  #推理框架类型，现支持vllm、huggingface。推理框架�
 log_path :"/log" #日志路径
 config_path :"./host.yaml" #host.yaml文件所在路径
 nproc_per_node: 8 #参与推理评测的GPU数量
-chip：
+chip："A100_40_SXM"#芯片名称
 ```
 
 3. **用户需要根据评测对象，配置tasks/<engine>/<vendor>/task.yaml**
