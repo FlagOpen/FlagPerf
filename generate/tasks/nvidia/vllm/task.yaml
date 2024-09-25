@@ -1,7 +1,0 @@
-GPU_NAME: "A100"
-#Theoretical FLOPs peak of the GPU for different precision computations (measured in TFLOPs)
-GPU_FP64: 9.7
-GPU_FP32: 19.5
-GPU_TF32: 156
-GPU_FP16TC: 312
-task_nums: 4000

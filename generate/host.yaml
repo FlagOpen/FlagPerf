@@ -1,7 +1,0 @@
-data_path: "/home/Xsum.csv"
-model_path: "/llama3_70b_hf"
-vendor: "nvidia"
-engine: "hf"
-log_path: "/generate_inference/log/"
-config_path: "/generate/host.yaml"
-nproc_per_node: 8
