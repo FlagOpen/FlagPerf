@@ -602,7 +602,7 @@ engine :"hf"  #推理框架类型，现支持vllm、huggingface。推理框架�
 log_path :"/log" #日志路径
 config_path :"./host.yaml" #host.yaml文件所在路径
 nproc_per_node: 8 #参与推理评测的GPU数量
-chip："A100_40_SXM"#芯片名称
+chip："A100_40_SXM" #芯片名称
 ```
 
 3. **用户需要根据评测对象，配置tasks/<engine>/<vendor>/task.yaml**
@@ -614,8 +614,8 @@ GPU_NAME: "A100_40_SXM"
 TFLOPS_FP16:312
 ```
 ```Bash
-# 若不修改则采用默认任务数量配置，需要保证总推理评测时间在5-15分钟内完成
-task_nums: 4000
+# 若不修改则采用默认任务数量配置，需要保证总推理评测时间在5-15分钟内完成且并发数不应高于256
+task_nums: 256
 ```
 
 4. **启动测试**
