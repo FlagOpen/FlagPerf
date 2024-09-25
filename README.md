@@ -602,18 +602,16 @@ engine :"hf"  #推理框架类型，现支持vllm、huggingface。推理框架�
 log_path :"/log" #日志路径
 config_path :"./host.yaml" #host.yaml文件所在路径
 nproc_per_node: 8 #参与推理评测的GPU数量
+chip：
 ```
 
 3. **用户需要根据评测对象，配置tasks/<engine>/<vendor>/task.yaml**
 
 ```Bash
 # 必改项
-GPU_NAME: "A100"
+GPU_NAME: "A100_40_SXM"
 #Theoretical FLOPs peak of the GPU for different precision computations (measured in TFLOPs)
-GPU_FP64: 9.7
-GPU_FP32: 19.5
-GPU_TF32: 156
-GPU_FP16TC: 312
+TFLOPS_FP16:312
 ```
 ```Bash
 # 若不修改则采用默认任务数量配置
