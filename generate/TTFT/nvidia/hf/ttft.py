@@ -62,7 +62,6 @@ def TTFT_Record(config_path):
                                return_tensors="pt")
             inputs = inputs.to(device)
             start = time.perf_counter()
-            print(duration)
             outputs = model.generate(
                 inputs.input_ids,
                 max_new_tokens=1,
