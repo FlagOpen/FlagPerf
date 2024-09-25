@@ -1,0 +1,4 @@
+GPU_NAME: "A100_40_SXM"
+#Theoretical FLOPs peak of the GPU for different precision computations (measured in TFLOPs)
+TFLOPS_FP16: 312
+task_nums: 256
