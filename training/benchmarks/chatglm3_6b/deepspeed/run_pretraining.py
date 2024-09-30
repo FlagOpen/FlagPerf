@@ -84,6 +84,11 @@ def get_deepspeed_engine(args, model_config_dir, flashattn):
         model.gradient_checkpointing_enable()
     model_engine, _, _, _ = deepspeed.initialize(
         args=args, model=model, model_parameters=model.parameters())
+    
+    if args.load_ckpt_dir is not None:
+        print(f"Loading ckpt from dir: {args.data_dir}/{args.load_ckpt_dir}")
+        model_engine.load_checkpoint(os.path.join(args.data_dir, args.load_ckpt_dir))
+
     return model_engine
 
 
@@ -113,6 +118,8 @@ if __name__ == "__main__":
     flashattn = getattr(module, 'flashattn')
     gradient_checkpointing_enable = getattr(module, 'gradient_checkpointing_enable', False)
     args.gradient_checkpointing_enable = gradient_checkpointing_enable
+    load_ckpt_dir = getattr(module, 'load_ckpt_dir', None)
+    args.load_ckpt_dir = load_ckpt_dir
 
     deepspeed.init_distributed()
     model_engine = get_deepspeed_engine(args, os.path.join("chatglm3_6b_hf"),

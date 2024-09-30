@@ -14,8 +14,7 @@ TOOL=all_reduce
 LOG=_${TOOL}.log.${RANDOM}.$$
 PERF=/opt/xccl/perf/${TOOL}
 
-# FIXME: hard code hostname, need graceful impl.
-if [[ w"$HOSTNAME" != w"p-perf-kunlun-01" ]]; then
+if [[ w"$NODERANK" != w"0" ]]; then
     echo "launch mpirun only on first node, exiting.\n"
     exit
 fi
