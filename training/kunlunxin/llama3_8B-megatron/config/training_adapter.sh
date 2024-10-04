@@ -15,7 +15,7 @@ VENDOR_ARGS=" \
     --use-mcore-models \
     --use-flash-attn \
     --disable-bias-linear \
-    --use-cpu-initialization --hidden-dropout 0 --attention-dropout 0 \
+    --hidden-dropout 0 --attention-dropout 0 \
     --no-async-tensor-model-parallel-allreduce --no-gradient-accumulation-fusion
 "
 
