@@ -176,7 +176,7 @@ if __name__ == "__main__":
             print("Maybe some errors")
         if len(info_line) == getattr(module, "steps"):
             break
-        time.sleep(300) if args.vendor != 'metax' else time.sleep(10)
+        time.sleep(300) if args.vendor != 'metax' else time.sleep(5)
 
     infos = []
     for line in info_line:
