@@ -133,6 +133,8 @@ CASES = {
     # "mixtral_8x7B:megatron_core060:H100:4:8:1": "/raid/datasets/mistral"
 
     # kunlunxin cases
+    #"llava1.5_7b:flagscale_llava:R300p:4:8:1": "/workspace/data_dir"
+    #"llava1.5_7b_continuetrain:flagscale_llava:R300p:4:8:1": "/workspace/data_dir"
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
