@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <vector>
 
 constexpr int M = 8192;
 constexpr int N = 8192;
@@ -23,6 +24,9 @@ struct PrecisionConfig {
 
 void test(const PrecisionConfig& config) {
     float* d_A, * d_B, * d_C;
+    std::vector<float> h_A(M * K); 
+    std::vector<float> h_B(K * N); 
+    std::vector<float> h_C(M * N); 
 
     musaMalloc(&d_A, M * K * config.bytesPerElement);
     musaMalloc(&d_B, K * N * config.bytesPerElement);
@@ -33,6 +37,9 @@ void test(const PrecisionConfig& config) {
     else {
         musaMalloc(&d_C, M * N * config.bytesPerElement);
     }
+
+    musaMemcpy(d_A, h_A.data(), M * K * config.bytesPerElement, musaMemcpyHostToDevice);
+    musaMemcpy(d_B, h_B.data(), K * N * config.bytesPerElement, musaMemcpyHostToDevice);
 
     mublasHandle_t handle;
     mublasCreate(&handle);
@@ -97,6 +104,8 @@ void test(const PrecisionConfig& config) {
 
     std::cout << "[FlagPerf Result]" << "computation-TF32=" << TFLOPS << "TFLOPS"
         << std::endl;
+
+    musaMemcpy(h_C.data(), d_C, M * N * config.bytesPerElement, musaMemcpyDeviceToHost);
 
     musaFree(d_A);
     musaFree(d_B);
