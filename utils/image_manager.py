@@ -69,7 +69,7 @@ class ImageManager():
         self.tag = tag
 
     def exist(self):
-        '''Check if local image existi or not
+        '''Check if local image exist or not
         Return code:
             0 - image already exist
             1 - image doesn't exist

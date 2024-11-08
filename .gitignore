@@ -1,4 +1,8 @@
 # Build and Release Folders
+*
+!*.*
+!*/
+!Dockerfile
 .idea/
 .ijwb/
 .vscode/
@@ -9,3 +13,5 @@ inference/result/*
 base/result/*
 operation/result/*
 inference/onnxs/*
+*.log
+*.o
