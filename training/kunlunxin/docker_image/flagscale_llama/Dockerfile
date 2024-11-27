@@ -1,4 +1,4 @@
-FROM zhiyuan_flagscale_llava:newest
+FROM zhiyuan_flagscale_llama:newest
 # FROM iregistry.baidu-int.com/xmlir/xmlir_ubuntu_2004_x86_64:v0.29
 RUN /bin/bash -c "pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple"
 RUN /bin/bash -c "uname -a"

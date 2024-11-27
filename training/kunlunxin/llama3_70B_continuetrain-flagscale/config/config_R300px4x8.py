@@ -1,5 +1,5 @@
 # scale_parent must under FlagPerf/ or data_dir/, otherwise you cannot mount it into baremetal, therefore cannot use shared storage
-scale_parent = "/share/project/PUBLIC/data/llama3-70b/FlagOpen"
+scale_parent = "/share/project/PUBLIC/data/FlagScale/build/kunlunxin_R300p/"
 scale_home = f"{scale_parent}/FlagScale"
 
 # this cmd should install scale at <scale_home>. <scale_home> is set by flagperf.training.benchmarks.llava1.5_7b.flagscale.run_pretraining.py
@@ -20,13 +20,13 @@ tokenizer = f"/share/project/PUBLIC/data/llama3-70b/llama3_tokenizer"
 ckpt = f"/share/project/PUBLIC/data/llama3-70b/llama3_ckpt"
 
 
-cmds = {"before_start": "source ~/.bashrc; export LD_LIBRARY_PATH=/share/project/PUBLIC/data/llama3-70b/xpu_output//xccl/3.0.0.4_20241107/xccl_rdma-ubuntu_x86_64/so/:/share/project/PUBLIC/data/llama3-70b/xpu_output//xhpc/20241107/xhpc-ubuntu2004_x86_64/xblas/so:/share/project/PUBLIC/data/llama3-70b/xpu_output//xhpc/20241107/xhpc-ubuntu2004_x86_64/xfa/so:/share/project/PUBLIC/data/llama3-70b/xpu_output//xhpc/20241107/xhpc-ubuntu2004_x86_64/xpudnn/so:/share/project/PUBLIC/data/llama3-70b/xpu_output//xre/5.0.21.5/xre-Linux-x86_64-5.0.21.5/so"}
+cmds = {"before_start": "source ~/.bashrc;"}
 
 
 # flagscale's requirements
 flagscale_chip_type = "R300p"
 flagscale_ssh_port = 3702
-flops = 999
+flops = -1
 
 # for llava's algorithm
 steps = 500

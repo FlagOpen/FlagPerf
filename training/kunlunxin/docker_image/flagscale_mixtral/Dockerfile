@@ -1,4 +1,4 @@
-From kunlunxin_mixtral8x7b:v0.1
+From zhiyuan_flagscale_mixtral:newest
 
 RUN /bin/bash -c "pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple"
 RUN /bin/bash -c "uname -a"
