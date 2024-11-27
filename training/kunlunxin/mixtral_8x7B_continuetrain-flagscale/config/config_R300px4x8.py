@@ -9,9 +9,6 @@ scale_download_cmd = f"cd {scale_parent}; "
 # NV need nothing because all requirements have been established in base docker image. vendor can do anything related here
 scale_install_cmd = ""
 
-# locate energon. the copy from energon_install_path to flagscale/megatron/ is done by flagperf...run_pretraining.py
-energon_locate_cmd = r"pip show megatron-energon | grep Location | awk -F: '{print $2}' | xargs"
-
 scale_conf_dir = f"{scale_home}/examples/mixtral/conf"
 configyaml = f"{scale_conf_dir}/config.yaml"
 trainyaml = f"{scale_conf_dir}/train/train_mixtral_8x7b.yaml"
@@ -19,9 +16,7 @@ dataset = f"/share/project/PUBLIC/data/SAMPLE50B/mixtral_dataset"
 tokenizer = f"/share/project/PUBLIC/data/SAMPLE50B/mixtral_tokenizer"
 ckpt = f"/share/project/PUBLIC/data/mixtral-8x7b/mixtral_tp2_pp4_ep4_latest"
 
-
 cmds = {"before_start": "source ~/.bashrc;"}
-
 
 # flagscale's requirements
 flagscale_chip_type = "R300p"
