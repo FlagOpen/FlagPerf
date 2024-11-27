@@ -575,7 +575,59 @@ CASES={} # 本次运行的测例，按照对应模型readme准备好数据，修
 sudo python inference/run.py
 ```
 
+
+### 生成式推理评测启动说明
+
+1. **下载FlagPerf并部署**
+
+```Bash
+# 按照FlagPerf/inference中安装相关环境
+git clone https://github.com/FlagOpen/FlagPerf.git
+cd FlagPerf/inference/
+pip3 install -r requirements.txt
+```
+
+2. **修改机器配置文件**
+
+```Bash
+cd Flagperf/generate/
+vim host.yaml
+```
+
+
+```Bash
+#必须修改项
+data_path: "/Xsum.csv" #数据路径
+model_path: "/llama3_70b_hf"#模型路径，该测量的标程应选用Llama3 70b进行测量
+VENDOR :"nvidia" #测试机器对象，nvidia/kunlunxin
+engine :"hf"  #推理框架类型，现支持vllm、huggingface。推理框架需自己本地配置
+log_path :"/log" #日志路径
+config_path :"./host.yaml" #host.yaml文件所在路径
+nproc_per_node: 8 #参与推理评测的GPU数量
+chip："A100_40_SXM" #芯片名称
+```
+
+3. **用户需要根据评测对象，配置tasks/<engine>/<vendor>/task.yaml**
+
+```Bash
+# 必改项
+GPU_NAME: "A100_40_SXM"
+#Theoretical FLOPs peak of the GPU for different precision computations (measured in TFLOPs)
+TFLOPS_FP16:312
+```
+```Bash
+# 若不修改则采用默认任务数量配置，需要保证总推理评测时间在5-15分钟内完成且并发数不应高于256
+task_nums: 256
+```
+
+4. **启动测试**
+
+```Bash
+sudo python generate/main.py
+```
+
 - 更多基础规格/训练/推理说明见[基础规格文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/base/base-case-doc.md)，[训练文档](https://github.com/FlagOpen/FlagPerf/blob/main/training/README.md)和[推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/inference/inference-case-doc.md)
+[生成式推理文档](https://github.com/FlagOpen/FlagPerf/blob/main/docs/generate/generate-case-doc.md)
 
 ## 参与共建FlagPerf
 
