@@ -1,0 +1,45 @@
+#pragma once
+#include "benchmark.muh"
+#include <mma.h>
+
+#define UNROLL_NUM 16
+#define ITERS 256
+using namespace mtmusa;
+
+#define MMA_4(a, b, c)        \
+  wmma::mma_sync(c, a, b, c); \
+  wmma::mma_sync(c, a, b, c); \
+  wmma::mma_sync(c, a, b, c); \
+  wmma::mma_sync(c, a, b, c);
+
+#define MMA_16(a, b, c) \
+  MMA_4(a, b, c);       \
+  MMA_4(a, b, c);       \
+  MMA_4(a, b, c);       \
+  MMA_4(a, b, c);
+
+template <int M, int N, int K>
+__device__ void compute_mma_bf16_impl(void* ptr, Int2Type<true>) {
+  wmma::fragment<wmma::matrix_a, M, N, K, __mt_bfloat16, wmma::row_major>
+      a_frag;
+  wmma::fragment<wmma::matrix_b, M, N, K, __mt_bfloat16, wmma::row_major>
+      b_frag;
+  wmma::fragment<wmma::accumulator, M, N, K, float> c_frag;
+  // #pragma unroll
+  for (int i = 0; i < ITERS; i++) {
+    MMA_16(a_frag, b_frag, c_frag);
+  }
+  wmma::store_matrix_sync((float*)ptr, c_frag, M, wmma::mem_col_major);
+}
+
+template <int M, int N, int K>
+__device__ void compute_mma_bf16_impl(void* ptr, Int2Type<false>) {}
+
+template <int M, int N, int K, int ARCH>
+__global__ void compute_mma_bf16(void* ptr) {
+#if defined(__MUSA_ARCH__) && (__MUSA_ARCH__ == 220)
+  compute_mma_bf16_impl<M, N, K>(ptr, Int2Type<(ARCH == MP_22)>());
+#elif defined(__MUSA_ARCH__) && (__MUSA_ARCH__ == 310)
+  compute_mma_bf16_impl<M, N, K>(ptr, Int2Type<(ARCH == MP_31)>());
+#endif
+}
