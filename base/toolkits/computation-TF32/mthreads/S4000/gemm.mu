@@ -1,7 +1,3 @@
-// Copyright (c) 2024 BAAI. All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License")
-
 #include <mublas.h>
 #include <musa_runtime.h>
 
@@ -24,9 +20,9 @@ struct PrecisionConfig {
 
 void test(const PrecisionConfig& config) {
     float* d_A, * d_B, * d_C;
-    std::vector<float> h_A(M * K); 
-    std::vector<float> h_B(K * N); 
-    std::vector<float> h_C(M * N); 
+    std::vector<float> h_A(M * K);
+    std::vector<float> h_B(K * N);
+    std::vector<float> h_C(M * N);
 
     musaMalloc(&d_A, M * K * config.bytesPerElement);
     musaMalloc(&d_B, K * N * config.bytesPerElement);
