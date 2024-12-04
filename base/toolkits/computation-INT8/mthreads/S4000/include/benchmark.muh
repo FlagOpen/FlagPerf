@@ -1,0 +1,54 @@
+#pragma once
+#include "benchmark_int8.h"
+
+template <class T, typename... Args>
+float Benchmark::RunKernel(T func, dim3 block_num, dim3 block_size, uint iters,
+                           Args... args) {
+  // unit micro secend
+  float timed = 0, timed_min = 0;
+
+  // Dummy calls
+  for (uint i = 0; i < 2; i++) {
+    func<<<block_num, block_size>>>(args...);
+    CHECK_MUSA_ERROR(musaDeviceSynchronize());
+  }
+
+  if (use_event_timer) {
+    MUSAEvent musaEvent(&timed);
+    for (uint i = 0; i < iters; i++) {
+      func<<<block_num, block_size>>>(args...);
+    }
+    CHECK_MUSA_ERROR(musaDeviceSynchronize());
+  } else  // std timer
+  {
+    Timer timer(&timed);
+    for (uint i = 0; i < iters; i++) {
+      func<<<block_num, block_size>>>(args...);
+    }
+    CHECK_MUSA_ERROR(musaDeviceSynchronize());
+  }
+  timed_min = timed;
+  // double check
+  if (use_event_timer) {
+    MUSAEvent musaEvent(&timed);
+    for (uint i = 0; i < iters; i++) {
+      func<<<block_num, block_size>>>(args...);
+    }
+    CHECK_MUSA_ERROR(musaDeviceSynchronize());
+  } else  // std timer
+  {
+    Timer timer(&timed);
+    for (uint i = 0; i < iters; i++) {
+      func<<<block_num, block_size>>>(args...);
+    }
+    CHECK_MUSA_ERROR(musaDeviceSynchronize());
+  }
+  timed_min = std::min(timed_min, timed);
+
+  return (timed_min / static_cast<float>(iters));
+}
+
+template <int A>
+struct Int2Type {
+  enum { VALUE = A };
+};
