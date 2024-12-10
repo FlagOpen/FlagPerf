@@ -38,7 +38,10 @@ def parse_args():
     
 
 def main(config, case_config, rank, world_size, local_rank):    
-    device = torch.device('cuda:{}'.format(local_rank))
+    if "mthreads" in config.vendor:
+        device = torch.device('musa:{}'.format(local_rank))
+    else:
+        device = torch.device('cuda:{}'.format(local_rank))
     byte_size = case_config.INITSIZE
     min_byte_size = 1
     total_allocated = 0
@@ -54,7 +57,10 @@ def main(config, case_config, rank, world_size, local_rank):
             print(f"Allocated: {total_allocated} MiB")
         except RuntimeError as e:
             if "out of memory" in str(e):
-                print(f"CUDA OOM at tensor size {byte_size} MiB. Allocated:{total_allocated} MiB")
+                if "mthreads" in config.vendor:
+                    print(f"MUSA OOM at tensor size {byte_size} MiB. Allocated:{total_allocated} MiB")
+                else:
+                    print(f"CUDA OOM at tensor size {byte_size} MiB. Allocated:{total_allocated} MiB")
                 byte_size //= 2
                 if byte_size < min_byte_size:
                     print("Tensor size == 1 Byte, finish test.")
