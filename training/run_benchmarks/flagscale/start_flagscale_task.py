@@ -111,7 +111,9 @@ def main():
 
     task_log_dir = helper.init_flagperf_logger(START_LOGGER, task_args)
     helper.write_pid_file(task_args.log_dir, "start_flagscale_task.pid")
-
+    if task_args.vendor == "kunlunxin":
+        import time
+        time.sleep(60)
     train_script_path = helper.get_train_script_path(task_args)
     config_dir, config_file = helper.get_config_dir_file(task_args)
     config_file = os.path.join(config_dir, config_file)
