@@ -51,7 +51,10 @@ def main(config, case_config, rank, world_size, local_rank):
     
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
-    tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
+    if "mthreads" in config.vendor:
+        tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
+    else:
+        tensor = torch.rand(torchsize, dtype=torch.float32).cuda()
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
