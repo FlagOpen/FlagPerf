@@ -51,7 +51,10 @@ def main(config, case_config, rank, world_size, local_rank):
     
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
-    tensor = torch.rand(torchsize, dtype=torch.float32).cuda()
+    if "mthreads" in config.vendor:
+        tensor = torch.rand(torchsize, dtype=torch.float32).to(local_rank)
+    else:
+        tensor = torch.rand(torchsize, dtype=torch.float32).cuda()
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -100,7 +103,10 @@ if __name__ == "__main__":
     world_size = dist.get_world_size()
     local_rank = rank % config.node_size
     if local_rank == 0:
-        torch.cuda.set_device(local_rank)
+        if "mthreads" in config.vendor:
+            torch.musa.set_device(local_rank)
+        else:    
+            torch.cuda.set_device(local_rank)
         print(rank, world_size, local_rank)
 
     gb, gib = main(config, case_config, rank, world_size, local_rank)
