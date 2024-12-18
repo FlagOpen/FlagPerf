@@ -67,7 +67,11 @@ def main(config, case_config, rank, world_size, local_rank):
 
     for _ in range(case_config.ITERS):
         _tensor = tensor.clone()
-    torch.cuda.synchronize()
+    
+    if "mthreads" in config.vendor:
+        torch.musa.synchronize()
+    else:
+        torch.cuda.synchronize()
 
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
