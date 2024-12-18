@@ -270,8 +270,8 @@ public:
         //     credible
         //     ? " "
         //     : " - the performance is not credible when enable stable checking");
-        SHOW("Average TF32 Single Op Duration:%f us\n", t * 1.0e3);
-        SHOW("[FlagPerf Result]computation-TF32=%f TFLOPS\n", gops / 1.0e3);
+        SHOW("Average BF16 Single Op Duration:%f us\n", t * 1.0e3);
+        SHOW("[FlagPerf Result]computation-BF16=%f TFLOPS\n", gops / 1.0e3);
 
     }
 
@@ -614,10 +614,10 @@ int RunMatMul() {
     CHECK_MUSA(musaGetDevice(&device_id));
 
     MatMulParam param;
-    const int iters = 20000;
+    const int iters = 30000;
     musaStream_t stream;
     CHECK_MUSA(musaStreamCreate(&stream));
-    TestMatMul test_mm(stream, device_id, DType::f32, param, iters);
+    TestMatMul test_mm(stream, device_id, DType::bf16, param, iters);
     bool ret = test_mm.Test();
     CHECK_MUSA(musaStreamDestroy(stream));
     return ret;
