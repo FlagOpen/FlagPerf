@@ -8,7 +8,7 @@ from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
 
-
+# 算子正确性入口
 def do_correctness(operation):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
@@ -21,6 +21,21 @@ def do_correctness(operation):
     p.wait()
 
     return p.returncode
+
+# 算子性能入口
+def do_performance():
+    flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
+    gems_repo = subprocess.check_output(
+        ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
+
+    p = subprocess.Popen(
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --record  log ",
+        shell=True
+    )
+    p.wait()
+
+    return p.returncode
+
 
 grad_outputs = None
 
