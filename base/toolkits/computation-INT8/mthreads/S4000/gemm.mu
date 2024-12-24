@@ -271,7 +271,7 @@ public:
         //     ? " "
         //     : " - the performance is not credible when enable stable checking");
         SHOW("Average INT8 Single Op Duration:%f us\n", t * 1.0e3);
-        SHOW("[FlagPerf Result]computation-INT8=%f TFLOPS\n", gops / 1.0e3);
+        SHOW("[FlagPerf Result]computation-INT8=%f TOPS\n", gops / 1.0e3);
 
     }
 
