@@ -75,7 +75,7 @@ void test(const PrecisionConfig& config) {
     double FLOPS = flops / time_second;
     double TFLOPS = FLOPS / 1.0e12;
 
-    std::cout << "[FlagPerf Result]" << "computation-FP32=" << TFLOPS << "TFLOPS"
+    std::cout << "[FlagPerf Result]" << "computation-FP64=" << TFLOPS << "TFLOPS"
         << std::endl;
 
     musaMemcpy(h_C.data(), d_C, M * N * config.bytesPerElement, musaMemcpyDeviceToHost);
