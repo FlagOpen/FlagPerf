@@ -96,9 +96,9 @@ if __name__ == "__main__":
     logger.info("Success Writing PID file at " +
                 os.path.join(config.log_dir, "start_base_task.pid"))
 
-    op, dataformat, spectflops, oplib, chip = config.case_name.split(":")
+    test_file, op, dataformat, spectflops, oplib, chip = config.case_name.split(":")
 
-    case_dir = os.path.join(config.perf_path, "benchmarks", op)
+    case_dir = os.path.join(config.perf_path, "benchmarks", test_file)
     start_cmd = "cd " + case_dir + ";python3 main.py "
     start_cmd += " --vendor=" + config.vendor
     start_cmd += " --case_name=" + op
