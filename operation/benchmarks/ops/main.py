@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument("--oplib",
                         type=str,
                         required=True,
-                        help="impl like pytorch/flaggems/ops")
+                        help="impl like pytorch/flaggems/cpp")
 
     parser.add_argument("--chip",
                         type=str,
@@ -52,8 +52,7 @@ def parse_args():
     return args
 
 
-def main(config):
-    # 算子正确性
+def main(config, case_config):
     correctness = do_correctness(config.case_name)
     correctness = correctness == 0
 
@@ -105,4 +104,4 @@ if __name__ == "__main__":
         print("Using flaggems")
     else:
         print("Using nativetorch")
-    main(config)
+    main(config, case_config)
