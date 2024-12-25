@@ -32,7 +32,7 @@ ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 # now only support flaggems and nativepytorch
 CASES: 
 #    "mm:FP16:312:nativetorch:A100_40_SXM": "ngctorch2403"
-    "ops:mm:FP16:flaggems:A100_40_SXM": "ngctorch2403"
+    "opv2:mm:312:FP16:flaggems:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:flaggems:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
 #    'exp:FP32:nativetorch:R300p" : "xpytorch029"
