@@ -53,14 +53,10 @@ def parse_args():
 
 def main(config, case_config):
     correctness = do_correctness(config.case_name)
-    print("算子正确性测试入口")
-    print(correctness)
     correctness = correctness == 0
 
     # 算子性能
     performance = do_performance()
-    print("算子性能测试入口")
-    print(performance)
     performance = performance == 0
 
     dtype = {
