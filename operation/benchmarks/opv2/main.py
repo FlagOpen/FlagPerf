@@ -14,6 +14,9 @@ import subprocess
 sys.path.append("..")
 from drivers.utils import *
 from drivers.calculate import *
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from utils import flagperf_logger
 
 RUN_LOGGER = flagperf_logger.FlagPerfLogger()
@@ -56,12 +59,10 @@ def parse_args():
 
 def main(config, case_config):
     correctness = do_correctness(config.case_name)
-    RUN_LOGGER.info("JHW Check correctness ......[SUCCESS]")
     correctness = correctness == 0
 
     # 算子性能
     performance = do_performance()
-    RUN_LOGGER.info("JHW Check performance ......[SUCCESS]")
     performance = performance == 0
 
     dtype = {

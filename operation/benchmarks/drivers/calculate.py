@@ -6,7 +6,11 @@
 import time
 from triton.testing import do_bench as kernel_bench
 import os
+import sys
 import subprocess
+
+CURR_PATH = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
 from utils import flagperf_logger
 
 RUN_LOGGER = flagperf_logger.FlagPerfLogger()
