@@ -6,27 +6,20 @@
 import time
 from triton.testing import do_bench as kernel_bench
 import os
-import sys
 import subprocess
-
-CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(CURR_PATH, "../../../")))
-from utils import flagperf_logger
-
-RUN_LOGGER = flagperf_logger.FlagPerfLogger()
 
 # 算子正确性入口
 def do_correctness(operation):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
-    RUN_LOGGER.info("JHW print flaggems_dir ......[SUCCESS]" + flaggems_dir)
+    print("operation correctness test FlagGems workdir" + flaggems_dir)
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
-    RUN_LOGGER.info("JHW print gems_repo ......[SUCCESS]" + gems_repo)
+    print("operation correctness test gems_repo " + gems_repo)
     p = subprocess.Popen(
         f"cd {os.path.join(gems_repo, 'tests')} && python3 test_named_ops.py --name {operation} --device cpu ",
         shell=True
         )
-    RUN_LOGGER.info(f"python3 test_named_ops.py --name {operation} --device cpu ")
+    print(f"python3 test_named_ops.py --name {operation} --device cpu ")
     p.wait()
 
     return p.returncode
@@ -34,15 +27,15 @@ def do_correctness(operation):
 # 算子性能入口
 def do_performance():
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
-    RUN_LOGGER.info("JHW print do_performance flaggems_dir ......[SUCCESS]" + flaggems_dir)
+    print("operation performance test FlagGems workdir" + flaggems_dir)
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
-    RUN_LOGGER.info("JHW print do_performance gems_repo ......[SUCCESS]" + gems_repo)
+    print("operation performance test gems_repo " + gems_repo)
     p = subprocess.Popen(
         f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --record  log ",
         shell=True
     )
-    RUN_LOGGER.info("pytest --level core --record  log ......[SUCCESS] ")
+    print("pytest --level core --record  log ......[SUCCESS] ")
     p.wait()
 
     return p.returncode
