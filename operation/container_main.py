@@ -118,6 +118,23 @@ if __name__ == "__main__":
                          shell=True,
                          stdout=f,
                          stderr=subprocess.STDOUT)
+    # 获取日志
+    flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
+    gems_repo = subprocess.check_output(
+        ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
+    log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log.log")
+    save_path = os.path.join(os.path.dirname(logfile),
+                                   "result.log.txt")
+    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
+        for line in file_r:
+            if line.startswith("[INFO]"):
+                json_data = line[6:].strip()
+                data = json.loads(json_data)
+                #数据处理
+                #info_data = data.get("")
+                new_line = json.dumps(json_data, ensure_ascii=False)
+                file_w.write(new_line + '\n')
+
     p.wait()
     f.close()
     logger.info("Task Finish")
