@@ -56,7 +56,7 @@ def main(config, case_config):
     correctness = correctness == 0
 
     # 算子性能
-    performance = do_performance()
+    performance = do_performance(config.case_name)
     performance = performance == 0
 
     dtype = {

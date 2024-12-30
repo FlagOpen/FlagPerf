@@ -22,15 +22,28 @@ def do_correctness(operation):
     return p.returncode
 
 # 算子性能入口
-def do_performance():
+def do_performance(operation):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
     p = subprocess.Popen(
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --record  log ",
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --record  log ",
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_blas_perf.py --level  core --record log ",
         shell=True
     )
     p.wait()
+    # 获取日志
+    log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log.log")
+    save_path = os.path.join(os.getcwd(), "test.log")
+    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
+        for line in file_r:
+            if line.startswith("[INFO]"):
+                json_data = line[6:].strip()
+                data = json.loads(json_data)
+                #数据处理
+                #info_data = data.get("")
+                new_line = json.dumps(json_data, ensure_ascii=False)
+                file_w.write(new_line + '\n')
 
     return p.returncode
 
