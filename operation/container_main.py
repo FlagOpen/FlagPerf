@@ -127,13 +127,14 @@ if __name__ == "__main__":
                                    "result.log.txt")
     with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
         for line in file_r:
-            if line.startswith("[INFO]"):
-                json_data = line[6:].strip()
-                data = json.loads(json_data)
+            file_w.write(line + '\n')
+            # if line.startswith("[INFO]"):
+                # json_data = line[6:].strip()
+                # data = json.loads(json_data)
                 #数据处理
                 #info_data = data.get("")
-                new_line = json.dumps(json_data, ensure_ascii=False)
-                file_w.write(new_line + '\n')
+                # new_line = json.dumps(json_data, ensure_ascii=False)
+
 
     p.wait()
     f.close()
