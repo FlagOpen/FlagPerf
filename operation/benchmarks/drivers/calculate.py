@@ -28,7 +28,7 @@ def do_performance(operation):
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
     p = subprocess.Popen(
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --record  log ",
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_blas_perf.py --level  core --record log -s",
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_blas_perf.py --level  core --mode cpu --warmup 0  --record log -s",
         shell=True
     )
     p.wait()
