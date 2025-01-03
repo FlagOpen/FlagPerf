@@ -22,13 +22,13 @@ def do_correctness(operation):
     return p.returncode
 
 # 算子性能入口
-def do_performance(operation):
+def do_performance(mode, warmup):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
     p = subprocess.Popen(
-        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --record  log ",
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_blas_perf.py --level  core --mode cpu --warmup 0  --record log -s",
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log ",
+        #f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_blas_perf.py --level  core --mode cpu --warmup 0  --record log -s",
         shell=True
     )
     p.wait()
