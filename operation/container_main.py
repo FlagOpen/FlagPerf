@@ -133,15 +133,22 @@ if __name__ == "__main__":
                          stderr=subprocess.STDOUT)
     # 获取日志
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
+    logger.info("FLAGGEMS_WORK_DIR======flaggems_dir")
+    logger.info(flaggems_dir)
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
+    logger.info("gems_repo=========")
+    logger.info(gems_repo)
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     # log_dir = os.path.join(gems_repo, "benchmark", "result_test_blas_perf--level_core--record_log.log")
     log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
+    logger.info("log_dir=========")
+    logger.info(log_dir)
     save_path = os.path.join(os.path.dirname(logfile),
                                    "result.log.txt")
     with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
         for line in file_r:
+            logger.info("result.log.txt print ok")
             file_w.write(line + '\n')
 
     p.wait()
