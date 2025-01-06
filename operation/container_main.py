@@ -135,7 +135,9 @@ if __name__ == "__main__":
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
-    log_dir = os.path.join(gems_repo, "benchmark", "result_test_blas_perf--level_core--record_log.log")
+    # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
+    # log_dir = os.path.join(gems_repo, "benchmark", "result_test_blas_perf--level_core--record_log.log")
+    log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
     save_path = os.path.join(os.path.dirname(logfile),
                                    "result.log.txt")
     with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
