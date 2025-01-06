@@ -116,8 +116,8 @@ if __name__ == "__main__":
     start_cmd += " --dataformat=" + dataformat
     start_cmd += " --oplib=" + oplib
     start_cmd += " --chip=" + chip
-    start_cmd += " --mode=" + config.mode
-    start_cmd += " --warmup=" + config.warmup
+    # start_cmd += " --mode=" + config.mode
+    # start_cmd += " --warmup=" + config.warmup
 
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     logger.info("gems_repo=========")
     logger.info(gems_repo)
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
-    log_dir = os.path.join(gems_repo, "benchmark", "result_test_blas_perf--level_core--mode_cpu--warmup_1000--record_log.log")
+    log_dir = os.path.join(gems_repo, "benchmark", "result_test_blas_perf--level_core--mode_cpu--warmup_0--record_log.log")
     # log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
     logger.info("log_dir=========")
     logger.info(log_dir)
