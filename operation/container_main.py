@@ -91,10 +91,11 @@ def write_pid_file(pid_file_path, pid_file):
 
 
 def get_performance_log():
+    conf = parse_args()
     save_path = os.path.join(
-        config.log_dir, config.case_name,
-        config.host_addr + "_noderank" + str(config.node_rank),
-        "result.log.txt")
+        conf.log_dir, config.case_name,
+        conf.host_addr + "_noderank" + str(conf.node_rank)
+        )
     return save_path
 
 
