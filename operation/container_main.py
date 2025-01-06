@@ -140,8 +140,8 @@ if __name__ == "__main__":
     logger.info("gems_repo=========")
     logger.info(gems_repo)
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
-    # log_dir = os.path.join(gems_repo, "benchmark", "result_test_blas_perf--level_core--record_log.log")
-    log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
+    log_dir = os.path.join(gems_repo, "benchmark", "result_test_generic_pointwise_perf--level_core--record_log.log")
+    # log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
     logger.info("log_dir=========")
     logger.info(log_dir)
     save_path = os.path.join(os.path.dirname(logfile),

@@ -27,9 +27,9 @@ def do_performance(mode, warmup):
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
     p = subprocess.Popen(
-        #f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log ",
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
-        #f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_blas_perf.py --level  core --mode {mode} --warmup {warmup} --record log -s",
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log ",
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_generic_pointwise_perf.py --level  core --mode {mode} --warmup {warmup} --record log -s",
         shell=True
     )
     p.wait()
