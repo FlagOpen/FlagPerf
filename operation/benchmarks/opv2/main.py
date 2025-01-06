@@ -14,7 +14,8 @@ import subprocess
 sys.path.append("..")
 from drivers.utils import *
 from drivers.calculate import *
-from container_main import *
+sys.path.append("/home/jhw/jiahuiwen/FlagPerf/operation/")
+from container_main import get_performance_log
 
 def parse_args():
     parser = ArgumentParser(description=" ")
