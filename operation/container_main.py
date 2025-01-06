@@ -121,7 +121,8 @@ if __name__ == "__main__":
 
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
-
+    logger.info("print operation.log.txt file")
+    logger.info(script_log_file)
     logger.info(start_cmd)
     logger.info(script_log_file)
 

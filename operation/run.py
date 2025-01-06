@@ -568,7 +568,9 @@ def main():
                     + " --nproc_per_node " + str(config.NPROC_PER_NODE) \
                     + " --log_dir " + os.path.join(dp_path, log_dir_container) \
                     + " --log_level " + config.FLAGPERF_LOG_LEVEL.upper() \
-                    + " --master_port " + config.MASTER_PORT
+                    + " --master_port " + config.MASTER_PORT \
+                    + " --mode " + config.MODE \
+                    + " --warmup " + config.WARMUP
 
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
 
