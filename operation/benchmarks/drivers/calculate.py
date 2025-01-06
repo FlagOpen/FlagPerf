@@ -4,6 +4,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import time
+from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
@@ -22,7 +23,8 @@ def do_correctness(operation):
     return p.returncode
 
 # 算子性能入口
-def do_performance(mode, warmup):
+def do_performance(mode, warmup, save_log_path):
+    logger.add(save_log_path + "jhw_test.log")
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -34,7 +36,20 @@ def do_performance(mode, warmup):
         shell=True
     )
     p.wait()
-
+    logger.info("gems_repo=========")
+    logger.info(gems_repo)
+    # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
+    log_dir = os.path.join(gems_repo, "benchmark",
+                           "result_test_blas_perf--level_core--mode_cpu--warmup_0--record_log.log")
+    # log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
+    logger.info("log_dir=========")
+    logger.info(log_dir)
+    save_path = os.path.join(os.path.dirname(save_log_path),
+                             "result.log.txt")
+    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
+        for line in file_r:
+            logger.info("result.log.txt print ok")
+            file_w.write(line + '\n')
     return p.returncode
 
 

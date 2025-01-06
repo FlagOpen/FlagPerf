@@ -14,6 +14,7 @@ import subprocess
 sys.path.append("..")
 from drivers.utils import *
 from drivers.calculate import *
+from container_main import *
 
 def parse_args():
     parser = ArgumentParser(description=" ")
@@ -66,7 +67,8 @@ def main(config, case_config):
     correctness = correctness == 0
 
     # 算子性能
-    performance = do_performance(config.mode, config.warmup)
+    save_log_path = get_performance_log()
+    performance = do_performance(config.mode, config.warmup, save_log_path)
     performance = performance == 0
 
     dtype = {
