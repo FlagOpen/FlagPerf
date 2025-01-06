@@ -29,7 +29,7 @@ def do_performance(mode, warmup):
     p = subprocess.Popen(
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log ",
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_generic_pointwise_perf.py --level  core --mode {mode} --warmup {warmup} --record log -s",
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest  test_generic_pointwise_perf.py --level  core --mode {mode} --warmup {warmup} --record log",
         shell=True
     )
     p.wait()
