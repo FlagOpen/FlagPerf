@@ -70,31 +70,31 @@ def main(config, case_config):
     performance = do_performance(config.mode, config.warmup)
     performance = performance == 0
 
-    dtype = {
-        "FP32": torch.float32,
-        "FP16": torch.float16,
-        "BF16": torch.bfloat16,
-        "INT32": torch.int32,
-        "INT16": torch.int16,
-        "BOOL": torch.bool
-        }
-    set_ieee_float32(config.vendor)
-
-
-    m = case_config.Melements
-
-
-    a = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
-
-    latency_nowarm, latency_warm, cputime, kerneltime = do_test(
-        torch.abs, (a, ), host_device_sync, config, case_config)
-
-    op2flops = lambda x: x * m * 1024 * 1024
-
-    perf_result = cal_perf(cputime, kerneltime, op2flops,
-                           config.spectflops)
-    print_result(config, config.case_name, *perf_result, correctness,
-                 latency_nowarm, latency_warm)
+    # dtype = {
+    #     "FP32": torch.float32,
+    #     "FP16": torch.float16,
+    #     "BF16": torch.bfloat16,
+    #     "INT32": torch.int32,
+    #     "INT16": torch.int16,
+    #     "BOOL": torch.bool
+    #     }
+    # set_ieee_float32(config.vendor)
+    #
+    #
+    # m = case_config.Melements
+    #
+    #
+    # a = torch.randn(m, 1024, 1024, dtype=dtype[config.dataformat]).to(0)
+    #
+    # latency_nowarm, latency_warm, cputime, kerneltime = do_test(
+    #     torch.abs, (a, ), host_device_sync, config, case_config)
+    #
+    # op2flops = lambda x: x * m * 1024 * 1024
+    #
+    # perf_result = cal_perf(cputime, kerneltime, op2flops,
+    #                        config.spectflops)
+    # print_result(config, config.case_name, *perf_result, correctness,
+    #              latency_nowarm, latency_warm)
 
 
 if __name__ == "__main__":
@@ -114,4 +114,5 @@ if __name__ == "__main__":
         print("Using flaggems")
     else:
         print("Using nativetorch")
+    main(config, case_config)
     main(config, case_config)
