@@ -8,6 +8,9 @@ from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
+sys.path.append("/home/jhw/jiahuiwen/FlagPerf/operation/")
+from container_main import get_performance_log
+
 
 # 算子正确性入口
 def do_correctness(operation):
@@ -23,7 +26,7 @@ def do_correctness(operation):
     return p.returncode
 
 # 算子性能入口
-def do_performance(mode, warmup, save_log_path):
+def do_performance(mode, warmup):
     logger.add(save_log_path + "jhw_test.log")
     logger.info("save_log_path=========")
     logger.info(save_log_path)
@@ -49,6 +52,7 @@ def do_performance(mode, warmup, save_log_path):
     # log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
     logger.info("log_dir=========")
     logger.info(log_dir)
+    save_log_path = get_performance_log()
     save_path = save_log_path + "result.log.txt"
     with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
         for line in file_r:

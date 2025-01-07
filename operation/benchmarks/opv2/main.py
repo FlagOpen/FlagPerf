@@ -14,8 +14,7 @@ import subprocess
 sys.path.append("..")
 from drivers.utils import *
 from drivers.calculate import *
-sys.path.append("/home/jhw/jiahuiwen/FlagPerf/operation/")
-from container_main import get_performance_log
+
 
 def parse_args():
     parser = ArgumentParser(description=" ")
@@ -48,6 +47,16 @@ def parse_args():
                         required=True,
                         help="chip like A100_40_SXM")
 
+    parser.add_argument("--mode",
+                        type=str,
+                        required=True,
+                        help="mode like cpu")
+
+    parser.add_argument("--warmup",
+                        type=str,
+                        required=True,
+                        help="warmup")
+
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
@@ -58,10 +67,7 @@ def main(config, case_config):
     correctness = correctness == 0
 
     # 算子性能
-    save_log_path = get_performance_log()
-    mode = case_config.MODE
-    warmup = case_config.WARMUP
-    performance = do_performance(mode, warmup, save_log_path)
+    performance = do_performance(config.mode, config.warmup)
     performance = performance == 0
 
     dtype = {

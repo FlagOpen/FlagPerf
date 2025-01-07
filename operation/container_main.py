@@ -39,6 +39,16 @@ def parse_args():
                         required=True,
                         help="vendor name like nvidia")
 
+    parser.add_argument("--mode",
+                        type=str,
+                        required=True,
+                        help="mode like cpu")
+
+    parser.add_argument("--warmup",
+                        type=str,
+                        required=True,
+                        help="warmup")
+
     parser.add_argument("--log_level",
                         type=str,
                         required=True,
@@ -84,8 +94,8 @@ def get_performance_log():
     conf = parse_args()
     save_path = os.path.join(
         conf.log_dir, config.case_name,
-        conf.host_addr + "_noderank" + str(conf.node_rank)
-        )
+        conf.host_addr + "_noderank" + str(conf.node_rank),
+        "result.log.txt")
     return save_path
 
 
@@ -115,6 +125,8 @@ if __name__ == "__main__":
     start_cmd += " --dataformat=" + dataformat
     start_cmd += " --oplib=" + oplib
     start_cmd += " --chip=" + chip
+    start_cmd += " --mode=" + config.mode
+    start_cmd += " --warmup=" + config.warmup
 
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
