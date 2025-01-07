@@ -48,16 +48,6 @@ def parse_args():
                         required=True,
                         help="chip like A100_40_SXM")
 
-    parser.add_argument("--mode",
-                        type=str,
-                        required=True,
-                        help="mode like cpu")
-
-    parser.add_argument("--warmup",
-                        type=str,
-                        required=True,
-                        help="warmup")
-
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
@@ -69,7 +59,9 @@ def main(config, case_config):
 
     # 算子性能
     save_log_path = get_performance_log()
-    performance = do_performance(config.mode, config.warmup, save_log_path)
+    mode = case_config.MODE
+    warmup = case_config.WARMUP
+    performance = do_performance(mode, warmup, save_log_path)
     performance = performance == 0
 
     dtype = {
