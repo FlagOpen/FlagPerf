@@ -8,6 +8,7 @@ from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
+import sys
 sys.path.append("/home/jhw/jiahuiwen/FlagPerf/operation/")
 from container_main import get_performance_log
 
