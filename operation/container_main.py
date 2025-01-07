@@ -90,18 +90,6 @@ def write_pid_file(pid_file_path, pid_file):
     file_d.close()
 
 
-def get_performance_log():
-    conf = parse_args()
-    logger.info("print sava_path======")
-    save_path = os.path.join(
-        conf.log_dir, config.case_name,
-        conf.host_addr + "_noderank" + str(conf.node_rank),
-        "result.log.txt")
-    logger.info("print sava_path======")
-    logger.info(save_path)
-    return save_path
-
-
 if __name__ == "__main__":
     config = parse_args()
 
@@ -130,6 +118,7 @@ if __name__ == "__main__":
     start_cmd += " --chip=" + chip
     start_cmd += " --mode=" + config.mode
     start_cmd += " --warmup=" + config.warmup
+    start_cmd += " --log_dir=" + config.log_dir
 
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")

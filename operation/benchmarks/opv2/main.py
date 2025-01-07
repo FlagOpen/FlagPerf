@@ -57,6 +57,11 @@ def parse_args():
                         required=True,
                         help="warmup")
 
+    parser.add_argument("--log_dir",
+                        type=str,
+                        required=True,
+                        help="abs log dir")
+
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
@@ -67,7 +72,7 @@ def main(config, case_config):
     correctness = correctness == 0
 
     # 算子性能
-    performance = do_performance(config.mode, config.warmup)
+    performance = do_performance(config.mode, config.warmup, config.log_dir)
     performance = performance == 0
 
     # dtype = {

@@ -8,9 +8,6 @@ from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
-import sys
-sys.path.append("/home/jhw/jiahuiwen/FlagPerf/operation/")
-from container_main import get_performance_log
 
 
 # 算子正确性入口
@@ -28,8 +25,7 @@ def do_correctness(operation):
 
 
 # 算子性能入口
-def do_performance(mode, warmup):
-    logger.info("=============start do_performance===========")
+def do_performance(mode, warmup, result_log_dir):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -42,13 +38,14 @@ def do_performance(mode, warmup):
     )
     p.wait()
     logger.info("=============do_performance end===========")
+    logger.info(result_log_dir)
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
                            "result_test_generic_pointwise_perf--level_core--mode_cpu--warmup_1000--record_log.log")
     # log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
     logger.info("log_dir=========")
     logger.info(log_dir)
-    save_log_path = get_performance_log()
+    save_log_path = os.path.join(result_log_dir, "result.log.txt")
     logger.info(" print do_performance save_log_path============")
     logger.info(save_log_path)
     with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
