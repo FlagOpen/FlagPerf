@@ -36,20 +36,22 @@ def do_performance(mode, warmup):
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log ",
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_blas_perf.py --level  core --mode {mode} --warmup {warmup} --record log",
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_blas_perf.py --level core --mode {mode} --warmup {warmup} --record log",
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_generic_pointwise_perf.py --level core --mode {mode} --warmup {warmup} --record log",
         shell=True
     )
     p.wait()
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
-                           "result_test_blas_perf--level_core--mode_cpu--warmup_1000--record_log.log")
+                           "result_test_generic_pointwise_perf--level_core--mode_cpu--warmup_1000--record_log.log")
     # log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
     logger.info("log_dir=========")
     logger.info(log_dir)
     save_log_path = get_performance_log()
+    logger.info(" print do_performance save_log_path============")
+    logger.info(save_log_path)
     with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
+        logger.info("pass111111")
         for line in file_r:
-            logger.info("result.log.txt print ok")
             file_w.write(line + '\n')
     return p.returncode
 

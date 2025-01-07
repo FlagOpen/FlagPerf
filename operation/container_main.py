@@ -96,6 +96,8 @@ def get_performance_log():
         conf.log_dir, config.case_name,
         conf.host_addr + "_noderank" + str(conf.node_rank),
         "result.log.txt")
+    logger.info("print sava_path======")
+    logger.info(save_path)
     return save_path
 
 
