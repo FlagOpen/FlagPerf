@@ -27,12 +27,11 @@ def do_correctness(operation):
 
 # 算子性能入口
 def do_performance(mode, warmup):
-    logger.add(save_log_path + "jhw_test.log")
-    logger.info("save_log_path=========")
-    logger.info(save_log_path)
-    logger.info("canshu=========")
-    logger.info(mode)
-    logger.info(warmup)
+    # logger.add(save_log_path + "jhw_test.log")
+    # logger.info("save_log_path=========")
+    # logger.info("canshu=========")
+    # logger.info(mode)
+    # loggerger.info(warmup)
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -53,8 +52,7 @@ def do_performance(mode, warmup):
     logger.info("log_dir=========")
     logger.info(log_dir)
     save_log_path = get_performance_log()
-    save_path = save_log_path + "result.log.txt"
-    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_path, "w", encoding="utf-8") as file_w:
+    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
         for line in file_r:
             logger.info("result.log.txt print ok")
             file_w.write(line + '\n')
