@@ -10,7 +10,7 @@ import os
 import subprocess
 
 
-# 算子正确性入口
+# 算子正确性
 def do_correctness(operation):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
@@ -24,32 +24,29 @@ def do_correctness(operation):
     return p.returncode
 
 
-# 算子性能入口
+# 算子性能
 def do_performance(mode, warmup, result_log_dir):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
     p = subprocess.Popen(
-        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log ",
+        # 执行所有算子
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
+        # 执行单个算子
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
-        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_blas_perf.py --level  core --mode {mode} --warmup {warmup} --record log",
+        # 执行文件
         f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_generic_pointwise_perf.py --level core --mode {mode} --warmup {warmup} --record log",
         shell=True
     )
     p.wait()
-    logger.info("=============do_performance end===========")
-    logger.info(result_log_dir)
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
-                           "result_test_generic_pointwise_perf--level_core--mode_cpu--warmup_1000--record_log.log")
-    # log_dir = os.path.join(gems_repo, "benchmark", "result-m_mm--level_core--mode_cpu--warmup_1000--record_log-s.log")
-    logger.info("log_dir=========")
-    logger.info(log_dir)
+                           f"result_test_generic_pointwise_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    # log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     save_log_path = os.path.join(result_log_dir, "result.log.txt")
-    logger.info(" print do_performance save_log_path============")
+    logger.info("======print do_performance save_log_path============")
     logger.info(save_log_path)
     with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
-        logger.info("pass111111")
         for line in file_r:
             file_w.write(line + '\n')
     return p.returncode
