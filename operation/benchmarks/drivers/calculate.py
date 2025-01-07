@@ -29,6 +29,7 @@ def do_correctness(operation):
 
 # 算子性能入口
 def do_performance(mode, warmup):
+    logger.info("=============start do_performance===========")
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -40,6 +41,7 @@ def do_performance(mode, warmup):
         shell=True
     )
     p.wait()
+    logger.info("=============do_performance end===========")
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
                            "result_test_generic_pointwise_perf--level_core--mode_cpu--warmup_1000--record_log.log")

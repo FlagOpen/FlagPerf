@@ -115,4 +115,3 @@ if __name__ == "__main__":
     else:
         print("Using nativetorch")
     main(config, case_config)
-    main(config, case_config)

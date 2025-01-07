@@ -92,6 +92,7 @@ def write_pid_file(pid_file_path, pid_file):
 
 def get_performance_log():
     conf = parse_args()
+    logger.info("print sava_path======")
     save_path = os.path.join(
         conf.log_dir, config.case_name,
         conf.host_addr + "_noderank" + str(conf.node_rank),
