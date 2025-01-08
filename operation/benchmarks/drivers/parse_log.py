@@ -1,11 +1,12 @@
 # Copyright (c) 2024 BAAI. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License")
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 import json
 import os
+from collections import defaultdict
 from loguru import logger
 
 
@@ -14,6 +15,11 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     save_log_path = os.path.join(result_log_path, "result.json")
     logger.info("print into parse_log_file")
     logger.info(log_dir)
+    if os.path.isfile(save_log_path):
+        with open(save_log_path, 'r', encoding='utf-8') as f_r:
+            res = json.loads(f_r.read())
+    else:
+        res = defaultdict(dict)
     with open(log_file, 'r') as file_r, open(save_log_path, 'w') as file_w:
         lines = file_r.readlines()
     for line in lines:
@@ -38,8 +44,7 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
                             "latency_base": latency_base,
                             "no_warmup_latency": no_warmup_latency
                         }
-                        new_line = "INFO" + str(parse_data)
-                        file_w.write(new_line + '\n')
+                        res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
                     elif mode == "cpu" and warmup == 1000:
                         warmup_latency = result.get("latency")
                         raw_throughput = 1 / int(warmup_latency)
@@ -57,8 +62,7 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
                             "ctflops": ctflops,
                             "cfu": cfu
                         }
-                        new_line = "INFO" + str(parse_data)
-                        file_w.write(new_line + '\n')
+                        res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
                     elif mode == "cuda" and warmup == 1000:
                         kerneltime = result.get("latency")
                         core_throughput = 1 / int(kerneltime)
@@ -75,11 +79,7 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
                             "core_throughput": core_throughput,
                             "kfu": kfu
                         }
-                        new_line = "INFO" + str(parse_data)
-                        file_w.write(new_line + '\n')
-                    else:
-                        pass
+                        res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
             except json.JSONDecodeError as e:
                 logger.error(f"Error decoding JSON: {e}")
-
-
+    file_w.write(json.dumps(res, ensure_ascii=False))
