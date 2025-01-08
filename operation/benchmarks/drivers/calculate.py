@@ -8,9 +8,10 @@ from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
+from parse_log import parse_log_file
 
 
-# 算子正确性
+# test operation correctness
 def do_correctness(operation):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
@@ -24,8 +25,8 @@ def do_correctness(operation):
     return p.returncode
 
 
-# 算子性能
-def do_performance(mode, warmup, result_log_dir):
+# test operation performance
+def do_performance(spectflops, mode, warmup, result_log_dir):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -43,16 +44,20 @@ def do_performance(mode, warmup, result_log_dir):
     log_dir = os.path.join(gems_repo, "benchmark",
                            f"result_test_generic_pointwise_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     # log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    save_log_path = os.path.join(result_log_dir, "result.log.txt")
+    save_log_path = os.path.join(result_log_dir, "result.json")
     logger.info("======print do_performance save_log_path============")
     logger.info(save_log_path)
-    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
-        for line in file_r:
-            file_w.write(line + '\n')
+    parse_log_file(spectflops, mode, warmup, log_dir, save_log_path)
+    logger.info("==========log save end============")
+    # with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
+    #     for line in file_r:
+    #         file_w.write(line + '\n')
+
     return p.returncode
 
 
 grad_outputs = None
+
 
 def do(exec_func, exec_args, bp=False):
     global grad_outputs

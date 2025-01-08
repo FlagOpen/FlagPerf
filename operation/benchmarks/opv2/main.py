@@ -14,6 +14,7 @@ import subprocess
 sys.path.append("..")
 from drivers.utils import *
 from drivers.calculate import *
+from drivers.parse_log import *
 
 
 def parse_args():
@@ -62,6 +63,11 @@ def parse_args():
                         required=True,
                         help="abs log dir")
 
+    parser.add_argument("--perf_path",
+                        type=str,
+                        required=True,
+                        help="abs path for FlagPerf/base")
+
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
@@ -71,8 +77,8 @@ def main(config, case_config):
     correctness = do_correctness(config.case_name)
     correctness = correctness == 0
 
-    # 算子性能
-    performance = do_performance(config.mode, config.warmup, config.log_dir)
+    # test operation performance
+    performance = do_performance(config.spectflops, config.mode, config.warmup, config.log_dir)
     performance = performance == 0
 
     # dtype = {
@@ -100,7 +106,6 @@ def main(config, case_config):
     #                        config.spectflops)
     # print_result(config, config.case_name, *perf_result, correctness,
     #              latency_nowarm, latency_warm)
-
 
 if __name__ == "__main__":
     config = parse_args()

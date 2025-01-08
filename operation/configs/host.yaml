@@ -34,7 +34,7 @@ MODE: "cpu"
 WARMUP: 1000
 CASES: 
 #    "mm:FP16:312:nativetorch:A100_40_SXM": "ngctorch2403"
-    "opv2:mm:312:FP16:flaggems:A100_40_SXM": "ngctorch2403"
+    "opv2:mm:FP16:312:flaggems:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:flaggems:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
 #    'exp:FP32:nativetorch:R300p" : "xpytorch029"
