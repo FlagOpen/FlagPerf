@@ -8,7 +8,6 @@ from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
-from drivers.parse_log import parse_log_file
 
 
 # test operation correctness
@@ -26,7 +25,7 @@ def do_correctness(operation):
 
 
 # test operation performance
-def do_performance(spectflops, mode, warmup, result_log_dir):
+def do_performance(mode, warmup, result_log_dir):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -47,11 +46,9 @@ def do_performance(spectflops, mode, warmup, result_log_dir):
     save_log_path = os.path.join(result_log_dir, "result.log.txt")
     logger.info("======print do_performance save_log_path============")
     logger.info(save_log_path)
-    parse_log_file(spectflops, mode, warmup, log_dir, save_log_path)
-    logger.info("==========log save end============")
-    # with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
-    #     for line in file_r:
-    #         file_w.write(line + '\n')
+    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
+        for line in file_r:
+            file_w.write(line + '\n')
 
     return p.returncode
 

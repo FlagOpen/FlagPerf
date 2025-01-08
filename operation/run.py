@@ -570,7 +570,8 @@ def main():
                     + " --log_level " + config.FLAGPERF_LOG_LEVEL.upper() \
                     + " --master_port " + config.MASTER_PORT \
                     + " --mode " + config.MODE \
-                    + " --warmup " + str(config.WARMUP)
+                    + " --warmup " + str(config.WARMUP) \
+                    + "--result_log_path" + config.FLAGPERF_LOG_PATH
 
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
 

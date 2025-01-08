@@ -63,10 +63,10 @@ def parse_args():
                         required=True,
                         help="abs log dir")
 
-    # parser.add_argument("--perf_path",
-    #                     type=str,
-    #                     required=True,
-    #                     help="abs path for FlagPerf/base")
+    parser.add_argument("--result_log_path",
+                        type=str,
+                        required=True,
+                        help="result log path for FlagPerf/operation/result")
 
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
@@ -80,6 +80,8 @@ def main(config, case_config):
     # test operation performance
     performance = do_performance(config.spectflops, config.mode, config.warmup, config.log_dir)
     performance = performance == 0
+
+    parse_log_file(config.spectflops, config.mode, config.warmup, config.log_dir, config.result_log_path)
 
     # dtype = {
     #     "FP32": torch.float32,

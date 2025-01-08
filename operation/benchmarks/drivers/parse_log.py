@@ -5,11 +5,16 @@
 # -*- coding: UTF-8 -*-
 
 import json
+import os
 from loguru import logger
 
 
-def parse_log_file(spectflops, mode, warmup, log_dir, save_log_path):
-    with open(log_dir, 'r') as file_r, open(save_log_path, 'w') as file_w:
+def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
+    log_file = os.path.join(log_dir, "result.log.txt")
+    save_log_path = os.path.join(result_log_path, "result.json")
+    logger.info("print into parse_log_file")
+    logger.info(log_dir)
+    with open(log_file, 'r') as file_r, open(save_log_path, 'w') as file_w:
         lines = file_r.readlines()
     for line in lines:
         if line.startswith("[INFO]"):

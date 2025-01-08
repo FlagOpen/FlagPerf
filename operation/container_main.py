@@ -73,6 +73,11 @@ def parse_args():
                         required=True,
                         help="abs path for FlagPerf/base")
 
+    parser.add_argument("--result_log_path",
+                        type=str,
+                        required=True,
+                        help="result log path for FlagPerf/operation/result")
+
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
@@ -119,6 +124,7 @@ if __name__ == "__main__":
     start_cmd += " --mode=" + config.mode
     start_cmd += " --warmup=" + config.warmup
     start_cmd += " --log_dir=" + config.log_dir
+    start_cmd += " --result_log_path=" + config.result_log_path
 
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
