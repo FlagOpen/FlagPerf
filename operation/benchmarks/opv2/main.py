@@ -63,10 +63,10 @@ def parse_args():
                         required=True,
                         help="abs log dir")
 
-    parser.add_argument("--perf_path",
-                        type=str,
-                        required=True,
-                        help="abs path for FlagPerf/base")
+    # parser.add_argument("--perf_path",
+    #                     type=str,
+    #                     required=True,
+    #                     help="abs path for FlagPerf/base")
 
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args

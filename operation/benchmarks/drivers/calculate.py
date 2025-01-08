@@ -8,7 +8,7 @@ from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
-from parse_log import parse_log_file
+from drivers.parse_log import parse_log_file
 
 
 # test operation correctness
@@ -44,7 +44,7 @@ def do_performance(spectflops, mode, warmup, result_log_dir):
     log_dir = os.path.join(gems_repo, "benchmark",
                            f"result_test_generic_pointwise_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     # log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    save_log_path = os.path.join(result_log_dir, "result.json")
+    save_log_path = os.path.join(result_log_dir, "result.log.txt")
     logger.info("======print do_performance save_log_path============")
     logger.info(save_log_path)
     parse_log_file(spectflops, mode, warmup, log_dir, save_log_path)
