@@ -107,6 +107,8 @@ if __name__ == "__main__":
     logger.add(sys.stdout, level=config.log_level)
 
     logger.info(config)
+    logger.info("=======result_log_path=========")
+    logger.info(config.result_log_path)
     write_pid_file(config.log_dir, "start_base_task.pid")
     logger.info("Success Writing PID file at " +
                 os.path.join(config.log_dir, "start_base_task.pid"))
