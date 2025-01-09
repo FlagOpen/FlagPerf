@@ -16,11 +16,18 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     logger.info("print into parse_log_file")
     logger.info(log_dir)
     if os.path.isfile(save_log_path):
+        logger.info("print result.json is exist")
         with open(save_log_path, 'r', encoding='utf-8') as f_r:
             res = json.loads(f_r.read())
+            logger.info("print one res")
+            logger.info(res)
     else:
-        res = defaultdict(dict)
-    with open(log_file, 'r') as file_r, open(save_log_path, 'w') as file_w:
+        logger.info("print result.json not is exist")
+        with open(save_log_path, 'w') as file_w:
+            res = defaultdict(dict)
+            logger.info("print two res")
+            logger.info(res)
+    with open(log_file, 'r') as file_r:
         lines = file_r.readlines()
         for line in lines:
             if line.startswith("[INFO]"):
@@ -82,4 +89,6 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
                             res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
                 except json.JSONDecodeError as e:
                     logger.error(f"Error decoding JSON: {e}")
+        logger.info("end last res =========")
+        logger.info(res)
         file_w.write(json.dumps(res, ensure_ascii=False))
