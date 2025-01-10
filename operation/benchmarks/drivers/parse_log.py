@@ -36,8 +36,10 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
 def get_result_data(log_file, res, spectflops, mode, warmup):
     with open(log_file, 'r') as file_r:
         lines = file_r.readlines()
+        logger.info("print log============check 001")
         for line in lines:
             if line.startswith("[INFO]"):
+                logger.info("print log============check 002")
                 json_data = line[6:].strip()
                 try:
                     data = json.loads(json_data)
@@ -48,6 +50,7 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                         shape_detail = result.get("shape_detail")
                         latency_base = result.get("latency_base")
                         if mode == "cpu" and warmup == 0:
+                            logger.info("print log============check 003")
                             no_warmup_latency = result.get("latency")
                             parse_data = {
                                 "op_name": op_name,
@@ -58,8 +61,11 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "latency_base": latency_base,
                                 "no_warmup_latency": no_warmup_latency
                             }
-                            res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
+                            res = res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
+                            logger.info("print log============check 004")
+                            logger.info(res)
                         elif mode == "cpu" and warmup == 1000:
+                            logger.info("print log============check 005")
                             warmup_latency = result.get("latency")
                             raw_throughput = 1 / int(warmup_latency)
                             ctflops = result.get("tflops")
@@ -76,8 +82,11 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "ctflops": ctflops,
                                 "cfu": cfu
                             }
-                            res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
+                            res = res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
+                            logger.info("print log============check 006")
+                            logger.info(res)
                         elif mode == "cuda" and warmup == 1000:
+                            logger.info("print log============check 007")
                             kerneltime = result.get("latency")
                             core_throughput = 1 / int(kerneltime)
                             ktflops = result.get("tflops")
@@ -93,7 +102,9 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "core_throughput": core_throughput,
                                 "kfu": kfu
                             }
-                            res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
+                            res = res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
+                            logger.info("print log============check 008")
+                            logger.info(res)
                 except json.JSONDecodeError as e:
                     logger.error(f"Error decoding JSON: {e}")
         logger.info("print get_result_data ========== ")
