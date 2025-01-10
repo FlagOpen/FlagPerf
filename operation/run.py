@@ -574,10 +574,7 @@ def main():
                     + " --warmup " + str(config.WARMUP) \
                     + " --result_log_path " + result_log_path
 
-        RUN_LOGGER.info("=== test result_log_path is ok ===")
-        RUN_LOGGER.info(base_args)
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
-
         RUN_LOGGER.info("-== Testcase " + case + " starts ==-")
         RUN_LOGGER.info("1) Prepare container environments in cluster...")
         case_log_dir = os.path.join(curr_log_path, case)

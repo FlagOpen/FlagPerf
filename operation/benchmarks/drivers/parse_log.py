@@ -19,14 +19,21 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
         logger.info("print result.json is exist")
         with open(save_log_path, 'r', encoding='utf-8') as f_r:
             res = json.loads(f_r.read())
-            logger.info("print one res")
-            logger.info(res)
+            result_data = get_result_data(log_file, res, spectflops, mode, warmup)
+            logger.info("print one result_data")
+            logger.info(result_data)
+            f_r.write(json.dumps(result_data, ensure_ascii=False))
     else:
         logger.info("print result.json not is exist")
         with open(save_log_path, 'w') as file_w:
             res = defaultdict(dict)
-            logger.info("print two res")
-            logger.info(res)
+            result_data = get_result_data(log_file, res, spectflops, mode, warmup)
+            logger.info("print two result_data")
+            logger.info(result_data)
+            file_w.write(json.dumps(result_data, ensure_ascii=False))
+
+
+def get_result_data(log_file, res, spectflops, mode, warmup):
     with open(log_file, 'r') as file_r:
         lines = file_r.readlines()
         for line in lines:
@@ -89,6 +96,6 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
                             res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
                 except json.JSONDecodeError as e:
                     logger.error(f"Error decoding JSON: {e}")
-        logger.info("end last res =========")
+        logger.info("print get_result_data ========== ")
         logger.info(res)
-        file_w.write(json.dumps(res, ensure_ascii=False))
+        return res
