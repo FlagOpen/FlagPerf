@@ -37,6 +37,11 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
     with open(log_file, 'r') as file_r:
         lines = file_r.readlines()
         logger.info("print log============check 001")
+        logger.info("print log============check 001" + res)
+        logger.info(type(mode))
+        logger.info("mode ======" + str(mode))
+        logger.info(type(warmup))
+        logger.info("warmup ======" + str(warmup))
         for line in lines:
             if line.startswith("[INFO]"):
                 logger.info("print log============check 002")
@@ -49,6 +54,15 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                     for result in results:
                         shape_detail = result.get("shape_detail")
                         latency_base = result.get("latency_base")
+                        parse_data = {
+                            "op_name": op_name,
+                            "dtype": dtype,
+                            "mode": mode,
+                            "warmup": warmup,
+                            "shape_detail": shape_detail,
+                            "latency_base": latency_base
+                        }
+                        res = res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
                         if mode == "cpu" and warmup == 0:
                             logger.info("print log============check 003")
                             no_warmup_latency = result.get("latency")
@@ -73,7 +87,7 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
-                                "mode": mode,
+                                "mode":  mode,
                                 "warmup": warmup,
                                 "shape_detail": shape_detail,
                                 "latency_base": latency_base,
