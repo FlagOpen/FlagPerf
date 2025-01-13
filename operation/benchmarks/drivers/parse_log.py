@@ -18,11 +18,15 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     if os.path.isfile(save_log_path):
         logger.info("print result.json is exist")
         with open(save_log_path, 'r', encoding='utf-8') as f_r:
-            res = json.loads(f_r.read())
-            result_data = get_result_data(log_file, res, spectflops, mode, warmup)
-            logger.info("print one result_data")
-            logger.info(result_data)
-            f_r.write(json.dumps(result_data, ensure_ascii=False))
+            f_r_json = f_r.read()
+            if f_r_json:
+                res = json.loads(f_r_json)
+                result_data = get_result_data(log_file, res, spectflops, mode, warmup)
+                logger.info("print one result_data")
+                logger.info(result_data)
+                f_r.write(json.dumps(result_data, ensure_ascii=False))
+            else:
+                logger.error("Contents of the file is empty！！！！")
     else:
         logger.info("print result.json not is exist")
         with open(save_log_path, 'w') as file_w:
@@ -37,7 +41,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
     with open(log_file, 'r') as file_r:
         lines = file_r.readlines()
         logger.info("print log============check 001")
-        logger.info("print log============check 001" + res)
         logger.info(type(mode))
         logger.info("mode ======" + str(mode))
         logger.info(type(warmup))
