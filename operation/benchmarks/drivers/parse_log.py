@@ -59,22 +59,22 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "mode": mode,
                                 "warmup": warmup,
                                 "shape_detail": shape_detail,
-                                "latency_base": latency_base,
+                                "latency_base_cpu_nwarm": latency_base,
                                 "no_warmup_latency": no_warmup_latency
                             }
                             res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
                         elif mode == "cpu" and warmup == "1000":
                             warmup_latency = result.get("latency")
-                            raw_throughput = 1 / int(warmup_latency)
+                            raw_throughput = 1 / float(warmup_latency)
                             ctflops = result.get("tflops")
-                            cfu = round(100.0 * ctflops / 1E12 / spectflops, 2)
+                            cfu = round(100.0 * float(ctflops) / 1e12 / float(spectflops), 2)
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
                                 "mode":  mode,
                                 "warmup": warmup,
                                 "shape_detail": shape_detail,
-                                "latency_base": latency_base,
+                                "latency_base_cpu_warm": latency_base,
                                 "warmup_latency": warmup_latency,
                                 "raw_throughput": raw_throughput,
                                 "ctflops": ctflops,
@@ -83,16 +83,16 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
                         elif mode == "cuda" and warmup == "1000":
                             kerneltime = result.get("latency")
-                            core_throughput = 1 / int(kerneltime)
+                            core_throughput = 1 / float(kerneltime)
                             ktflops = result.get("tflops")
-                            kfu = round(100.0 * ktflops / 1E12 / spectflops, 2)
+                            kfu = round(100.0 * float(ctflops) / 1E12 / float(spectflops), 2)
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
                                 "mode": mode,
                                 "warmup": warmup,
                                 "shape_detail": shape_detail,
-                                "latency_base": latency_base,
+                                "latency_base_cuda_warm": latency_base,
                                 "kerneltime": kerneltime,
                                 "core_throughput": core_throughput,
                                 "kfu": kfu
