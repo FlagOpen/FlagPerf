@@ -17,14 +17,14 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     logger.info(log_dir)
     if os.path.isfile(save_log_path):
         logger.info("print result.json is exist")
-        with open(save_log_path, 'r', encoding='utf-8') as f_r:
-            f_r_json = f_r.read()
-            if f_r_json:
-                res = json.loads(f_r_json)
+        with open(save_log_path, 'r+', encoding='utf-8') as file_r:
+            file_r_json = file_r.read()
+            if file_r_json:
+                res = json.loads(file_r_json)
                 result_data = get_result_data(log_file, res, spectflops, mode, warmup)
                 logger.info("print one result_data")
                 logger.info(result_data)
-                f_r.write(json.dumps(result_data, ensure_ascii=False))
+                file_r.write(json.dumps(result_data, ensure_ascii=False))
             else:
                 logger.error("Contents of the file is empty！！！！")
     else:
@@ -59,7 +59,7 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "mode": mode,
                                 "warmup": warmup,
                                 "shape_detail": shape_detail,
-                                "latency_base_cpu_nwarm": latency_base,
+                                "latency_base_cpu_nowarm": latency_base,
                                 "no_warmup_latency": no_warmup_latency
                             }
                             res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
@@ -67,7 +67,11 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             warmup_latency = result.get("latency")
                             raw_throughput = 1 / float(warmup_latency)
                             ctflops = result.get("tflops")
-                            cfu = round(100.0 * float(ctflops) / 1e12 / float(spectflops), 2)
+                            if ctflops is None:
+                                ctflops = 0.0
+                                cfu = None
+                            else:
+                                cfu = round(100.0 * float(ctflops) / 1e12 / float(spectflops), 2)
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
@@ -85,7 +89,10 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             kerneltime = result.get("latency")
                             core_throughput = 1 / float(kerneltime)
                             ktflops = result.get("tflops")
-                            kfu = round(100.0 * float(ctflops) / 1E12 / float(spectflops), 2)
+                            if ktflops is None:
+                                kfu = None
+                            else:
+                                kfu = round(100.0 * float(ktflops) / 1E12 / float(spectflops), 2)
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
@@ -95,6 +102,7 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "latency_base_cuda_warm": latency_base,
                                 "kerneltime": kerneltime,
                                 "core_throughput": core_throughput,
+                                "ktflops": ktflops,
                                 "kfu": kfu
                             }
                             res[f"{op_name}_{dtype}_{shape_detail}"].update(parse_data)
