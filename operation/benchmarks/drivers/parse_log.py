@@ -13,21 +13,18 @@ from loguru import logger
 def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     log_file = os.path.join(log_dir, "result.log.txt")
     save_log_path = os.path.join(result_log_path, "result.json")
-    logger.info("print into parse_log_file")
-    logger.info(log_dir)
     if os.path.isfile(save_log_path):
-        logger.info("print result.json is exist")
         with open(save_log_path, 'r+', encoding='utf-8') as file_r:
             file_r_json = file_r.read()
             if file_r_json:
                 res = json.loads(file_r_json)
                 result_data = get_result_data(log_file, res, spectflops, mode, warmup)
-                logger.info(result_data)
+                file_r.seek(0)
                 file_r.write(json.dumps(result_data, ensure_ascii=False))
+                file_r.truncate()
             else:
                 logger.error("Contents of the file is empty！！！！")
     else:
-        logger.info("print result.json not is exist")
         with open(save_log_path, 'w') as file_w:
             res = defaultdict(dict)
             result_data = get_result_data(log_file, res, spectflops, mode, warmup)
@@ -54,7 +51,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "op_name": op_name,
                                 "dtype": dtype,
                                 "mode": mode,
-                                "warmup": warmup,
                                 "shape_detail": shape_detail,
                                 "latency_base_cpu_nowarm": latency_base,
                                 "no_warmup_latency": no_warmup_latency
@@ -73,7 +69,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "op_name": op_name,
                                 "dtype": dtype,
                                 "mode":  mode,
-                                "warmup": warmup,
                                 "shape_detail": shape_detail,
                                 "latency_base_cpu_warm": latency_base,
                                 "warmup_latency": warmup_latency,
@@ -94,7 +89,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                                 "op_name": op_name,
                                 "dtype": dtype,
                                 "mode": mode,
-                                "warmup": warmup,
                                 "shape_detail": shape_detail,
                                 "latency_base_cuda_warm": latency_base,
                                 "kerneltime": kerneltime,
