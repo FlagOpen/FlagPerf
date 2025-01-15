@@ -22,7 +22,6 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
             if file_r_json:
                 res = json.loads(file_r_json)
                 result_data = get_result_data(log_file, res, spectflops, mode, warmup)
-                logger.info("print one result_data")
                 logger.info(result_data)
                 file_r.write(json.dumps(result_data, ensure_ascii=False))
             else:
@@ -32,8 +31,6 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
         with open(save_log_path, 'w') as file_w:
             res = defaultdict(dict)
             result_data = get_result_data(log_file, res, spectflops, mode, warmup)
-            logger.info("print two result_data")
-            logger.info(result_data)
             file_w.write(json.dumps(result_data, ensure_ascii=False))
 
 
