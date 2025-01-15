@@ -32,6 +32,10 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
 
 
 def get_result_data(log_file, res, spectflops, mode, warmup):
+    # 参数说明
+    # 时延：1 无预热时延 Latency-No warmup：no_warmup_latency，2 预热时延 Latency-Warmup：warmup_latency
+    # 吞吐率：3 Raw-Throughput原始吞吐：raw_throughput， 4 Core-Throughput是核心吞吐：core_throughput
+    # 算力：5 实际算力开销：ctflops， 6 实际算力利用率：cfu， 7 实际算力开销-内核时间：ktflops， 8 实际算力利用率-内核时间：kfu
     with open(log_file, 'r') as file_r:
         lines = file_r.readlines()
         for line in lines:
@@ -61,7 +65,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             raw_throughput = 1 / float(warmup_latency)
                             ctflops = result.get("tflops")
                             if ctflops is None:
-                                ctflops = 0.0
                                 cfu = None
                             else:
                                 cfu = round(100.0 * float(ctflops) / 1e12 / float(spectflops), 2)
