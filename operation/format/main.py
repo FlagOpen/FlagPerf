@@ -37,5 +37,5 @@ if __name__ == "__main__":
         for case_name in cases:
             case_chip = case_name
         test_file, op, dataformat, spectflops, oplib, chip = case_chip.split(":")
-        print(vendor, shm_size, chip)
         main(vendor, shm_size, chip)
+    print("successful !!!")
