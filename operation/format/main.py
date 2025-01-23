@@ -25,7 +25,8 @@ def main(vendor, shm_size, chip):
 
 
 if __name__ == "__main__":
-    with open("configs/host.yaml", "r") as file:
+    config_path = os.path.join(OP_PATH, "configs/host.yaml")
+    with open(config_path, "r") as file:
         config_dict = yaml.safe_load(file)
         config = Namespace(**config_dict)
         cases = []
