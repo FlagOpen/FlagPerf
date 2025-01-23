@@ -34,8 +34,8 @@ if __name__ == "__main__":
             cases.append(case)
         vendor = config.VENDOR
         shm_size = config.SHM_SIZE
-        for case_name in cases:
-            case_chip = case_name
-        test_file, op, dataformat, spectflops, oplib, chip = case_chip.split(":")
+        for run_case in cases:
+            case_name = run_case
+        test_file, op, dataformat, spectflops, oplib, chip = case_name.split(":")
         main(vendor, shm_size, chip)
     print("successful !!!")
