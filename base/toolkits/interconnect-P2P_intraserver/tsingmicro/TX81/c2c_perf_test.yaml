@@ -1,0 +1,8 @@
+globals:
+  logfile: /tmp/tsmvs_c2c_perf.log
+
+perf_test:
+        c2c_perf_test:
+                send_card: 18
+                receive_card: 20
+                data_size: 128

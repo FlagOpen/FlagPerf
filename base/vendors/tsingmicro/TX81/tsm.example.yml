@@ -1,0 +1,11 @@
+gemm_config:
+  m: 128                     # Number of rows in the matrix (M)
+  k: 128                     # Number of columns in the input matrix (K)
+  n: 128                     # Number of columns in the output matrix (N)
+  input_data_format: "tfloat"  # Input data format (e.g., "int8", "half", "bfloat16", "tfloat")
+  output_data_format: "tfloat" # Output data format (e.g., "int8", "half", "bfloat16", "tfloat")
+  iterations: 1000           # Number of iterations to run the GEMM test
+
+tanh_config:
+  data_format: "float"       # The data format for the input values (e.g., "float" for floating point numbers)
+  iterations: 1000           # Number of iterations to run the Tanh test

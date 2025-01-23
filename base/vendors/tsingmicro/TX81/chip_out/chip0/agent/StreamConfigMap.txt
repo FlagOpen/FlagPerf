@@ -1,0 +1,829 @@
+groupStreamCfg{
+    FirstStreamNum: 1
+    LastStreamNum: 1
+    TileNum: 16
+    GroupXlen: 4
+    GroupYlen: 4
+    ModelTaskType: Inference
+    InferenceType: FixNumber
+    Batch: 0
+    MiniBatch: 0
+    MiniBatchRound: 0
+}
+
+SFC_0 {
+    TileId: 0 (1d:0)
+    StreamId: 0
+    StreamType: InStream
+    StreamScope: DDR
+    ArmDataPacketSize: 8
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    BufferType: 2
+    BufferInitType: 1
+}
+
+SLC_0 {
+    TileId: 0 (1d:0)
+    StreamId: 3
+    StreamType: OutStream
+    StreamScope: DDR
+    ArmDataPacketSize: 16
+    RingBufferSize: 64
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+}
+
+tileStreamCfg_0 {
+    TileId: 0 (1d:0)
+    StreamNum: 5
+}
+StreamCfg_tile_0_0 {
+    TileId: 0 (1d:0)
+    StreamId: 0
+    StreamType: InStream
+    StreamScope: DDR
+    FirstStream: Yes
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 8
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 1
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+StreamCfg_tile_0_1 {
+    TileId: 0 (1d:0)
+    StreamId: 1
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+StreamCfg_tile_0_2 {
+    TileId: 0 (1d:0)
+    StreamId: 2
+    StreamType: InStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 16
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 64
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 3
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+StreamCfg_tile_0_3 {
+    TileId: 0 (1d:0)
+    StreamId: 3
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: Yes
+    StreamAttr: unicast
+    DataPacketSize: 16
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 16
+    RingBufferSize: 64
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 2
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+StreamCfg_tile_0_4 {
+    TileId: 0 (1d:0)
+    StreamId: 4
+    StreamType: InStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: broadcast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 15
+    otherEndCfgFw_0 {
+        TileId: 1 (1d:1)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_1 {
+        TileId: 2 (1d:2)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_2 {
+        TileId: 3 (1d:3)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_3 {
+        TileId: 65536 (1d:4)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_4 {
+        TileId: 65537 (1d:5)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_5 {
+        TileId: 65538 (1d:6)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_6 {
+        TileId: 65539 (1d:7)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_7 {
+        TileId: 131072 (1d:8)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_8 {
+        TileId: 131073 (1d:9)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_9 {
+        TileId: 131074 (1d:10)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_10 {
+        TileId: 131075 (1d:11)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_11 {
+        TileId: 196608 (1d:12)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_12 {
+        TileId: 196609 (1d:13)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_13 {
+        TileId: 196610 (1d:14)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+    otherEndCfgFw_14 {
+        TileId: 196611 (1d:15)
+        StreamId: 0
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_1 {
+    TileId: 1 (1d:1)
+    StreamNum: 1
+}
+StreamCfg_tile_1_0 {
+    TileId: 1 (1d:1)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_2 {
+    TileId: 2 (1d:2)
+    StreamNum: 1
+}
+StreamCfg_tile_2_0 {
+    TileId: 2 (1d:2)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_3 {
+    TileId: 3 (1d:3)
+    StreamNum: 1
+}
+StreamCfg_tile_3_0 {
+    TileId: 3 (1d:3)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_65536 {
+    TileId: 65536 (1d:4)
+    StreamNum: 1
+}
+StreamCfg_tile_65536_0 {
+    TileId: 65536 (1d:4)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_65537 {
+    TileId: 65537 (1d:5)
+    StreamNum: 1
+}
+StreamCfg_tile_65537_0 {
+    TileId: 65537 (1d:5)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_65538 {
+    TileId: 65538 (1d:6)
+    StreamNum: 1
+}
+StreamCfg_tile_65538_0 {
+    TileId: 65538 (1d:6)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_65539 {
+    TileId: 65539 (1d:7)
+    StreamNum: 1
+}
+StreamCfg_tile_65539_0 {
+    TileId: 65539 (1d:7)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_131072 {
+    TileId: 131072 (1d:8)
+    StreamNum: 1
+}
+StreamCfg_tile_131072_0 {
+    TileId: 131072 (1d:8)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_131073 {
+    TileId: 131073 (1d:9)
+    StreamNum: 1
+}
+StreamCfg_tile_131073_0 {
+    TileId: 131073 (1d:9)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_131074 {
+    TileId: 131074 (1d:10)
+    StreamNum: 1
+}
+StreamCfg_tile_131074_0 {
+    TileId: 131074 (1d:10)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_131075 {
+    TileId: 131075 (1d:11)
+    StreamNum: 1
+}
+StreamCfg_tile_131075_0 {
+    TileId: 131075 (1d:11)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_196608 {
+    TileId: 196608 (1d:12)
+    StreamNum: 1
+}
+StreamCfg_tile_196608_0 {
+    TileId: 196608 (1d:12)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_196609 {
+    TileId: 196609 (1d:13)
+    StreamNum: 1
+}
+StreamCfg_tile_196609_0 {
+    TileId: 196609 (1d:13)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_196610 {
+    TileId: 196610 (1d:14)
+    StreamNum: 1
+}
+StreamCfg_tile_196610_0 {
+    TileId: 196610 (1d:14)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
+tileStreamCfg_196611 {
+    TileId: 196611 (1d:15)
+    StreamNum: 1
+}
+StreamCfg_tile_196611_0 {
+    TileId: 196611 (1d:15)
+    StreamId: 0
+    StreamType: OutStream
+    StreamScope: DDR
+    FirstStream: No
+    LastStream: No
+    StreamAttr: unicast
+    DataPacketSize: 8
+    ArmDataPacketOffset: 0
+    ArmDataPacketSize: 0
+    RingBufferSize: 32
+    RingBufferAddrHigh: 0
+    RingBufferAddrLow: 0
+    PairNum: 1
+    otherEndCfgFw_0 {
+        TileId: 0 (1d:0)
+        StreamId: 4
+        DataLen: 0
+        AddrOffset: 0
+        Stride0: 0
+        Iteration0: 0
+        Stride1: 0
+        Iteration1: 0
+        Stride2: 0
+        Iteration2: 0
+    }
+}
