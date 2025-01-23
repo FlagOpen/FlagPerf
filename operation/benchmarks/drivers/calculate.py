@@ -31,18 +31,18 @@ def do_performance(mode, warmup, result_log_dir):
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
     p = subprocess.Popen(
         # 执行所有算子
-        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
         # 执行单个算子
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
         # 执行文件
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_tensor_concat_perf.py --level core --mode {mode} --warmup {warmup} --record log",
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_tensor_concat_perf.py --level core --mode {mode} --warmup {warmup} --record log",
         shell=True
     )
     p.wait()
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
-    log_dir = os.path.join(gems_repo, "benchmark",
-                           f"result_test_tensor_concat_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    # log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    # log_dir = os.path.join(gems_repo, "benchmark",
+    #                        f"result_test_tensor_concat_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     save_log_path = os.path.join(result_log_dir, "result.log.txt")
     logger.info("======print do_performance save_log_path============")
     logger.info(save_log_path)
