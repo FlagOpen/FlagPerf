@@ -54,7 +54,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
-                                "mode": mode,
                                 "shape_detail": shape_detail,
                                 "latency_base_cpu_nowarm": latency_base,
                                 "no_warmup_latency": no_warmup_latency
@@ -71,7 +70,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
-                                "mode":  mode,
                                 "shape_detail": shape_detail,
                                 "latency_base_cpu_warm": latency_base,
                                 "warmup_latency": warmup_latency,
@@ -91,7 +89,6 @@ def get_result_data(log_file, res, spectflops, mode, warmup):
                             parse_data = {
                                 "op_name": op_name,
                                 "dtype": dtype,
-                                "mode": mode,
                                 "shape_detail": shape_detail,
                                 "latency_base_cuda_warm": latency_base,
                                 "kerneltime": kerneltime,
