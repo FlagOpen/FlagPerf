@@ -3,7 +3,7 @@
 
 # Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads, metax and dcu.
 # We will run benchmarks in training/<vendor>
-VENDOR = "iluvatar"
+VENDOR = "nvidia"
 
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
@@ -25,7 +25,7 @@ VENDOR = "iluvatar"
 #       " --device=/dev/infiniband --device=/dev/dri --device=/dev/mxcd --group-add video"
 #   dcu:
 #       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
-ACCE_CONTAINER_OPT = " --privileged --pid=host --ipc=host --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules  -v /mnt:/mnt   -v /usr/src:/usr/src  -v /home:/home "
+ACCE_CONTAINER_OPT = " --gpus all"
 
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
@@ -43,7 +43,7 @@ PIP_SOURCE = "https://pypi.tuna.tsinghua.edu.cn/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/zhiyuan/FlagPerf/training"
+FLAGPERF_PATH = "/home/FlagPerf/training"
 
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
