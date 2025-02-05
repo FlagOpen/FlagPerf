@@ -3,7 +3,7 @@
 
 # Set accelerator's vendor name, e.g. iluvatar, cambricon, kunlunxin, ascend, mthreads, metax and dcu.
 # We will run benchmarks in training/<vendor>
-VENDOR = "nvidia"
+VENDOR = "iluvatar"
 
 # Accelerator options for docker. TODO FIXME support more accelerators.
 # possible value of ACCE_CONTAINER_OPT are:
@@ -25,7 +25,8 @@ VENDOR = "nvidia"
 #       " --device=/dev/infiniband --device=/dev/dri --device=/dev/mxcd --group-add video"
 #   dcu:
 #       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
-ACCE_CONTAINER_OPT = " --gpus all"
+ACCE_CONTAINER_OPT = " --privileged --pid=host --ipc=host --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules  -v /mnt:/mnt   -v /usr/src:/usr/src  -v /home:/home "
+
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -42,7 +43,8 @@ PIP_SOURCE = "https://pypi.tuna.tsinghua.edu.cn/simple"
 # The path that flagperf deploy in the cluster.
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
-FLAGPERF_PATH = "/home/FlagPerf/training"
+FLAGPERF_PATH = "/home/zhiyuan/FlagPerf/training"
+
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -169,6 +171,7 @@ CASES = {
     # "llava1.5_13b:deepspeed-torch:BI-V150:1:16:1": "/raid/dataset/llava1.5_13b",
     # "mixtral_8x7B:megatron:BI-V150:4:16:1": "/raid/dataset/mixtral_8x7B",   ##单机测试
     # "mixtral_8x7B:megatron:BI-V150:1:16:1": "/raid/dataset/mixtral_8x7B",   ##四机测试
+    "llama3_8B:megatron:TG-V200:1:16:1": "/datasets",   ##单机测试
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
