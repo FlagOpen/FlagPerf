@@ -200,6 +200,8 @@ if __name__ == '__main__':
         computation_analysis(args.log_file, "computation-FP32")
     elif args.log_type == "power_full_load":
         power_full_load_analysis(args.log_file)
+    elif args.log_type == "c2c_global_latency":
+        c2c_global_latency_analysis(args.log_file)
     elif args.log_type == "intra_allreduce":
         allreduce_analysis(args.log_file, "intra_allreduce")
     elif args.log_type == "inter_allreduce":
