@@ -109,7 +109,10 @@ if __name__ == "__main__":
                 time_per_step = float(steptime) / 1000
 
     whole_tps = 512 * 8192 / time_per_step
-    chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
+    if args.vendor=="iluvatar":
+        chip_tps = whole_tps / (args.nproc_per_node * args.nnodes) * 2
+    else:
+        chip_tps = whole_tps / (args.nproc_per_node * args.nnodes)
     print("System tokens per second: ", whole_tps)
     print("Tokens/p/s: ", chip_tps)
     print("MFU: ", chip_tps * 8000000000.0 * 6 / theoryflops)
