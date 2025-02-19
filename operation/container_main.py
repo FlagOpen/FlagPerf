@@ -39,6 +39,16 @@ def parse_args():
                         required=True,
                         help="vendor name like nvidia")
 
+    parser.add_argument("--mode",
+                        type=str,
+                        required=True,
+                        help="mode like cpu")
+
+    parser.add_argument("--warmup",
+                        type=str,
+                        required=True,
+                        help="warmup")
+
     parser.add_argument("--log_level",
                         type=str,
                         required=True,
@@ -62,6 +72,11 @@ def parse_args():
                         type=str,
                         required=True,
                         help="abs path for FlagPerf/base")
+
+    parser.add_argument("--result_log_path",
+                        type=str,
+                        required=True,
+                        help="result log path for FlagPerf/operation/result")
 
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
@@ -92,13 +107,15 @@ if __name__ == "__main__":
     logger.add(sys.stdout, level=config.log_level)
 
     logger.info(config)
+    logger.info("=======result_log_path=========")
+    logger.info(config.result_log_path)
     write_pid_file(config.log_dir, "start_base_task.pid")
     logger.info("Success Writing PID file at " +
                 os.path.join(config.log_dir, "start_base_task.pid"))
 
-    op, dataformat, spectflops, oplib, chip = config.case_name.split(":")
+    test_file, op, dataformat, spectflops, oplib, chip = config.case_name.split(":")
 
-    case_dir = os.path.join(config.perf_path, "benchmarks", op)
+    case_dir = os.path.join(config.perf_path, "benchmarks", test_file)
     start_cmd = "cd " + case_dir + ";python3 main.py "
     start_cmd += " --vendor=" + config.vendor
     start_cmd += " --case_name=" + op
@@ -106,11 +123,13 @@ if __name__ == "__main__":
     start_cmd += " --dataformat=" + dataformat
     start_cmd += " --oplib=" + oplib
     start_cmd += " --chip=" + chip
+    start_cmd += " --mode=" + config.mode
+    start_cmd += " --warmup=" + config.warmup
+    start_cmd += " --log_dir=" + config.log_dir
+    start_cmd += " --result_log_path=" + config.result_log_path
 
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
-
-    logger.info(start_cmd)
     logger.info(script_log_file)
 
     f = open(script_log_file, "w")

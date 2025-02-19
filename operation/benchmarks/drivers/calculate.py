@@ -4,16 +4,17 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import time
+from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
 
 
+# test operation correctness
 def do_correctness(operation):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
-
     p = subprocess.Popen(
         f"cd {os.path.join(gems_repo, 'tests')} && python3 test_named_ops.py --name {operation} --device cpu ",
         shell=True
@@ -22,7 +23,38 @@ def do_correctness(operation):
 
     return p.returncode
 
+
+# test operation performance
+def do_performance(mode, warmup, result_log_dir):
+    flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
+    gems_repo = subprocess.check_output(
+        ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
+    p = subprocess.Popen(
+        # 执行所有算子
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
+        # 执行单个算子
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
+        # 执行文件
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_tensor_concat_perf.py --level core --mode {mode} --warmup {warmup} --record log",
+        shell=True
+    )
+    p.wait()
+    # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
+    # log_dir = os.path.join(gems_repo, "benchmark",
+    #                        f"result_test_tensor_concat_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    save_log_path = os.path.join(result_log_dir, "result.log.txt")
+    logger.info("======print do_performance save_log_path============")
+    logger.info(save_log_path)
+    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
+        for line in file_r:
+            file_w.write(line + '\n')
+
+    return p.returncode
+
+
 grad_outputs = None
+
 
 def do(exec_func, exec_args, bp=False):
     global grad_outputs

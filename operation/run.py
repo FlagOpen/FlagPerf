@@ -201,8 +201,8 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
     nnodes = len(config.HOSTS)
     framework = config.CASES[case]
 
-    op, df, spectflops, oplib, chip = case.split(":")
-    env_dir = os.path.join(config.FLAGPERF_PATH, "benchmarks", op,
+    test_file, op, df, spectflops, oplib, chip = case.split(":")
+    env_dir = os.path.join(config.FLAGPERF_PATH, "benchmarks", test_file,
                            config.VENDOR, chip)
 
     env_shell = os.path.join(env_dir, "env.sh")
@@ -371,7 +371,7 @@ def summary_logs(config, case_log_dir):
         result[host]["vendor"] = vendor_log
 
         # system monitor results like CPU/MEM/POWER
-        for index in ["cpu", "mem", "pwr"]:
+        for index in ["cpu", "mem"]:
             monitor_path = os.path.join(monitor_log_dir,
                                         index + "_monitor.log")
             with open(monitor_path, 'r') as file:
@@ -405,27 +405,27 @@ def analysis_log(key_logs):
         for line in key_logs[host]["flagperf"]:
             RUN_LOGGER.info("  " + line.split("]")[1])
 
-        RUN_LOGGER.info("2) POWER:")
-        RUN_LOGGER.info("  2.1) SYSTEM POWER:")
-        pwr_series = key_logs[host]["pwr"]
-        RUN_LOGGER.info(
-            "    AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts".
-            format(round(np.mean(pwr_series), 2), round(np.max(pwr_series), 2),
-                   round(np.std(pwr_series), 2)))
-
-        RUN_LOGGER.info("  2.2) AI-chip POWER:")
-        for node in key_logs[host]["vendor"]["power"].keys():
-            pwr_series = key_logs[host]["vendor"]["power"][node]
-            kmeans_series = []
-            for item in pwr_series:
-                if (np.max(pwr_series) - item) <= (item - np.min(pwr_series)):
-                    kmeans_series.append(item)
-            pwr_series = kmeans_series
-            RUN_LOGGER.info(
-                "    RANK {}'s AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts"
-                .format(node, round(np.mean(pwr_series), 2),
-                        round(np.max(pwr_series), 2),
-                        round(np.std(pwr_series), 2)))
+        # RUN_LOGGER.info("2) POWER:")
+        # RUN_LOGGER.info("  2.1) SYSTEM POWER:")
+        # pwr_series = key_logs[host]["pwr"]
+        # RUN_LOGGER.info(
+        #     "    AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts".
+        #     format(round(np.mean(pwr_series), 2), round(np.max(pwr_series), 2),
+        #            round(np.std(pwr_series), 2)))
+        #
+        # RUN_LOGGER.info("  2.2) AI-chip POWER:")
+        # for node in key_logs[host]["vendor"]["power"].keys():
+        #     pwr_series = key_logs[host]["vendor"]["power"][node]
+        #     kmeans_series = []
+        #     for item in pwr_series:
+        #         if (np.max(pwr_series) - item) <= (item - np.min(pwr_series)):
+        #             kmeans_series.append(item)
+        #     pwr_series = kmeans_series
+        #     RUN_LOGGER.info(
+        #         "    RANK {}'s AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts"
+        #         .format(node, round(np.mean(pwr_series), 2),
+        #                 round(np.max(pwr_series), 2),
+        #                 round(np.std(pwr_series), 2)))
 
         RUN_LOGGER.info("  2.3) AI-chip TEMPERATURE:")
         for node in key_logs[host]["vendor"]["temp"].keys():
@@ -533,6 +533,7 @@ def main():
     check_cluster_deploy_path(dp_path)
     cases = get_valid_cases(config)
     log_test_configs(cases, curr_log_path, dp_path, config)
+    result_log_path = os.path.join(config.FLAGPERF_PATH, config.FLAGPERF_LOG_PATH)
 
     RUN_LOGGER.info("========= Step 2: Prepare and Run test cases. =========")
 
@@ -568,10 +569,12 @@ def main():
                     + " --nproc_per_node " + str(config.NPROC_PER_NODE) \
                     + " --log_dir " + os.path.join(dp_path, log_dir_container) \
                     + " --log_level " + config.FLAGPERF_LOG_LEVEL.upper() \
-                    + " --master_port " + config.MASTER_PORT
+                    + " --master_port " + config.MASTER_PORT \
+                    + " --mode " + config.MODE \
+                    + " --warmup " + str(config.WARMUP) \
+                    + " --result_log_path " + result_log_path
 
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
-
         RUN_LOGGER.info("-== Testcase " + case + " starts ==-")
         RUN_LOGGER.info("1) Prepare container environments in cluster...")
         case_log_dir = os.path.join(curr_log_path, case)
