@@ -1,0 +1,125 @@
+#include <musa_runtime.h>
+#include <iostream>
+#include <musa_fp8.h>
+#define FP8E4M3_MAX 448.0f
+
+// max_abs
+template <typename T>
+__device__ __forceinline__ T abs_func(T val) {
+    if constexpr (std::is_signed<T>::value) {
+        return abs(val);
+    }
+    else {
+        return val;
+    }
+}
+
+
+template <typename T>
+__global__ void abs_max_kernel(const T* input, T* output, T* max_value, int size) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    int local_idx = threadIdx.x;
+
+    __shared__ T shared_max[256];
+
+    T val = (idx < size) ? abs_func(input[idx]) : -std::numeric_limits<T>::infinity();
+
+    if (idx < size) {
+        output[idx] = val;
+    }
+
+    shared_max[local_idx] = val;
+    __syncthreads();
+
+
+    for (int stride = blockDim.x / 2; stride > 0; stride /= 2) {
+        if (local_idx < stride && local_idx + stride < blockDim.x) {
+            shared_max[local_idx] = max(shared_max[local_idx], shared_max[local_idx + stride]);
+        }
+        __syncthreads();
+    }
+
+
+    if (local_idx == 0) {
+        max_value[blockIdx.x] = shared_max[0];
+    }
+}
+
+template <typename T>
+T gpu_abs_max(const T* d_input, T* d_output, int size) {
+    int threads_per_block = 256;
+    int num_blocks = (size + threads_per_block - 1) / threads_per_block;
+
+    T* d_max_value, * h_max_value;
+    musaMalloc((void**)&d_max_value, num_blocks * sizeof(T));
+    h_max_value = new T[num_blocks];
+
+    abs_max_kernel<<<num_blocks, threads_per_block>>>(d_input, d_output, d_max_value, size);
+
+    if (num_blocks > 1) {
+        T* d_final_max;
+        musaMalloc((void**)&d_final_max, sizeof(T));
+
+        abs_max_kernel<<<1, num_blocks>>>(d_max_value, d_max_value, d_final_max, num_blocks);
+
+        musaMemcpy(h_max_value, d_final_max, sizeof(T), musaMemcpyDeviceToHost);
+        musaFree(d_final_max);
+    }
+    else {
+        musaMemcpy(h_max_value, d_max_value, num_blocks * sizeof(T), musaMemcpyDeviceToHost);
+    }
+
+    T max_value = h_max_value[0];
+    musaFree(d_max_value);
+    delete[] h_max_value;
+
+    return max_value;
+}
+
+// be called
+float GetScale(float* d_input, int size) {
+    float* d_output;
+    musaMalloc((void**)&d_output, size * sizeof(float));
+
+    float max_value = gpu_abs_max(d_input, d_output, size);
+    float scale = max_value / FP8E4M3_MAX;
+
+    musaFree(d_output);
+
+    return scale; // scale is a cpu value
+}
+// max_abs end
+
+// scale and convert fp8
+
+__global__ void scale_fp32tofp8(const float* input, __mt_fp8_e4m3* output, float scale, int size) {
+    int idx = blockDim.x * blockIdx.x + threadIdx.x;
+    if (idx < size) {
+        // FP32 -> FP8 e4m3
+        output[idx] = __mt_fp8_e4m3(input[idx] / scale );
+    }
+}
+
+__global__ void scale_fp8tofp32(const __mt_fp8_e4m3* input, float *output, float scale, int size) {
+    int idx = blockDim.x * blockIdx.x + threadIdx.x;
+    if (idx < size) {
+        // FP8 e4m3 -> FP32
+        output[idx] = scale * static_cast<float>(input[idx]);
+    }
+}
+
+// f8_ = (mat / scale_).float8()
+void scale_fp32tofp8_mat(const float* d_input, __mt_fp8_e4m3* d_output, float scale, int size) {
+    int blockSize = 256; 
+    int gridSize = (size + blockSize - 1) / blockSize;
+    scale_fp32tofp8<<<gridSize, blockSize>>>(d_input, d_output, scale, size);
+}
+
+// f32_ scale_ * mat_.float32()
+void scale_fp8tofp32_mat(const __mt_fp8_e4m3* d_input, float* d_output, float scale, int size) {
+    int blockSize = 256; 
+    int gridSize = (size + blockSize - 1) / blockSize;
+    scale_fp8tofp32<<<gridSize, blockSize>>>(d_input, d_output, scale, size);
+}
+
+// scale and convert fp8 end
