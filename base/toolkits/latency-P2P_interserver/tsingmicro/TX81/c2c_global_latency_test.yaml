@@ -2,4 +2,4 @@ globals:
   logfile: /tmp/tsmvs_c2c_global_latency_test.log
 
 c2c_latency_test:
-  send_tile_xy: 0x041c
+  send_card_id: 7

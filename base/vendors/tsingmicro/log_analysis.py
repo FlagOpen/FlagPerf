@@ -153,7 +153,7 @@ def power_full_load_analysis(log_file):
             if "PowerSum:" in line:
                 # core_power = float(line.split('W')[0].strip()[-4:].strip())
                 core_power = float(line.split(':')[2].strip().split('W')[0])
-                if (core_power < (200 * 4)):
+                if (core_power < (200 * 32)):
                     core_power_max = core_power if core_power > core_power_max else core_power_max
 
         core_power = core_power_max / 8
