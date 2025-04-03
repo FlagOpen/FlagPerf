@@ -6,7 +6,7 @@ def analysis_log(logpath, config):
         for monitor_index in result.keys():
             result[monitor_index][gpuID] = []
 
-    max_mem = 65536
+    max_mem = None
     next_gpu_id = 0
 
     for line in logfile.readlines():
