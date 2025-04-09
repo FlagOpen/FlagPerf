@@ -30,6 +30,8 @@ def do_performance(mode, warmup, result_log_dir):
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
     p = subprocess.Popen(
+        # 删除历史日志
+        f"cd {os.path.join(gems_repo, 'benchmark')} && rm -r result--level_core--mode_{mode}--warmup_{warmup}--record_log.log",
         # 执行所有算子
         f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
         # 执行单个算子
