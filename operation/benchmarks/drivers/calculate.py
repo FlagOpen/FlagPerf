@@ -45,14 +45,14 @@ def do_performance(mode, warmup, result_log_dir):
     # log_dir = os.path.join(gems_repo, "benchmark",
     #                        f"result_test_tensor_concat_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    save_log_path = os.path.join(result_log_dir, "result.log.txt")
-    logger.info("======print do_performance save_log_path============")
-    logger.info(save_log_path)
-    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
-        for line in file_r:
-            file_w.write(line + '\n')
-
-    return p.returncode
+    # save_log_path = os.path.join(result_log_dir, "result.log.txt")
+    # logger.info("======print do_performance save_log_path============")
+    # logger.info(save_log_path)
+    # with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
+    #     for line in file_r:
+    #         file_w.write(line + '\n')
+    return log_dir
+    # return p.returncode
 
 
 grad_outputs = None

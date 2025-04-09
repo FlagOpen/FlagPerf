@@ -11,7 +11,9 @@ from loguru import logger
 
 
 def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
-    log_file = os.path.join(log_dir, "result.log.txt")
+# def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
+#     log_file = os.path.join(log_dir, "result.log.txt")
+    log_file = os.path.join(log_dir)
     save_log_path = os.path.join(result_log_path, "result.json")
     if os.path.isfile(save_log_path):
         with open(save_log_path, 'r+', encoding='utf-8') as file_r:
