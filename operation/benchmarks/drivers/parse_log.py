@@ -11,8 +11,7 @@ from loguru import logger
 
 
 def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
-# def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
-#     log_file = os.path.join(log_dir, "result.log.txt")
+    log_file = os.path.join(log_dir, "result.log.txt")
     logger.info("log_dir=======")
     logger.info(log_dir)
     log_file = os.path.join(log_dir)

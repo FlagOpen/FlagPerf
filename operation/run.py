@@ -572,7 +572,8 @@ def main():
                     + " --master_port " + config.MASTER_PORT \
                     + " --mode " + config.MODE \
                     + " --warmup " + str(config.WARMUP) \
-                    + " --result_log_path " + result_log_path
+                    + " --result_log_path " + result_log_path \
+                    + "--image_name" + image_name
 
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
         RUN_LOGGER.info("-== Testcase " + case + " starts ==-")

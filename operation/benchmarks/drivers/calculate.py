@@ -25,7 +25,7 @@ def do_correctness(operation):
 
 
 # test operation performance
-def do_performance(mode, warmup, result_log_dir):
+def do_performance(mode, warmup, result_log_dir, image_name):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -50,6 +50,12 @@ def do_performance(mode, warmup, result_log_dir):
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
                            f"test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+
+    cp_subprocess = subprocess.run(
+        [f"docker cp {image_name}:{log_dir} {result_log_dir}/result.log.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+    cp_subprocess.communicate()
+    return p.returncode
     # log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     # save_log_path = os.path.join(result_log_dir, "result.log.txt")
     # logger.info("======print do_performance save_log_path============")
@@ -57,8 +63,7 @@ def do_performance(mode, warmup, result_log_dir):
     # with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
     #     for line in file_r:
     #         file_w.write(line + '\n')
-    return log_dir
-    # return p.returncode
+    # return log_dir
 
 
 grad_outputs = None
