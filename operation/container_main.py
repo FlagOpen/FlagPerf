@@ -78,7 +78,7 @@ def parse_args():
                         required=True,
                         help="result log path for FlagPerf/operation/result")
 
-    parser.add_argument("--image_name",
+    parser.add_argument("--container_name",
                         type=str,
                         required=True,
                         help="image name for cp log")
@@ -102,7 +102,8 @@ def write_pid_file(pid_file_path, pid_file):
 
 if __name__ == "__main__":
     config = parse_args()
-
+    logger.info("config.container_name container_name =====")
+    logger.info(config.container_name)
     logfile = os.path.join(
         config.log_dir, config.case_name,
         config.host_addr + "_noderank" + str(config.node_rank),
@@ -112,8 +113,8 @@ if __name__ == "__main__":
     logger.add(sys.stdout, level=config.log_level)
 
     logger.info(config)
-    logger.info("=======image_name=========")
-    logger.info(config.image_name)
+    logger.info("=======result_log_path=========")
+    logger.info(config.result_log_path)
     write_pid_file(config.log_dir, "start_base_task.pid")
     logger.info("Success Writing PID file at " +
                 os.path.join(config.log_dir, "start_base_task.pid"))
@@ -132,8 +133,9 @@ if __name__ == "__main__":
     start_cmd += " --warmup=" + config.warmup
     start_cmd += " --log_dir=" + config.log_dir
     start_cmd += " --result_log_path=" + config.result_log_path
-    start_cmd += " --image_name=" + config.image_name
-
+    start_cmd += " --container_name=" + config.container_name
+    logger.info("logfile========")
+    logger.info(logfile)
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
     logger.info(script_log_file)

@@ -25,7 +25,7 @@ def do_correctness(operation):
 
 
 # test operation performance
-def do_performance(mode, warmup, result_log_dir, image_name):
+def do_performance(mode, warmup, result_log_dir, container_name):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -50,10 +50,10 @@ def do_performance(mode, warmup, result_log_dir, image_name):
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
                            f"test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    logger.info("=====do_performance image_name =====")
-    logger.info(image_name)
+    logger.info("=====do_performance container_name =====")
+    logger.info(container_name)
     cp_subprocess = subprocess.run(
-        [f"docker cp {image_name}:{log_dir} {result_log_dir}/result.log.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        [f"docker cp {container_name}:{log_dir} {result_log_dir}/result.log.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     cp_subprocess.communicate()
     return p.returncode
