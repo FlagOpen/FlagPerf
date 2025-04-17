@@ -32,7 +32,7 @@ def do_performance(mode, warmup, result_log_dir, container_name):
     del_file_path = os.path.join(gems_repo, 'benchmark')
     # 删除历史日志
     # del_file = os.path.join(del_file_path, f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    del_file = os.path.join(del_file_path, f"test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    del_file = os.path.join(del_file_path, f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     logger.info(del_file)
     del_process = subprocess.Popen(["rm", del_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     logger.info(del_process)
@@ -52,11 +52,11 @@ def do_performance(mode, warmup, result_log_dir, container_name):
                            f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     logger.info("=====do_performance container_name =====")
     logger.info(container_name)
-    cp_subprocess = subprocess.run(
-        [f"docker cp {container_name}:{log_dir} {result_log_dir}/result.log.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    cp_subprocess.communicate()
-    return p.returncode
+    cp_subprocess = subprocess.run(["cp", f"{log_dir}", f"{result_log_dir}/result.log.txt"], check=True)
+        # [f"docker cp {container_name}:{log_dir} {result_log_dir}/result.log.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    # )
+    # cp_subprocess.communicate()
+    return p.returncode, cp_subprocess.returncode
     # log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     # save_log_path = os.path.join(result_log_dir, "result.log.txt")
     # logger.info("======print do_performance save_log_path============")
