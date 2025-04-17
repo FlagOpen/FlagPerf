@@ -49,7 +49,7 @@ def do_performance(mode, warmup, result_log_dir, container_name):
     p.wait()
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
-                           f"test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+                           f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     logger.info("=====do_performance container_name =====")
     logger.info(container_name)
     cp_subprocess = subprocess.run(
