@@ -383,7 +383,6 @@ def summary_logs(config, case_log_dir):
 
         # FlagPerf Result
         flagperf_result_path = os.path.join(monitor_log_dir, "operation.log.txt")
-        RUN_LOGGER.info("==flagperf_result_path==" + flagperf_result_path + "===")
         with open(flagperf_result_path, 'r') as file:
             key_lines = [
                 line.strip() for line in file if 'FlagPerf Result' in line
@@ -561,7 +560,7 @@ def main():
         if config.VENDOR == "iluvatar":
             container_name = container_name + "_device_" + str(config.DEVICE)
         # Set command to start train script in container in the cluster
-        RUN_LOGGER.info("======container_name" + container_name + "=====")
+        RUN_LOGGER.info("======container_name= " + container_name + "=====")
         log_dir_container = os.path.join(config.FLAGPERF_LOG_PATH,
                                          timestamp_log_dir)
         base_args = " --vendor " + config.VENDOR + " --case_name " + case \
@@ -574,7 +573,7 @@ def main():
                     + " --mode " + config.MODE \
                     + " --warmup " + str(config.WARMUP) \
                     + " --result_log_path " + result_log_path \
-                    + "--container_name" + container_name
+                    + " --container_name " + container_name
 
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
         RUN_LOGGER.info("-== Testcase " + case + " starts ==-")
