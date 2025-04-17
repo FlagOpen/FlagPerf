@@ -573,8 +573,9 @@ def main():
                     + " --mode " + config.MODE \
                     + " --warmup " + str(config.WARMUP) \
                     + " --result_log_path " + result_log_path \
-                    + "--image_name" + image_name
+                    + "--image_name" + container_name
 
+        RUN_LOGGER.info("======container_name" + container_name + "=====")
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
         RUN_LOGGER.info("-== Testcase " + case + " starts ==-")
         RUN_LOGGER.info("1) Prepare container environments in cluster...")

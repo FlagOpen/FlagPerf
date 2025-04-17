@@ -50,7 +50,8 @@ def do_performance(mode, warmup, result_log_dir, image_name):
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
                            f"test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-
+    logger.info("=====do_performance image_name =====")
+    logger.info(image_name)
     cp_subprocess = subprocess.run(
         [f"docker cp {image_name}:{log_dir} {result_log_dir}/result.log.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
