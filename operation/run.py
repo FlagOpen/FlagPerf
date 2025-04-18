@@ -371,7 +371,7 @@ def summary_logs(config, case_log_dir):
         result[host]["vendor"] = vendor_log
 
         # system monitor results like CPU/MEM/POWER
-        for index in ["cpu", "mem"]:
+        for index in ["cpu", "mem", "pwr"]:
             monitor_path = os.path.join(monitor_log_dir,
                                         index + "_monitor.log")
             with open(monitor_path, 'r') as file:
@@ -404,27 +404,27 @@ def analysis_log(key_logs):
         for line in key_logs[host]["flagperf"]:
             RUN_LOGGER.info("  " + line.split("]")[1])
 
-        # RUN_LOGGER.info("2) POWER:")
-        # RUN_LOGGER.info("  2.1) SYSTEM POWER:")
-        # pwr_series = key_logs[host]["pwr"]
-        # RUN_LOGGER.info(
-        #     "    AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts".
-        #     format(round(np.mean(pwr_series), 2), round(np.max(pwr_series), 2),
-        #            round(np.std(pwr_series), 2)))
-        #
-        # RUN_LOGGER.info("  2.2) AI-chip POWER:")
-        # for node in key_logs[host]["vendor"]["power"].keys():
-        #     pwr_series = key_logs[host]["vendor"]["power"][node]
-        #     kmeans_series = []
-        #     for item in pwr_series:
-        #         if (np.max(pwr_series) - item) <= (item - np.min(pwr_series)):
-        #             kmeans_series.append(item)
-        #     pwr_series = kmeans_series
-        #     RUN_LOGGER.info(
-        #         "    RANK {}'s AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts"
-        #         .format(node, round(np.mean(pwr_series), 2),
-        #                 round(np.max(pwr_series), 2),
-        #                 round(np.std(pwr_series), 2)))
+        RUN_LOGGER.info("2) POWER:")
+        RUN_LOGGER.info("  2.1) SYSTEM POWER:")
+        pwr_series = key_logs[host]["pwr"]
+        RUN_LOGGER.info(
+            "    AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts".
+            format(round(np.mean(pwr_series), 2), round(np.max(pwr_series), 2),
+                   round(np.std(pwr_series), 2)))
+
+        RUN_LOGGER.info("  2.2) AI-chip POWER:")
+        for node in key_logs[host]["vendor"]["power"].keys():
+            pwr_series = key_logs[host]["vendor"]["power"][node]
+            kmeans_series = []
+            for item in pwr_series:
+                if (np.max(pwr_series) - item) <= (item - np.min(pwr_series)):
+                    kmeans_series.append(item)
+            pwr_series = kmeans_series
+            RUN_LOGGER.info(
+                "    RANK {}'s AVERAGE: {} Watts, MAX: {} Watts, STD DEVIATION: {} Watts"
+                .format(node, round(np.mean(pwr_series), 2),
+                        round(np.max(pwr_series), 2),
+                        round(np.std(pwr_series), 2)))
 
         RUN_LOGGER.info("  2.3) AI-chip TEMPERATURE:")
         for node in key_logs[host]["vendor"]["temp"].keys():
