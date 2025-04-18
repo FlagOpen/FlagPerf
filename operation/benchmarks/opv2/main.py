@@ -80,7 +80,6 @@ def main(config):
     # test operation performance
     performance = do_performance(config.mode, config.warmup, config.log_dir)
     performance = performance == 0
-
     parse_log_file(config.spectflops, config.mode, config.warmup, config.log_dir, config.result_log_path)
 
     # dtype = {

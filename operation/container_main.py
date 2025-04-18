@@ -107,8 +107,6 @@ if __name__ == "__main__":
     logger.add(sys.stdout, level=config.log_level)
 
     logger.info(config)
-    logger.info("=======result_log_path=========")
-    logger.info(config.result_log_path)
     write_pid_file(config.log_dir, "start_base_task.pid")
     logger.info("Success Writing PID file at " +
                 os.path.join(config.log_dir, "start_base_task.pid"))
@@ -127,7 +125,6 @@ if __name__ == "__main__":
     start_cmd += " --warmup=" + config.warmup
     start_cmd += " --log_dir=" + config.log_dir
     start_cmd += " --result_log_path=" + config.result_log_path
-
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
     logger.info(script_log_file)

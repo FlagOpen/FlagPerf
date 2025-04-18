@@ -15,15 +15,15 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     save_log_path = os.path.join(result_log_path, "result.json")
     if os.path.isfile(save_log_path):
         with open(save_log_path, 'r+', encoding='utf-8') as file_r:
-            file_r_json = file_r.read()
-            if file_r_json:
+            try:
+                file_r_json = file_r.read()
                 res = json.loads(file_r_json)
                 result_data = get_result_data(log_file, res, spectflops, mode, warmup)
                 file_r.seek(0)
                 file_r.write(json.dumps(result_data, ensure_ascii=False))
                 file_r.truncate()
-            else:
-                logger.error("Contents of the file is empty！！！！")
+            except json.decoder.JSONDecodeError:
+                print("JSONDecodeError json file content is None")
     else:
         with open(save_log_path, 'w') as file_w:
             res = defaultdict(dict)
@@ -31,10 +31,11 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
             file_w.write(json.dumps(result_data, ensure_ascii=False))
 
 
-# 参数说明
+""" 参数说明
 # 时延：1 无预热时延 Latency-No warmup：no_warmup_latency，2 预热时延 Latency-Warmup：warmup_latency
 # 吞吐率：3 Raw-Throughput原始吞吐：raw_throughput， 4 Core-Throughput是核心吞吐：core_throughput
 # 算力：5 实际算力开销：ctflops， 6 实际算力利用率：cfu， 7 实际算力开销-内核时间：ktflops， 8 实际算力利用率-内核时间：kfu
+"""
 def get_result_data(log_file, res, spectflops, mode, warmup):
     with open(log_file, 'r') as file_r:
         lines = file_r.readlines()

@@ -29,28 +29,30 @@ def do_performance(mode, warmup, result_log_dir):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
+    del_file_path = os.path.join(gems_repo, 'benchmark')
+    # 删除历史日志
+    del_file = os.path.join(del_file_path, f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    del_process = subprocess.Popen(["rm", del_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    del_process.communicate()
     p = subprocess.Popen(
-        # 执行所有算子
-        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
-        # 执行单个算子
+        # 执行所有算子命令
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
+        # 执行单个算子命令
         # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
-        # 执行文件
-        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_tensor_concat_perf.py --level core --mode {mode} --warmup {warmup} --record log",
+        # 执行单个文件命令
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_distribution_perf.py --level core --mode {mode} --warmup {warmup} --record log",
         shell=True
     )
     p.wait()
-    # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
-    # log_dir = os.path.join(gems_repo, "benchmark",
-    #                        f"result_test_tensor_concat_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    save_log_path = os.path.join(result_log_dir, "result.log.txt")
-    logger.info("======print do_performance save_log_path============")
-    logger.info(save_log_path)
-    with open(log_dir, "r", encoding="utf-8") as file_r, open(save_log_path, "w", encoding="utf-8") as file_w:
-        for line in file_r:
-            file_w.write(line + '\n')
 
-    return p.returncode
+    # 全量执行日志路径
+    # log_dir = os.path.join(gems_repo, "benchmark",
+    #                      f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    # 仅执行单个文件日志路径
+    log_dir = os.path.join(gems_repo, "benchmark",
+                           f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    cp_subprocess = subprocess.run(["cp", f"{log_dir}", f"{result_log_dir}/result.log.txt"], check=True)
+    return p.returncode, cp_subprocess.returncode
 
 
 grad_outputs = None
