@@ -15,12 +15,15 @@ def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     save_log_path = os.path.join(result_log_path, "result.json")
     if os.path.isfile(save_log_path):
         with open(save_log_path, 'r+', encoding='utf-8') as file_r:
-            file_r_json = file_r.read()
-            res = json.loads(file_r_json)
-            result_data = get_result_data(log_file, res, spectflops, mode, warmup)
-            file_r.seek(0)
-            file_r.write(json.dumps(result_data, ensure_ascii=False))
-            file_r.truncate()
+            try:
+                file_r_json = file_r.read()
+                res = json.loads(file_r_json)
+                result_data = get_result_data(log_file, res, spectflops, mode, warmup)
+                file_r.seek(0)
+                file_r.write(json.dumps(result_data, ensure_ascii=False))
+                file_r.truncate()
+            except json.decoder.JSONDecodeError:
+                print("JSONDecodeError json file content is None")
     else:
         with open(save_log_path, 'w') as file_w:
             res = defaultdict(dict)
