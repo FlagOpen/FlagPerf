@@ -12,23 +12,20 @@ from loguru import logger
 
 def parse_log_file(spectflops, mode, warmup, log_dir, result_log_path):
     log_file = os.path.join(log_dir, "result.log.txt")
-    logger.info("log_dir=======")
-    logger.info(log_dir)
-    log_file = os.path.join(log_dir)
     logger.info("log_file=======")
     logger.info(log_file)
     save_log_path = os.path.join(result_log_path, "result.json")
     if os.path.isfile(save_log_path):
         with open(save_log_path, 'r+', encoding='utf-8') as file_r:
             file_r_json = file_r.read()
-            if file_r_json:
-                res = json.loads(file_r_json)
-                result_data = get_result_data(log_file, res, spectflops, mode, warmup)
-                file_r.seek(0)
-                file_r.write(json.dumps(result_data, ensure_ascii=False))
-                file_r.truncate()
-            else:
-                logger.error("Contents of the file is empty！！！！")
+            # if file_r_json:
+            res = json.loads(file_r_json)
+            result_data = get_result_data(log_file, res, spectflops, mode, warmup)
+            file_r.seek(0)
+            file_r.write(json.dumps(result_data, ensure_ascii=False))
+            file_r.truncate()
+            # else:
+            #     logger.error("Contents of the file is empty！！！！")
     else:
         with open(save_log_path, 'w') as file_w:
             res = defaultdict(dict)

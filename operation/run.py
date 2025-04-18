@@ -560,7 +560,6 @@ def main():
         if config.VENDOR == "iluvatar":
             container_name = container_name + "_device_" + str(config.DEVICE)
         # Set command to start train script in container in the cluster
-        RUN_LOGGER.info("======container_name= " + container_name + "=====")
         log_dir_container = os.path.join(config.FLAGPERF_LOG_PATH,
                                          timestamp_log_dir)
         base_args = " --vendor " + config.VENDOR + " --case_name " + case \
@@ -572,8 +571,7 @@ def main():
                     + " --master_port " + config.MASTER_PORT \
                     + " --mode " + config.MODE \
                     + " --warmup " + str(config.WARMUP) \
-                    + " --result_log_path " + result_log_path \
-                    + " --container_name " + container_name
+                    + " --result_log_path " + result_log_path
 
         RUN_LOGGER.info("=== 2.2 Setup container and run testcases. ===")
         RUN_LOGGER.info("-== Testcase " + case + " starts ==-")

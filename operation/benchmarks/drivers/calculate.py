@@ -25,7 +25,7 @@ def do_correctness(operation):
 
 
 # test operation performance
-def do_performance(mode, warmup, result_log_dir, container_name):
+def do_performance(mode, warmup, result_log_dir):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
@@ -50,12 +50,7 @@ def do_performance(mode, warmup, result_log_dir, container_name):
     # log_dir = os.path.join(gems_repo, "benchmark", "result--level_core--record_log")
     log_dir = os.path.join(gems_repo, "benchmark",
                            f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
-    logger.info("=====do_performance container_name =====")
-    logger.info(container_name)
     cp_subprocess = subprocess.run(["cp", f"{log_dir}", f"{result_log_dir}/result.log.txt"], check=True)
-        # [f"docker cp {container_name}:{log_dir} {result_log_dir}/result.log.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    # )
-    # cp_subprocess.communicate()
     return p.returncode, cp_subprocess.returncode
     # log_dir = os.path.join(gems_repo, "benchmark", f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
     # save_log_path = os.path.join(result_log_dir, "result.log.txt")

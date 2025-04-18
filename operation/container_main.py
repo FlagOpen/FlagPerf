@@ -78,11 +78,6 @@ def parse_args():
                         required=True,
                         help="result log path for FlagPerf/operation/result")
 
-    parser.add_argument("--container_name",
-                        type=str,
-                        required=True,
-                        help="image name for cp log")
-
     args, unknown_args = parser.parse_known_args()
     args.unknown_args = unknown_args
     return args
@@ -102,8 +97,7 @@ def write_pid_file(pid_file_path, pid_file):
 
 if __name__ == "__main__":
     config = parse_args()
-    logger.info("config.container_name container_name =====")
-    logger.info(config.container_name)
+
     logfile = os.path.join(
         config.log_dir, config.case_name,
         config.host_addr + "_noderank" + str(config.node_rank),
@@ -131,7 +125,6 @@ if __name__ == "__main__":
     start_cmd += " --warmup=" + config.warmup
     start_cmd += " --log_dir=" + config.log_dir
     start_cmd += " --result_log_path=" + config.result_log_path
-    start_cmd += " --container_name=" + config.container_name
     script_log_file = os.path.join(os.path.dirname(logfile),
                                    "operation.log.txt")
     logger.info(script_log_file)
