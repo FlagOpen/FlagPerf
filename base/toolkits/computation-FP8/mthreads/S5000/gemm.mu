@@ -60,9 +60,9 @@ struct MatMulParam {
     bool trans_a{ false };
     bool trans_b{ false };
     int batch{ 1 };
-    int m{ 6144 };
-    int n{ 4096 };
-    int k{ 192000 };
+    int m{ 14336 };
+    int n{ 16384 };
+    int k{ 38400 };
     double alpha{ 1.0 };
     double beta{ 0.0 };
     double gamma{ 0.0 };
@@ -111,11 +111,10 @@ void GenerateRandom(Type* data, int64_t size, uint seed = 2333) {
     std::default_random_engine engine(seed);
     if (std::is_floating_point_v<RandomType>) {
         std::uniform_real_distribution<float> dist(-1, 1);
-        SHOW("start gen random float data >>>>>>>>>>>>>>>>>>>>>\n");
+        SHOW("start gen random float data ...\n");
         for (auto i = 0; i < size; i++) {
             data[i] = (Type)(dist(engine));      
         }
-        SHOW("end >>>>>>>>>>>>>>>>>>>>>\n");
     }
     else {
         std::uniform_int_distribution<int8_t> dist(-127, 127);
@@ -748,7 +747,7 @@ private:
             tensor_a.SetAddr(d_a);
             tensor_a.SetType(ttype);
             if (DType::q8 == dtype) {
-                tensor_a.SetQuantizationInfo({ scale_a }, { 0 });
+                tensor_a.SetQuantizationInfo(scale_a);
             }
             if (trans_a) {
                 tensor_a.SetNdInfo({ k, m });
@@ -760,7 +759,7 @@ private:
             tensor_b.SetAddr(d_b);
             tensor_b.SetType(ttype);
             if (DType::q8 == dtype) {
-                tensor_b.SetQuantizationInfo({ scale_b }, { 0 });
+                tensor_b.SetQuantizationInfo(scale_b);
             }
             if (trans_b) {
                 tensor_b.SetNdInfo({ n, k });
@@ -773,7 +772,7 @@ private:
             tensor_c.SetType(ttype);
             tensor_c.SetNdInfo({ m, n });
             if (DType::q8 == dtype) {
-                tensor_c.SetQuantizationInfo({ scale_c }, { 0 });
+                tensor_c.SetQuantizationInfo(scale_c);
             }
 
             tensor_z.SetAddr(d_z);

@@ -4,9 +4,9 @@
 #include <musa_runtime.h>
 #include <vector>
 
-constexpr size_t M = 16384;
+constexpr size_t M = 14336;
 constexpr size_t N = 16384;
-constexpr size_t K = 32768;
+constexpr size_t K = 9600;
 
 struct PrecisionConfig
 {
@@ -95,7 +95,7 @@ void test(const PrecisionConfig &config)
 int main()
 {
   musaSetDevice(5);
-  PrecisionConfig fp32 = {sizeof(float), "FP32", 10, 10};
+  PrecisionConfig fp32 = {sizeof(float), "FP32", 2500, 10};
 
   test(fp32);
 
