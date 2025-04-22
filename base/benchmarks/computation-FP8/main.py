@@ -49,8 +49,8 @@ def main(config, case_config, rank, world_size, local_rank):
     k = case_config.K
     
     
-    matrixA = torch.randn(m, k, dtype=torch.float32).to(local_rank)
-    matrixB = torch.randn(k, n, dtype=torch.float32).to(local_rank)
+    matrixA = torch.randn(m, n, dtype=torch.float32).to(local_rank)
+    matrixB = torch.randn(n, k, dtype=torch.float32).to(local_rank)
     
     # get f8 tensor from inputs
     scale_a = matrixA.abs().max() / fp8max
