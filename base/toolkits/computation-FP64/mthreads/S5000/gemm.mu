@@ -41,7 +41,7 @@ void test(const PrecisionConfig &config)
     mublasDgemm(handle, MUBLAS_OP_N, MUBLAS_OP_T,
                 M, N, K, &alpha,
                 d_A, M,
-                d_B, K,
+                d_B, N,
                 &beta,
                 d_C, M);
   }
@@ -59,7 +59,7 @@ void test(const PrecisionConfig &config)
     mublasDgemm(handle, MUBLAS_OP_N, MUBLAS_OP_T,
                 M, N, K, &alpha,
                 d_A, M,
-                d_B, K,
+                d_B, N,
                 &beta,
                 d_C, M);
   }
@@ -94,7 +94,7 @@ void test(const PrecisionConfig &config)
 
 int main()
 {
-  musaSetDevice(5);
+  musaSetDevice(2);
   PrecisionConfig fp64 = {sizeof(double), "FP64", 600, 10};
 
   test(fp64);

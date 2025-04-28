@@ -630,7 +630,7 @@ int RunMatMul() {
     CHECK_MUSA(musaGetDevice(&device_id));
 
     MatMulParam param;
-    const int iters = 100000;
+    const int iters = 16000;
     musaStream_t stream;
     CHECK_MUSA(musaStreamCreate(&stream));
     TestMatMul test_mm(stream, device_id, DType::f32, param, iters);
