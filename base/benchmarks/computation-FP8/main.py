@@ -48,9 +48,14 @@ def main(config, case_config, rank, world_size, local_rank):
     n = case_config.N
     k = case_config.K
     
-    
-    matrixA = torch.randn(m, n, dtype=torch.float32).to(local_rank)
-    matrixB = torch.randn(n, k, dtype=torch.float32).to(local_rank)
+    if torch.musa.is_available():
+        torch.musa.set_device(local_rank)
+        device = torch.device(f"musa")
+        matrixA = torch.randn(m, n, dtype=torch.float32, device=device)
+        matrixB = torch.randn(n, k, dtype=torch.float32, device=device)
+    else:
+        matrixA = torch.randn(m, n, dtype=torch.float32).to(local_rank)
+        matrixB = torch.randn(n, k, dtype=torch.float32).to(local_rank)
     
     # get f8 tensor from inputs
     scale_a = matrixA.abs().max() / fp8max
@@ -85,8 +90,6 @@ def main(config, case_config, rank, world_size, local_rank):
     if rank == 0:
         print("start test")
     
-    host_device_sync(config.vendor)
-    multi_device_sync(config.vendor)
     start_time = time.perf_counter()
     
     for _ in range(case_config.ITERS):
