@@ -17,8 +17,16 @@ void checkCudaError(hipError_t err, const char *msg) {
     }
 }
 
+__global__ void copyKernel(void* d_dst, const void* d_src, size_t size) {
+    size_t offset = blockIdx.x * blockDim.x + threadIdx.x;
+    if (offset < size) {
+        ((double*)d_dst)[offset] = ((const double*)d_src)[offset];
+    }
+}
+
 int main() {
-    float *d_src, *d_dst;
+
+    double *d_src, *d_dst;
     hipEvent_t start, end;
     float elapsed_time;
 
@@ -28,16 +36,18 @@ int main() {
     checkCudaError(hipEventCreate(&start), "hipEventCreate");
     checkCudaError(hipEventCreate(&end), "hipEventCreate");
 
+    int threadsPerBlock = 1024;
+    size_t numElem = SIZE/sizeof(double);
+    int blocksPerGrid = (numElem + threadsPerBlock - 1) / threadsPerBlock;
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
-        checkCudaError(hipMemcpy(d_dst, d_src, SIZE, hipMemcpyDeviceToDevice), "hipMemcpy");
+        copyKernel<<<blocksPerGrid, threadsPerBlock>>>(d_dst, d_src, SIZE);
     }
-
+    hipDeviceSynchronize();
     checkCudaError(hipEventRecord(start), "hipEventRecord");
-
     for (int i = 0; i < ITERATIONS; ++i) {
-        checkCudaError(hipMemcpy(d_dst, d_src, SIZE, hipMemcpyDeviceToDevice), "hipMemcpy");
+        copyKernel<<<blocksPerGrid, threadsPerBlock>>>(d_dst, d_src, SIZE);
     }
-
+    hipDeviceSynchronize();
     checkCudaError(hipEventRecord(end), "hipEventRecord");
     checkCudaError(hipEventSynchronize(end), "hipEventSynchronize");
 

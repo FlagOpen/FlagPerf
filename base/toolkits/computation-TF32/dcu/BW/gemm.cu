@@ -2,6 +2,11 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License")
 
+#include <hip/hip_runtime.h>
+#include <rocblas.h>
+#include <iostream>
+#include <chrono>
+
 #include <hipblas.h>
 #include <hip/hip_runtime.h>
 #include <chrono>
@@ -31,30 +36,26 @@ void test(const PrecisionConfig& config) {
         hipMalloc(&d_C, M * N * config.bytesPerElement);
     }
 
-    hipblasHandle_t handle;
-    hipblasCreate(&handle);
+    rocblas_handle handle;
+    rocblas_create_handle(&handle);
+    rocblas_set_math_mode(handle, rocblas_xf32_xdl_math_op);
+
+    // hipblasHandle_t handle;
+    // hipblasCreate(&handle);
 
     float alpha = 1.0f;
     float beta = 0.0f;
 
     for (int i = 0; i < config.WARMUP_ITERATIONS; ++i) {
-        if (config.cudaType == HIPBLAS_R_8I) {
-            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_T,
-                         M, N, K, &alpha,
-                         d_A, config.cudaType, M,
-                         d_B, config.cudaType, N,
-                         &beta,
-                         d_C, HIPBLAS_R_32I, M,
-                         config.cublasType, HIPBLAS_GEMM_DEFAULT);
-        } else {
-            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_T,
-                         M, N, K, &alpha,
-                         d_A, config.cudaType, M,
-                         d_B, config.cudaType, N,
-                         &beta,
-                         d_C, config.cudaType, M,
-                         config.cublasType, HIPBLAS_GEMM_DEFAULT);
-        }
+
+        rocblas_sgemm(handle,
+            rocblas_operation_none, rocblas_operation_transpose,
+                M, N, K,
+                &alpha,
+                d_A, M,
+                d_B, N,
+                &beta,
+                d_C, M);
     }
 
     hipError_t syncError = hipDeviceSynchronize();
@@ -65,23 +66,14 @@ void test(const PrecisionConfig& config) {
     }
 
     for (int i = 0; i < config.NUM_ITERATIONS; ++i) {
-        if (config.cudaType == HIPBLAS_R_8I) {
-            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_T,
-                         M, N, K, &alpha,
-                         d_A, config.cudaType, M,
-                         d_B, config.cudaType, N,
-                         &beta,
-                         d_C, HIPBLAS_R_32I, M,
-                         config.cublasType, HIPBLAS_GEMM_DEFAULT);
-        } else {
-            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_T,
-                         M, N, K, &alpha,
-                         d_A, config.cudaType, M,
-                         d_B, config.cudaType, N,
-                         &beta,
-                         d_C, config.cudaType, M,
-                         config.cublasType, HIPBLAS_GEMM_DEFAULT);
-        }
+          rocblas_sgemm(handle,
+            rocblas_operation_none, rocblas_operation_transpose,
+                M, N, K,
+                &alpha,
+                d_A, M,
+                d_B, N,
+                &beta,
+                d_C, M);
     }
     syncError = hipDeviceSynchronize();
     auto end = std::chrono::high_resolution_clock::now();
@@ -103,7 +95,7 @@ void test(const PrecisionConfig& config) {
     hipFree(d_B);
     hipFree(d_C);
 
-    hipblasDestroy(handle);
+    rocblas_destroy_handle(handle);
 }
 
 int main() {
@@ -112,7 +104,7 @@ int main() {
         HIPBLAS_R_32F,
         4,
         "TF32",
-        100000,
+        100,
         10
     };
 
@@ -120,4 +112,3 @@ int main() {
 
     return 0;
 }
-

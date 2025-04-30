@@ -47,10 +47,10 @@ void test(const PrecisionConfig& config) {
                          d_C, HIPBLAS_R_32I, M,
                          config.cublasType, HIPBLAS_GEMM_DEFAULT);
         } else {
-            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_N,
+            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_T,
                          M, N, K, &alpha,
                          d_A, config.cudaType, M,
-                         d_B, config.cudaType, K,
+                         d_B, config.cudaType, N,
                          &beta,
                          d_C, config.cudaType, M,
                          config.cublasType, HIPBLAS_GEMM_DEFAULT);
@@ -74,10 +74,10 @@ void test(const PrecisionConfig& config) {
                          d_C, HIPBLAS_R_32I, M,
                          config.cublasType, HIPBLAS_GEMM_DEFAULT);
         } else {
-            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_N,
+            hipblasGemmEx(handle, HIPBLAS_OP_N, HIPBLAS_OP_T,
                          M, N, K, &alpha,
                          d_A, config.cudaType, M,
-                         d_B, config.cudaType, K,
+                         d_B, config.cudaType, N,
                          &beta,
                          d_C, config.cudaType, M,
                          config.cublasType, HIPBLAS_GEMM_DEFAULT);

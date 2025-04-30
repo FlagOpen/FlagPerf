@@ -34,9 +34,10 @@ void test(const PrecisionConfig& config) {
 
     hipblasHandle_t handle;
     hipblasCreate(&handle);
-
-    __half alpha = __float2half(1.0f);
-    __half beta = __float2half(0.0f);
+    float alpha = 1.0f;
+    float beta = 0.0f;
+    // __half alpha = __float2half(1.0f);
+    // __half beta = __float2half(0.0f);
 
     for (int i = 0; i < config.WARMUP_ITERATIONS; ++i) {
         if (config.cudaType == HIPBLAS_R_8I) {

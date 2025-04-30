@@ -1,4 +1,4 @@
-FLAGPERF_PATH: "/mnt/shared/nvme1/zhangyq/FlagGems-test/FlagPerf/base"
+FLAGPERF_PATH: "/home/suma/FlagPerf/base"
 FLAGPERF_LOG_PATH: "result"
 VENDOR: "dcu"
 FLAGPERF_LOG_LEVEL: "info"
@@ -7,9 +7,9 @@ FLAGPERF_LOG_LEVEL: "info"
 # toolkits using container_main to launch bash toolkits/<case>/<vendor>/main.sh, nnodes.
 # only in benchmarks, flagperf will automatically execute benchmakrs/<case>/<vendor>/requirements.txt and env.sh
 # all resources to be used in toolkits/<case>/<vendor>/main.sh, should be under toolkits/<case>/<vendor>/
-BENCHMARKS_OR_TOOLKITS: "BENCHMARK"
-HOSTS: ["10.17.27.73"]
-NPROC_PER_NODE: 1
+BENCHMARKS_OR_TOOLKITS:  "TOOLKIT"
+HOSTS: ["10.1.15.92","10.1.15.136"]
+NPROC_PER_NODE: 8
 SSH_PORT: "22"
 HOSTS_PORTS: ["2223"]
 MASTER_PORT: "29502"
@@ -32,23 +32,24 @@ CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "HIP_VISIBLE_DEVICES"
 # "operation:dataFormat:chip": "docker_images"
 # now only support flaggems and nativepytorch
-CASES: 
-     "interconnect-h2d:BW": "pytorch_2.4"
-     "interconnect-MPI_interserver:BW": "pytorch_2.4"
-     "interconnect-MPI_intraserver:BW": "pytorch_2.4"
-     "interconnect-P2P_interserver:BW": "pytorch_2.4"
-     "interconnect-P2P_intraserver:BW": "pytorch_2.4"
-     "main_memory-bandwidth:BW": "pytorch_2.4"
-     "main_memory-capacity:BW": "pytorch_2.4"
-     "computation-FP32:BW": "pytorch_2.4"
-     "computation-FP16:BW": "pytorch_2.4"
-     "computation-BF16:BW": "pytorch_2.4"
-     "computation-INT8:BW": "pytorch_2.4" 
-     "computation-TF32:BW": "pytorch_2.4"
-     
+CASES:
+       "interconnect-MPI_interserver:BW": "pytorch_2.4"
+       "interconnect-MPI_intraserver:BW": "pytorch_2.4"
+       "interconnect-P2P_interserver:BW": "pytorch_2.4"
+       "interconnect-P2P_intraserver:BW": "pytorch_2.4"
+       "computation-FP64:BW": "pytorch_2.4"
+       "computation-FP32:BW": "pytorch_2.4"
+       "computation-INT8:BW": "pytorch_2.4"
+       "computation-TF32:BW": "pytorch_2.4"
+       "computation-FP16:BW": "pytorch_2.4"
+       "computation-BF16:BW": "pytorch_2.4"
+       "main_memory-bandwidth:BW": "pytorch_2.4"
+       "main_memory-capacity:BW": "pytorch_2.4"
+       "interconnect-h2d:BW": "pytorch_2.4"
+
 # iluvatar "computation-BF16:BI150": "pytorch_2.1"
 # iluvatar "computation-FP16:BI150": "pytorch_2.1"
-# iluvatar "computation-FP32:BI150": "pytorch_2.1" 
+# iluvatar "computation-FP32:BI150": "pytorch_2.1"
 # iluvatar "main_memory-bandwidth:BI150": "pytorch_2.1"
 # iluvatar "main_memory-capacity:BI150": "pytorch_2.1"
 # iluvatar "interconnect-h2d:BI150": "pytorch_2.1"

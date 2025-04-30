@@ -4,3 +4,5 @@ RUN /bin/bash -c "pip config set global.index-url https://pypi.tuna.tsinghua.edu
 RUN /bin/bash -c "uname -a"
 RUN /bin/bash -c alias python3=python
 RUN /bin/bash -c "pip install loguru"
+RUN /bin/bash -c "apt-get update"
+RUN /bin/bash -c "apt-get install sshpass"

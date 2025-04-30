@@ -33,9 +33,10 @@ void test(const PrecisionConfig& config) {
 
     hipblasHandle_t handle;
     hipblasCreate(&handle);
-
-    hip_bfloat16 alpha = static_cast<hip_bfloat16>(1.0f);//_nv_float_to_bfloat16(1.0f);
-    hip_bfloat16 beta =  static_cast<hip_bfloat16>(0.0f);//_nv_float_to_bfloat16(0.0f);
+    float alpha = 1.0f;
+    float beta = 0.0f;
+    // hip_bfloat16 alpha = static_cast<hip_bfloat16>(1.0f);//_nv_float_to_bfloat16(1.0f);
+    // hip_bfloat16 beta =  static_cast<hip_bfloat16>(0.0f);//_nv_float_to_bfloat16(0.0f);
 
     for (int i = 0; i < config.WARMUP_ITERATIONS; ++i) {
         if (config.cudaType == HIPBLAS_R_8I) {

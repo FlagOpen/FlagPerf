@@ -8,9 +8,9 @@
 #include <iostream>
 
 
-constexpr int M = 5120;
-constexpr int N = 4096;
-constexpr int K = 16384;
+constexpr int M = 8192;
+constexpr int N = 13312;
+constexpr int K = 17792;
 
 struct PrecisionConfig {
     hipblasDatatype_t cudaType;
