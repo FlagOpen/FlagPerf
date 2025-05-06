@@ -26,5 +26,5 @@ mpirun -x NCCL_IB_HCA=mlx5_6 \
 
 data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
 # result=$(python3 -c "print(float($data) * 2)")
-echo "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=$data GB/s"
+echo "[FlagPerf Result]interconnect-P2P_interserver-bandwidth=$data GB/s"
 rm -rf ${LOG_PATH}
