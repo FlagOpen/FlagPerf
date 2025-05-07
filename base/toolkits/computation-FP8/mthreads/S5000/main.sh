@@ -1,2 +1,2 @@
-mcc gemm.mu -std=c++17 -fopenmp -lmudnn -lmusart -o gemm -O2 --offload-arch=mp_31
+g++ gemm-new.cpp -std=c++17 -I/usr/local/musa/include -L /usr/local/musa/lib/ -fopenmp -lmudnn -lmusart -o gemm -O2
 ./gemm

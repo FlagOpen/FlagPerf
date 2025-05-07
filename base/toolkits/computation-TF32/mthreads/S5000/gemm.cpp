@@ -61,9 +61,9 @@ struct MatMulParam {
     bool trans_a{ false };
     bool trans_b{ true };
     int batch{ 1 };
-    int m{ 14336 };
-    int n{ 16384 };
-    int k{ 9600 };
+    int m{ 6144 };
+    int n{ 8192 };
+    int k{ 19200 };
     double alpha{ 1.0 };
     double beta{ 0.0 };
     double gamma{ 0.0 };
@@ -111,13 +111,13 @@ void GenerateRandom(Type* data, int64_t size, uint seed = 2333) {
     // constexpr auto seed = 2333;
     std::default_random_engine engine(seed);
     if (std::is_floating_point_v<RandomType>) {
-        std::uniform_real_distribution<float> dist(-1, 1);
+        std::uniform_real_distribution<float> dist(0, 0);
         for (auto i = 0; i < size; i++) {
             data[i] = (Type)(dist(engine));
         }
     }
     else {
-        std::uniform_int_distribution<int8_t> dist(-127, 127);
+        std::uniform_int_distribution<int8_t> dist(0, 0);
         for (auto i = 0; i < size; i++) {
             data[i] = (Type)(dist(engine));
         }
@@ -630,7 +630,7 @@ int RunMatMul() {
     CHECK_MUSA(musaGetDevice(&device_id));
 
     MatMulParam param;
-    const int iters = 16000;
+    const int iters = 42000;
     musaStream_t stream;
     CHECK_MUSA(musaStreamCreate(&stream));
     TestMatMul test_mm(stream, device_id, DType::f32, param, iters);

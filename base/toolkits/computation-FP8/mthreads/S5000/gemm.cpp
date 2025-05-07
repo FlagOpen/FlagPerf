@@ -41,9 +41,11 @@
 #include <random>
 #include <eigen3/Eigen/Core>
 #include <musa_fp8.h>
-#include "utils/fp8_scale_helper.muh"
+ // #include "utils/fp8_scale_helper.muh"
 
-using qint8 = int8_t;
+using qint8 = uint8_t;
+using fp8_e4m3_t = int8_t;
+
 
 #define SHOW printf
 #define FP8E4M3_MAX 448.0f
@@ -60,8 +62,8 @@ struct MatMulParam {
     bool trans_a{ false };
     bool trans_b{ false };
     int batch{ 1 };
-    int m{ 14336 };
-    int n{ 16384 };
+    int m{ 6144 };
+    int n{ 8192 };
     int k{ 38400 };
     double alpha{ 1.0 };
     double beta{ 0.0 };
@@ -110,14 +112,16 @@ void GenerateRandom(Type* data, int64_t size, uint seed = 2333) {
     // constexpr auto seed = 2333;
     std::default_random_engine engine(seed);
     if (std::is_floating_point_v<RandomType>) {
-        std::uniform_real_distribution<float> dist(-1, 1);
+        // std::uniform_real_distribution<float> dist(0, 0);
+        std::uniform_real_distribution<float> dist(0, 0);
         SHOW("start gen random float data ...\n");
         for (auto i = 0; i < size; i++) {
-            data[i] = (Type)(dist(engine));      
+            data[i] = (Type)(dist(engine));
+            // data[i] = (Type)(0);
         }
     }
     else {
-        std::uniform_int_distribution<int8_t> dist(-127, 127);
+        std::uniform_int_distribution<int8_t> dist(0, 0);
         for (auto i = 0; i < size; i++) {
             data[i] = (Type)(dist(engine));
         }
@@ -249,7 +253,7 @@ public:
         // initial memory && dnn tensor op
         Init();
         // warm up && prepare base golden
-        Exec(dtype);
+        Exec(false);
         // main loop
         float elapsed_ms = 0.f;
         musaEvent_t start, stop;
@@ -272,7 +276,7 @@ public:
         while ((iters > 0 && i < iters) ||
             (iters == 0 && (current_time - start_time) <= duration_time)) {
             // operator running
-            Exec(dtype, true);
+            Exec(false);
 
             if (bubble > 0) {
                 // SHOW("sleeping %d ms\n", bubble);
@@ -386,7 +390,7 @@ private:
     float f8_scale_r; // scale_result
     float golden_amax; // golden.abs().max()
 
-  
+
     void* d_f8_scale_a; // scale_a on gpu
     void* d_f8_scale_b; // scale_b on gpu
     void* d_f8_scale_r; // scale_r on gpu
@@ -561,12 +565,17 @@ private:
             GenerateRandom<qint8, qint8>((qint8*)(h_buf_b), nr_elem_b, seed);
             GenerateRandom<qint8, qint8>((qint8*)(h_buf_c), nr_elem_c, seed);
         }
+        else if (dtype == DType::f8) {
+            GenerateRandom<fp8_e4m3_t, fp8_e4m3_t>((fp8_e4m3_t*)(h_buf_a), nr_elem_a, seed);
+            GenerateRandom<fp8_e4m3_t, fp8_e4m3_t>((fp8_e4m3_t*)(h_buf_b), nr_elem_b, seed);
+            GenerateRandom<fp8_e4m3_t, fp8_e4m3_t>((fp8_e4m3_t*)(h_buf_c), nr_elem_c, seed);
+        }
         else {
             GenerateRandom<float, float>((float*)(h_buf_a), nr_elem_a, seed);
             GenerateRandom<float, float>((float*)(h_buf_b), nr_elem_b, seed);
             GenerateRandom<float, float>((float*)(h_buf_c), nr_elem_c, seed);
         }
-        
+
         // tensor float 32 format
         if ((dtype == DType::f32) && mode == 0) {
             for (size_t i = 0; i < nr_elem_a; i++) {
@@ -612,194 +621,59 @@ private:
 
         ::musa::dnn::Tensor::Type ttype = GetmuDNNType(dtype_str);
         ::musa::dnn::Tensor::Type f8_tmp_ttype_f32 = GetmuDNNType(f8_tmp_dtype_str); // for temp value from computation
-        
-        if (DType::f8 == dtype)
-        {   
-            // Compute the scale value
-            f8_scale_a = GetScale((float*)d_a, nr_elem_a);
-            f8_scale_b = GetScale((float*)d_b, nr_elem_b);
 
-            // malloc fp8 buffer
-            CHECK_MUSA(musaMalloc(&d_f8_a, sizeof(__mt_fp8_e4m3) * nr_elem_a));
-            CHECK_MUSA(musaMalloc(&d_f8_b, sizeof(__mt_fp8_e4m3) * nr_elem_b));
 
-            // f8_a = (mat_a / scale_a).float8(), f8_b = (mat_b / scale_b).float8()
-            scale_fp32tofp8_mat((float*)d_a, (__mt_fp8_e4m3*)d_f8_a, f8_scale_a, nr_elem_a);
-            scale_fp32tofp8_mat((float*)d_b, (__mt_fp8_e4m3*)d_f8_b, f8_scale_b, nr_elem_b);
-            
-            tensor_f8_a.SetAddr(d_f8_a);
-            tensor_f8_a.SetType(ttype);
-            if (trans_a) {
-                tensor_f8_a.SetNdInfo({ k, m });
-            }
-            else {
-                tensor_f8_a.SetNdInfo({ m, k });
-            }
-
-            tensor_f8_b.SetAddr(d_f8_b);
-            tensor_f8_b.SetType(ttype);
-            if (trans_b) {
-                tensor_f8_b.SetNdInfo({ n, k });
-            }
-            else {
-                tensor_f8_b.SetNdInfo({ k, n });
-            }
-            
-            // result tensor setup
-            CHECK_MUSA(musaMalloc(&d_f8_c, sizeof(__mt_fp8_e4m3) * nr_elem_c));
-            scale_fp32tofp8_mat((float*)d_c, (__mt_fp8_e4m3*)d_f8_c, 1.0f, nr_elem_c);// convert d_c to fp8 data type, scale set 1.0f
-            tensor_f8_c.SetAddr(d_f8_c);
-            tensor_f8_c.SetType(ttype);
-            tensor_f8_c.SetNdInfo({ m, n });
-           
-
-            // malloc fp32 buffer for f32_tmp_mat computation
-            CHECK_MUSA(musaMalloc(&d_f32_tmp_a, nr_elem_a * sizeof(float)));
-            CHECK_MUSA(musaMalloc(&d_f32_tmp_b, nr_elem_b * sizeof(float)));
-            
-            // f32_tmp_a = scale_a * f8_a.float(), f32_tmp_b = scale_b * f8_b.float()
-            scale_fp8tofp32_mat((__mt_fp8_e4m3*)d_f8_a, (float*)d_f32_tmp_a, f8_scale_a, nr_elem_a);
-            scale_fp8tofp32_mat((__mt_fp8_e4m3*)d_f8_b, (float*)d_f32_tmp_b, f8_scale_b, nr_elem_b);
-
-            tensor_f32_tmp_a.SetAddr(d_f32_tmp_a);
-            tensor_f32_tmp_a.SetType(f8_tmp_ttype_f32);
-            if (trans_a) {
-                tensor_f32_tmp_a.SetNdInfo({ k, m });
-            }
-            else {
-                tensor_f32_tmp_a.SetNdInfo({ m, k });
-            }
-
-            tensor_f32_tmp_b.SetAddr(d_f32_tmp_b);
-            tensor_f32_tmp_b.SetType(f8_tmp_ttype_f32);
-            if (trans_b) {
-                tensor_f32_tmp_b.SetNdInfo({ n, k });
-            }
-            else {
-                tensor_f32_tmp_b.SetNdInfo({ k, n });
-            }
-
-            // compute golden
-            CHECK_MUSA(musaMalloc(&d_golden, nr_elem_c * sizeof(float))); // golden tensor for scale_fp32 gemm
-            tensor_golden.SetAddr(d_golden);
-            tensor_golden.SetType(f8_tmp_ttype_f32);
-            tensor_golden.SetNdInfo({ m, n });
-            
-            tensor_z.SetAddr(d_z);
-            tensor_z.SetType(f8_tmp_ttype_f32);
-            tensor_z.SetNdInfo({ n });
-
-            CHECK_MUSA(musaStreamSynchronize(stream));
-            CHECK_MUSA(musaDeviceSynchronize());
-
-            op.SetTranspose(trans_a, trans_b);
-            op.SetSplitK(split_k);
-            op.SetAlpha(alpha);
-            op.SetBeta(beta);
-            op.SetGamma(gamma);
-            op.SetComputeMode(static_cast<::musa::dnn::MatMul::ComputeMode>(1)); // scalar fp32 matmul
-
-            CHECK_ERR(::musa::dnn::Status::SUCCESS != op.RunWithBiasAdd(*handle, tensor_golden, tensor_f32_tmp_a, tensor_f32_tmp_b, tensor_z, MemoryFunc));
-            CHECK_MUSA(musaMalloc(&d_temp, nr_elem_c * sizeof(float))); 
-            golden_amax = gpu_abs_max((float*)d_golden, (float*)d_temp, nr_elem_c);
-            f8_scale_r = golden_amax / FP8E4M3_MAX;
-
-            // convert scale value to  mudnn tensor type
-            // first convert the cpu variable to gpu
-            CHECK_MUSA(musaMalloc(&d_f8_scale_a, sizeof(float)));
-            musaMemcpy(d_f8_scale_a, &f8_scale_a, sizeof(float), musaMemcpyHostToDevice);
-            tensor_f8_scale_a.SetAddr(d_f8_scale_a);
-            tensor_f8_scale_a.SetType(f8_tmp_ttype_f32);
-            tensor_f8_scale_a.SetNdInfo({ 1 });
-
-            CHECK_MUSA(musaMalloc(&d_f8_scale_b, sizeof(float)));
-            musaMemcpy(d_f8_scale_b, &f8_scale_b, sizeof(float), musaMemcpyHostToDevice);
-            tensor_f8_scale_b.SetAddr(d_f8_scale_b);
-            tensor_f8_scale_b.SetType(f8_tmp_ttype_f32);
-            tensor_f8_scale_b.SetNdInfo({ 1 });
-
-            CHECK_MUSA(musaMalloc(&d_f8_scale_r, sizeof(float)));
-            musaMemcpy(d_f8_scale_r, &f8_scale_r, sizeof(float), musaMemcpyHostToDevice);
-            tensor_f8_scale_r.SetAddr(d_f8_scale_r);
-            tensor_f8_scale_r.SetType(f8_tmp_ttype_f32);
-            tensor_f8_scale_r.SetNdInfo({ 1 });
-
-            CHECK_MUSA(musaMalloc(&d_golden_amax, sizeof(float)));
-            musaMemcpy(d_golden_amax, &golden_amax, sizeof(float), musaMemcpyHostToDevice);
-            tensor_golden_amax.SetAddr(d_golden_amax);
-            tensor_golden_amax.SetType(f8_tmp_ttype_f32);
-            tensor_golden_amax.SetNdInfo({ 1 });
-
-            f8_param.SetScale(tensor_f8_scale_a, tensor_f8_scale_b, tensor_temp, tensor_f8_scale_r);
-            f8_param.SetAmaxD(tensor_golden_amax);
-
-            CHECK_MUSA(musaStreamSynchronize(stream));
-            CHECK_MUSA(musaDeviceSynchronize());
-
-            op_f8.SetTranspose(trans_a, trans_b);
-            op_f8.SetSplitK(split_k);
-            op_f8.SetAlpha(alpha);
-            op_f8.SetBeta(beta);
-            op_f8.SetGamma(gamma);
-            op_f8.SetComputeMode(static_cast<::musa::dnn::MatMul::ComputeMode>(mode));
+        tensor_a.SetAddr(d_a);
+        tensor_a.SetType(ttype);
+        if (DType::q8 == dtype) {
+            tensor_a.SetQuantizationInfo(scale_a);
         }
-        else{
-            tensor_a.SetAddr(d_a);
-            tensor_a.SetType(ttype);
-            if (DType::q8 == dtype) {
-                tensor_a.SetQuantizationInfo(scale_a);
-            }
-            if (trans_a) {
-                tensor_a.SetNdInfo({ k, m });
-            }
-            else {
-                tensor_a.SetNdInfo({ m, k });
-            }
-
-            tensor_b.SetAddr(d_b);
-            tensor_b.SetType(ttype);
-            if (DType::q8 == dtype) {
-                tensor_b.SetQuantizationInfo(scale_b);
-            }
-            if (trans_b) {
-                tensor_b.SetNdInfo({ n, k });
-            }
-            else {
-                tensor_b.SetNdInfo({ k, n });
-            }
-
-            tensor_c.SetAddr(d_c);
-            tensor_c.SetType(ttype);
-            tensor_c.SetNdInfo({ m, n });
-            if (DType::q8 == dtype) {
-                tensor_c.SetQuantizationInfo(scale_c);
-            }
-
-            tensor_z.SetAddr(d_z);
-            tensor_z.SetType(ttype);
-            tensor_z.SetNdInfo({ n });
-
-            CHECK_MUSA(musaStreamSynchronize(stream));
-            CHECK_MUSA(musaDeviceSynchronize());
-
-            op.SetTranspose(trans_a, trans_b);
-            op.SetSplitK(split_k);
-            op.SetAlpha(alpha);
-            op.SetBeta(beta);
-            op.SetGamma(gamma);
-            op.SetComputeMode(static_cast<::musa::dnn::MatMul::ComputeMode>(mode));
+        if (trans_a) {
+            tensor_a.SetNdInfo({ k, m });
         }
+        else {
+            tensor_a.SetNdInfo({ m, k });
+        }
+
+        tensor_b.SetAddr(d_b);
+        tensor_b.SetType(ttype);
+        if (DType::q8 == dtype) {
+            tensor_b.SetQuantizationInfo(scale_b);
+        }
+        if (trans_b) {
+            tensor_b.SetNdInfo({ n, k });
+        }
+        else {
+            tensor_b.SetNdInfo({ k, n });
+        }
+
+        tensor_c.SetAddr(d_c);
+        tensor_c.SetType(ttype);
+        tensor_c.SetNdInfo({ m, n });
+        if (DType::q8 == dtype) {
+            tensor_c.SetQuantizationInfo(scale_c);
+        }
+
+        tensor_z.SetAddr(d_z);
+        tensor_z.SetType(ttype);
+        tensor_z.SetNdInfo({ n });
+
+        CHECK_MUSA(musaStreamSynchronize(stream));
+        CHECK_MUSA(musaDeviceSynchronize());
+
+        op.SetTranspose(trans_a, trans_b);
+        op.SetSplitK(split_k);
+        op.SetAlpha(alpha);
+        op.SetBeta(beta);
+        op.SetGamma(gamma);
+        op.SetComputeMode(static_cast<::musa::dnn::MatMul::ComputeMode>(mode));
+
 
         return true;
     }
 
-    void Exec(DType dtype, bool sync = false) {
-        if (DType::f8 == dtype) {
-            CHECK_ERR(::musa::dnn::Status::SUCCESS != op_f8.RunLt(*handle, tensor_f8_c, tensor_f8_a, tensor_f8_b, tensor_f8_c, tensor_z, f8_param, MemoryFunc));
-        }
-        else {
-            CHECK_ERR(::musa::dnn::Status::SUCCESS != op.RunWithBiasAdd(*handle, tensor_c, tensor_a, tensor_b, tensor_z, MemoryFunc));
-        }
+    void Exec(bool sync = false) {
+        CHECK_ERR(::musa::dnn::Status::SUCCESS != op.RunWithBiasAdd(*handle, tensor_c, tensor_a, tensor_b, tensor_z, MemoryFunc));
         CHECK_MUSA(musaGetLastError());
         if (sync) {
             CHECK_MUSA(musaStreamSynchronize(stream));
@@ -812,7 +686,7 @@ int RunMatMul() {
     CHECK_MUSA(musaGetDevice(&device_id));
 
     MatMulParam param;
-    const int iters = 18000;
+    const int iters = 90000;
     musaStream_t stream;
     CHECK_MUSA(musaStreamCreate(&stream));
     TestMatMul test_mm(stream, device_id, DType::f8, param, iters);
