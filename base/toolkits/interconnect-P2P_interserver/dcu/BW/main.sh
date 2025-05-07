@@ -23,7 +23,7 @@ mpirun -x NCCL_TOPO_FILE=/opt/topo.xml  -x  NCCL_IB_HCA=mlx5_2,mlx5_3,mlx5_4,mlx
     --allow-run-as-root \
     --host ${ip1}:1,${ip2}:1 \
     -mca plm_rsh_args "-p 1234" -np 2 -x LD_LIBRARY_PATH=/opt/hyhal/lib:${LD_LIBRARY_PATH} \
-    -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 sendrecv_perf -b 1g -e 1g -g 1 -f 2 2>&1 | tee ${LOG_PATH}
+    -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 sendrecv_perf -b 8m -e 8m -g 1 -f 2 2>&1 | tee ${LOG_PATH}
 
 data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
 # result=$(python3 -c "print(float($data) * 2)")
