@@ -75,30 +75,19 @@ int main() {
 
 
     for (int i = 0; i < WARMUP_ITERATIONS; ++i) {
-        if (i % 2 == 0) {
-            checkMusaError(musaMemcpy(d_dst, d_src, SIZE, musaMemcpyDefault), "musaMemcpy");
-        }
-        else {
-            checkMusaError(musaMemcpy(d_src, d_dst, SIZE, musaMemcpyDefault), "musaMemcpy");
-        }
+        checkMusaError(musaMemcpy(d_dst, d_src, SIZE, musaMemcpyDefault), "musaMemcpy");
     }
-
 
     checkMusaError(musaEventRecord(start, 0), "musaEventRecord");
 
     for (int i = 0; i < ITERATIONS; ++i) {
-        if (i % 2 == 0) {
-            checkMusaError(musaMemcpy(d_dst, d_src, SIZE, musaMemcpyDefault), "musaMemcpy");
-        }
-        else {
-            checkMusaError(musaMemcpy(d_src, d_dst, SIZE, musaMemcpyDefault), "musaMemcpy");
-        }
+        checkMusaError(musaMemcpy(d_dst, d_src, SIZE, musaMemcpyDefault), "musaMemcpy");
     }
     checkMusaError(musaEventRecord(end, 0), "musaEventRecord");
     checkMusaError(musaEventSynchronize(end), "musaEventSynchronize");
     checkMusaError(musaEventElapsedTime(&elapsed_time, start, end), "musaEventElapsedTime");
     double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0) + SIZE * ITERATIONS / (elapsed_time / 1000.0);
-    printf("[FlagPerf Result]elapsed_time=%.2fs\n",elapsed_time / 1000.0);
+    
     std::cout << "[FlagPerf Result]inferconnect-P2P_intraserver-bandwidth="
         << std::fixed << std::setprecision(2) << bandwidth / (1024.0 * 1024.0 * 1024.0)
         << "GiB/s" << std::endl;

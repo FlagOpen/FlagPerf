@@ -6,9 +6,9 @@
 #include <iomanip>
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
-#define SIZE (4ULL * GB)
+#define SIZE (20ULL * GB)
 #define WARMUP_ITERATIONS 10
-#define ITERATIONS 12000
+#define ITERATIONS 2400
 
 void checkMusaError(musaError_t err, const char* msg) {
     if (err != musaSuccess) {
@@ -73,7 +73,7 @@ int main() {
     checkMusaError(musaEventSynchronize(end), "musaEventSynchronize");
     checkMusaError(musaEventElapsedTime(&elapsed_time, start, end), "musaEventElapsedTime");
     double algbw = SIZE * ITERATIONS / (elapsed_time / 1000.0);
-    std::cout<<"[FlagPerf Result]interconnect-MPI_intraserver elapsed_time = "<<elapsed_time/1000<<"s"<<std::endl;
+    
     std::cout << "[FlagPerf Result]interconnect-MPI_intraserver-algbw="
         << std::fixed << std::setprecision(2) << algbw / (1024.0 * 1024.0 * 1024.0)
         << "GiB/s" << std::endl;

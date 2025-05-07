@@ -40,7 +40,7 @@ int main() {
     checkMusaError(musaEventElapsedTime(&elapsed_time, start, end), "musaEventElapsedTime");
 
     double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0);
-    printf("[FlagPerf Result]elapsed_time=%.2fs\n",elapsed_time / 1000.0);
+
     printf("[FlagPerf Result]transfer-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
     printf("[FlagPerf Result]transfer-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
 
