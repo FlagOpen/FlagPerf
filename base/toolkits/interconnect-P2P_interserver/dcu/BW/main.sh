@@ -17,12 +17,13 @@ sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@${ip1}
 sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@${ip2}
 
 LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
-mpirun -x NCCL_IB_HCA=mlx5_6 \
+
+mpirun -x NCCL_TOPO_FILE=/opt/topo.xml  -x  NCCL_IB_HCA=mlx5_2,mlx5_3,mlx5_4,mlx5_5,mlx5_8,mlx5_9,mlx5_10,mlx5_11 \
     --mca btl_tcp_if_include ${ip1}/24 \
     --allow-run-as-root \
-    --host ${ip1}:8,${ip2}:8 \
-    -mca plm_rsh_args "-p 1234" -np 16 -x LD_LIBRARY_PATH=/opt/hyhal/lib:${LD_LIBRARY_PATH} \
-    -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 sendrecv_perf -b 8 -e 1g -g 1 -f 2 2>&1 | tee ${LOG_PATH}
+    --host ${ip1}:1,${ip2}:1 \
+    -mca plm_rsh_args "-p 1234" -np 2 -x LD_LIBRARY_PATH=/opt/hyhal/lib:${LD_LIBRARY_PATH} \
+    -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 sendrecv_perf -b 1g -e 1g -g 1 -f 2 2>&1 | tee ${LOG_PATH}
 
 data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
 # result=$(python3 -c "print(float($data) * 2)")

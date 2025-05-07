@@ -17,13 +17,15 @@ sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@${ip1}
 sshpass -p "123456" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 1234 root@${ip2}
 
 LOG_PATH=`pwd`/`hostname -i | awk '{print $1}'`_run_log
-mpirun -x NCCL_IB_HCA=mlx5_6 \
+mpirun -x NCCL_IB_HCA=mlx5_10,mlx5_11,mlx5_2,mlx5_3,mlx5_4,mlx5_5,mlx5_8,mlx5_9 \
+    -x NCCL_GRAPH_FILE=/opt/graph.xml -x NCCL_TOPO_FILE=/opt/topo.xml \
     --mca btl_tcp_if_include ${ip1}/24 \
     --allow-run-as-root \
     --host ${ip1}:8,${ip2}:8 \
+    -x ROCM_PATH=/opt/dtk \
     -mca plm_rsh_args "-p 1234" -np 16 -x LD_LIBRARY_PATH=/opt/hyhal/lib:${LD_LIBRARY_PATH} \
-    -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 all_reduce_perf -b 8 -e 1g -g 1 -f 2 2>&1 | tee ${LOG_PATH}
-
+    -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 all_reduce_perf -b 256m -e 256m -g 1 -f 2 2>&1 | tee ${LOG_PATH}
+    
 data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
 # result=$(python3 -c "print(float($data) * 2)")
 echo "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=$data GB/s"
