@@ -1,15 +1,3 @@
-# Copyright (c) 2024 BAAI. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License")
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
-# cambricon mlu import
-try:
-    from torch_mlu.utils.model_transfer import transfer
-except ImportError:
-    pass
-
 import torch
 import torch.distributed as dist
 import os
@@ -53,9 +41,13 @@ def main(config, case_config, rank, world_size, local_rank):
         device = torch.device(f"musa")
         matrixA = torch.randn(m, n, dtype=torch.float32, device=device)
         matrixB = torch.randn(n, k, dtype=torch.float32, device=device)
+        output = torch.empty((m, k), dtype=torch.float32, device=device)
+        amax = torch.empty(1, dtype=torch.float32, device=device)
     else:
         matrixA = torch.randn(m, n, dtype=torch.float32).to(local_rank)
         matrixB = torch.randn(n, k, dtype=torch.float32).to(local_rank)
+        output = torch.empty((m, k), dtype=torch.float32).to(local_rank)
+        amax = torch.empty([], dtype=torch.float32).to(local_rank)
     
     # get f8 tensor from inputs
     scale_a = matrixA.abs().max() / fp8max
@@ -63,12 +55,17 @@ def main(config, case_config, rank, world_size, local_rank):
     f8_a = (matrixA / scale_a).to(torch.float8_e4m3fn)
     f8_b = (matrixB / scale_b).to(torch.float8_e4m3fn)
 
-    
+    d_scale_a = scale_a.to(local_rank)
+    d_scale_b = scale_b.to(local_rank)
+    d_f8_a = f8_a.to(local_rank)
+    d_f8_b = f8_b.to(local_rank)
+
     # fp32 golden result
     golden = torch.mm(f8_a.float(), f8_b.float()) * scale_a * scale_b
     # out_dtype scaled_mm result
     scale_out = golden.abs().max() / fp8max
 
+    d_scale_out = scale_out.to(local_rank)
     
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
@@ -76,13 +73,14 @@ def main(config, case_config, rank, world_size, local_rank):
         print("start warmup")
     
     for _ in range(case_config.WARMUP):
-        _result = torch._scaled_mm(
-            f8_a, 
-            f8_b, 
-            scale_a=scale_a,
-            scale_b=scale_b,
-            scale_result=scale_out,
-            out_dtype=torch.float8_e4m3fn,
+        _result, _result_amx = torch._scaled_mm(
+            d_f8_a, 
+            d_f8_b, 
+            scale_a=d_scale_a,
+            scale_b=d_scale_b,
+            scale_result=d_scale_out,
+            out_dtype=torch.float32,
+            out=(output,amax)
             )
     
     host_device_sync(config.vendor)
@@ -93,13 +91,14 @@ def main(config, case_config, rank, world_size, local_rank):
     start_time = time.perf_counter()
     
     for _ in range(case_config.ITERS):
-        _result = torch._scaled_mm(
-            f8_a, 
-            f8_b, 
-            scale_a=scale_a,
-            scale_b=scale_b,
-            scale_result=scale_out,
-            out_dtype=torch.float8_e4m3fn,
+        _result, _result_amx = torch._scaled_mm(
+            d_f8_a, 
+            d_f8_b, 
+            scale_a=d_scale_a,
+            scale_b=d_scale_b,
+            scale_result=d_scale_out,
+            out_dtype=torch.float32,
+            out=(output,amax)
             )
     
     host_device_sync(config.vendor)
