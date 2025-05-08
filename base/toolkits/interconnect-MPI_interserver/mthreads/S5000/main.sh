@@ -2,6 +2,7 @@
 service ssh restart
 export MCCL_PROTOS=2
 export MUSA_EXECUTION_TIMEOUT=1000000
+export MCCL_GRAPH_FILE=/usr/local/musa/topo
 export OMP_PATH=/usr/local/openmpi/
 export PATH=/usr/local/openmpi/bin:$PATH
 export LD_LIBRARY_PATH=$OMP_PATH/local/musa/lib/:$LD_LIBRARY_PATH
@@ -27,5 +28,6 @@ if [ "$NODERANK" -eq 0 ]; then
             -x MCCL_TOPO_ENHANCE_PLUGIN=None \
             -x MCCL_PROTOS=2 \
             -x MUSA_DEVICE_MAX_CONNECTIONS=1 \
+            -x MCCL_GRAPH_FILE=/usr/local/musa/topo \
             ./bdtest
 fi
