@@ -28,7 +28,22 @@ CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
      "computation-FP32": "pytorch_2.3"
-     
+
+# mthreads "computation-FP64:S5000": "pytorch_2.2"
+# mthreads "computation-FP32:S5000": "pytorch_2.2"
+# mthreads "computation-TF32:S5000": "pytorch_2.2"
+# mthreads "computation-FP16:S5000": "pytorch_2.2"
+# mthreads "computation-BF16:S5000": "pytorch_2.2"
+# mthreads "computation-FP8:S5000": "pytorch_2.2"
+# mthreads "computation-INT8:S5000": "pytorch_2.2"
+# mthreads "main_memory-bandwidth:S5000": "pytorch_2.2"
+# mthreads "main_memory-capacity:S5000": "pytorch_2.2"
+# mthreads "interconnect-h2d:S5000": "pytorch_2.2"
+# mthreads "interconnect-MPI_intraserver:S5000": "pytorch_2.2"
+# mthreads "interconnect-P2P_intraserver:S5000": "pytorch_2.2"
+# mthreads "interconnect-P2P_interserver:S5000": "pytorch_ssh"
+# mthreads "interconnect-MPI_interserver:S5000": "pytorch_ssh" 
+
 # mthreads "computation-TF32:S4000": "pytorch_2.2"
 # mthreads "computation-FP16:S4000": "pytorch_2.2"
 
