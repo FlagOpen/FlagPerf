@@ -39,13 +39,13 @@ def main(config, case_config, rank, world_size, local_rank):
     if torch.musa.is_available():
         torch.musa.set_device(local_rank)
         device = torch.device(f"musa")
-        matrixA = torch.randn(m, n, dtype=torch.float32, device=device)
-        matrixB = torch.randn(n, k, dtype=torch.float32, device=device)
+        matrixA = torch.ones(m, n, dtype=torch.float32, device=device)
+        matrixB = torch.ones(n, k, dtype=torch.float32, device=device)
         output = torch.empty((m, k), dtype=torch.float32, device=device)
         amax = torch.empty(1, dtype=torch.float32, device=device)
     else:
-        matrixA = torch.randn(m, n, dtype=torch.float32).to(local_rank)
-        matrixB = torch.randn(n, k, dtype=torch.float32).to(local_rank)
+        matrixA = torch.ones(m, n, dtype=torch.float32).to(local_rank)
+        matrixB = torch.ones(n, k, dtype=torch.float32).to(local_rank)
         output = torch.empty((m, k), dtype=torch.float32).to(local_rank)
         amax = torch.empty([], dtype=torch.float32).to(local_rank)
     
