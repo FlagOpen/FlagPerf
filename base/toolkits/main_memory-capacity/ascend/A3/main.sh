@@ -5,5 +5,5 @@ LOG_PATH=`pwd`
 npu-smi info -t memory -i 0 -c 0 > ${LOG_PATH}/test_result.log 2>&1
 RESULT=$(grep "HBM Capacity(MB)" ${LOG_PATH}/test_result.log | awk '{print $NF}')
 RESULT_A3=$(expr $RESULT \* 2)
-echo "[FlagPref Result] main_memory-capacity=${RESULT_A3} MiB"
+echo "[FlagPerf Result] main_memory-capacity=${RESULT_A3} MiB"
 rm -rf ${LOG_PATH}/test_result.log
