@@ -11,5 +11,5 @@ mpirun -n 16 ./bin/alltoall_test -b 8K -e 4G -f 2 -p 16 > ${LOG_PATH}/test_resul
 #mpirun -n 16 ./bin/all_reduce_test -b 8K -e 4G -f 2 -p 16 > ${LOG_PATH}/test_result.log 2>&1
 #mpirun -n 16 ./bin/reduce_scatter_test -b 8K -e 4G -f 2 -p 16 > ${LOG_PATH}/test_result.log 2>&1
 RESULT=$(awk 'END{print $5}' ${LOG_PATH}/test_result.log)
-echo "[FlagPref Result] interconnect-MPI_intraserver-bandwidth=$RESULT GB/s"
+echo "[FlagPerf Result] interconnect-MPI_intraserver-bandwidth=$RESULT GB/s"
 rm -rf ${LOG_PATH}/test_result.log
