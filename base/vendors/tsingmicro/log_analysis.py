@@ -41,7 +41,7 @@ def ddr_cap_analysis(log_file):
             line = f_log.readline()
             if not line: break
 
-            # |   0   TX81  19830   54C     95W / 200W  |  00000000:89:00.0  |    5508M /137072M  |      37944 |
+            # |  30   TX8110-128GB-PCIe     49C     62W / 200W  |  00000000:63:00.0  |   22269M /131072M     0%    |  1  |
             if "TX81" in line:
                 line = line.split('|')[-3].strip()
                 mem_used  = int(line.split('/')[0].split('M')[0].strip())
@@ -64,8 +64,8 @@ def c2c_global_latency_analysis(log_file):
                         continue
 
                     result_str = result_temp.split('[')[0].strip()
-                    result_num = int(result_str, 16)
-                    if result_num > result_max:
+                    result_num = int(result_str, 10)
+                    if result_num > result_max and result_num < 0xffff:
                         result_max = result_num
 
                 result_max = int(result_max/2)
@@ -170,10 +170,81 @@ def allreduce_analysis(log_file, type_str):
                 allreduce_perf = float(perf_str)
 
                 if "intra" in type_str:
-                    print(f"[FlagPerf Result]interconnect-P2P_intraserver-bandwidth={allreduce_perf} GB/s")
+                    print(f"[FlagPerf Result]interconnect-MPI_intraserver-bandwidth={allreduce_perf} GB/s")
                 else:
-                    print(f"[FlagPerf Result]interconnect-P2P_interserver-bandwidth={allreduce_perf} GB/s")
+                    print(f"[FlagPerf Result]interconnect-MPI_interserver-bandwidth={allreduce_perf} GB/s")
                 break
+
+def programmable_op_perf_analysis(log_file):
+    sigmoid_rvv_perf = 0
+    sigmoid_ct_perf = 0
+    tanh_rvv_perf = 0
+    tanh_ct_perf = 0
+
+    with open(log_file, "r") as f_log:
+        while True:
+            line = f_log.readline()
+            if not line: break
+
+            if "sigmoid RVV result" in line:
+                line = f_log.readline()
+                # run is: 2853 us
+                sigmoid_rvv_perf = line.split(':')[1].split('us')[0].strip()
+
+            if "sigmoid CT result" in line:
+                line = f_log.readline()
+                sigmoid_ct_perf = line.split(':')[1].split('us')[0].strip()
+
+            if "tanh RVV result" in line:
+                line = f_log.readline()
+                tanh_rvv_perf = line.split(':')[1].split('us')[0].strip()
+
+            if "tanh CT result" in line:
+                line = f_log.readline()
+                tanh_ct_perf = line.split(':')[1].split('us')[0].strip()
+                break
+
+        print(f"[FlagPerf Result] programmable_op_perf: sigmoid_rvv={sigmoid_rvv_perf}us, sigmoid_ct_={sigmoid_ct_perf}us, tanh_rvv={tanh_rvv_perf}us, tanh_ct_={tanh_ct_perf}us")
+
+def lsu_perf_analysis(log_file):
+    read_bw = 0
+    write_bw = 0
+    multiple = 4
+    with open(log_file, "r") as f_log:
+        while True:
+            line = f_log.readline()
+            if not line: break
+
+            # [2025-04-17 15:25:30.794] [RT_TEST][INFO] [28390:28392] [lsu_perf_dyn.cpp:GetLSUResult:114]  !!! RDMA total_perf: 155.762 GB/s, WDMA total_perf: 165.798 GB/s
+            if "RDMA total_perf:" in line:
+                line = line.split('!!!')[-1].strip()    # RDMA total_perf: 155.762 GB/s, WDMA total_perf: 165.798 GB/s
+                results = line.split('GB')
+                read_bw_str  = results[0].split(':')[-1].strip()    # RDMA total_perf: 155.762
+                write_bw_str = results[1].split(':')[-1].strip()    # /s, WDMA total_perf: 165.798
+
+                read_bw  = float(read_bw_str)
+                write_bw = float(write_bw_str)
+
+                print(f"[FlagPerf Result] main_memory-bandwidth: read={read_bw * multiple} GB/s, write={write_bw * multiple} GB/s")
+                break
+
+def inter_tile_bandwidth_analysis(log_file):
+    bandwidth = 0
+    with open(log_file, "r") as f_log:
+        while True:
+            line = f_log.readline()
+            if not line: break
+
+            # [2025-04-17 15:47:28.235] [RT_TEST][INFO] [28676:28678] [dte_perf_dyn.cpp:GetDTEResult:82] !!! DTE total_perf:3746.553 Gb/s
+            if "DTE total_perf:" in line:
+                line = line.split('!!!')[-1].strip()    # DTE total_perf:3746.553 Gb/s
+                results = line.split('Gb')
+                bandwidth_str = results[0].split(':')[-1].strip()    # RDMA total_perf: 155.762
+                bandwidth  = float(bandwidth_str)
+
+                print(f"[FlagPerf Result] inter-tile-bandwidth = {bandwidth} GB/s")
+                break
+
 
 if __name__ == '__main__':
     args = parse_args()
@@ -206,5 +277,11 @@ if __name__ == '__main__':
         allreduce_analysis(args.log_file, "intra_allreduce")
     elif args.log_type == "inter_allreduce":
         allreduce_analysis(args.log_file, "inter_allreduce")
+    elif args.log_type == "programmable_op_perf":
+        programmable_op_perf_analysis(args.log_file)
+    elif args.log_type == "lsu_test":
+        lsu_perf_analysis(args.log_file)
+    elif args.log_type == "inter_tile_bandwidth":
+        inter_tile_bandwidth_analysis(args.log_file)
 
     print()

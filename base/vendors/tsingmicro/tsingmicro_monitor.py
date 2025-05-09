@@ -79,7 +79,7 @@ class Daemon:
             TIMESTAMP = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
             # cmd = "paste <(cnmon |grep 'Default') <(cnmon |grep 'MLU' | head -n -1) | awk '{print $3,$4,$5,$9,$10,$11,$25}'; echo \"\""
             # cmd = "source /etc/profile && python3 /usr/local/kuiper_host/bin/smi_info.py --power"
-            cmd = "source /etc/profile && (tsm_smi | grep 'TX81' | head -n 1)"
+            cmd = "source /root/.bash_profile && (tsm_smi | sed -n '7p')"
             process = subprocess.Popen(
                 cmd,
                 shell=True,
