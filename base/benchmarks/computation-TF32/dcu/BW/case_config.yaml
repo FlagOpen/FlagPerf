@@ -1,0 +1,4 @@
+M: 8192
+N: 8896
+K: 13312
+DIST_BACKEND: "nccl"

@@ -1,12 +1,12 @@
-FLAGPERF_PATH: "/home/FlagPerf/operation"
+FLAGPERF_PATH: "/mnt/shared/nvme1/zhangyq/FlagGems-test/FlagPerf/operation"
 FLAGPERF_LOG_PATH: "result"
 ##nvidia,iluvatar,or other
-VENDOR: "nvidia"
+VENDOR: "dcu"
 # VENDOR: "cambricon"
 # VENDOR: "metax"
 # VENDOR: "kunlunxin"
 FLAGPERF_LOG_LEVEL: "info"
-HOSTS: ["192.168.1.2"]
+HOSTS: ["10.17.27.73"]
 NPROC_PER_NODE: 1
 SSH_PORT: "22"
 HOSTS_PORTS: ["2222"]
@@ -19,19 +19,22 @@ DEVICE: 0
 # for kunlunxin, using "--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
 # for cambricon, using " --device=/dev/cambricon_dev0:/dev/cambricon_dev0 --device=/dev/cambricon_dev1:/dev/cambricon_dev1 --device=/dev/cambricon_dev2:/dev/cambricon_dev2 --device=/dev/cambricon_dev3:/dev/cambricon_dev3  --device=/dev/cambricon_dev4:/dev/cambricon_dev4  --device=/dev/cambricon_dev5:/dev/cambricon_dev5  --device=/dev/cambricon_dev6:/dev/cambricon_dev6   --device=/dev/cambricon_dev7:/dev/cambricon_dev7  --device=/dev/cambricon_ctl "
 # for iluvatar, using ""
+# for dcu, using "--device=/dev/kfd --device=/dev/dri --group-add video -v /opt/hyhal:/opt/hyhal"
 # for xxx, using
-ACCE_CONTAINER_OPT: " --gpus all"
+ACCE_CONTAINER_OPT: " --device=/dev/kfd --device=/dev/dri --group-add video -v /opt/hyhal:/opt/hyhal"
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 # for nvidia, using "CUDA_VISIBLE_DEVICES"
 # for metax, using "MACA_VISIBLE_DEVICES"
 # for cambricon, using "MLU_VISIBLE_DEVICES"
+# for dcu, using "HIP_VISIBLE_DEVICES"
 # for xxx, using
-ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
+ACCE_VISIBLE_DEVICE_ENV_NAME: "HIP_VISIBLE_DEVICES"
 # "operation:dataFormat:chip": "docker_images"
 # now only support flaggems and nativepytorch
 CASES: 
-    "mm:FP16:312:nativetorch:A100_40_SXM": "ngctorch2403"
+     "mm:FP16:491:nativetorch:BW": "pytorch_2.4"
+#    "mm:FP16:312:nativetorch:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:flaggems:A100_40_SXM": "ngctorch2403"
 #    "mm:FP16:nativetorch:A100_40_SXM": "ngctorch2403"
 #    'exp:FP32:nativetorch:R300p" : "xpytorch029"
