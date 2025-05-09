@@ -82,6 +82,7 @@ class Daemon:
                                        shell=True,
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
+                                       executable='/bin/bash',
                                        encoding='utf-8')
             try:
                 out = process.communicate(timeout=10)
