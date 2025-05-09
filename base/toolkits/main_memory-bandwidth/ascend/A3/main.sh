@@ -6,5 +6,5 @@ ascend-dmi --bw -t d2d -q > ${LOG_PATH}/test_result.log 2>&1
 RESULT=$(awk 'NR>29 && NR<31 {print $3}' ${LOG_PATH}/test_result.log)
 RESULT_INT=$(print "%.0f" "$RESULT")
 RESULT_A3=$(expr $RESULT_INT \* 2)
-echo "[FlagPref Result] main_memory-bandwidth=${RESULT_A3} GB/s"
+echo "[FlagPerf Result] main_memory-bandwidth=${RESULT_A3} GB/s"
 rm -rf ${LOG_PATH}/test_result.log
