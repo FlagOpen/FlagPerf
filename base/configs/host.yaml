@@ -1,55 +1,42 @@
-FLAGPERF_PATH: "/home/suma/FlagPerf/base"
+FLAGPERF_PATH: "/home/FlagPerf/base"
 FLAGPERF_LOG_PATH: "result"
-VENDOR: "dcu"
+VENDOR: "nvidia"
 FLAGPERF_LOG_LEVEL: "info"
 # "BENCHMARK" means benchmarks(torch), "TOOLKIT" means toolkits
 # benchmarks using container_main to launch "torchrun benchmarks/<case>/main.py", nnodes * nproc
 # toolkits using container_main to launch bash toolkits/<case>/<vendor>/main.sh, nnodes.
 # only in benchmarks, flagperf will automatically execute benchmakrs/<case>/<vendor>/requirements.txt and env.sh
 # all resources to be used in toolkits/<case>/<vendor>/main.sh, should be under toolkits/<case>/<vendor>/
-BENCHMARKS_OR_TOOLKITS:  "TOOLKIT"
-HOSTS: ["10.1.15.92","10.1.15.136"]
+BENCHMARKS_OR_TOOLKITS: "BENCHMARK"
+HOSTS: ["192.168.1.2", "192.168.1.3"]
 NPROC_PER_NODE: 8
 SSH_PORT: "22"
-HOSTS_PORTS: ["2223"]
-MASTER_PORT: "29502"
+HOSTS_PORTS: ["2222"]
+MASTER_PORT: "29501"
 SHM_SIZE: "32G"
+ACCE_CONTAINER_OPT: " --gpus all"
 # for nvidia, using " -- gpus all"
-# for metax, using " --device=/dev/dri --device=/dev/mxcd --group-add video"
+# for mthreads, using"--env MTHREADS_VISIBLE_DEVICES=all"
 # for kunlunxin, using "--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
-# for cambricon, using " --device=/dev/cambricon_dev0:/dev/cambricon_dev0 --device=/dev/cambricon_dev1:/dev/cambricon_dev1 --device=/dev/cambricon_dev2:/dev/cambricon_dev2 --device=/dev/cambricon_dev3:/dev/cambricon_dev3  --device=/dev/cambricon_dev4:/dev/cambricon_dev4  --device=/dev/cambricon_dev5:/dev/cambricon_dev5  --device=/dev/cambricon_dev6:/dev/cambricon_dev6   --device=/dev/cambricon_dev7:/dev/cambricon_dev7  --device=/dev/cambricon_ctl "
-# for iluvatar, using ""
+# for iluvatar, using""
 # for dcu, using "--device=/dev/kfd --device=/dev/dri --group-add video -v /opt/hyhal:/opt/hyhal"
 # for xxx, using
-ACCE_CONTAINER_OPT: " --device=/dev/kfd --device=/dev/dri --group-add video -v /opt/hyhal:/opt/hyhal"
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 # for nvidia, using "CUDA_VISIBLE_DEVICES"
-# for metax, using "MACA_VISIBLE_DEVICES"
-# for cambricon, using "MLU_VISIBLE_DEVICES"
+# for mthreads, using "MUSA_VISIBLE_DEVICES"
 # for dcu, using "HIP_VISIBLE_DEVICES"
 # for xxx, using
-ACCE_VISIBLE_DEVICE_ENV_NAME: "HIP_VISIBLE_DEVICES"
-# "operation:dataFormat:chip": "docker_images"
-# now only support flaggems and nativepytorch
-CASES:
-       "interconnect-MPI_interserver:BW": "pytorch_2.4"
-       "interconnect-MPI_intraserver:BW": "pytorch_2.4"
-       "interconnect-P2P_interserver:BW": "pytorch_2.4"
-       "interconnect-P2P_intraserver:BW": "pytorch_2.4"
-       "computation-FP64:BW": "pytorch_2.4"
-       "computation-FP32:BW": "pytorch_2.4"
-       "computation-INT8:BW": "pytorch_2.4"
-       "computation-TF32:BW": "pytorch_2.4"
-       "computation-FP16:BW": "pytorch_2.4"
-       "computation-BF16:BW": "pytorch_2.4"
-       "main_memory-bandwidth:BW": "pytorch_2.4"
-       "main_memory-capacity:BW": "pytorch_2.4"
-       "interconnect-h2d:BW": "pytorch_2.4"
+ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
+CASES: 
+     "computation-FP32": "pytorch_2.3"
+     
+# mthreads "computation-TF32:S4000": "pytorch_2.2"
+# mthreads "computation-FP16:S4000": "pytorch_2.2"
 
 # iluvatar "computation-BF16:BI150": "pytorch_2.1"
 # iluvatar "computation-FP16:BI150": "pytorch_2.1"
-# iluvatar "computation-FP32:BI150": "pytorch_2.1"
+# iluvatar "computation-FP32:BI150": "pytorch_2.1" 
 # iluvatar "main_memory-bandwidth:BI150": "pytorch_2.1"
 # iluvatar "main_memory-capacity:BI150": "pytorch_2.1"
 # iluvatar "interconnect-h2d:BI150": "pytorch_2.1"
@@ -111,3 +98,18 @@ CASES:
 # kunlunxin "computation-BF16:R300p": "pytorch_2.0"
 # kunlunxin "computation-INT8:R300p": "pytorch_2.0"
 # kunlunxin "computation-TF32:R300p": "pytorch_2.0"
+
+
+#dcu "interconnect-MPI_interserver:BW": "pytorch_2.4"
+#dcu "interconnect-MPI_intraserver:BW": "pytorch_2.4"
+#dcu "interconnect-P2P_interserver:BW": "pytorch_2.4"
+#dcu "interconnect-P2P_intraserver:BW": "pytorch_2.4"
+#dcu "computation-FP64:BW": "pytorch_2.4"
+#dcu "computation-FP32:BW": "pytorch_2.4"
+#dcu "computation-INT8:BW": "pytorch_2.4"
+#dcu "computation-TF32:BW": "pytorch_2.4"
+#dcu "computation-FP16:BW": "pytorch_2.4"
+#dcu "computation-BF16:BW": "pytorch_2.4"
+#dcu "main_memory-bandwidth:BW": "pytorch_2.4"
+#dcu "main_memory-capacity:BW": "pytorch_2.4"
+#dcu "interconnect-h2d:BW": "pytorch_2.4"
