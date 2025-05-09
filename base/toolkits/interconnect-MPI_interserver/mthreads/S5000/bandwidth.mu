@@ -7,9 +7,9 @@
 #include <vector>
 
 #define GB (1024ULL * 1024ULL * 1024ULL)
-#define SIZE (4ULL * GB)
+#define SIZE (20ULL * GB)
 #define WARMUP_ITERATIONS 10
-#define ITERATIONS 400
+#define ITERATIONS 2500
 
 void checkMusaError(musaError_t err, const char* msg) {
   if (err != musaSuccess) {

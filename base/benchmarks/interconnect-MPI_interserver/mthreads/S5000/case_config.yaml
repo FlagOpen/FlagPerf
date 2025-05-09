@@ -1,4 +1,4 @@
-Melements: 16384
-WARMUP: 100
-ITERS: 4000
+Melements: 18432
+WARMUP: 10
+ITERS: 700
 DIST_BACKEND: "mccl"

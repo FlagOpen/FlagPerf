@@ -8,3 +8,4 @@ export MCCL_BUFFSIZE=41943040
 export MCCL_IB_GID_INDEX=3
 export MUSA_EXECUTION_TIMEOUT=1000000
 export MCCL_GRAPH_FILE=/usr/local/musa/topo
+export MCCL_IB_HCA='=mlx5_0:1,mlx5_2:1,mlx5_3:1,mlx5_4:1,mlx5_5:1,mlx5_8:1,mlx5_9:1,mlx5_10:1,mlx5_11:1'
