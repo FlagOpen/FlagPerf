@@ -1,5 +1,5 @@
 bs: 1
 channel: 3
 hiddensize: 4
-ITERS: 50
+ITERS: 10000
 SPECTFLOPS: 9999

@@ -26,6 +26,7 @@ VENDOR = "nvidia"
 #   dcu:
 #       "-v /opt/hyhal/:/opt/hyhal/ --device=/dev/kfd --device=/dev/dri/ --group-add video"
 ACCE_CONTAINER_OPT = " --gpus all"
+
 # XXX_VISIBLE_DEVICE item name in env
 # possible value of ACCE_VISIBLE_DEVICE_ENV_NAME are:
 #   CUDA_VISIBLE_DEVICES for nvidia, iluvatar
@@ -43,6 +44,7 @@ PIP_SOURCE = "https://pypi.tuna.tsinghua.edu.cn/simple"
 # Users must set FLAGPERF_PATH to where flagperf deploy
 # You can assume the preset "/home/FlagPerf/training" points to Null
 FLAGPERF_PATH = "/home/FlagPerf/training"
+
 # Set log path on the host here.
 FLAGPERF_LOG_PATH = FLAGPERF_PATH + "/result/"
 
@@ -70,6 +72,10 @@ CASES = {
 
     #"llava1.5_7b:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
     #"llava1.5_7b_continuetrain:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
+    #"llama3_70B:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
+    #"llama3_70B_continuetrain:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
+    #"mixtral_8x7B:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
+    #"mixtral_8x7B_continuetrain:flagscale_2409:H100:4:8:1": "/workspace/data_dir"
     # "llava1.5_7b:deepspeed-torch:A800:1:8:1": "/raid/dataset/LLAVA/",
     #"llama2_7b_finetune:pytorch_2.0.1:A100:1:1:1": "/raid/dataset/llama2_finetune/",
     #"aquila2_7b_finetune:flagscale:A800:1:8:1": "/raid/dataset/aquila2_7b_finetune",
@@ -129,6 +135,8 @@ CASES = {
     # "mixtral_8x7B:megatron_core060:H100:4:8:1": "/raid/datasets/mistral"
 
     # kunlunxin cases
+    #"llava1.5_7b:flagscale_llava:R300p:4:8:1": "/workspace/data_dir"
+    #"llava1.5_7b_continuetrain:flagscale_llava:R300p:4:8:1": "/workspace/data_dir"
     # "gpt2:pytorch:R300:1:8:1": "/raid/dataset/gpt2",
     # "resnet50:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "mask_rcnn:pytorch:R300:1:8:1": "/raid/dataset/coco2017/",
@@ -148,9 +156,10 @@ CASES = {
     # "bigtransfer:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "efficientnet:pytorch:R300:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
     # "llama2_70B:megatron:R300:10:8:1": "/raid/dataset/llama2_70B_pretrain",
-    # "baichuan2_13b:deepspeed:R300:1:8:1": "/raid/dataset/baichuan_data/",
-    # "baichuan2_13b:deepspeed_new:R300:1:1:1": "/raid/dataset/baichuan_data/",
+    # "baichuan2_13b:deepspeed_v0.14.4:R300:2:8:1": "/raid/dataset/baichuan_data/",
     # "chatglm3_6b:deepspeed_v0.14.4:R300:1:8:1": "/raid/dataset/chatglm3_6b_data/",
+    # "llama3_8B:megatron_core060:R300p:1:8:1": "/raid/dataset/llama3_8b_data/",
+    # "llama3_70B_continuetrain:flagscale_llama:R300p:4:8:1": "/raid/dataset/llama3_8b_data/",
 
     # iluvatar cases
     # "bigtransfer:pytorch:BI-V100:1:8:1": "/raid/dataset/ImageNet_1k_2012/",
@@ -162,6 +171,7 @@ CASES = {
     # "llava1.5_13b:deepspeed-torch:BI-V150:1:16:1": "/raid/dataset/llava1.5_13b",
     # "mixtral_8x7B:megatron:BI-V150:4:16:1": "/raid/dataset/mixtral_8x7B",   ##单机测试
     # "mixtral_8x7B:megatron:BI-V150:1:16:1": "/raid/dataset/mixtral_8x7B",   ##四机测试
+    "llama3_8B:megatron:TG-V200:1:16:1": "/datasets",   ##单机测试
 
     # mthreads cases
     # "resnet50:pytorch_2.0:S4000:1:8:1": "/data/flagperf/ImageNet",
@@ -170,6 +180,8 @@ CASES = {
     # "llama2_7b:deepspeed:S4000:1:8:1": "/data/flagperf/llama/openwebtext",
 
     # metax cases
+    #"llama3_70B_continuetrain:flagscale:C500:4:8:1": "/metax/dataset"
+    #"llava1.5_7b_continuetrain:flagscale:C500:4:8:1": "/data/dataset/llava"
     #"llama3_8B:megatron_core060:C500:1:8:1": "/data/llama3_8b"
     # "llama2_70B:megatron:C500:4:8:1": "/data/llama2-70B"
     #"chatglm3_6b:deepspeed:C500:1:8:1": "/raid/dataset//chatglm3-6b"

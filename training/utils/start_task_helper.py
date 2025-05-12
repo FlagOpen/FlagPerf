@@ -51,6 +51,18 @@ def get_extern_module_dir(task_args):
     return extern_module_dir
 
 
+def get_mlu_pid():
+    '''Return the PID of the first process that contains 'MLU_VISIBLE_DEVICES'
+       in its command, or None if not found.
+    '''
+    import subprocess
+    result = subprocess.Popen(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
+    for line in result.stdout:
+        if 'torchrun' in line and 'flagscale' in line and 'grep' not in line:
+            return line.split()[1]
+    return None
+
+
 def write_pid_file(pid_file_path, pid_file):
     '''Write pid file for watching the process later.
        In each round of case, we will write the current pid in the same path.
@@ -61,6 +73,12 @@ def write_pid_file(pid_file_path, pid_file):
     file_d = open(pid_file_path, "w")
     file_d.write("%s\n" % os.getpid())
     file_d.close()
+
+    mlu_pid = get_mlu_pid()
+    if mlu_pid:
+        file_d = open(pid_file_path, "w")
+        file_d.write("%s\n" % mlu_pid)
+        file_d.close()
 
 
 def init_flagperf_logger(logger, task_args):

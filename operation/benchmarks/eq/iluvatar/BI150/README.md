@@ -1,11 +1,10 @@
 # 参评AI芯片信息
 
-* 厂商：Nvidia
+* 厂商：ILUVATAR
 
-
-* 产品名称：A100
-* 产品型号：A100-40GiB-SXM
-* TDP：400W
+* 产品名称：BI150
+* 产品型号：BI150
+* TDP：W
 
 # 所用服务器配置
 
@@ -13,17 +12,17 @@
 
 
 * 单服务器内使用卡数：1
-* 服务器型号：DGX A100
-* 操作系统版本：Ubuntu 20.04.4 LTS
-* 操作系统内核：linux5.4.0-113
-* CPU：AMD EPYC7742-64core
-* docker版本：20.10.16
-* 内存：1TiB
+* 服务器型号：
+* 操作系统版本：Ubuntu 20.04.6 LTS
+* 操作系统内核：linux5.4.0-148-generic
+* CPU：
+* docker版本：20.10.25
+* 内存：
 * 服务器间AI芯片直连规格及带宽：此评测项不涉及服务期间AI芯片直连
 
 # 算子库版本
 
-https://github.com/FlagOpen/FlagGems. Commit ID:982781081f5d62856064ae986e8927a31e96c235
+FlagGems:>联系邮箱: contact-us@iluvatar.com获取版本(FlagGems最新适配版本)
 
 # 评测结果
 

@@ -30,7 +30,7 @@ class Daemon:
                  pid_file,
                  log_file,
                  err_file,
-                 xpu_log,
+                 gpu_log,
                  log_path,
                  rate=5,
                  stdin=os.devnull,
@@ -47,7 +47,7 @@ class Daemon:
         self.pidfile = pid_file
         self.logfile = log_file
         self.errfile = err_file
-        self.gpufile = xpu_log
+        self.gpufile = gpu_log
         self.logpath = log_path
         self.rate = rate
         self.umask = umask
@@ -73,10 +73,9 @@ class Daemon:
         NOTE: override the method in subclass
         '''
 
-        def xpu_mon(file):
+        def gpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = 'xpu_smi|egrep "[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}.[0-9a-f]"|' \
-                  'awk \'{printf("%dC %3dW %dMiB %dMiB %d%\\n",$29,$27,$22,$24,$14)}\''
+            cmd = "xpu-smi -m | awk '{print $5\"C\",$9\"W\",$18\"MiB\",$19\"MiB\",$20\"%\"}'"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,
@@ -94,11 +93,11 @@ class Daemon:
             with open(file, 'a') as f:
                 f.write(result)
 
-        def timer_xpu_mon():
-            xpu_process = Process(target=xpu_mon, args=(self.gpufile, ))
-            xpu_process.start()
+        def timer_gpu_mon():
+            gpu_process = Process(target=gpu_mon, args=(self.gpufile, ))
+            gpu_process.start()
 
-        schedule.every(self.rate).seconds.do(timer_xpu_mon)
+        schedule.every(self.rate).seconds.do(timer_gpu_mon)
         while True:
             schedule.run_pending()
             time.sleep(5)
@@ -218,61 +217,25 @@ def parse_args():
     return args
 
 
-def get_system_info():
-    cmd = r"echo OS version:;"
-    cmd = cmd + r"cat /etc/issue | head -n1 | awk '{print $1, $2, $3}';"
-    cmd = cmd + r"echo ;"
-    
-    cmd = cmd + r"echo OS Kernel version:;"
-    cmd = cmd + r"uname -r;"
-    cmd = cmd + r"echo ;"
-    
-    cmd = cmd + r"echo Hardware Model:;"
-    cmd = cmd + r"sudo dmidecode | grep -A9 'System Information' | tail -n +2 | sed 's/^[ \t]*//';"
-    cmd = cmd + r"echo ;"
-    
-    cmd = cmd + r"echo Accelerator Model:;"
-    cmd = cmd + r"xpu_smi info -m;"
-    cmd = cmd + r"echo ;"
-    
-    cmd = cmd + r"echo Accelerator Driver version:;"
-    cmd = cmd + r"xpu_smi info | grep 'Driver Version' | awk '{print $3}';"
-    cmd = cmd + r"echo ;"
-    
-    cmd = cmd + r"echo Docker version:;"
-    cmd = cmd + r"docker -v"
-    
-    return cmd
-    
-
 def main():
     sample_rate1 = 5
     args = parse_args()
     operation = args.o
     log_path = args.l
-    pid_fn = str('/tmp/xpu_monitor.pid')
+    pid_fn = str('/tmp/kunlunxin_monitor.pid')
     log_fn = str(log_path + '/kunlunxin_monitor.log')
     err_fn = str(log_path + '/kunlunxin_monitor.err')
     # result for gpu
-    xpu_fn = str(log_path + '/kunlunxin_monitor.log')
+    gpu_fn = str(log_path + '/kunlunxin_monitor.log')
 
     subdaemon = Daemon(pid_fn,
                        log_fn,
                        err_fn,
-                       xpu_fn,
+                       gpu_fn,
                        log_path,
                        verbose=1,
                        rate=sample_rate1)
     if operation == 'start':
-        sys_fn = os.path.join(log_path, 'sys_info.log')
-        cmd = get_system_info()
-        with open(sys_fn, "w") as f:
-            try:
-                # this command need sudo privilege, may raise exception
-                p = subprocess.Popen(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
-                p.wait()
-            except:
-                pass
         subdaemon.start()
     elif operation == 'stop':
         subdaemon.stop()

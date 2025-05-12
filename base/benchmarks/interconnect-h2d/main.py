@@ -44,9 +44,16 @@ def main(config, case_config, rank, world_size, local_rank):
     if rank == 0:
         print("finish initialization")
 
+    if "iluvatar" in config.vendor:
+        torch.cuda.set_device(local_rank)
+
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
-    tensor = torch.rand(torchsize, dtype=torch.float32)
+    
+    if "mthreads" in config.vendor:
+        tensor = torch.rand(torchsize, dtype=torch.float32).pin_memory()
+    else:    
+        tensor = torch.rand(torchsize, dtype=torch.float32)
     #print(f"Memory address of tensor in rank {rank} and local rank {local_rank}: {tensor.data_ptr()}")
 
 
@@ -56,7 +63,10 @@ def main(config, case_config, rank, world_size, local_rank):
         print("start warmup")
     
     for _ in range(case_config.WARMUP):
-        _tensor = tensor.to(local_rank)
+        if "mthreads" in config.vendor:
+            _tensor = tensor.to(local_rank, non_blocking=True)
+        else:
+            _tensor = tensor.to(local_rank)
 
 
     host_device_sync(config.vendor)
@@ -64,8 +74,11 @@ def main(config, case_config, rank, world_size, local_rank):
     start_time = time.perf_counter()
 
     for _ in range(case_config.ITERS):
-        _tensor = tensor.to(local_rank)
-
+        if "mthreads" in config.vendor:
+            _tensor = tensor.to(local_rank, non_blocking=True)
+        else:
+            _tensor = tensor.to(local_rank)
+    
     host_device_sync(config.vendor)
     multi_device_sync(config.vendor)
     end_time = time.perf_counter()

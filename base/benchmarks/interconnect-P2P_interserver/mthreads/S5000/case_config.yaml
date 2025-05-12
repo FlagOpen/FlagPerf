@@ -1,0 +1,4 @@
+DIST_BACKEND: "mccl"
+WARMUP: 10
+ITERS: 450
+Melements: 4096
