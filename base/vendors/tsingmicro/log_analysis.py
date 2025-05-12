@@ -64,7 +64,7 @@ def c2c_global_latency_analysis(log_file):
                         continue
 
                     result_str = result_temp.split('[')[0].strip()
-                    result_num = int(result_str, 10)
+                    result_num = int(result_str, 16)
                     if result_num > result_max and result_num < 0xffff:
                         result_max = result_num
 
