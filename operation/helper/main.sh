@@ -1,23 +1,23 @@
 #!/bin/bash
 
 # ==========================修改点1: START==========================
-VENDOR="dcu"
-ACCE_CONTAINER_OPT=" --device=/dev/kfd --device=/dev/dri --group-add video -v /opt/hyhal:/opt/hyhal"
-ACCE_VISIBLE_DEVICE_ENV_NAME="HIP_VISIBLE_DEVICES"
+VENDOR="nvidia"
+ACCE_CONTAINER_OPT=" --gpus all"
+ACCE_VISIBLE_DEVICE_ENV_NAME="CUDA_VISIBLE_DEVICES"
 SSH_PORT="22"
 HOSTS_PORTS="[\"2222\"]"
 MASTER_PORT="29501"
-TDP="800W"
+TDP="400W"
 
-ip_address="10.17.27.73"
-chip_name="BW"
-env_name="pytorch_2.4"
+ip_address="10.1.2.155"
+chip_name="A100_40_SXM"
+env_name="ngctorch2403"
 
 declare -A spec_tflops_dict
-spec_tflops_dict["BF16"]=491.52
-spec_tflops_dict["FP16"]=491.52
-spec_tflops_dict["FP32"]=61.44
-spec_tflops_dict["INT32"]=983.04
+spec_tflops_dict["BF16"]=312
+spec_tflops_dict["FP16"]=312
+spec_tflops_dict["FP32"]=19.5
+spec_tflops_dict["INT32"]=19.5
 spec_tflops_dict["INT16"]=-1
 #=============================STOP==========================
 

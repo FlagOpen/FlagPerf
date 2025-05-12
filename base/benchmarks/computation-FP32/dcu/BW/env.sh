@@ -1,1 +1,1 @@
-echo "NVIDIA PLACEHOLDER ENV.SH"
+
