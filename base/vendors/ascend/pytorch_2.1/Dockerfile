@@ -1,7 +1,6 @@
 FROM flagperf_ascend:v2025
 
 SHELL ["/bin/bash", "-c"]
-RUN echo "192.168.1.1 node-name" >> /etc/hosts
 
 ENV EXEC_IN_CONTAINER True
 ENV LD_LIBRARY_PATH /usr/local/python3.11.5/lib:$LD_LIBRARY_PATH
