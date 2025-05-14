@@ -228,7 +228,8 @@ def start_tasks_in_cluster(dp_path, container_name, config, base_args,
                      + " > " + abs_log_path + "/env.log.txt " \
                      + "2>&1"
 
-    start_cmd += "&& source ~/.bashrc"
+    if config.VENDOR == "ascend":
+        start_cmd += "&& source ~/.bashrc"
 
     start_cmd += " && python3 " + config.FLAGPERF_PATH + "/container_main.py" + base_args \
                  + " > " + abs_log_path + "/container_main.log.txt " \
