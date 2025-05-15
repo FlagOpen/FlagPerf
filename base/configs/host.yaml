@@ -20,11 +20,13 @@ ACCE_CONTAINER_OPT: " --gpus all"
 # for kunlunxin, using "--device=/dev/xpu0 --device=/dev/xpu1 --device=/dev/xpu2 --device=/dev/xpu3 --device=/dev/xpu4 --device=/dev/xpu5 --device=/dev/xpu6 --device=/dev/xpu7 --device=/dev/xpuctrl"
 # for iluvatar, using""
 # for metax, using "--device=/dev/dri --device=/dev/mxcd --group-add video"
+# for dcu, using "--device=/dev/kfd --device=/dev/dri --group-add video -v /opt/hyhal:/opt/hyhal"
 # for xxx, using
 PIP_SOURCE: "https://mirror.baidu.com/pypi/simple"
 CLEAR_CACHES: True
 # for nvidia, using "CUDA_VISIBLE_DEVICES"
 # for mthreads, using "MUSA_VISIBLE_DEVICES"
+# for dcu, using "HIP_VISIBLE_DEVICES"
 # for xxx, using
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
@@ -124,3 +126,20 @@ CASES:
 # ascend "interconnect-P2P_interserver:A3": "pytorch_2.1"
 # ascend "interconnect-MPI_interserver:A3": "pytorch_2.1"
 # ascend "interconnect-MPI_intraserver:A3": "pytorch_2.1" 
+
+#dcu "interconnect-MPI_interserver:BW": "pytorch_2.4"
+#dcu "interconnect-MPI_intraserver:BW": "pytorch_2.4"
+#dcu "interconnect-P2P_interserver:BW": "pytorch_2.4"
+#dcu "interconnect-P2P_intraserver:BW": "pytorch_2.4"
+#dcu "computation-FP64:BW": "pytorch_2.4"
+#dcu "computation-FP32:BW": "pytorch_2.4"
+#dcu "computation-INT8:BW": "pytorch_2.4"
+#dcu "computation-TF32:BW": "pytorch_2.4"
+#dcu "computation-FP16:BW": "pytorch_2.4"
+#dcu "computation-BF16:BW": "pytorch_2.4"
+#dcu "main_memory-bandwidth:BW": "pytorch_2.4"
+#dcu "main_memory-capacity:BW": "pytorch_2.4"
+#dcu "interconnect-h2d:BW": "pytorch_2.4"
+
+
+
