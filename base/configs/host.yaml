@@ -30,7 +30,22 @@ CLEAR_CACHES: True
 ACCE_VISIBLE_DEVICE_ENV_NAME: "CUDA_VISIBLE_DEVICES"
 CASES: 
      "computation-FP32": "pytorch_2.3"
-     
+
+# mthreads "computation-FP64:S5000": "pytorch_2.2"
+# mthreads "computation-FP32:S5000": "pytorch_2.2"
+# mthreads "computation-TF32:S5000": "pytorch_2.2"
+# mthreads "computation-FP16:S5000": "pytorch_2.2"
+# mthreads "computation-BF16:S5000": "pytorch_2.2"
+# mthreads "computation-FP8:S5000": "pytorch_2.2"
+# mthreads "computation-INT8:S5000": "pytorch_2.2"
+# mthreads "main_memory-bandwidth:S5000": "pytorch_2.2"
+# mthreads "main_memory-capacity:S5000": "pytorch_2.2"
+# mthreads "interconnect-h2d:S5000": "pytorch_2.2"
+# mthreads "interconnect-MPI_intraserver:S5000": "pytorch_2.2"
+# mthreads "interconnect-P2P_intraserver:S5000": "pytorch_2.2"
+# mthreads "interconnect-P2P_interserver:S5000": "pytorch_ssh"
+# mthreads "interconnect-MPI_interserver:S5000": "pytorch_ssh" 
+
 # mthreads "computation-TF32:S4000": "pytorch_2.2"
 # mthreads "computation-FP16:S4000": "pytorch_2.2"
 
@@ -99,6 +114,17 @@ CASES:
 # kunlunxin "computation-INT8:R300p": "pytorch_2.0"
 # kunlunxin "computation-TF32:R300p": "pytorch_2.0"
 
+# ascend "computation-INT8:A3": "pytorch_2.1"
+# ascend "computation-BF16:A3": "pytorch_2.1"
+# ascend "computation-FP16:A3": "pytorch_2.1"
+# ascend "computation-FP32:A3": "pytorch_2.1"
+# ascend "main_memory-capacity:A3": "pytorch_2.1"
+# ascend "main_memory-bandwidth:A3": "pytorch_2.1"
+# ascend "interconnect-h2d:A3": "pytorch_2.1"
+# ascend "interconnect-P2P_intraserver:A3": "pytorch_2.1"
+# ascend "interconnect-P2P_interserver:A3": "pytorch_2.1"
+# ascend "interconnect-MPI_interserver:A3": "pytorch_2.1"
+# ascend "interconnect-MPI_intraserver:A3": "pytorch_2.1" 
 
 #dcu "interconnect-MPI_interserver:BW": "pytorch_2.4"
 #dcu "interconnect-MPI_intraserver:BW": "pytorch_2.4"
@@ -113,3 +139,6 @@ CASES:
 #dcu "main_memory-bandwidth:BW": "pytorch_2.4"
 #dcu "main_memory-capacity:BW": "pytorch_2.4"
 #dcu "interconnect-h2d:BW": "pytorch_2.4"
+
+
+
