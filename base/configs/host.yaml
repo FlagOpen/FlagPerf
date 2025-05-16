@@ -140,6 +140,3 @@ CASES:
 #dcu "main_memory-bandwidth:BW": "pytorch_2.4"
 #dcu "main_memory-capacity:BW": "pytorch_2.4"
 #dcu "interconnect-h2d:BW": "pytorch_2.4"
-
-
-
