@@ -8,8 +8,8 @@ def analysis_log(logpath, config):
 
     max_mem = None
     next_gpu_id = 0
-    max_usage = 0.0
     for line in logfile.readlines():
+        #35C 58W 280W 666/65536 MiB
         if "MiB" in line:
 
             if max_mem is None:
@@ -21,19 +21,10 @@ def analysis_log(logpath, config):
             power =  (float(power_str[:-1]))
             usage_and_maxusage = line.split(" ")[2]
             usage = float(usage_and_maxusage.split("/")[0])
-            max_usage = max(max_usage, usage)
             max_mem = float(usage_and_maxusage.split("/")[1])
-
-
-            print('@@@@ ')
-            print(temp)
-            print(power)
-            print (max_mem)
-            print (max_usage)
-            print('end @@@@ ')
             result["temp"][next_gpu_id].append(temp)
             result["power"][next_gpu_id].append(power)
-            result["mem"][next_gpu_id].append(max_usage)
+            result["mem"][next_gpu_id].append(usage)
             next_gpu_id = (next_gpu_id + 1) % config.NPROC_PER_NODE
 
     return result

@@ -75,7 +75,7 @@ class Daemon:
 
         def gpu_mon(file):
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            cmd = "mx-smi |grep 'MiB' -m 1 | awk '{print $2, $3, $5,$6}' && mx-smi |grep 'MXC' -m 1 | awk '{print $7}'"
+            cmd = "mx-smi | grep 'MiB' -m 8 | grep -v 'Usage(MiB)' | awk '{print $2, $3, $7, $8}' && mx-smi |grep 'MetaX C' -m 1 | awk '{print $6}'"
             process = subprocess.Popen(cmd,
                                        shell=True,
                                        stdout=subprocess.PIPE,
