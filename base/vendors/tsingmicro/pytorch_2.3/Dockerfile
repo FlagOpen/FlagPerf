@@ -1,4 +1,3 @@
 
-FROM hub.tsingmicro.com/tx8/v4.3.7.p1:kuiper-rex1032-release
-RUN /bin/bash -c alias docker='sudo docker'
-
+FROM tx8-ubuntu:rex1032_flagperf
+RUN tar xzf /root/TX81.tar.gz -C /root
