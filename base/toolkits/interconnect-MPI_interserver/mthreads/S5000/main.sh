@@ -29,5 +29,6 @@ if [ "$NODERANK" -eq 0 ]; then
             -x MCCL_PROTOS=2 \
             -x MUSA_DEVICE_MAX_CONNECTIONS=1 \
             -x MCCL_GRAPH_FILE=/usr/local/musa/topo \
+            -x MCCL_IB_HCA='=mlx5_0:1,mlx5_2:1,mlx5_3:1,mlx5_4:1,mlx5_5:1,mlx5_8:1,mlx5_9:1,mlx5_10:1,mlx5_11:1' \
             ./bdtest
 fi
