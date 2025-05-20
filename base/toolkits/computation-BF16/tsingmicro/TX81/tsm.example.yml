@@ -1,0 +1,7 @@
+gemm_config:
+  m: 256                     # Number of rows in the matrix (M)
+  k: 512                     # Number of columns in the input matrix (K)
+  n: 256                     # Number of columns in the output matrix (N)
+  input_data_format: "bfloat16"  # Input data format (e.g., "int8", "half", "bfloat16", "tfloat")
+  output_data_format: "bfloat16" # Output data format (e.g., "int8", "half", "bfloat16", "tfloat")
+  iterations: 1000           # Number of iterations to run the GEMM test
