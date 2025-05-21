@@ -6,7 +6,7 @@ PERF=/opt/xre/tools/$TOOL
 DEV=0
 SIZE=$((1024*1024*1024))
 
-$PERF \
+numactl --cpunodebind=0 $PERF \
     --loop 5000 \
     $DEV \
     $SIZE | tee $LOG
