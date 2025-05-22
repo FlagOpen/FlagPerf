@@ -6,5 +6,5 @@ perf_test:
     send_tile: 0x1c
     receive_tile: 0x20
     data_size: 128
-    send_ip: 10.152.21.3
-    recv_ip: 10.152.21.1
+    send_ip: 10.1.15.201
+    recv_ip: 10.1.15.96
