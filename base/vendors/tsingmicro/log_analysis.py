@@ -83,6 +83,7 @@ def c2c_global_perf_analysis(log_file):
                 c2c_bw = int(line.split('Mb')[0].strip())
                 c2c_bw /= 8
                 c2c_bw /= 1024
+                c2c_bw = c2c_bw * 24 * 2
 
                 print(f"[FlagPerf Result]interconnect-P2P_interserver={int(c2c_bw)} GB/s")
                 break
@@ -170,8 +171,10 @@ def allreduce_analysis(log_file, type_str):
                 allreduce_perf = float(perf_str)
 
                 if "intra" in type_str:
+                    allreduce_perf = allreduce_perf * 8
                     print(f"[FlagPerf Result]interconnect-MPI_intraserver-bandwidth={allreduce_perf} GB/s")
                 else:
+                    allreduce_perf = allreduce_perf * 24 * 2
                     print(f"[FlagPerf Result]interconnect-MPI_interserver-bandwidth={allreduce_perf} GB/s")
                 break
 
