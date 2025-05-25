@@ -26,6 +26,7 @@ if [[ "${cur_ip}" == "${ip1}" ]];then
             --allow-run-as-root \
             --host ${ip1}:8,${ip2}:8 \
             -x ROCM_PATH=/opt/dtk \
+            -x RCCL_SDMA_COUNT_ENABLE=1 -x RCCL_SDMA_COPY_ENABLE=1 -x RCCL_COLL_XHCL_CHANNEL_NUM=28 \
             -mca plm_rsh_args "-p 1234" -np 16 -x LD_LIBRARY_PATH=/opt/hyhal/lib:${LD_LIBRARY_PATH} \
             -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 all_reduce_perf -b 256m -e 256m -g 1 -f 2 2>&1 | tee ${LOG_PATH}
             
@@ -46,6 +47,7 @@ else
             --allow-run-as-root \
             --host ${ip1}:8,${ip2}:8 \
             -x ROCM_PATH=/opt/dtk \
+            -x RCCL_SDMA_COUNT_ENABLE=1 -x RCCL_SDMA_COPY_ENABLE=1 -x RCCL_COLL_XHCL_CHANNEL_NUM=28 \
             -mca plm_rsh_args "-p 1234" -np 16 -x LD_LIBRARY_PATH=/opt/hyhal/lib:${LD_LIBRARY_PATH} \
             -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 all_reduce_perf -b 256m -e 256m -g 1 -f 2 2>&1 | tee ${LOG_PATH}
             
