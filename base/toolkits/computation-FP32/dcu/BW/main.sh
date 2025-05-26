@@ -1,3 +1,8 @@
-hipcc -O3 gemm.cu -lhipblas -o gemm -std=c++17 --offload-arch=gfx936
-./gemm
-# /opt/dtk/rocblas/lib/rocblas/benchmark_tool/rocblas-bench -f gemm_ex --transposeA N --transposeB T -m 3840 -n 3840 -k 3840 --lda 3840 --ldb 3840 --ldc 3840 --alpha 1 --beta 0 --a_type f32_r --b_type f32_r --c_type f32_r --d_type f32_r --compute_type f32_r --algo 0 
+LOG_PATH=$(pwd)/$(ip a | grep -w 'inet' | grep 'global' | sed 's/.*inet //;s/\/.*//' | awk 'NR==1{print $1}')_run_log
+
+export PATH=/opt/hyqual_v3.0.3:${PATH}
+run 7 2>&1 | tee ${LOG_PATH}
+
+data=$(grep 'peak sgemm    :'  ${LOG_PATH} | awk '{print $4}' | sort -nr | head -n1)
+echo "[FlagPerf Result]computation-FP32=$data TFLOPS"
+rm -rf ${LOG_PATH}
