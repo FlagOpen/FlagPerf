@@ -1,8 +1,0 @@
-globals:
-  logfile: /tmp/tsmvs_npu_stress_test.log
-
-stress_test:
-        npu_stress_test:
-            power_level: 0
-            test_duration: 20
-            test_card_id: 0xff

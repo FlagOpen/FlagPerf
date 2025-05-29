@@ -1,15 +1,9 @@
 #!/bin/bash
 
-curr_path=$(pwd)
 
-vendor_path=../../../../vendors/tsingmicro
-exec_path=/root/TX81
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$exec_path
-
-cd $exec_path
-./tsmPerf -r lsuPerf -d chip_out/ -f 0 | tee $curr_path/test_result.log
-cd -
-
-python3 $vendor_path/log_analysis.py --log_type="lsu_test" --log_file="./test_result.log"
-rm -f ./test_result.log
-
+source /root/.bash_profile
+tsmvs -c ddr_perf_test.yaml 2>&1 | tee ./ddr_test.log
+cat ./ddr_test.log | grep ddr_bandwidth > ./ddr_bandwidth.log
+python3 ../../../../vendors/tsingmicro/log_analysis.py --log_type="ddr_perf" --log_file="./ddr_bandwidth.log"
+rm -f ./ddr_test.log
+rm -f ./ddr_bandwidth.log

@@ -28,12 +28,10 @@ def ddr_perf_analysis(log_file):
                 write_bw_str = line[-1].strip()
                 read_bw  += int(read_bw_str.split('M')[0].strip())
                 write_bw += int(write_bw_str.split('M')[0].strip())
-                count += 1
 
-                if count == 4:
-                    bandwidth = write_bw if write_bw > read_bw else read_bw
-                    print(f"[FlagPerf Result]main_memory-bandwidth={round(bandwidth/1024, 2)} GB/s")
-                    break
+                bandwidth = write_bw if write_bw > read_bw else read_bw
+                print(f"[FlagPerf Result]main_memory-bandwidth={round(bandwidth/1024, 2)} GB/s")
+                break
 
 def ddr_cap_analysis(log_file):
     with open(log_file, "r") as f_log:
@@ -46,7 +44,7 @@ def ddr_cap_analysis(log_file):
                 line = line.split('|')[-3].strip()
                 mem_used  = int(line.split('/')[0].split('M')[0].strip())
                 mem_total = int(line.split('/')[1].split('M')[0].strip())
-                mem_cap = (mem_total - mem_used + 1024) / 1024 * 4
+                mem_cap = (mem_total - mem_used + 1024) / 1024
                 print(f"[FlagPerf Result]main_memory-capacity={int(mem_cap)} GB")
                 break
 
@@ -80,9 +78,7 @@ def c2c_global_perf_analysis(log_file):
 
             if "c2c_test: bandwidth" in line:
                 line = line.split('=')[-1].strip()
-                c2c_bw = int(line.split('Mb')[0].strip())
-                c2c_bw /= 8
-                c2c_bw /= 1024
+                c2c_bw = int(line.split('GB')[0].strip())
 
                 print(f"[FlagPerf Result]interconnect-P2P_interserver={int(c2c_bw)} GB/s")
                 break
@@ -95,11 +91,9 @@ def c2c_perf_analysis(log_file):
 
             if "c2c_test: bandwidth" in line:
                 line = line.split('=')[-1].strip()
-                c2c_bw = int(line.split('Mb')[0].strip())
-                # c2c_bw /= 8
-                c2c_bw /= 1024
+                c2c_bw = int(line.split('GB')[0].strip())
 
-                print(f"[FlagPerf Result]interconnect-P2P_intraserver={int(c2c_bw * 2)} GB/s")  # send + recv
+                print(f"[FlagPerf Result]interconnect-P2P_intraserver={int(c2c_bw)} GB/s")  # send + recv
                 break
 
 def pcie_perf_analysis(log_file):
@@ -115,16 +109,16 @@ def pcie_perf_analysis(log_file):
             # [2024-12-03 06:53:34]: pcie_test: bandwidth_d2h = 14 GB/s
             if "bandwidth_h2d" in line:
                 line = line.split(':')[-1].strip().split('=')[-1]
-                h2d_bw += int(line.split('G')[0].strip())
+                h2d = int(line.split('G')[0].strip())
+                h2d_bw += h2d
 
             if "bandwidth_d2h" in line:
                 line = line.split(':')[-1].strip().split('=')[-1]
-                d2h_bw += int(line.split('G')[0].strip())
-                count += 1
-                if count == 4:
-                    print(f"[FlagPerf Result]interconnect-h2d={h2d_bw} GB/s")
-                    print(f"[FlagPerf Result]interconnect-d2h={d2h_bw} GB/s")
-                    break
+                d2h = int(line.split('G')[0].strip())
+                d2h_bw += d2h
+                print(f"[FlagPerf Result]interconnect-h2d={h2d_bw} GB/s")
+                print(f"[FlagPerf Result]interconnect-d2h={d2h_bw} GB/s")
+                break
 
 def computation_analysis(log_file, type_str):
     with open(log_file, "r") as f_log:
@@ -135,7 +129,7 @@ def computation_analysis(log_file, type_str):
             # [gemm_dyn.cpp:GetGemmCycle:292] !!! gemm total_perf:175.252 Tops, Percentage: 98.210 %
             if "total_perf" in line:
                 line = line.split(':')[-2].strip()
-                computation_value = float(line.split('T')[0].strip()) * 4
+                computation_value = float(line.split('T')[0].strip())
                 if "INT" in type_str:
                     print(f"[FlagPerf Result]{type_str}={round(computation_value, 2)}Tops")
                 else:
