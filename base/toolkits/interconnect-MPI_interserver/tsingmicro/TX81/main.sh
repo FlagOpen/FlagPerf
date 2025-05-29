@@ -8,8 +8,9 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$exec_path
 
 
 cd $exec_path
-./tsmPerf -r allreducePerf --multi-node | tee $curr_path/test_result.log
+./tsmPerf -r allreducePerf --multi-node | tee /tmp/multi_mpi_test_result.log
 cd -
 
-python3 $vendor_path/log_analysis.py --log_type="inter_allreduce" --log_file="./test_result.log"
-rm -f ./test_result.log
+python3 $vendor_path/log_analysis.py --log_type="inter_allreduce" --log_file="/tmp/multi_mpi_test_result.log"
+
+
