@@ -113,7 +113,6 @@ def pcie_perf_analysis(log_file):
                 d2h = int(line.split('G')[0].strip())
                 d2h_bw += d2h
                 print(f"[FlagPerf Result]interconnect-h2d={h2d_bw} GB/s")
-                print(f"[FlagPerf Result]interconnect-d2h={d2h_bw} GB/s")
                 break
 
 def computation_analysis(log_file, type_str):
