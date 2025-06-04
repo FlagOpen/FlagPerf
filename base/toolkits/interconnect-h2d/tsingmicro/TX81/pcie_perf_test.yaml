@@ -1,0 +1,7 @@
+globals:
+    logfile: /tmp/pcie_perf_test.log
+
+perf_test:
+    pcie_perf_test:
+        data_size: 512
+        test_card_id: 0xff
