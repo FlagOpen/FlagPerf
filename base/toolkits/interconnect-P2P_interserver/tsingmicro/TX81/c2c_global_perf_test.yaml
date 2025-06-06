@@ -1,0 +1,10 @@
+globals:
+  logfile: /tmp/tsmvs_c2c_global_perf_test.log
+
+perf_test:
+  c2c_global_perf_test:
+    send_tile: 0x1c
+    receive_tile: 0x20
+    data_size: 128
+    send_ip: 10.1.15.201
+    recv_ip: 10.1.15.96
