@@ -27,10 +27,13 @@ if [[ "${cur_ip}" == "${ip1}" ]];then
                 -x RCCL_SDMA_COUNT_ENABLE=1 -x RCCL_SDMA_COPY_ENABLE=1 -x RCCL_COLL_XHCL_CHANNEL_NUM=28 \
                 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 -x NCCL_IB_HCA=mlx5_2,mlx5_3,mlx5_4,mlx5_5,mlx5_8,mlx5_9,mlx5_10,mlx5_11 sendrecv_perf -b 1g -e 1g -g 1 -f 2  2>&1 | tee ${LOG_PATH}
         data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
+
+        result=$(python3 -c "print(float($data) * 2)")
         while  [ ! -f ${ip2}_run_log ] || ! grep -q "Avg bus bandwidth" ${ip2}_run_log ; do
                 sleep 1 
         done
-        echo "[FlagPerf Result]interconnect-P2P_interserver-bandwidth=$data GB/s"
+        echo "[FlagPerf Result]interconnect-P2P_interserver-bandwidth=$result GB/s"
+
         rm -rf *_run_log
 else
         while [ ! -f ${ip1}_run_log ] || ! grep -q "Avg bus bandwidth" ${ip1}_run_log ; do
@@ -43,6 +46,9 @@ else
                 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 -x NCCL_IB_HCA=mlx5_2,mlx5_3,mlx5_4,mlx5_5,mlx5_8,mlx5_9,mlx5_10,mlx5_11 sendrecv_perf -b 1g -e 1g -g 1 -f 2  2>&1 | tee ${LOG_PATH}
 
         data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
-        echo "[FlagPerf Result]interconnect-P2P_interserver-bandwidth=$data GB/s"
+
+        result=$(python3 -c "print(float($data) * 2)")
+        echo "[FlagPerf Result]interconnect-P2P_interserver-bandwidth=$result GB/s"
+
 
 fi
