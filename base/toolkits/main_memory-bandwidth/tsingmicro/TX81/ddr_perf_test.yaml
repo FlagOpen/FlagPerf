@@ -1,0 +1,6 @@
+globals:
+  logfile: /tmp/tsmvs_ddr_perf_test.log
+
+perf_test:
+        ddr_perf_test:
+                test_card_id: 0xff
