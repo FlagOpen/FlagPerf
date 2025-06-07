@@ -32,6 +32,8 @@ if [[ "${cur_ip}" == "${ip1}" ]];then
         while  [ ! -f ${ip2}_run_log ] || ! grep -q "Avg bus bandwidth" ${ip2}_run_log ; do
                 sleep 1 
         done
+        echo "# Avg bus bandwidth :$data GB/s  # Unidirectional bandwidth"
+        echo "# Avg bus bandwidth :$result GB/s  # Bidirectional bandwidth"
         echo "[FlagPerf Result]interconnect-P2P_interserver-bandwidth=$result GB/s"
 
         rm -rf *_run_log
@@ -48,6 +50,8 @@ else
         data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
 
         result=$(python3 -c "print(float($data) * 2)")
+        echo "# Avg bus bandwidth :$data GB/s  # Unidirectional bandwidth"
+        echo "# Avg bus bandwidth :$result GB/s  # Bidirectional bandwidth"
         echo "[FlagPerf Result]interconnect-P2P_interserver-bandwidth=$result GB/s"
 
 
