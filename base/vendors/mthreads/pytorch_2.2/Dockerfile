@@ -1,1 +1,1 @@
-FROM registry.mthreads.com/public/ai_devtech/flagperf_base_s5000:20250417_hotfix_torch-zy-base-2025_single
+FROM registry.mthreads.com/public/zhiyuan/musa-train:20250603-rope-tp-overlap
