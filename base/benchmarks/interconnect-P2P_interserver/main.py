@@ -84,7 +84,8 @@ def main(config, case_config, rank, world_size, local_rank):
 
     datasize = case_config.ITERS * (Melements * 1024 * 1024 * 4 / 1E9)
     bandwidth = datasize / elapsed_time
-    bandwidth *= 2
+    if "iluvatar" in config.vendor:
+        bandwidth *= 2 # output bidirectional bandwidth for iluvatar test
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
     
     return round(bandwidth, 2), round(bandwidth_gib, 2)
