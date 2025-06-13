@@ -52,6 +52,8 @@ def main(config, case_config, rank, world_size, local_rank):
     
     if "mthreads" in config.vendor:
         tensor = torch.rand(torchsize, dtype=torch.float32).pin_memory()
+    elif "iluvatar" in config.vendor:
+        tensor = torch.rand(torchsize, dtype=torch.float32, pin_memory=True)
     else:    
         tensor = torch.rand(torchsize, dtype=torch.float32)
     #print(f"Memory address of tensor in rank {rank} and local rank {local_rank}: {tensor.data_ptr()}")

@@ -74,14 +74,13 @@ def main(config, case_config, rank, world_size, local_rank):
     for _ in range(case_config.ITERS):
         _result = torch.mm(matrixA, matrixB)
     
-    if "iluvatar" not in config.vendor:
-        host_device_sync(config.vendor)
-        multi_device_sync(config.vendor)
+    host_device_sync(config.vendor)
+    multi_device_sync(config.vendor)
     end_time = time.perf_counter()
     
     exec_time = end_time - start_time
     
-    operations = case_config.ITERS * 2 * m * n * k
+    operations = case_config.ITERS * 2 * m * n * k if "iluvatar" not in config.vendor else case_config.ITERS * 4 * m * n * k
     tflops = operations / exec_time / 1e12
     
     return round(tflops, 2)
