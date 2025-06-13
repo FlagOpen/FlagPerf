@@ -76,7 +76,10 @@ def main(config, case_config, rank, world_size, local_rank):
     
     if local_rank == 0:
         print("Test Finished")
-    
+
+    if "iluvatar" in config.vendor:
+        total_allocated *= 2
+
     return total_allocated
 
 

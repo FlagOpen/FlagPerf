@@ -80,7 +80,7 @@ def main(config, case_config, rank, world_size, local_rank):
     elapsed_time = end_time - start_time
 
 
-    datasize = case_config.ITERS * 2 * (Melements * 1024 * 1024 * 4 / 1E9)
+    datasize = case_config.ITERS * 2 * (Melements * 1024 * 1024 * 4 / 1E9) if "iluvatar" not in config.vendor else case_config.ITERS * 2 * (Melements * 1024 * 1024 * 8 / 1E9)
     bandwidth = datasize / elapsed_time
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
     

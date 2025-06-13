@@ -45,9 +45,8 @@ def main(config, case_config, rank, world_size, local_rank):
         
     if "iluvatar" in config.vendor:
         torch.cuda.set_device(local_rank)
-        rank_dst = 16
-    else:
-        rank_dst = 8
+        
+    rank_dst = 8
     
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
@@ -85,6 +84,7 @@ def main(config, case_config, rank, world_size, local_rank):
 
     datasize = case_config.ITERS * (Melements * 1024 * 1024 * 4 / 1E9)
     bandwidth = datasize / elapsed_time
+    bandwidth *= 2
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
     
     return round(bandwidth, 2), round(bandwidth_gib, 2)

@@ -1,4 +1,4 @@
 Melements: 1024
-WARMUP: 10
-ITERS: 100
+WARMUP: 1
+ITERS: 5
 DIST_BACKEND: "nccl"
