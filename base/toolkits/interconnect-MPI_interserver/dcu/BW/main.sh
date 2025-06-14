@@ -31,10 +31,13 @@ if [[ "${cur_ip}" == "${ip1}" ]];then
             -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 all_reduce_perf -b 256m -e 256m -g 1 -f 2 2>&1 | tee ${LOG_PATH}
             
         data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
+        result=$(python3 -c "print(float($data) * 2)")
         while  [ ! -f ${ip2}_run_log ] || ! grep -q "Avg bus bandwidth" ${ip2}_run_log ; do
                 sleep 1 
         done
-        echo "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=$data GB/s"
+        echo "# Avg bus bandwidth :$data GB/s  # Unidirectional bandwidth"
+        echo "# Avg bus bandwidth :$result GB/s  # Bidirectional bandwidth"
+        echo "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=$result GB/s"
         rm -rf ${ip1}_run_log ${ip2}_run_log
 else
         while [ ! -f ${ip1}_run_log ] || ! grep -q "Avg bus bandwidth" ${ip1}_run_log ; do
@@ -52,6 +55,9 @@ else
             -x UCX_NET_DEVICES=mlx5_6:1 -x NCCL_NET_GDR_LEVEL=5 -x NCCL_NET_GDR_READ=1 all_reduce_perf -b 256m -e 256m -g 1 -f 2 2>&1 | tee ${LOG_PATH}
             
         data=$(grep "# Avg bus bandwidth" ${LOG_PATH} | awk '{print $NF}')
-        echo "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=$data GB/s"
+        result=$(python3 -c "print(float($data) * 2)")
+        echo "# Avg bus bandwidth :$data GB/s  # Unidirectional bandwidth"
+        echo "# Avg bus bandwidth :$result GB/s  # Bidirectional bandwidth"
+        echo "[FlagPerf Result]interconnect-MPI_interserver-bandwidth=$result GB/s"
 
 fi

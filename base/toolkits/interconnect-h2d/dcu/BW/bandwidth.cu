@@ -44,8 +44,11 @@ int main() {
 
     double bandwidth = SIZE * ITERATIONS / (elapsed_time / 1000.0);
 
-    printf("[FlagPerf Result]transfer-bandwidth=%.2fGiB/s\n", bandwidth / (1024.0 * 1024.0 * 1024.0));
-    printf("[FlagPerf Result]transfer-bandwidth=%.2fGB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
+    printf("# Avg Unidirectional  bandwidth :=%.2f GB/s\n", bandwidth / (1000.0 * 1000.0 * 1000.0));
+    printf("# Avg Bidirectional  bandwidth :=%.2f GB/s\n", 2 * bandwidth / (1000.0 * 1000.0 * 1000.0));
+
+    printf("[FlagPerf Result]transfer-bandwidth=%.2fGiB/s\n", 2 * bandwidth / (1024.0 * 1024.0 * 1024.0));
+    printf("[FlagPerf Result]transfer-bandwidth=%.2fGB/s\n", 2 * bandwidth / (1000.0 * 1000.0 * 1000.0));
 
     checkCudaError(hipHostFree(d_src), "hipHostFree");
     checkCudaError(hipFree(d_dst), "hipFree");
