@@ -80,7 +80,7 @@ def main(config, case_config, rank, world_size, local_rank):
     
     exec_time = end_time - start_time
     
-    operations = case_config.ITERS * 2 * m * n * k if "iluvatar" not in config.vendor else case_config.ITERS * 4 * m * n * k
+    operations = case_config.ITERS * 2 * m * n * k
     tflops = operations / exec_time / 1e12
     
     return round(tflops, 2)
@@ -106,6 +106,8 @@ if __name__ == "__main__":
     for output_rank in range(config.node_size):
         if local_rank == output_rank:
             print(r"[FlagPerf Result]Rank {}'s computation-BF16=".format(dist.get_rank()) + str(result) + "TFLOPS")
+            if "iluvatar" in config.vendor:
+                print(r"[FlagPerf Result]Rank {} BI-V150 has 2 chips and overall GPU computation-BF16=".format(dist.get_rank()) + str(result*2) + "TFLOPS")
         multi_device_sync(config.vendor)
         
     dist.destroy_process_group()

@@ -95,8 +95,6 @@ def main(config, case_config, rank, world_size, local_rank):
     datasize = case_config.ITERS * (Melements * 1024 * 1024 * 4 / 1E9)
     algbw = datasize / elapsed_time
     bandwidth = algbw * (2 * (config.node_size - 1) / config.node_size)
-    if "iluvatar" in config.vendor:
-        bandwidth *= 2 # output bidirectional bandwidth for iluvatar test
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
 
     return round(bandwidth, 2), round(bandwidth_gib, 2)
@@ -123,6 +121,9 @@ if __name__ == "__main__":
         if local_rank == output_rank:
             print(r"[FlagPerf Result]Rank {}'s interconnect-MPI_interserver-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
             print(r"[FlagPerf Result]Rank {}'s interconnect-MPI_interserver-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
+            if "iluvatar" in config.vendor:
+                print(r"[FlagPerf Result]Rank {} BI-V150 output bidirectional bandwidth and interconnect-MPI_interserver-bandwidth=".format(dist.get_rank()) + str(gb*2) + "GB/s")
+                print(r"[FlagPerf Result]Rank {} BI-V150 output bidirectional bandwidth and interconnect-MPI_interserver-bandwidth=".format(dist.get_rank()) + str(gib*2) + "GiB/s")
         multi_device_sync(config.vendor)
 
     dist.destroy_process_group()

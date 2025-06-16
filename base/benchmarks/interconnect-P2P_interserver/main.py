@@ -84,8 +84,6 @@ def main(config, case_config, rank, world_size, local_rank):
 
     datasize = case_config.ITERS * (Melements * 1024 * 1024 * 4 / 1E9)
     bandwidth = datasize / elapsed_time
-    if "iluvatar" in config.vendor:
-        bandwidth *= 2 # output bidirectional bandwidth for iluvatar test
     bandwidth_gib = bandwidth * 1E9 / (1024**3)
     
     return round(bandwidth, 2), round(bandwidth_gib, 2)
@@ -115,6 +113,9 @@ if __name__ == "__main__":
     if dist.get_rank() % config.node_size == 0:
         print(r"[FlagPerf Result]Rank {}'s inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
         print(r"[FlagPerf Result]Rank {}'s inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
+        if "iluvatar" in config.vendor:
+            print(r"[FlagPerf Result]Rank {} BI-V150 output bidirectional bandwidth and inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gb*2) + "GB/s")
+            print(r"[FlagPerf Result]Rank {} BI-V150 output bidirectional bandwidth and inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gib*2) + "GiB/s")
 
     dist.destroy_process_group()
 
