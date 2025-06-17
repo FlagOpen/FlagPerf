@@ -76,7 +76,7 @@ def main(config, case_config, rank, world_size, local_rank):
     
     if local_rank == 0:
         print("Test Finished")
-    
+
     return total_allocated
 
 
@@ -104,6 +104,9 @@ if __name__ == "__main__":
         if local_rank == output_rank:
             print(r"[FlagPerf Result]Rank {}'s main_memory-capacity=".format(dist.get_rank()) + str(gb) + "GB")
             print(r"[FlagPerf Result]Rank {}'s main_memory-capacity=".format(dist.get_rank()) + str(gib) + "GiB")
+            if "iluvatar" in config.vendor:
+                print(r"[FlagPerf Result]Rank {} BI-V150 has 2 chips and overall GPU main_memory-capacity=".format(dist.get_rank()) + str(gb*2) + "GB")
+                print(r"[FlagPerf Result]Rank {} BI-V150 has 2 chips and overall GPU main_memory-capacity=".format(dist.get_rank()) + str(gib*2) + "GiB")
         if "iluvatar" not in config.vendor:
             multi_device_sync(config.vendor)
 

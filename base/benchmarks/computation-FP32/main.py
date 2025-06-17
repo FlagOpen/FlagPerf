@@ -74,9 +74,9 @@ def main(config, case_config, rank, world_size, local_rank):
     
     for _ in range(case_config.ITERS):
         _result = torch.mm(matrixA, matrixB)
-    if "iluvatar" not in config.vendor:
-        host_device_sync(config.vendor)
-        multi_device_sync(config.vendor)
+
+    host_device_sync(config.vendor)
+    multi_device_sync(config.vendor)
     end_time = time.perf_counter()
     
     exec_time = end_time - start_time
@@ -107,6 +107,8 @@ if __name__ == "__main__":
     for output_rank in range(config.node_size):
         if local_rank == output_rank:
             print(r"[FlagPerf Result]Rank {}'s computation-FP32=".format(dist.get_rank()) + str(result) + "TFLOPS")
+            if "iluvatar" in config.vendor:
+                print(r"[FlagPerf Result]Rank {} BI-V150 has 2 chips and overall GPU computation-FP32=".format(dist.get_rank()) + str(result*2) + "TFLOPS")
         multi_device_sync(config.vendor)
         
     dist.destroy_process_group()

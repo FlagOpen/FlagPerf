@@ -45,9 +45,8 @@ def main(config, case_config, rank, world_size, local_rank):
         
     if "iluvatar" in config.vendor:
         torch.cuda.set_device(local_rank)
-        rank_dst = 16
-    else:
-        rank_dst = 8
+        
+    rank_dst = 8
     
     Melements = case_config.Melements
     torchsize = (Melements, 1024, 1024)
@@ -114,6 +113,9 @@ if __name__ == "__main__":
     if dist.get_rank() % config.node_size == 0:
         print(r"[FlagPerf Result]Rank {}'s inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gb) + "GB/s")
         print(r"[FlagPerf Result]Rank {}'s inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gib) + "GiB/s")
+        if "iluvatar" in config.vendor:
+            print(r"[FlagPerf Result]Rank {} BI-V150 output bidirectional bandwidth and inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gb*2) + "GB/s")
+            print(r"[FlagPerf Result]Rank {} BI-V150 output bidirectional bandwidth and inferconnect-P2P_intraserver-bandwidth=".format(dist.get_rank()) + str(gib*2) + "GiB/s")
 
     dist.destroy_process_group()
 
