@@ -1,0 +1,6 @@
+M: 5120
+N: 8192
+K: 8192
+DIST_BACKEND: "nccl"
+WARMUP: 1
+ITERS: 5
