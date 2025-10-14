@@ -104,10 +104,6 @@ class Daemon:
             TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             cmd = "ipmitool sdr list|grep -i Watts|awk 'BEGIN{FS = \"|\"}{for (f=1; f <= NF; f+=1) {if ($f ~ /Watts/)" \
                   " {print $f}}}'|awk '{print $1}'|sort -n -r|head -n1"
-            # support cambriocn mlu 
-            if "cambricon" in self.vendor:
-                cmd = "echo $(( $(ipmitool sdr list | grep -i Watts | awk 'BEGIN{FS=\"|\"} {for (f=1; f<=NF; f++) {if ($f ~ /Watts/) print $f}}' | awk '{print $1}' | sort -n -r | head -n 1) + $(cnmon info -c 0 | grep 'Machine' | awk '{print $3}') ))"
-            
             res, out = rcw(cmd, 10)
             if res:
                 result = "error"
