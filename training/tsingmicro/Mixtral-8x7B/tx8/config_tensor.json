@@ -1,0 +1,18 @@
+{
+    "task": "tensor",
+    "dump_path": "/login_home/zhangxiaohe/transformers/data_dump",
+    "rank": [1,2,3,4],
+    "step": [],
+    "level": "L1",
+    "seed": 1234,
+    "is_deterministic": false,
+    "enable_dataloader": false,
+
+    "tensor": {
+        "scope": [],
+        "list":[],
+        "data_mode": ["all"],
+        "backward_input": "",
+        "file_format": "bin" 
+    }
+}

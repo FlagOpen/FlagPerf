@@ -1,0 +1,19 @@
+{
+    "fsdp_transformer_layer_cls_to_wrap": [
+        "BaichuanLayer"
+    ],
+    "xla": true,
+    "xla_fsdp_settings": {
+        "compute_dtype": "bfloat16",
+        "shard_param_on_dim_0": false,
+        "pin_layout_in_collective_ops": false,
+        "_debug_dummy_reduce_scatter_op": false,
+        "flatten_parameters": true,
+        "param_init_cpu_device": true,
+        "optimization_barrier_in_forward": false,
+        "optimization_barrier_in_backward": false,
+        "reshard_after_forward": false,
+        "_shard_size_multiple": 1
+    },
+    "xla_fsdp_grad_ckpt": false
+}
