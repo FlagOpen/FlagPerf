@@ -1,6 +1,7 @@
-![img_v3_02ge_ae47c9ed-de00-4ea1-aac3-bbca933f242g](https://github.com/user-attachments/assets/7802da86-1cc2-4d1b-96d4-b9bf501dda94)
 
-![FlagAI](assets/imgs/logo.png)
+<img width="4750" height="958" alt="github+banner__2025-11-11+13_27_10" src="https://github.com/user-attachments/assets/418d4df4-fccf-45ad-997e-1659fd19b6b8" />
+
+
 ----------
 ## FlagPerf是什么
 [![Lint Code Base](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml/badge.svg)](https://github.com/FlagOpen/FlagPerf/actions/workflows/super-linter.yml)
