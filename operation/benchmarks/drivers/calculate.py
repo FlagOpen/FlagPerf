@@ -4,16 +4,17 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import time
+from loguru import logger
 from triton.testing import do_bench as kernel_bench
 import os
 import subprocess
 
 
+# test operation correctness
 def do_correctness(operation):
     flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
     gems_repo = subprocess.check_output(
         ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
-
     p = subprocess.Popen(
         f"cd {os.path.join(gems_repo, 'tests')} && python3 test_named_ops.py --name {operation} --device cpu ",
         shell=True
@@ -22,7 +23,43 @@ def do_correctness(operation):
 
     return p.returncode
 
+
+# test operation performance
+def do_performance(mode, warmup, result_log_dir):
+    flaggems_dir = os.getenv("FLAGGEMS_WORK_DIR", "/")
+    gems_repo = subprocess.check_output(
+        ["find", flaggems_dir, "-type", "d", "-name", "FlagGems"], text=True).strip()
+    del_file_path = os.path.join(gems_repo, 'benchmark')
+    # 删除历史日志
+    # del_file = os.path.join(del_file_path,
+    #                       f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    del_file = os.path.join(del_file_path,
+                            f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    del_process = subprocess.Popen(["rm", del_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    del_process.communicate()
+    p = subprocess.Popen(
+        # 执行所有算子命令
+        f"cd {os.path.join(gems_repo, 'benchmark')} && pytest --level core --mode {mode} --warmup {warmup} --record log",
+        # 执行单个算子命令
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest -m mm --level core --mode {mode} --warmup {warmup} --record log -s",
+        # 执行单个文件命令
+        # f"cd {os.path.join(gems_repo, 'benchmark')} && pytest test_distribution_perf.py --level core --mode {mode} --warmup {warmup} --record log",
+        shell=True
+    )
+    p.wait()
+
+    # 全量执行日志路径
+    log_dir = os.path.join(gems_repo, "benchmark",
+                           f"result--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    # 仅执行单个文件日志路径
+    # log_dir = os.path.join(gems_repo, "benchmark",
+    #                        f"result_test_distribution_perf--level_core--mode_{mode}--warmup_{warmup}--record_log.log")
+    cp_subprocess = subprocess.run(["cp", f"{log_dir}", f"{result_log_dir}/result.log.txt"], check=True)
+    return p.returncode, cp_subprocess.returncode
+
+
 grad_outputs = None
+
 
 def do(exec_func, exec_args, bp=False):
     global grad_outputs
