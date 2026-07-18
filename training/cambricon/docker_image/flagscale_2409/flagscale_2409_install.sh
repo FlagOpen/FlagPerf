@@ -1,4 +1,19 @@
 #!/bin/bash
+
+# Copyright 2026 FlagOS Contributors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 #!/bin/bash
 set -xe
 pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
@@ -15,4 +30,3 @@ sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/ssh
 /etc/init.d/ssh restart
 sleep 10
 sshpass -p "123456" ssh-copy-id -i /root/.ssh/id_rsa.pub -p 55623 root@`hostname -i | awk '{print $1}'`
-

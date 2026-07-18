@@ -1,3 +1,19 @@
+<!--
+ Copyright 2026 FlagOS Contributors
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ -->
+
 # 厂商适配Case的规范
 
 > 文档信息说明
@@ -173,4 +189,3 @@ FlagPerf采用开源共建的方式，开发者应fork [FlagPerf仓库](https://
 
   - 只提交添加模型必要代码变动，代码格式执行"yapf -i --style "pep8" --recursive ./FlagPerf "
   - 文档齐全，case文档包括1x1, 1x8, 2x8 性能精度结果、厂商文档(如需)
-

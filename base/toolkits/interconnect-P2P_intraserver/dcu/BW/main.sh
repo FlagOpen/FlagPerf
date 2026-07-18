@@ -1,3 +1,17 @@
+# Copyright 2026 FlagOS Contributors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 LOG_PATH=$(pwd)/$(ip a | grep -w 'inet' | grep 'global' | sed 's/.*inet //;s/\/.*//' | awk 'NR==1{print $1}')_run_log
 
 mpirun -x NCCL_GRAPH_FILE=/opt/single_graph.xml -x NCCL_P2P_LEVEL=SYS -x NCCL_MIN_NCHANNELS=32 -x NCCL_MIN_P2P_NCHANNELS=32 -x NCCL_NCHANNELS_PER_PEER=32 -x RCCL_SDMA_COUNT_ENABLE=1 -x RCCL_SDMA_COPY_ENABLE=1 -x RCCL_COLL_XHCL_CHANNEL_NUM=28 --allow-run-as-root -np 8 sendrecv_perf -b 1g -e 1g -f 2 -g 1 2>&1 | tee ${LOG_PATH}

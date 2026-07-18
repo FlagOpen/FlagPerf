@@ -1,3 +1,19 @@
+<!--
+ Copyright 2026 FlagOS Contributors
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ -->
+
 # 算子评测厂商适配文档
 
 为了评估AI芯片在原生算子和Triton算子（[FlagGems](https://github.com/FlagOpen/FlagGems)）方面的支持程度和性能，FlagPerf 设计并实现了针对各个算子在 AI 芯片的评测方案。具体的评测方案细节可以向 FlagPerf 团队索取评测方案文档，这里仅介绍厂商适配需关注的详细内容。厂商按照本文档完成适配后，评测时会自动生成相关指标结果。

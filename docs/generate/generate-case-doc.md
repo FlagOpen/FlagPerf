@@ -1,3 +1,19 @@
+<!--
+ Copyright 2026 FlagOS Contributors
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ -->
+
 ### 部署说明
 #### 测试原因
   generate文件夹下对生成式推理的评测不同于inference文件夹下的推理评测，这是因为在inference文件夹下的推理评测侧重于对模型前向传播的性能测量，而生成式推理评测在此基础上充分考虑了解码算法、采样参数等对于性能的影响。相较于inference文件夹下的评测，该评测更贴近真实的文本生成推理场景。
@@ -60,4 +76,3 @@
 
 #### 运行方式
 厂商修改完task.yaml和host.yaml文件后，调用python main.py 即可进行评测，评测结果会显示在控制台以及/log/engine/之中的log文件
-
