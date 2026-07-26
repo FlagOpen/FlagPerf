@@ -1,0 +1,19 @@
+{
+    "task": "tensor",
+    "dump_path": "./output/mstt_output",
+    "rank": [],
+    "step": [],
+    "level": "L1",
+    "seed": 1234,
+    "is_deterministic": false,
+    "enable_dataloader": false,
+
+    "tensor": {
+        "scope": [],
+        "list":[""],
+        "//" : ["TX8.RoPE", "Functional.softmax", "Functional.embedding"],
+        "data_mode": ["all"],
+        "backward_input": "",
+        "file_format": "bin" 
+    }
+}
