@@ -1,0 +1,8 @@
+# Copyright 2026 FlagOS Contributors
+#
+# Licensed under the Apache License, Version 2.0 (the "License")
+
+# Python 依赖包
+torch>=2.0.0
+pyyaml>=5.1
+numpy>=1.19.0
